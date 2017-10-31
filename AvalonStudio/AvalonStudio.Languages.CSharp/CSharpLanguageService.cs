@@ -23,6 +23,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reactive.Subjects;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
 
@@ -113,6 +114,8 @@
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => _snippetDynamicVars;
 
         public string LanguageId => "cs";
+
+        public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; } = new Subject<TextSegmentCollection<Diagnostic>>();
 
         public bool CanHandle(ISourceFile file)
         {
@@ -365,15 +368,18 @@
             {
                 var dataAssociation = GetAssociatedData(file);
 
-                var results = new TextSegmentCollection<Diagnostic>();
+                var results = new TextSegmentCollection<Diagnostic>(editor.Document);
 
                 foreach (var diagnostic in diagnostics.Diagnostics)
                 {
                     results.Add(FromRoslynDiagnostic(diagnostic, file.Location, file.Project));
                 }
 
-                //dataAssociation.Diagnostics.OnNext(results);
-                Console.WriteLine("Restore adding diagnostics to output");
+                (Diagnostics as Subject<TextSegmentCollection<Diagnostic>>).OnNext(results);
+            }, 
+            (source) => 
+            {
+                avaloniaEditTextContainer.UpdateText(source);
             });
 
             dataAssociations.Add(file, association);

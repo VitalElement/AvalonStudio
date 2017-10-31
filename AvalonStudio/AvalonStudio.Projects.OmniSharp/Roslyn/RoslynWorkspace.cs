@@ -49,6 +49,7 @@ namespace RoslynPad.Roslyn
             _compositionContext = compositionContext;
             GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;
 
+            DiagnosticProvider.Enable(this, DiagnosticProvider.Options.Semantic | DiagnosticProvider.Options.Syntax);
             this.EnableDiagnostics(DiagnosticOptions.Semantic | DiagnosticOptions.Syntax);
         }
 
@@ -224,7 +225,7 @@ namespace RoslynPad.Roslyn
             return CurrentSolution.GetDocument(documentId);
         }
 
-        public void OpenDocument(AvalonStudio.Projects.ISourceFile file, AvalonEditTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated)
+        public void OpenDocument(AvalonStudio.Projects.ISourceFile file, AvalonEditTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated, Action<SourceText> onTextUpdated)
         {
             var documentId = GetDocumentId(file);
 
@@ -235,6 +236,11 @@ namespace RoslynPad.Roslyn
 
             _diagnosticsUpdatedNotifiers[documentId] = onDiagnosticsUpdated;
             _openDocumentTextLoaders.Add(documentId, textContainer);
+
+            if (onTextUpdated != null)
+            {
+                ApplyingTextChange += (d, s) => onTextUpdated(s);
+            }
         }
 
         public void CloseDocument(AvalonStudio.Projects.ISourceFile file)
@@ -242,7 +248,7 @@ namespace RoslynPad.Roslyn
             var documentId = GetDocumentId(file);
             var textContainer = _openDocumentTextLoaders[documentId];
 
-            _openDocumentTextLoaders.Remove(documentId);            
+            _openDocumentTextLoaders.Remove(documentId);
             _diagnosticsUpdatedNotifiers.TryRemove(documentId, out Action<DiagnosticsUpdatedArgs> value);
 
             OnDocumentClosed(documentId, TextLoader.From(textContainer, VersionStamp.Default));
@@ -256,6 +262,8 @@ namespace RoslynPad.Roslyn
         }
 
         public override bool CanOpenDocuments => true;
+
+        public event Action<DocumentId, SourceText> ApplyingTextChange;
 
         public override bool CanApplyChange(ApplyChangesKind feature)
         {
@@ -276,6 +284,8 @@ namespace RoslynPad.Roslyn
         protected override void ApplyDocumentTextChanged(DocumentId document, SourceText newText)
         {
             _openDocumentTextLoaders[document].UpdateText(newText);
+
+            ApplyingTextChange?.Invoke(document, newText);
 
             OnDocumentTextChanged(document, newText, PreservationMode.PreserveIdentity);
         }
