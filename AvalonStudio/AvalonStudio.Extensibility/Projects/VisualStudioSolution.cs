@@ -62,7 +62,17 @@ namespace AvalonStudio.Extensibility.Projects
 
             ResolveReferences();
 
+            LoadFiles();
+
             BuildTree();
+        }
+
+        private void LoadFiles()
+        {
+            foreach (var project in Projects)
+            {
+                project.LoadFiles();
+            }
         }
 
         private void BuildTree()
@@ -107,7 +117,7 @@ namespace AvalonStudio.Extensibility.Projects
 
             foreach (var project in solutionProjects)
             {
-                IProject newProject = Project.LoadProjectFile(Guid.Parse(project.TypeGuid), Path.Combine(this.CurrentDirectory, project.FilePath));
+                IProject newProject = Project.LoadProjectFile(this, Guid.Parse(project.TypeGuid), Path.Combine(this.CurrentDirectory, project.FilePath));
 
                 newProject.Id = Guid.Parse(project.Id);
                 newProject.Solution = this;

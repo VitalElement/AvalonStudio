@@ -49,12 +49,17 @@ namespace AvalonStudio.Projects
 
         IReadOnlyList<ISourceFile> SourceFiles { get; }
 
-        event EventHandler FileAdded;
+        event EventHandler<ISourceFile> FileAdded;
 
         /// <summary>
         ///     Resolves all references in the project.
         /// </summary>
         void ResolveReferences();
+
+        /// <summary>
+        /// This is called only once when a project is loaded and is used to populate the files.
+        /// </summary>
+        void LoadFiles();
 
         void Save();
     }

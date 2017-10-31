@@ -137,7 +137,7 @@ namespace AvalonStudio.Projects
 
             if (projectType != null && System.IO.File.Exists(projectFilePath))
             {
-                result = projectType.Load(projectFilePath);
+                result = projectType.Load(solution, projectFilePath);
             }
             else
             {

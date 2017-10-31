@@ -61,7 +61,7 @@ namespace AvalonStudio.Projects
 
         public IReadOnlyList<ISourceFile> SourceFiles => null;
 
-        public event EventHandler FileAdded;
+        public event EventHandler<ISourceFile> FileAdded;
 
         public void AddReference(IProject project)
         {
@@ -125,6 +125,10 @@ namespace AvalonStudio.Projects
         public int CompareTo(ISolutionItem other)
         {
             return this.DefaultCompareTo(other);
+        }
+
+        public void LoadFiles()
+        {
         }
     }
 }

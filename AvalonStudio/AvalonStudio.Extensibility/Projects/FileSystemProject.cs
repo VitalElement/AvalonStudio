@@ -258,7 +258,7 @@
                         sourceFile.Parent = folder;
                     }
 
-                    FileAdded?.Invoke(this, new EventArgs());
+                    FileAdded?.Invoke(this, sourceFile);
                 }
             }
         }
@@ -428,8 +428,6 @@
         public abstract Guid ProjectTypeId { get; }        
 
         IReadOnlyList<ISourceFile> IProject.SourceFiles => SourceFiles.AsReadOnly();
-
-        public event EventHandler FileAdded;
 
         public abstract void AddReference(IProject project);
 

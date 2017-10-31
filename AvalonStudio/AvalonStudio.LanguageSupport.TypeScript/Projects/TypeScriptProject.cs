@@ -65,8 +65,6 @@ Program.main();
                 }
                 result.Save();
 
-                result.LoadFiles();
-
                 return result;
             });
         }
@@ -77,8 +75,6 @@ Program.main();
             result.Location = filename;
 
             //TODO: Load TS language service from here
-            
-            result.LoadFiles();
 
             return result;
         }

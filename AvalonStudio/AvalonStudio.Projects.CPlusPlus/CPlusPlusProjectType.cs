@@ -7,7 +7,7 @@
     {
         public static readonly Guid TypeId = Guid.Parse("{DA891B1A-E1A3-4A1A-83CD-252F07B636ED}");
 
-        public List<string> Extensions => new List<string>
+        public List<string> Extensions { get; } = new List<string>
         {
             "acproj"
         };
@@ -24,7 +24,7 @@
         {
         }
 
-        public IProject Load(string filePath)
+        public IProject Load(ISolution solution, string filePath)
         {
             return CPlusPlusProject.LoadFromFile(filePath);
         }

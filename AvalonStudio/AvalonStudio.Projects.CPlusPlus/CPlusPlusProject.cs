@@ -502,7 +502,6 @@ namespace AvalonStudio.Projects.CPlusPlus
             project.Location = filename;
 
             project.Items.InsertSorted(new ReferenceFolder(project));
-            project.LoadFiles();
 
             return project;
         }
@@ -519,7 +518,6 @@ namespace AvalonStudio.Projects.CPlusPlus
                 project.Location = projectFile;
 
                 project.Save();
-                project.LoadFiles();
 
                 result = project;
             }

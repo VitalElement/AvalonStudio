@@ -139,5 +139,9 @@
         {
             throw new NotImplementedException();
         }
+
+        public void LoadFiles()
+        {
+        }
     }
 }

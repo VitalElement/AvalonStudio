@@ -8,7 +8,7 @@ namespace AvalonStudio.Projects
 {
     public class Project
     {
-        public static IProject LoadProjectFile (string fileName)
+        public static IProject LoadProjectFile (ISolution solution, string fileName)
         {
             var shell = IoC.Get<IShell>();
 
@@ -18,19 +18,19 @@ namespace AvalonStudio.Projects
 
             if(projectType != null)
             {
-                return LoadProjectFile(projectType.ProjectTypeId, fileName);
+                return LoadProjectFile(solution, projectType.ProjectTypeId, fileName);
             }
 
             return new UnsupportedProjectType(fileName);
         }
 
-        public static IProject LoadProjectFile(Guid projectTypeId, string fileName)
+        public static IProject LoadProjectFile(ISolution solution, Guid projectTypeId, string fileName)
         {   
             var projectType = projectTypeId.GetProjectType();
 
             if (projectType != null)
             {
-                return projectType.Load(fileName);
+                return projectType.Load(solution, fileName);
             }
 
             return new UnsupportedProjectType(fileName);

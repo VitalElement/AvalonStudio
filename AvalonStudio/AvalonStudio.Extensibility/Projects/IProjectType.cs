@@ -10,6 +10,6 @@
         List<string> Extensions { get; }
         string Description { get; }
 
-        IProject Load(string filePath);
+        IProject Load(ISolution solution, string filePath);
     }
 }
