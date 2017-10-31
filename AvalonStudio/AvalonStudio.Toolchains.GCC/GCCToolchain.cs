@@ -137,7 +137,7 @@ namespace AvalonStudio.Toolchains.GCC
                     console.WriteLine(e.Data);
                 }
             },
-            false, file.CurrentDirectory, false);
+            false, "", false);
 
             // console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
 
