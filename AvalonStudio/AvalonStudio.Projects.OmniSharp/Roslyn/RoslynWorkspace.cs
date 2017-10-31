@@ -243,7 +243,7 @@ namespace RoslynPad.Roslyn
             var textContainer = _openDocumentTextLoaders[documentId];
 
             _openDocumentTextLoaders.Remove(documentId);            
-            //_diagnosticsUpdatedNotifiers.Remove(documentId, out Action<DiagnosticsUpdatedArgs> value);
+            _diagnosticsUpdatedNotifiers.TryRemove(documentId, out Action<DiagnosticsUpdatedArgs> value);
 
             OnDocumentClosed(documentId, TextLoader.From(textContainer, VersionStamp.Default));
         }
