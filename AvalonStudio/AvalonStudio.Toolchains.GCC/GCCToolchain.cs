@@ -63,20 +63,24 @@ namespace AvalonStudio.Toolchains.GCC
 
             if(!result)
             {
-                var extensions = file.Project.GetToolchainSettings<GccToolchainSettings>().CompileSettings.CompileExtensions;
+                var settings = file.Project.GetToolchainSettingsIfExists<GccToolchainSettings>();
 
-                if (extensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower()))
+                if (settings != null)
                 {
-                    result = true;
+                    var extensions = settings.CompileSettings.CompileExtensions;
+
+                    if (extensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower()))
+                    {
+                        result = true;
+                    }
+
+                    extensions = settings.CompileSettings.AssembleExtensions;
+
+                    if (extensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower()))
+                    {
+                        result = true;
+                    }
                 }
-
-                extensions = file.Project.GetToolchainSettings<GccToolchainSettings>().CompileSettings.AssembleExtensions;
-
-                if(extensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower()))
-                {
-                    result = true;
-                }
-
             }
 
             return result;
@@ -110,18 +114,18 @@ namespace AvalonStudio.Toolchains.GCC
         {
             var result = new CompileResult();
 
+            var settings = superProject.Project.GetToolchainSettingsIfExists<GccToolchainSettings>().CompileSettings;
+
             string commandName = file.Extension == ".cpp" ? CPPExecutable : CCExecutable;
 
             var fileArguments = string.Empty;
-
-            var extensions = file.Project.GetToolchainSettings<GccToolchainSettings>().CompileSettings.CompileExtensions;
-            if (file.Extension == ".cpp" || extensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower()))
+            
+            if (file.Extension == ".cpp")
             {
                 fileArguments = "-x c++ -fno-use-cxa-atexit";
             }
-
-            extensions = file.Project.GetToolchainSettings<GccToolchainSettings>().CompileSettings.AssembleExtensions;
-            if (file.Extension.ToLower() == ".s" || extensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower()))
+            
+            if (file.Extension.ToLower() == ".s" || (settings != null && settings.CompileExtensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower())))
             {
                 fileArguments = "-x assembler-with-cpp";
             }
