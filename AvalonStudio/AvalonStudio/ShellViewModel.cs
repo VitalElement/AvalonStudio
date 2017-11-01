@@ -670,7 +670,7 @@ namespace AvalonStudio
             var allErrors = new List<ErrorViewModel>();
             var toRemove = new List<ErrorViewModel>();
 
-            foreach (var document in DocumentTabs.Documents.Where(d => d.IsVisible).OfType<EditorViewModel>())
+            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
             {
                 if (document.Diagnostics != null)
                 {
