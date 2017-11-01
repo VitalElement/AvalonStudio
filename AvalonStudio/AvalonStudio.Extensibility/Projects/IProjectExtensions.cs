@@ -18,6 +18,11 @@ namespace AvalonStudio.Projects
             return SettingsSerializer.GetSettings<T>(() => project.ToolchainSettings, () => project.Save());
         }
 
+        public static T GetToolchainSettingsIfExists<T>(this IProject project) where T : new ()
+        {
+            return SettingsSerializer.GetSettingsIfExists<T>(() => project.ToolchainSettings);
+        }
+
         public static void SetToolchainSettings<T>(this IProject project, T value) where T : new()
         {
             SettingsSerializer.SetSettings<T>(() => project.ToolchainSettings, () => project.Save(), value);
