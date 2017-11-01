@@ -697,6 +697,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
 
                 TextArea.IndentationStrategy = LanguageService.IndentationStrategy;
+
+                LanguageService.Diagnostics.ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
+                {
+                    Diagnostics = d;
+
+                    _shell.InvalidateErrors();
+                });
             }
             else
             {

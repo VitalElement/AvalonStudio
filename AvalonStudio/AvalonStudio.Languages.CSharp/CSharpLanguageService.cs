@@ -180,7 +180,7 @@
             var dataAssociation = GetAssociatedData(sourceFile);
 
             var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(sourceFile);
-
+            
             var completionService = CompletionService.GetService(document);
             var completionTrigger = GetCompletionTrigger(null);
             var data = await completionService.GetCompletionsAsync(
@@ -368,7 +368,7 @@
             {
                 var dataAssociation = GetAssociatedData(file);
 
-                var results = new TextSegmentCollection<Diagnostic>(editor.Document);
+                var results = new TextSegmentCollection<Diagnostic>();
 
                 foreach (var diagnostic in diagnostics.Diagnostics)
                 {
@@ -563,12 +563,19 @@
 
             var dataAssociation = GetAssociatedData(file);
 
-            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(file);
+            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
+
+            var document = workspace.GetDocument(file);
 
             if (document == null)
             {
                 return result;
             }
+
+            // Example how to get file specific diagnostics.
+            /*var model = await document.GetSemanticModelAsync();
+
+            var diagnostics = model.GetDiagnostics();*/
 
             var highlightData = await Classifier.GetClassifiedSpansAsync(document, new Microsoft.CodeAnalysis.Text.TextSpan(0, textLength));
 
