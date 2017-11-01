@@ -58,11 +58,11 @@ namespace AvalonStudio.Shell
 
         IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true);
 
-        Task CloseDocumentsForProjectAsync(IProject project);
+        void CloseDocumentsForProject(IProject project);
 
         Task OpenSolutionAsync(string path);
 
-        Task CloseSolutionAsync();
+        void CloseSolution();
 
         void AddDocument(IDocumentTabViewModel document);
 
