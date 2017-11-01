@@ -401,8 +401,8 @@ namespace AvalonStudio
 
                 AddDocument(currentTab);
 
-                currentTab.OpenFile(file);                
-            }            
+                currentTab.OpenFile(file);
+            }
             else
             {
                 AddDocument(currentTab);
@@ -575,7 +575,7 @@ namespace AvalonStudio
             {
                 this.RaiseAndSetIfChanged(ref _currentColorScheme, value);
 
-                foreach(var document in DocumentTabs.Documents.OfType<EditorViewModel>())
+                foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
                 {
                     document.ColorScheme = value;
                 }
@@ -717,7 +717,7 @@ namespace AvalonStudio
         {
             if (CurrentSolution != null)
             {
-                await CloseSolutionAsync();
+                CloseSolution();
             }
 
             if (System.IO.File.Exists(path))
@@ -731,22 +731,22 @@ namespace AvalonStudio
             }
         }
 
-        public async Task CloseSolutionAsync()
+        public void CloseSolution()
         {
             var documentsToClose = DocumentTabs.Documents.ToList();
 
             foreach (var document in documentsToClose)
             {
-                if (document is EditorViewModel)
+                if (document is EditorViewModel evm)
                 {
-                    //await (document as EditorViewModel).CloseCommand.ExecuteAsyncTask();
+                    DocumentTabs.CloseDocument(evm);
                 }
             }
 
             CurrentSolution = null;
         }
 
-        public async Task CloseDocumentsForProjectAsync(IProject project)
+        public void CloseDocumentsForProject(IProject project)
         {
             var documentsToClose = DocumentTabs.Documents.ToList();
 
@@ -754,9 +754,7 @@ namespace AvalonStudio
             {
                 if (document is EditorViewModel evm && evm.ProjectFile.Project == project)
                 {
-                    //await evm.CloseCommand.ExecuteAsyncTask();
-
-                    evm.OnClose();
+                    DocumentTabs.CloseDocument(evm);
                 }
             }
         }
