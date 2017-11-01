@@ -20,6 +20,7 @@ using System.Collections.Immutable;
 using System.Composition.Hosting;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace RoslynPad.Roslyn
@@ -47,17 +48,16 @@ namespace RoslynPad.Roslyn
             _diagnosticsUpdatedNotifiers = new ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>>();
 
             _compositionContext = compositionContext;
-            GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;
 
-            DiagnosticProvider.Enable(this, DiagnosticProvider.Options.Semantic | DiagnosticProvider.Options.Syntax);
             this.EnableDiagnostics(DiagnosticOptions.Semantic | DiagnosticOptions.Syntax);
+
+            GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;
         }
 
         public static RoslynWorkspace GetWorkspace(AvalonStudio.Projects.ISolution solution)
         {
             if (!s_solutionWorkspaces.ContainsKey(solution))
             {
-
                 //await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
 
                 var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
@@ -71,10 +71,11 @@ namespace RoslynPad.Roslyn
 
                 var assemblies = new[]
                 {
-                    loadedAssemblies.First(a=>a.FullName.StartsWith("Microsoft.CodeAnalysis")),
-                    loadedAssemblies.First(a=>a.FullName.StartsWith("Microsoft.CodeAnalysis.CSharp")),
-                    loadedAssemblies.First(a => a.FullName.StartsWith("Microsoft.CodeAnalysis.Features")),
-                    typeof(DiagnosticsService).Assembly,
+                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis")),
+                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis.CSharp")),
+                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis.Features")),
+                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis.CSharp.Features")),
+                    typeof(RoslynWorkspace).Assembly,
                 };
 
                 var partTypes = MefHostServices.DefaultAssemblies.Concat(assemblies)
