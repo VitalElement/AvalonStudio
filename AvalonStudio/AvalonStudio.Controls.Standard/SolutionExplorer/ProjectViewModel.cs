@@ -83,9 +83,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 shell.ModalDialog.ShowDialog();
             });
 
-            RemoveCommand = ReactiveCommand.Create(async () =>
+            RemoveCommand = ReactiveCommand.Create(() =>
             {
-                await shell.CloseDocumentsForProjectAsync(Model);
+                shell.CloseDocumentsForProject(Model);
                 Model.Solution.RemoveItem(Model);
                 Model.Solution.Save();
             });
