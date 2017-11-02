@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
-using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
 
@@ -21,6 +20,8 @@ namespace AvalonStudio.Controls
             {
                 IoC.Get<IShell>().RemoveDocument(this);
             });
+
+            Dock = Dock.Left;
 
             IsVisible = true;
         }
@@ -50,6 +51,15 @@ namespace AvalonStudio.Controls
             }
             set
             {
+                if (value)
+                {
+                    Dock = Dock.Right;
+                }
+                else
+                {
+                    Dock = Dock.Left;
+                }
+
                 this.RaiseAndSetIfChanged(ref _isTemporary, value);
             }
         }

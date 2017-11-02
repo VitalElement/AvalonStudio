@@ -1,13 +1,11 @@
-﻿using AvalonStudio.Platforms;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ReactiveUI;
-using AvalonStudio.Shell;
-using AvalonStudio.Extensibility;
+﻿using AvalonStudio.Controls;
 using AvalonStudio.Extensibility.Documents;
+using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
+using AvalonStudio.Shell;
+using ReactiveUI;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Extensibility.Editor
 {
     public class TextEditorViewModel : EditorViewModel
     {
@@ -18,9 +16,13 @@ namespace AvalonStudio.Controls
         private IShell _shell;
         private ITextDocument _document;
 
-        public TextEditorViewModel()
+        public TextEditorViewModel(ISourceFile file) : base(file)
         {
             _shell = IoC.Get<IShell>();
+            _visualFontSize = _fontSize = 14;
+            _zoomLevel = 1;
+            Title = file.Name;
+            //ZoomLevel = _shell.GlobalZoomLevel;
         }
 
         public void Save ()

@@ -6,7 +6,7 @@ namespace AvalonStudio.Documents
 {
     public interface IEditor
     {
-        ISourceFile File { get; }
+        ISourceFile SourceFile { get; }
     }
 
     public interface ICodeEditor : IEditor
@@ -14,8 +14,6 @@ namespace AvalonStudio.Documents
         void Focus();
 
         void TriggerCodeAnalysis();
-
-        void Close();
 
         void Save();
 

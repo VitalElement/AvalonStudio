@@ -35,17 +35,17 @@ namespace AvalonStudio.Controls
 
         public bool IsDirty
         {
-            get
-            {
-                return _isDirty;
-            }
+            get => _isDirty;
             set
             {
                 this.RaiseAndSetIfChanged(ref _isDirty, value);
+
+                if(value && IsTemporary)
+                {
+                    IsTemporary = false;
+                }
             }
         }
-
-        public ISourceFile File { get; set; }
 
         public void SetDebugHighlight(int line, int startColumn, int endColumn)
         {
@@ -84,7 +84,6 @@ namespace AvalonStudio.Controls
 
         public void OpenFile(ISourceFile file)
         {
-            File = file;
             SourceFile = file;
             Title = Path.GetFileName(file.Location);
         }
@@ -129,7 +128,6 @@ namespace AvalonStudio.Controls
         public override void OnClose()
         {
             _shell.InvalidateErrors();
-            _editor?.Close();
         }
 
         public void OnPointerWheelChanged(PointerWheelEventArgs e)
@@ -502,11 +500,6 @@ namespace AvalonStudio.Controls
                     IsDirty = false;
                 });
             }
-        }
-
-        public void Close()
-        {
-            _editor?.Close();
         }
 
         public async Task<Symbol> GetSymbolAsync(int offset)

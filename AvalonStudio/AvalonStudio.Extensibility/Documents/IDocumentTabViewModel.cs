@@ -6,7 +6,7 @@ namespace AvalonStudio.Controls
 {
     public interface IFileDocumentTabViewModel : IDocumentTabViewModel
     {
-        ISourceFile File { get; }
+        ISourceFile SourceFile { get; }
 
         bool IsDirty { get; set; }
     }

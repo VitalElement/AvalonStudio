@@ -11,12 +11,13 @@ using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
-using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.CodeEditor;
+using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Threading;
+using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
@@ -31,7 +32,6 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
-using AvalonStudio.GlobalSettings;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -732,7 +732,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             DoCodeAnalysisAsync().GetAwaiter();
         }
 
-        public void UnRegisterLanguageService()
+        private void UnRegisterLanguageService()
         {
             if (_scopeLineBackgroundRenderer != null)
             {
@@ -1052,6 +1052,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public void ClearDebugHighlight()
         {
             _selectedDebugLineBackgroundRenderer.SetLocation(-1);
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            UnRegisterLanguageService();
+
+            base.OnDetachedFromVisualTree(e);
         }
     }
 }

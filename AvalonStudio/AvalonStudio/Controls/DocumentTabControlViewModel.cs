@@ -1,12 +1,9 @@
-using Avalonia.Media;
 using Avalonia.Threading;
 using AvalonStudio.Documents;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 

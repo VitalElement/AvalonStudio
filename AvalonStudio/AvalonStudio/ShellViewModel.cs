@@ -398,7 +398,7 @@ namespace AvalonStudio
 
         public ICodeEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
         {
-            var currentTab = DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(t => t.File?.FilePath == file.FilePath);
+            var currentTab = DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(t => t.SourceFile?.FilePath == file.FilePath);
 
             if (currentTab == null)
             {
@@ -412,11 +412,9 @@ namespace AvalonStudio
                 }
                 else
                 {
-                    var newTab = new EditorViewModel();
+                    var newTab = new TextEditorViewModel(file);
 
                     AddDocument(newTab);
-
-                    newTab.OpenFile(file);
 
                     currentTab = newTab;
                 }
@@ -454,7 +452,7 @@ namespace AvalonStudio
 
         public ICodeEditor GetDocument(string path)
         {
-            return DocumentTabs.Documents.OfType<ICodeEditor>().FirstOrDefault(d => d.File?.FilePath == path);
+            return DocumentTabs.Documents.OfType<ICodeEditor>().FirstOrDefault(d => d.SourceFile?.FilePath == path);
         }
 
         public void Save()
@@ -770,7 +768,7 @@ namespace AvalonStudio
 
             foreach (var document in documentsToClose)
             {
-                if (document is EditorViewModel evm && evm.File.Project == project)
+                if (document is EditorViewModel evm && evm.SourceFile.Project == project)
                 {
                     DocumentTabs.CloseDocument(evm);
                 }

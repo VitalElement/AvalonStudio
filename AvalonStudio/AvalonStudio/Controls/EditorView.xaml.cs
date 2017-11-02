@@ -26,7 +26,7 @@ namespace AvalonStudio.Controls
 
         private IShell shell;
 
-        public ISourceFile File => throw new NotImplementedException();
+        public ISourceFile SourceFile => throw new NotImplementedException();
 
         public int CaretOffset => _editor.CaretOffset;
 
@@ -104,13 +104,6 @@ namespace AvalonStudio.Controls
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-        }
-
-        public void Close()
-        {
-            _editor.UnRegisterLanguageService();
-
-            // TODO dispose disposables.
         }
 
         public void Save()
