@@ -1,8 +1,14 @@
 ﻿using Avalonia.Controls;
+using AvalonStudio.Projects;
 using ReactiveUI;
 
 namespace AvalonStudio.Controls
 {
+    public interface IFileDocumentTabViewModel : IDocumentTabViewModel
+    {
+        ISourceFile File { get; }
+    }
+
     public interface IDocumentTabViewModel
     {
         bool IsDirty { get; set; }

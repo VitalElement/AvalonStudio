@@ -47,6 +47,7 @@ namespace AvalonStudio
         private List<ILanguageService> _languageServices;
         private List<IProjectTemplate> _projectTemplates;
         private List<ISolutionType> _solutionTypes;
+        private List<IEditorProvider> _editorProviders;
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
@@ -82,6 +83,7 @@ namespace AvalonStudio
             _debugger2s = new List<IDebugger>();
             _codeTemplates = new List<ICodeTemplate>();
             _projectTypes = new List<IProjectType>();
+            _editorProviders = new List<IEditorProvider>();
             _solutionTypes = new List<ISolutionType>();
             _testFrameworks = new List<ITestFramework>();
             _toolChains = new List<IToolChain>();
@@ -143,6 +145,7 @@ namespace AvalonStudio
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
+                _editorProviders.ConsumeExtension(extension);
 
                 _commandDefinitions.ConsumeExtension(extension);
             }
@@ -355,6 +358,8 @@ namespace AvalonStudio
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
+        public IEnumerable<IEditorProvider> EditorProviders => _editorProviders;
+
         public IEnumerable<ISolutionType> SolutionTypes => _solutionTypes;
 
         public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
@@ -391,24 +396,37 @@ namespace AvalonStudio
             DocumentTabs.CloseDocument(document);
         }
 
-        public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
+        public ICodeEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
         {
-            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
+            var currentTab = DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(t => t.File?.FilePath == file.FilePath);
 
             if (currentTab == null)
             {
-                currentTab = new EditorViewModel();
+                var provider = EditorProviders.FirstOrDefault(p => p.CanEdit(file));
 
-                AddDocument(currentTab);
+                if (provider != null)
+                {
+                    currentTab = provider.CreateViewModel(file);
 
-                currentTab.OpenFile(file);
+                    AddDocument(currentTab);
+                }
+                else
+                {
+                    var newTab = new EditorViewModel();
+
+                    AddDocument(newTab);
+
+                    newTab.OpenFile(file);
+
+                    currentTab = newTab;
+                }
             }
             else
             {
                 AddDocument(currentTab);
             }
 
-            if (DocumentTabs.SelectedDocument is IEditor editor)
+            if (DocumentTabs.SelectedDocument is ICodeEditor editor)
             {
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
@@ -431,19 +449,19 @@ namespace AvalonStudio
                 });
             }
 
-            return currentTab as IEditor;
+            return currentTab as ICodeEditor;
         }
 
-        public IEditor GetDocument(string path)
+        public ICodeEditor GetDocument(string path)
         {
-            return DocumentTabs.Documents.OfType<IEditor>().FirstOrDefault(d => d.ProjectFile?.FilePath == path);
+            return DocumentTabs.Documents.OfType<ICodeEditor>().FirstOrDefault(d => d.File?.FilePath == path);
         }
 
         public void Save()
         {
-            if (SelectedDocument is IEditor)
+            if (SelectedDocument is ICodeEditor)
             {
-                (SelectedDocument as IEditor).Save();
+                (SelectedDocument as ICodeEditor).Save();
             }
         }
 
@@ -752,7 +770,7 @@ namespace AvalonStudio
 
             foreach (var document in documentsToClose)
             {
-                if (document is EditorViewModel evm && evm.ProjectFile.Project == project)
+                if (document is EditorViewModel evm && evm.File.Project == project)
                 {
                     DocumentTabs.CloseDocument(evm);
                 }

@@ -1,13 +1,13 @@
 ﻿using Avalonia.Controls;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
+using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
-using System;
 
 namespace AvalonStudio.Controls
 {
-    public class DocumentTabViewModel<T> : ViewModel<T>, IDocumentTabViewModel where T : class
+    public abstract class DocumentTabViewModel<T> : ViewModel<T>, IDocumentTabViewModel where T : class
     {
         private Dock dock;
         private string title;

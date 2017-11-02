@@ -24,7 +24,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
-    public class EditorViewModel : DocumentTabViewModel, IEditor
+    public class EditorViewModel : DocumentTabViewModel, ICodeEditor, IFileDocumentTabViewModel
     {
         private double _fontSize;
         private double _zoomLevel;
@@ -32,7 +32,7 @@ namespace AvalonStudio.Controls
         private ISourceFile _sourceFile;
         private ShellViewModel _shell;
 
-        public ISourceFile ProjectFile { get; set; }
+        public ISourceFile File { get; set; }
 
         public void SetDebugHighlight(int line, int startColumn, int endColumn)
         {
@@ -71,7 +71,7 @@ namespace AvalonStudio.Controls
 
         public void OpenFile(ISourceFile file)
         {
-            ProjectFile = file;
+            File = file;
             SourceFile = file;
             Title = Path.GetFileName(file.Location);
         }
@@ -140,12 +140,12 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public void AttachEditor(IEditor editor)
+        public void AttachEditor(ICodeEditor editor)
         {
             _editor = editor;
         }
 
-        private IEditor _editor;
+        private ICodeEditor _editor;
 
         #endregion Constructors
 

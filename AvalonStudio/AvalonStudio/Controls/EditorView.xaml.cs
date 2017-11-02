@@ -16,7 +16,7 @@ using AvaloniaEdit.Document;
 
 namespace AvalonStudio.Controls
 {
-    public class EditorView : UserControl, IEditor
+    public class EditorView : UserControl, ICodeEditor
     {
         private readonly CompositeDisposable disposables;
 
@@ -26,7 +26,7 @@ namespace AvalonStudio.Controls
 
         private IShell shell;
 
-        public ISourceFile ProjectFile => throw new NotImplementedException();
+        public ISourceFile File => throw new NotImplementedException();
 
         public int CaretOffset => _editor.CaretOffset;
 

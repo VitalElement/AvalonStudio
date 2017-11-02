@@ -40,6 +40,8 @@ namespace AvalonStudio.Languages.Xaml
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
+        public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics => null;
+
         public void Activation()
         {
         }

@@ -38,6 +38,8 @@ namespace AvalonStudio.Shell
 
         ColorScheme CurrentColorScheme { get; set; }
 
+        IEnumerable<IEditorProvider> EditorProviders { get; }
+
         IEnumerable<ISolutionType> SolutionTypes { get; }
 
         IEnumerable<IProjectType> ProjectTypes { get; }
@@ -54,9 +56,9 @@ namespace AvalonStudio.Shell
 
         IEnumerable<ITestFramework> TestFrameworks { get; }
 
-        IEditor GetDocument(string path);
+        ICodeEditor GetDocument(string path);
 
-        IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true);
+        ICodeEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true);
 
         void CloseDocumentsForProject(IProject project);
 

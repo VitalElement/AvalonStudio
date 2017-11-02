@@ -22,7 +22,7 @@
 
         private IShell _shell;
         private IConsole _console;
-        private IEditor _lastDocument;
+        private ICodeEditor _lastDocument;
 
         public event EventHandler DebugSessionStarted;
 
@@ -310,7 +310,7 @@
                     if (document != null)
                     {
                         _lastDocument = document;
-                        file = document?.ProjectFile;
+                        file = document?.File;
                     }
 
                     if (file == null)
