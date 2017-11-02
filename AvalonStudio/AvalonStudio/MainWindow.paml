@@ -3,7 +3,7 @@
                       xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.ViewModels;assembly=AvalonStudio.Extensibility"
                       xmlns:dock="clr-namespace:Mabiavalon.DockNC;assembly=Mabiavalon.DockNC"
                       xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"
-                      Icon="resm:AvalonStudio.Assets.icon.ico?assembly=AvalonStudio"
+                      Icon="resm:AvalonStudio.Assets.logo-256.png?assembly=AvalonStudio"
                       Title="AvalonStudio" BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}" FontFamily="Segoe UI"
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized">
   <Controls:MetroWindow.TitleBarContent>
@@ -16,7 +16,7 @@
     
     <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
       <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
-    </Style>    
+    </Style>
     
     <Style Selector="TreeViewItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
       <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
@@ -61,7 +61,7 @@
     </Style>
   </Controls:MetroWindow.Styles>
   <Controls:MetroWindow.KeyBindings>
-    <KeyBinding Command="{Binding EnableDebugModeCommand}" CommandParameter="{Binding}" Gesture="CTRL+SHIFT+D"/>
+    <KeyBinding Command="{Binding EnableDebugModeCommand}" Gesture="CTRL+SHIFT+D"/>
   </Controls:MetroWindow.KeyBindings>
   <Grid RowDefinitions="Auto,*,25">
     <Grid Grid.ColumnSpan="5" Margin="0 0 0 0">
@@ -138,6 +138,8 @@
       <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
     </Grid>
 
+    <Controls:QuickCommander Grid.RowSpan="3" Grid.ColumnSpan="5" Width="450" MaxHeight="500" DataContext="{Binding QuickCommander}" VerticalAlignment="Top" />
+    
     <Controls:ModalDialog Grid.RowSpan="3" Grid.ColumnSpan="5" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" ZIndex="100" />
   </Grid>
 </Controls:MetroWindow>

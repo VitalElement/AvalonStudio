@@ -14,10 +14,6 @@ namespace AvalonStudio.Debugging.GDB.JLink
     {
         public JLinkSettings()
         {
-            Download = true;
-            Reset = true;
-            UseRemote = false;
-            RemoteIPAddress = "";
         }
 
         public JlinkInterfaceType Interface { get; set; }
@@ -25,12 +21,16 @@ namespace AvalonStudio.Debugging.GDB.JLink
         public string DeviceKey { get; set; }
         public int SpeedkHz { get; set; }
 
-        public bool Download { get; set; }
+        public bool PostDownloadReset { get; set; } = true;
 
-        public bool Reset { get; set; }
+        public bool Download { get; set; } = true;
 
-        public bool UseRemote { get; set; }
+        public bool Reset { get; set; } = true;
 
-        public string RemoteIPAddress { get; set; }
+        public bool Run { get; set; } = true;
+
+        public bool UseRemote { get; set; } = false;
+
+        public string RemoteIPAddress { get; set; } = "";
     }
 }

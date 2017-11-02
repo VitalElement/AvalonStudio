@@ -1,14 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="**\*.resx" GenerateSource="true" />
+  </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.2-build3991-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.2-build4186-alpha" />
     <PackageReference Include="LibGit2Sharp-dotnet" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="reactiveui" Version="8.0.0-alpha0089" />
@@ -22,5 +26,18 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AvaloniaEdit\src\AvaloniaEdit\AvaloniaEdit.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Projects\MSBuildSolution\LocalizableStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>LocalizableStrings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Projects\MSBuildSolution\LocalizableStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>LocalizableStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

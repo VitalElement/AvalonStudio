@@ -125,11 +125,6 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                     parseOptions: projectOptions.parseOptions,
                     metadataReferences: loadData.metaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly)));
 
-                if(projectFile.Contains("AvalonStudio.csproj"))
-                {
-
-                }
-
                 return (projectInfo, loadData.projectReferences);
             }
             else

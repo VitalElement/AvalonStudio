@@ -145,6 +145,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public string LanguageId => "cpp";
 
+        public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics => null;
         private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
             switch (kind)
@@ -835,17 +836,23 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private void AddArguments(List<string> list, IEnumerable<string> arguments)
         {
-            foreach (var argument in arguments)
+            if (list != null && arguments != null)
             {
-                AddArgument(list, argument);
+                foreach (var argument in arguments)
+                {
+                    AddArgument(list, argument);
+                }
             }
         }
 
         private void AddArgument(List<string> list, string argument)
         {
-            if (!list.Contains(argument))
+            if (list != null)
             {
-                list.Add(argument);
+                if (!list.Contains(argument))
+                {
+                    list.Add(argument);
+                }
             }
         }
 
@@ -858,9 +865,15 @@ namespace AvalonStudio.Languages.CPlusPlus
                 var args = new List<string>();
 
                 var superProject = file.Project.Solution.StartupProject as IStandardProject;
+
+                if(superProject == null)
+                {
+                    superProject = file.Project as IStandardProject;
+                }
+
                 var project = file.Project as IStandardProject;
 
-                var toolchainIncludes = superProject.ToolChain?.GetToolchainIncludes(file);
+                var toolchainIncludes = superProject?.ToolChain?.GetToolchainIncludes(file);
 
                 if (toolchainIncludes != null)
                 {
@@ -877,9 +890,9 @@ namespace AvalonStudio.Languages.CPlusPlus
                 AddArguments(args, referencedIncludes.Select(s => $"-I{s}"));
 
                 // global includes
-                var globalIncludes = superProject.GetGlobalIncludes();
+                var globalIncludes = superProject?.GetGlobalIncludes();
 
-                AddArguments(args, globalIncludes.Select(s => $"-I{s}"));
+                AddArguments(args, globalIncludes?.Select(s => $"-I{s}"));
 
                 // includes
                 AddArguments(args, project.Includes.Select(s => $"-I{Path.Combine(project.CurrentDirectory, s.Value)}"));
@@ -889,9 +902,9 @@ namespace AvalonStudio.Languages.CPlusPlus
                 AddArguments(args, referencedDefines.Select(s => $"-D{s}"));
 
                 // global includes
-                var globalDefines = superProject.GetGlobalDefines();
+                var globalDefines = superProject?.GetGlobalDefines();
 
-                AddArguments(args, globalDefines.Select(s => $"-D{s}"));
+                AddArguments(args, globalDefines?.Select(s => $"-D{s}"));
 
                 AddArguments(args, project.Defines.Select(s => $"-D{s}"));
 
@@ -899,13 +912,13 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     case ".c":
                         {
-                            AddArguments(args, superProject.CCompilerArguments);
+                            AddArguments(args, superProject?.CCompilerArguments);
                         }
                         break;
 
                     case ".cpp":
                         {
-                            AddArguments(args, superProject.CppCompilerArguments);
+                            AddArguments(args, superProject?.CppCompilerArguments);
                         }
                         break;
                 }

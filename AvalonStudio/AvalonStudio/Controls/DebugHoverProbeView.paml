@@ -1,7 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"             
-             xmlns:cont="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging" 
-             FontFamily="Verdana" FontSize="12">
-    <Grid Background="{DynamicResource ThemeControlDarkBrush}">
+             xmlns:cont="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging" FontFamily="Segoe UI" FontSize="12">
+    <Grid Background="{DynamicResource ThemeControlBackgroundBrush}" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}">
       <cont:VariableControlView Margin="5" />
     </Grid>    
 </UserControl>

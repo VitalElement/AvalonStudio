@@ -50,6 +50,8 @@ namespace AvalonStudio.Languages
 
         Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
+        IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; }
+
         void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument);
 
         void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file);

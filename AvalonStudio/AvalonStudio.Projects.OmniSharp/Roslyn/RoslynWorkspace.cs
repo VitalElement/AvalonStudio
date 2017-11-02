@@ -1,16 +1,13 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using AsyncRpc;
-using AsyncRpc.Transport.Tcp;
-using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
-using AvalonStudio.MSBuildHost;
+using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
+using AvalonStudio.Projects.OmniSharp.DotnetCli;
 using AvalonStudio.Projects.OmniSharp.MSBuild;
 using AvalonStudio.Projects.OmniSharp.Roslyn;
 using AvalonStudio.Utils;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
@@ -21,10 +18,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition.Hosting;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -32,6 +27,8 @@ namespace RoslynPad.Roslyn
 {
     public sealed class RoslynWorkspace : Workspace
     {
+        private static Dictionary<AvalonStudio.Projects.ISolution, RoslynWorkspace> s_solutionWorkspaces = new Dictionary<AvalonStudio.Projects.ISolution, RoslynWorkspace>();
+
         private CompositionHost _compositionContext;
         private readonly NuGetConfiguration _nuGetConfiguration;
         private readonly Dictionary<DocumentId, AvalonEditTextContainer> _openDocumentTextLoaders;
@@ -51,10 +48,57 @@ namespace RoslynPad.Roslyn
             _diagnosticsUpdatedNotifiers = new ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>>();
 
             _compositionContext = compositionContext;
-            GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;
 
             this.EnableDiagnostics(DiagnosticOptions.Semantic | DiagnosticOptions.Syntax);
+
+            GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;
         }
+
+        public static RoslynWorkspace GetWorkspace(AvalonStudio.Projects.ISolution solution)
+        {
+            if (!s_solutionWorkspaces.ContainsKey(solution))
+            {
+                //await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
+
+                var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
+                var dotnet = new DotNetCliService(Path.Combine(dotnetDirectory, "dotnet"));
+
+                var dotnetInfo = dotnet.GetInfo();
+
+                var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
+
+                var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+
+                var assemblies = new[]
+                {
+                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis")),
+                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis.CSharp")),
+                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis.Features")),
+                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis.CSharp.Features")),
+                    typeof(RoslynWorkspace).Assembly,
+                };
+
+                var partTypes = MefHostServices.DefaultAssemblies.Concat(assemblies)
+                        .Distinct()
+                        .SelectMany(x => x.GetTypes())
+                        //.Concat(new[] { typeof(DocumentationProviderServiceFactory) })
+                        .ToArray();
+
+                var compositionContext = new ContainerConfiguration()
+                    .WithParts(partTypes)
+                    .CreateContainer();
+
+                var host = MefHostServices.Create(compositionContext);
+
+                var workspace = new RoslynWorkspace(host, null, compositionContext, Path.Combine(dotnetDirectory, "dotnet"), dotnetInfo.BasePath);
+
+                workspace.RegisterWorkspace(solution);
+            }
+
+            return s_solutionWorkspaces[solution];
+        }
+
+        internal RoslynWorkspace RegisterWorkspace(AvalonStudio.Projects.ISolution solution) => s_solutionWorkspaces[solution] = this;
 
         private void OnDiagnosticsUpdated(object sender, DiagnosticsUpdatedArgs diagnosticsUpdatedArgs)
         {
@@ -113,7 +157,7 @@ namespace RoslynPad.Roslyn
         }
 
         private void ResolveChildReferences(ProjectId project, ProjectId reference)
-        {            
+        {
             var refer = CurrentSolution.GetProject(reference);
 
             foreach (var child in refer.AllProjectReferences)
@@ -131,25 +175,28 @@ namespace RoslynPad.Roslyn
 
         public void ResolveReference(AvalonStudio.Projects.IProject project, string reference)
         {
-            var projects = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(Path.Combine(project.LocationDirectory, reference)) == 0);
+            var referencePath = Path.Combine(project.LocationDirectory, reference).NormalizePath();
+            var projects = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(referencePath) == 0);
 
-            if (projects.Count() != 1)
+            if (projects.Count() == 1)
             {
-                throw new NotImplementedException();
+                var referencedProject = projects.First();
+
+                var proj = GetProject(project);
+
+                var newRef = new ProjectReference(referencedProject.Id);
+
+                if (!proj.AllProjectReferences.Contains(newRef))
+                {
+                    OnProjectReferenceAdded(proj.Id, newRef);
+                }
+
+                ResolveChildReferences(proj.Id, referencedProject.Id);
             }
-
-            var referencedProject = projects.First();
-
-            var proj = GetProject(project);
-
-            var newRef = new ProjectReference(referencedProject.Id);
-
-            if (!proj.AllProjectReferences.Contains(newRef))
+            else
             {
-                OnProjectReferenceAdded(proj.Id, newRef);
+                // TODO: mark as unresolved.
             }
-
-            ResolveChildReferences(proj.Id, referencedProject.Id);
         }
 
         public DocumentId AddDocument(Project project, AvalonStudio.Projects.ISourceFile file)
@@ -179,7 +226,7 @@ namespace RoslynPad.Roslyn
             return CurrentSolution.GetDocument(documentId);
         }
 
-        public void OpenDocument(AvalonStudio.Projects.ISourceFile file, AvalonEditTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated)
+        public void OpenDocument(AvalonStudio.Projects.ISourceFile file, AvalonEditTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated, Action<SourceText> onTextUpdated)
         {
             var documentId = GetDocumentId(file);
 
@@ -190,6 +237,11 @@ namespace RoslynPad.Roslyn
 
             _diagnosticsUpdatedNotifiers[documentId] = onDiagnosticsUpdated;
             _openDocumentTextLoaders.Add(documentId, textContainer);
+
+            if (onTextUpdated != null)
+            {
+                ApplyingTextChange += (d, s) => onTextUpdated(s);
+            }
         }
 
         public void CloseDocument(AvalonStudio.Projects.ISourceFile file)
@@ -198,7 +250,7 @@ namespace RoslynPad.Roslyn
             var textContainer = _openDocumentTextLoaders[documentId];
 
             _openDocumentTextLoaders.Remove(documentId);
-            _diagnosticsUpdatedNotifiers.Remove(documentId, out Action<DiagnosticsUpdatedArgs> value);
+            _diagnosticsUpdatedNotifiers.TryRemove(documentId, out Action<DiagnosticsUpdatedArgs> value);
 
             OnDocumentClosed(documentId, TextLoader.From(textContainer, VersionStamp.Default));
         }
@@ -211,6 +263,8 @@ namespace RoslynPad.Roslyn
         }
 
         public override bool CanOpenDocuments => true;
+
+        public event Action<DocumentId, SourceText> ApplyingTextChange;
 
         public override bool CanApplyChange(ApplyChangesKind feature)
         {
@@ -231,6 +285,8 @@ namespace RoslynPad.Roslyn
         protected override void ApplyDocumentTextChanged(DocumentId document, SourceText newText)
         {
             _openDocumentTextLoaders[document].UpdateText(newText);
+
+            ApplyingTextChange?.Invoke(document, newText);
 
             OnDocumentTextChanged(document, newText, PreservationMode.PreserveIdentity);
         }

@@ -17,11 +17,13 @@
     using Microsoft.CodeAnalysis.Formatting;
     using Projects.OmniSharp;
     using RoslynPad.Editor.Windows;
+    using RoslynPad.Roslyn;
     using RoslynPad.Roslyn.Diagnostics;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reactive.Subjects;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
 
@@ -113,6 +115,8 @@
 
         public string LanguageId => "cs";
 
+        public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; } = new Subject<TextSegmentCollection<Diagnostic>>();
+
         public bool CanHandle(ISourceFile file)
         {
             var result = false;
@@ -122,11 +126,6 @@
                 case ".cs":
                     result = true;
                     break;
-            }
-
-            if (!(file.Project.Solution is OmniSharpSolution))
-            {
-                result = false;
             }
 
             return result;
@@ -180,8 +179,8 @@
 
             var dataAssociation = GetAssociatedData(sourceFile);
 
-            var document = dataAssociation.Solution.Workspace.GetDocument(sourceFile);
-
+            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(sourceFile);
+            
             var completionService = CompletionService.GetService(document);
             var completionTrigger = GetCompletionTrigger(null);
             var data = await completionService.GetCompletionsAsync(
@@ -243,10 +242,10 @@
         {
             var dataAssociation = GetAssociatedData(file);
 
-            var document = dataAssociation.Solution.Workspace.GetDocument(file);
+            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(file);
             var formattedDocument = Formatter.FormatAsync(document).GetAwaiter().GetResult();
 
-            dataAssociation.Solution.Workspace.TryApplyChanges(formattedDocument.Project.Solution);
+            RoslynWorkspace.GetWorkspace(dataAssociation.Solution).TryApplyChanges(formattedDocument.Project.Solution);
 
             return -1;
         }
@@ -255,11 +254,11 @@
         {
             var dataAssociation = GetAssociatedData(file);
 
-            var document = dataAssociation.Solution.Workspace.GetDocument(file);
+            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(file);
 
             var semanticModel = await document.GetSemanticModelAsync();
 
-            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, offset, dataAssociation.Solution.Workspace);
+            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, offset, RoslynWorkspace.GetWorkspace(dataAssociation.Solution));
 
             Symbol result = null;
 
@@ -361,10 +360,11 @@
             IndentationStrategy = new CSharpIndentationStrategy(editor.Options);
 
             association = new CSharpDataAssociation();
-            association.Solution = file.Project.Solution as OmniSharpSolution; // CanHandle has checked this.
+            association.Solution = file.Project.Solution;
 
             var avaloniaEditTextContainer = new AvalonEditTextContainer(editor.Document) { Editor = editor };
-            association.Solution.Workspace.OpenDocument(file, avaloniaEditTextContainer, (diagnostics) =>
+
+            RoslynWorkspace.GetWorkspace(association.Solution).OpenDocument(file, avaloniaEditTextContainer, (diagnostics) =>
             {
                 var dataAssociation = GetAssociatedData(file);
 
@@ -375,8 +375,11 @@
                     results.Add(FromRoslynDiagnostic(diagnostic, file.Location, file.Project));
                 }
 
-                //dataAssociation.Diagnostics.OnNext(results);
-                Console.WriteLine("Restore adding diagnostics to output");
+                (Diagnostics as Subject<TextSegmentCollection<Diagnostic>>).OnNext(results);
+            }, 
+            (source) => 
+            {
+                avaloniaEditTextContainer.UpdateText(source);
             });
 
             dataAssociations.Add(file, association);
@@ -560,12 +563,19 @@
 
             var dataAssociation = GetAssociatedData(file);
 
-            var document = dataAssociation.Solution.Workspace.GetDocument(file);
+            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
+
+            var document = workspace.GetDocument(file);
 
             if (document == null)
             {
                 return result;
             }
+
+            // Example how to get file specific diagnostics.
+            /*var model = await document.GetSemanticModelAsync();
+
+            var diagnostics = model.GetDiagnostics();*/
 
             var highlightData = await Classifier.GetClassifiedSpansAsync(document, new Microsoft.CodeAnalysis.Text.TextSpan(0, textLength));
 
@@ -635,7 +645,7 @@
             editor.TextArea.TextEntered -= association.TextInputHandler;
             editor.TextArea.TextEntering -= association.BeforeTextInputHandler;
 
-            association.Solution.Workspace.CloseDocument(file);
+            RoslynWorkspace.GetWorkspace(association.Solution).CloseDocument(file);
 
             association.Solution = null;
             dataAssociations.Remove(file);

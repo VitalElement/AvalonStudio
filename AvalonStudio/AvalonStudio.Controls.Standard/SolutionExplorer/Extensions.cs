@@ -23,13 +23,17 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 return "CPPIcon".GetIcon();
             }
-            else if (name.EndsWith("OmnisharpProject"))
+            else if (name.EndsWith("OmniSharpProject"))
             {
                 return "CSharpIcon".GetIcon();
             }
             else if (name.EndsWith("TypeScriptProject"))
             {
                 return "TypeScriptIcon".GetIcon();
+            }
+            else if(name.EndsWith("UnsupportedProjectType"))
+            {
+                return "UnknownProjectIcon".GetIcon();
             }
 
             return null;

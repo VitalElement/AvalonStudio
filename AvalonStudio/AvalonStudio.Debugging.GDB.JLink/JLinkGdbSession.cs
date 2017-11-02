@@ -45,9 +45,16 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
                 if (settings.Download)
                 {
-                    console.WriteLine(RunCommand("-target-download").Status.ToString());
+                    console.WriteLine(RunCommand("-target-download", 60000).Status.ToString());
 
-                    RunCommand("monitor", "reset");
+                    if (settings.PostDownloadReset)
+                    {
+                        RunCommand("monitor", "reset");
+                    }
+                    else
+                    {
+                        RunCommand("monitor", "halt");
+                    }
                 }
 
                 console.WriteLine("[JLink] - Connected.");

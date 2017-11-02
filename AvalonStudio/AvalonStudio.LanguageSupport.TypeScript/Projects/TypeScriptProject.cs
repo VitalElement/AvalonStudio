@@ -22,7 +22,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 {
     public class TypeScriptProject : FileSystemProject, IProject
     {
-        public static async Task<TypeScriptProject> Create(ISolution solution, string directory)
+        public static async Task<TypeScriptProject> Create(string directory)
         {
             return await Task.Run(() =>
             {
@@ -32,8 +32,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Projects
 
                 //Create new project with default name and extension
                 var projectFileLocation = Path.Combine(directory, projectName + $".{result.Extension}");
-
-                result.Solution = solution;
+                
                 result.Location = projectFileLocation;
 
                 //Create Main.TS file
@@ -66,21 +65,16 @@ Program.main();
                 }
                 result.Save();
 
-                result.LoadFiles();
-
                 return result;
             });
         }
 
-        public override IProject Load(ISolution solution, string filename)
+        public override IProject Load(string filename)
         {
             TypeScriptProject result = new TypeScriptProject();
             result.Location = filename;
 
             //TODO: Load TS language service from here
-
-            result.Solution = solution;
-            result.LoadFiles();
 
             return result;
         }
@@ -143,7 +137,14 @@ Program.main();
         public override string LocationDirectory => CurrentDirectory;
 
         [JsonIgnore]
-        public override string Name => Path.GetFileNameWithoutExtension(Location);
+        public override string Name
+        {
+            get => Path.GetFileNameWithoutExtension(Location);
+            set { }
+        }
+
+        [JsonIgnore]
+        public override bool CanRename => false;
 
         [JsonIgnore]
         public override IProjectFolder Parent { get; set; }
@@ -168,6 +169,8 @@ Program.main();
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public override dynamic ToolchainSettings { get; set; }
+
+        public override Guid ProjectTypeId => throw new NotImplementedException();
 
         public override void AddReference(IProject project)
         {

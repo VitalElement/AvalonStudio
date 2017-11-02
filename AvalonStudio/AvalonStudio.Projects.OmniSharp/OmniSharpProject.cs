@@ -4,26 +4,31 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
-using Microsoft.CodeAnalysis;
+using RoslynPad.Roslyn;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects.OmniSharp
 {
     public class OmniSharpProject : FileSystemProject
     {
-        public static OmniSharpProject Create(Project roslynProject, ISolution solution, string path, List<string> unresolvedReferences)
+        public static async Task<OmniSharpProject> Create(ISolution solution, string path)
         {
+            var (project, projectReferences) = await RoslynWorkspace.GetWorkspace(solution).AddProject(solution.CurrentDirectory, path);
+            var roslynProject = project;
+            var references = projectReferences;
+
             OmniSharpProject result = new OmniSharpProject
             {
                 Solution = solution,
                 Location = path,
                 RoslynProject = roslynProject,
-                UnresolvedReferences = unresolvedReferences
+                UnresolvedReferences = references
             };
 
             return result;
@@ -37,12 +42,22 @@ namespace AvalonStudio.Projects.OmniSharp
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
             Settings = new ExpandoObject();
-            Project = this;            
+            Project = this;
+
+            FileAdded += (sender, e) =>
+            {
+                switch (e.Extension)
+                {
+                    case ".cs":
+                        RoslynWorkspace.GetWorkspace(Solution).AddDocument(RoslynProject, e);
+                        break;
+                }
+            };
         }
 
         public List<string> UnresolvedReferences { get; set; }
 
-        public Project RoslynProject { get; set; }
+        public Microsoft.CodeAnalysis.Project RoslynProject { get; set; }
 
         public override IList<object> ConfigurationPages
         {
@@ -100,9 +115,12 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override string LocationDirectory => CurrentDirectory;
 
+        public override bool CanRename => false;
+
         public override string Name
         {
             get { return Path.GetFileNameWithoutExtension(Location); }
+            set { }
         }
 
         public override IProjectFolder Parent { get; set; }
@@ -173,7 +191,7 @@ namespace AvalonStudio.Projects.OmniSharp
             throw new NotImplementedException();
         }
 
-        public override IProject Load(ISolution solution, string filePath)
+        public override IProject Load(string filePath)
         {
             return null;
         }
@@ -185,7 +203,10 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override void ResolveReferences()
         {
-            throw new NotImplementedException();
+            foreach (var unresolvedReference in UnresolvedReferences)
+            {
+                RoslynWorkspace.GetWorkspace(Solution).ResolveReference(this, unresolvedReference);
+            }
         }
 
         public override void Save()
@@ -194,5 +215,7 @@ namespace AvalonStudio.Projects.OmniSharp
         }
 
         public override List<string> ExcludedFiles { get; set; }
+
+        public override Guid ProjectTypeId => throw new NotImplementedException();
     }
 }

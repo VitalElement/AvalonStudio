@@ -47,7 +47,10 @@ namespace AvalonStudio.Extensibility.Theme
             ControlMid = Brush.Parse("#FFC2C3C9"),
             ControlDark = Brush.Parse("#FFF5F5F5"),
             ControlBackground = Brush.Parse("#FFE6E7E8"),
-            EditorBackground = Brush.Parse("#FFFFFFFF")
+            EditorBackground = Brush.Parse("#FFFFFFFF"),
+            Accent = Brush.Parse("#FF007ACC"),
+            AccentLight = Brush.Parse("#FF1C97EA"),
+            AccentForeground = Brush.Parse("#FFF0F0F0")
         };
 
         public static readonly ColorTheme VisualStudioDark = new ColorTheme
@@ -64,7 +67,10 @@ namespace AvalonStudio.Extensibility.Theme
             ControlMid = Brush.Parse("#FF686868"),
             ControlDark = Brush.Parse("#FF3E3E42"),
             ControlBackground = Brush.Parse("#FF252526"),
-            EditorBackground = Brush.Parse("#FF1E1E1E")
+            EditorBackground = Brush.Parse("#FF1E1E1E"),
+            Accent = Brush.Parse("#FF007ACC"),
+            AccentLight = Brush.Parse("#FF1C97EA"),
+            AccentForeground = Brush.Parse("#FFF0F0F0")
         };
 
         public static ColorTheme LoadTheme (string name)
@@ -93,6 +99,9 @@ namespace AvalonStudio.Extensibility.Theme
             Application.Current.Resources["ThemeForegroundBrush"] = theme.Foreground;
             Application.Current.Resources["ThemeBorderDarkBrush"] = theme.BorderDark;
             Application.Current.Resources["ThemeEditorBackground"] = theme.EditorBackground;
+            Application.Current.Resources["ApplicationAccentBrush"] = theme.Accent;
+            Application.Current.Resources["ApplicationAccentBrushLight"] = theme.AccentLight;
+            Application.Current.Resources["ApplicationAccentForegroundBrush"] = theme.AccentForeground;
 
             CurrentTheme = theme;
         }
@@ -100,6 +109,12 @@ namespace AvalonStudio.Extensibility.Theme
         public static ColorTheme CurrentTheme { get; private set; }
 
         public string Name { get; private set; }
+
+        public IBrush Accent { get; set; }
+
+        public IBrush AccentLight { get; set; }
+
+        public IBrush AccentForeground { get; set; }
 
         public IBrush WindowBorder { get; set; }
 

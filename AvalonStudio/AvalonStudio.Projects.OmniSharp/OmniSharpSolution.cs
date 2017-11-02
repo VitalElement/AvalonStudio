@@ -24,7 +24,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects.OmniSharp
 {
-    public class OmniSharpSolution : ISolution
+    /*public class OmniSharpSolution : ISolution
     {
         private CompositionHost _compositionContext;
         private MefHostServices _host;
@@ -101,19 +101,19 @@ namespace AvalonStudio.Projects.OmniSharp
                     AddProject(asProject);
                 }
 
-                foreach(var project in Projects)
+                foreach (var project in Projects)
                 {
-                    var asProject = (project as OmniSharpProject);                    
+                    var asProject = (project as OmniSharpProject);
 
                     foreach (var unresolvedReference in asProject.UnresolvedReferences)
                     {
-                         Workspace.ResolveReference(project, unresolvedReference);
+                        Workspace.ResolveReference(project, unresolvedReference);
                     }
 
                     asProject.LoadFiles();
                 }
             }
-            else if(Path.GetExtension(path) == ".csproj")
+            else if (Path.GetExtension(path) == ".csproj")
             {
                 var roslynProject = await Workspace.AddProject("", path);
 
@@ -128,7 +128,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
             Name = Path.GetFileNameWithoutExtension(path);
 
-           
+
 
             CurrentDirectory = Path.GetDirectoryName(path);
         }
@@ -196,5 +196,5 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             //throw new NotImplementedException();
         }
-    }
+    }*/
 }

@@ -6,6 +6,7 @@ using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
 using System.IO;
+using System.Linq;
 
 namespace AvalonStudio.Toolchains.GCC
 {
@@ -50,7 +51,7 @@ namespace AvalonStudio.Toolchains.GCC
         public override bool SupportsFile(ISourceFile file)
         {
             var result = false;
-
+            
             switch (file.Extension.ToLower())
             {
                 case ".cpp":
@@ -58,6 +59,28 @@ namespace AvalonStudio.Toolchains.GCC
                 case ".s":
                     result = true;
                     break;
+            }
+
+            if(!result)
+            {
+                var settings = file.Project.GetToolchainSettingsIfExists<GccToolchainSettings>();
+
+                if (settings != null)
+                {
+                    var extensions = settings.CompileSettings.CompileExtensions;
+
+                    if (extensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower()))
+                    {
+                        result = true;
+                    }
+
+                    extensions = settings.CompileSettings.AssembleExtensions;
+
+                    if (extensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower()))
+                    {
+                        result = true;
+                    }
+                }
             }
 
             return result;
@@ -91,16 +114,18 @@ namespace AvalonStudio.Toolchains.GCC
         {
             var result = new CompileResult();
 
+            var settings = superProject.Project.GetToolchainSettingsIfExists<GccToolchainSettings>().CompileSettings;
+
             string commandName = file.Extension == ".cpp" ? CPPExecutable : CCExecutable;
 
             var fileArguments = string.Empty;
-
+            
             if (file.Extension == ".cpp")
             {
                 fileArguments = "-x c++ -fno-use-cxa-atexit";
             }
-
-            if (file.Extension.ToLower() == ".s")
+            
+            if (file.Extension.ToLower() == ".s" || (settings != null && settings.CompileExtensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower())))
             {
                 fileArguments = "-x assembler-with-cpp";
             }
@@ -116,7 +141,7 @@ namespace AvalonStudio.Toolchains.GCC
                     console.WriteLine(e.Data);
                 }
             },
-            false, file.CurrentDirectory, false);
+            false, "", false);
 
             // console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
 

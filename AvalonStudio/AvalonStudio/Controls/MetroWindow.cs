@@ -121,34 +121,6 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public void EnableSystemStyles()
-        {
-            HasSystemDecorations = true;
-            closeButton.Opacity = 0;
-            minimiseButton.Opacity = 0;
-            restoreButton.Opacity = 0;
-        }
-
-        public void DisableSystemStyles()
-        {
-            HasSystemDecorations = false;
-            closeButton.Opacity = 1;
-            minimiseButton.Opacity = 1;
-            restoreButton.Opacity = 1;
-        }
-
-        public void ToggleSystemStyles()
-        {
-            if (HasSystemDecorations)
-            {
-                DisableSystemStyles();
-            }
-            else
-            {
-                EnableSystemStyles();
-            }
-        }
-
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
             titleBar = e.NameScope.Find<Grid>("titlebar");
@@ -176,8 +148,6 @@ namespace AvalonStudio.Controls
             closeButton.Click += (sender, ee) => { Application.Current.Exit(); };
 
             icon.DoubleTapped += (sender, ee) => { Close(); };
-
-            icon.Tapped += (sender, ee) => { ToggleSystemStyles(); };
         }
     }
 }

@@ -149,7 +149,7 @@ namespace AvalonStudio.Shell
         public ColorScheme CurrentColorScheme { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false,
-            bool selectLine = false)
+            bool selectLine = false, bool focus = true)
         {
             throw new NotImplementedException();
         }

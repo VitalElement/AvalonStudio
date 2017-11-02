@@ -1,9 +1,10 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui" xmlns:local="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
-        xmlns:convert="clr-namespace:AvalonStudio.Converters;assembly=AvalonStudio">
+        xmlns:convert="clr-namespace:AvalonStudio.Converters;assembly=AvalonStudio"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Style Selector="local|MetroWindow">
     <Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}" />
     <Setter Property="FontFamily" Value="Segoe UI" />
-    <Setter Property="FontSize" Value="{StyleResource FontSizeNormal}" />
+    <Setter Property="FontSize" Value="{DynamicResource FontSizeNormal}" />
     <Setter Property="HasSystemDecorations" Value="false" />    
     <Setter Property="Template">
       <ControlTemplate>
@@ -16,7 +17,7 @@
                     <Grid ColumnDefinitions="Auto,*,Auto" Name="titlebar" Margin="4 0" Background="Transparent">
                       <Grid Margin="0">
                         <StackPanel Orientation="Horizontal" Gap="10">
-                          <Image Source="{TemplateBinding Icon, Converter={Static convert:IconImageConverter.Converter}}" Name="icon" Height="20" Width="20" />
+                          <Image Source="{TemplateBinding Icon, Converter={x:Static convert:IconImageConverter.Converter}}" Name="icon" Height="20" Width="20" Margin="8 5 0 0" Stretch="UniformToFill" />
                           <Border BorderThickness="0">
                             <TextBlock Margin="0 7 0 0" Text="{TemplateBinding Title}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" />
                           </Border>

@@ -650,12 +650,22 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     _textColorizer?.SetTransformations(result.SyntaxHighlightingData);
 
-                    _diagnosticMarkersRenderer?.SetDiagnostics(result.Diagnostics);
-
                     _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
+
+                    if (LanguageService.Diagnostics == null)
+                    {
+                        _diagnosticMarkersRenderer?.SetDiagnostics(result.Diagnostics);
+                    }
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
+                        if (LanguageService.Diagnostics == null)
+                        {
+                            Diagnostics = result.Diagnostics;
+
+                            _shell.InvalidateErrors();
+                        }
+
                         TextArea.TextView.Redraw();
                     });
                 }
@@ -697,6 +707,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
 
                 TextArea.IndentationStrategy = LanguageService.IndentationStrategy;
+
+                LanguageService.Diagnostics?.ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
+                {
+                    _diagnosticMarkersRenderer?.SetDiagnostics(d);
+
+                    Diagnostics = d;
+
+                    _shell.InvalidateErrors();
+
+                    TextArea.TextView.Redraw();
+                });
             }
             else
             {
