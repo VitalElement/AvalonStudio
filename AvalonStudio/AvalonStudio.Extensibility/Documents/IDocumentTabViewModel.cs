@@ -7,12 +7,12 @@ namespace AvalonStudio.Controls
     public interface IFileDocumentTabViewModel : IDocumentTabViewModel
     {
         ISourceFile File { get; }
+
+        bool IsDirty { get; set; }
     }
 
     public interface IDocumentTabViewModel
     {
-        bool IsDirty { get; set; }
-
         string Title { get; set; }
 
         ReactiveCommand CloseCommand { get; }

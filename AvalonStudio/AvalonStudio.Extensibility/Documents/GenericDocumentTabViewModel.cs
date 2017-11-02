@@ -11,7 +11,6 @@ namespace AvalonStudio.Controls
     {
         private Dock dock;
         private string title;
-        private bool isDirty;
         private bool _isTemporary;
         private bool _isHidden;
         private bool _isSelected;
@@ -36,33 +35,10 @@ namespace AvalonStudio.Controls
 
         public string Title
         {
-            get
-            {
-                if (IsDirty)
-                {
-                    return title + "*";
-                }
-                else
-                {
-                    return title;
-                }
-            }
+            get => title;
             set
             {
                 this.RaiseAndSetIfChanged(ref title, value);
-            }
-        }
-
-        public bool IsDirty
-        {
-            get
-            {
-                return isDirty;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref isDirty, value);
-                this.RaisePropertyChanged(nameof(Title));
             }
         }
 

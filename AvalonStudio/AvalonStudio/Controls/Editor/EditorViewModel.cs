@@ -31,6 +31,20 @@ namespace AvalonStudio.Controls
         private ISourceFile _sourceFile;
         private ShellViewModel _shell;
 
+        private bool _isDirty;
+
+        public bool IsDirty
+        {
+            get
+            {
+                return _isDirty;
+            }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _isDirty, value);
+            }
+        }
+
         public ISourceFile File { get; set; }
 
         public void SetDebugHighlight(int line, int startColumn, int endColumn)
