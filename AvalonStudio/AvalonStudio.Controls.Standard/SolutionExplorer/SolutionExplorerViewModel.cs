@@ -25,12 +25,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         private IProject selectedProject;
         private IShell shell;
 
-        private ObservableCollection<SolutionViewModel> solution;
+        private SolutionViewModel solution;
 
         public SolutionExplorerViewModel()
         {
             Title = "Solution Explorer";
-            solution = new ObservableCollection<SolutionViewModel>();
         }
 
         public new ISolution Model
@@ -58,10 +57,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                         SelectedProject = Model.StartupProject;
                     }
 
-                    var sol = new ObservableCollection<SolutionViewModel>();
-                    sol.Add(new SolutionViewModel(model));
-
-                    Solution = sol;
+                    Solution = new SolutionViewModel(model);
                 }
                 else
                 {
@@ -73,7 +69,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        public ObservableCollection<SolutionViewModel> Solution
+        public SolutionViewModel Solution
         {
             get { return solution; }
             set { this.RaiseAndSetIfChanged(ref solution, value); }
