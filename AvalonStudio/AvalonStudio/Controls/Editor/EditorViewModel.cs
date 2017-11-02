@@ -19,7 +19,6 @@ using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Reactive.Disposables;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls

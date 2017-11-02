@@ -5,8 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Avalonia.Ide\src\Avalonia.Ide.CompletionEngine.SrmMetadataProvider\Avalonia.Ide.CompletionEngine.SrmMetadataProvider.csproj" />
     <ProjectReference Include="..\Avalonia.Ide\src\Avalonia.Ide.CompletionEngine\Avalonia.Ide.CompletionEngine.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
   </ItemGroup>
 

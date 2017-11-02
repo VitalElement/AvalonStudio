@@ -57,6 +57,7 @@ namespace AvalonStudio.Controls
                 }
 
                 document.IsTemporary = true;
+                document.IsVisible = true;
                 Documents.Add(document);
                 SelectedDocument = document;
                 TemporaryDocument = document;

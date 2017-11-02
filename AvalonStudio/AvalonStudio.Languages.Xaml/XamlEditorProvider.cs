@@ -31,7 +31,7 @@ namespace AvalonStudio.Languages.Xaml
 
         public IFileDocumentTabViewModel CreateViewModel(ISourceFile file)
         {
-            return null;
+            return new XamlEditorViewModel();
         }
     }
 }
