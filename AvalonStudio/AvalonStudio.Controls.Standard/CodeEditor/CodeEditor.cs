@@ -219,7 +219,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             Options = new AvaloniaEdit.TextEditorOptions
             {
                 ConvertTabsToSpaces = true,
-                IndentationSize = 4
+                IndentationSize = 4,
+                EnableHyperlinks = false,
+                EnableEmailHyperlinks = false,
             };
 
             BackgroundRenderersProperty.Changed.Subscribe(s =>
