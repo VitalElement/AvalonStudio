@@ -2,8 +2,8 @@
              xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.Standard.SolutionExplorer;assembly=AvalonStudio.Controls.Standard">
   <Controls:ToolControl Title="Solution Explorer">
-    <StackPanel>
-      <StackPanel Orientation="Horizontal" Gap="4" Margin="2 4 0 -2">
+    <DockPanel>
+      <StackPanel Orientation="Horizontal" Gap="4" Margin="2 4 0 -2" DockPanel.Dock="Top">
         <StackPanel.ContextMenu>
           <ContextMenu>
             <MenuItem Header="Run All Tests" />
@@ -23,6 +23,7 @@
         <DrawingPresenter Width="16" Height="16" Drawing="{Binding Solution.Icon}" />
         <Controls:EditableTextBlock Text="{Binding Solution.Title}" InEditMode="{Binding Solution.InEditMode}" />
       </StackPanel>
+
       <TreeView BorderThickness="0" Items="{Binding Path=Solution.Items}" SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}">
         <TreeView.Styles>
           <Style Selector="TreeViewItem">
@@ -138,6 +139,6 @@
           </TreeDataTemplate>
         </TreeView.DataTemplates>
       </TreeView>
-    </StackPanel>
+    </DockPanel>
   </Controls:ToolControl>
 </UserControl>
