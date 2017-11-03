@@ -79,6 +79,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
 
+        public event EventHandler TextChanged;
+
         private bool _isLoaded = false;
 
         private int _lastLine = -1;
@@ -455,6 +457,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     IsDirty = true;
 
                     TriggerCodeAnalysis();
+
+                    if(TextChanged != null)
+                    {
+                        TextChanged(this, new EventArgs());
+                    }
                 }
             }
         }

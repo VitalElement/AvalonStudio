@@ -1,14 +1,24 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:editor="clr-namespace:AvalonStudio.Extensibility.Editor;assembly=AvalonStudio.Extensibility">
+             xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard">
     <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
         <Grid RowDefinitions="*,10,*">
             <Grid DockPanel.Dock="Top" Background="{DynamicResource ThemeEditorBackground}">
-                <TextBlock>Designer will be displayed when project has been built.</TextBlock>
+                <ScrollViewer Name="Remote"/>
             </Grid>
 
             <GridSplitter Grid.Row="1" Height="5" />
 
-            <editor:EditorView  Grid.Row="2" />
+            <editor:CodeEditor Grid.Row="2" Name="editor"
+                                   BorderThickness="0" Margin="0"
+                                   VerticalAlignment="Stretch"
+                                   Background="{DynamicResource ThemeEditorBackground}"
+                                   
+                                   FontFamily="{Binding FontFamily}" 
+                                   FontSize="{Binding VisualFontSize}"
+                                  
+                                  SourceFile="{Binding SourceFile}" 
+                                  IsDirty="{Binding IsDirty}">
+            </editor:CodeEditor>
         </Grid>
     </Border>
 </UserControl>
