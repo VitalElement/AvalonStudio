@@ -15,6 +15,7 @@ namespace AvalonStudio.Extensibility.Editor
         private double _visualFontSize;
         private IShell _shell;
         private ITextDocument _document;
+        private string _sourceText;
 
         public TextEditorViewModel(ISourceFile file) : base(file)
         {
@@ -34,6 +35,12 @@ namespace AvalonStudio.Extensibility.Editor
         {
             get { return _document; }
             set { this.RaiseAndSetIfChanged(ref _document, value); }
+        }
+
+        public string SourceText
+        {
+            get { return _sourceText; }
+            set { this.RaiseAndSetIfChanged(ref _sourceText, value); }
         }
 
         public string FontFamily

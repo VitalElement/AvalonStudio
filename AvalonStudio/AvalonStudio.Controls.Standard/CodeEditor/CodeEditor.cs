@@ -79,8 +79,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
 
-        public event EventHandler TextChanged;
-
         private bool _isLoaded = false;
 
         private int _lastLine = -1;
@@ -457,12 +455,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     IsDirty = true;
 
                     TriggerCodeAnalysis();
-
-                    if(TextChanged != null)
-                    {
-                        TextChanged(this, new EventArgs());
-                    }
                 }
+
+                SourceText = Document.Text;
             }
         }
 
@@ -971,14 +966,22 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             set { SetValue(DiagnosticsProperty, value); }
         }
 
-
         public static readonly AvaloniaProperty<ISourceFile> SourceFileProperty =
-            AvaloniaProperty.Register<CodeEditor, ISourceFile>(nameof(SourceFile));
+            AvaloniaProperty.Register<CodeEditor, ISourceFile>(nameof(SourceFile), defaultBindingMode: BindingMode.TwoWay);
 
         public ISourceFile SourceFile
         {
             get { return GetValue(SourceFileProperty); }
             set { SetValue(SourceFileProperty, value); }
+        }
+
+        public static readonly AvaloniaProperty<string> SourceTextProperty =
+            AvaloniaProperty.Register<CodeEditor, string>(nameof(SourceText), defaultBindingMode:BindingMode.TwoWay);
+
+        public string SourceText
+        {
+            get => GetValue(SourceTextProperty);
+            set => SetValue(SourceTextProperty, value);
         }
 
         public static readonly StyledProperty<bool> IsDirtyProperty =

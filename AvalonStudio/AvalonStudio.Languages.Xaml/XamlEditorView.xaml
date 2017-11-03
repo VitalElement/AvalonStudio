@@ -1,9 +1,11 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard">
+             xmlns:previewer="clr-namespace:AvalonStudio.Languages.Xaml"
+             xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
+             >
     <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
         <Grid RowDefinitions="*,10,*">
             <Grid DockPanel.Dock="Top" Background="{DynamicResource ThemeEditorBackground}">
-                <ScrollViewer Name="Remote"/>
+                <previewer:AvaloniaPreviewer Xaml="{Binding SourceText} SourceFile={Binding SourceFile}" />
             </Grid>
 
             <GridSplitter Grid.Row="1" Height="5" />
@@ -17,7 +19,8 @@
                                    FontSize="{Binding VisualFontSize}"
                                   
                                   SourceFile="{Binding SourceFile}" 
-                                  IsDirty="{Binding IsDirty}">
+                                  IsDirty="{Binding IsDirty}"
+                                  SourceText="{Binding SourceText}">
             </editor:CodeEditor>
         </Grid>
     </Border>

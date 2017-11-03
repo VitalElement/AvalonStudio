@@ -1,0 +1,11 @@
+﻿<Styles  xmlns="https://github.com/avaloniaui" xmlns:local="clr-namespace:AvalonStudio.Languages.Xaml;assembly=AvalonStudio.Languages.Xaml">
+    <Style Selector="local|AvaloniaPreviewer">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ScrollViewer Name="PART_Remote"/>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>
