@@ -72,20 +72,6 @@ namespace AvalonStudio.Languages.Xaml
             set => SetValue(SourceFileProperty, value);
         }
 
-        protected override void OnDataContextEndUpdate()
-        {
-            base.OnDataContextEndUpdate();
-
-            if(DataContext is XamlEditorViewModel vm)
-            {
-                _sourceFile = vm.SourceFile;
-
-                OnSourceFileChanged(_sourceFile);
-
-                Xaml = vm.SourceText;
-            }
-        }
-
         private void OnSourceFileChanged(ISourceFile file)
         {
             if (_currentHost != null)

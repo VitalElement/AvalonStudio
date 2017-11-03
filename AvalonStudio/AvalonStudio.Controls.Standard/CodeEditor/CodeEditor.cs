@@ -304,6 +304,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     RegisterLanguageService(file.Item2);
 
                     TextArea.TextView.Redraw();
+
+                    SourceText = Text;
                 }
             });
 
