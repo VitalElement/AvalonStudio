@@ -8,7 +8,7 @@
                 <previewer:AvaloniaPreviewer Xaml="{Binding SourceText}" SourceFile="{Binding SourceFile}" />
             </Grid>
 
-            <GridSplitter Grid.Row="1" Height="5" />
+            <GridSplitter Grid.Row="1" Height="4" />
 
             <editor:CodeEditor Grid.Row="2" Name="editor"
                                    BorderThickness="0" Margin="0"
