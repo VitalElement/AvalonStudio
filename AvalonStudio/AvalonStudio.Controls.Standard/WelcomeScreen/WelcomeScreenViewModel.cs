@@ -37,7 +37,7 @@
         public void Activation()
         {
             var shell = IoC.Get<IShell>();
-            shell.AddDocument(this);
+            shell.AddDocument(this, false);
             shell.SolutionChanged += ShellOnSolutionChanged;
 
             //LoadNewsFeed().GetAwaiter().GetResult();

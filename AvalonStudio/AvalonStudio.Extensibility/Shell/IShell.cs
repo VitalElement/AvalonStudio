@@ -66,7 +66,7 @@ namespace AvalonStudio.Shell
 
         void CloseSolution();
 
-        void AddDocument(IDocumentTabViewModel document);
+        void AddDocument(IDocumentTabViewModel document, bool temporary = true);
 
         void RemoveDocument(IDocumentTabViewModel document);
 

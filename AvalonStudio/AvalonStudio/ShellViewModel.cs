@@ -376,9 +376,9 @@ namespace AvalonStudio
 
         public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
 
-        public void AddDocument(IDocumentTabViewModel document)
+        public void AddDocument(IDocumentTabViewModel document, bool temporary = true)
         {
-            DocumentTabs.OpenDocument(document);
+            DocumentTabs.OpenDocument(document, temporary);
         }
 
         public void RemoveDocument(IDocumentTabViewModel document)

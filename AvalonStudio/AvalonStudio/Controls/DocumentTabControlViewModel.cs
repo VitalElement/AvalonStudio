@@ -34,7 +34,7 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public void OpenDocument(IDocumentTabViewModel document)
+        public void OpenDocument(IDocumentTabViewModel document, bool temporary)
         {
             if (document == null)
             {
@@ -53,11 +53,15 @@ namespace AvalonStudio.Controls
                     CloseDocument(TemporaryDocument);
                 }
 
-                document.IsTemporary = true;
                 document.IsVisible = true;
                 Documents.Add(document);
                 SelectedDocument = document;
-                TemporaryDocument = document;
+
+                if (temporary)
+                {
+                    document.IsTemporary = true;
+                    TemporaryDocument = document;
+                }
             }
 
             InvalidateSeperatorVisibility();
