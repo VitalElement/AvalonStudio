@@ -36,6 +36,9 @@ namespace AvalonStudio
             builder.Start<MainWindow>();
         }
 
+        public static AppBuilder BuildAvaloniaApp()
+            => AppBuilder.Configure<App>().UsePlatformDetect().UseReactiveUI();
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
