@@ -32,7 +32,7 @@
 
       <ItemsControl.DataTemplates>
         <DataTemplate DataType="mod:CommandToolBarItem">
-          <Button BorderThickness="0" Margin="0" Height="18" Width="18" Command="{Binding Command}" ToolTip.Tip="{Binding ToolTip}" >
+          <Button BorderThickness="0" Margin="0" Height="18" Width="18" Command="{Binding Command}">
             <DrawingPresenter Drawing="{Binding Icon}" Width="16" Height="16" />
           </Button>
         </DataTemplate>

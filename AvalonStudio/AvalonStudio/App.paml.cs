@@ -1,10 +1,12 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Diagnostics;
+using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
+using Serilog;
 using System;
 
 namespace AvalonStudio
@@ -29,6 +31,8 @@ namespace AvalonStudio
                 ShellViewModel.Instance = container.GetExport<ShellViewModel>();
             });
 
+            InitializeLogging();
+
             builder.Start<MainWindow>();
         }
 
@@ -37,15 +41,21 @@ namespace AvalonStudio
             AvaloniaXamlLoader.Load(this);
         }
 
+        private static void InitializeLogging()
+        {
+#if DEBUG
+            SerilogLogger.Initialize(new LoggerConfiguration()
+                .MinimumLevel.Warning()
+                .WriteTo.Trace(outputTemplate: "{Area}: {Message}")
+                .CreateLogger());
+#endif
+        }
+
         public static void AttachDevTools(Window window)
         {
 #if DEBUG
             DevTools.Attach(window);
 #endif
-        }
-
-        private static void InitializeLogging()
-        {
         }
     }
 
