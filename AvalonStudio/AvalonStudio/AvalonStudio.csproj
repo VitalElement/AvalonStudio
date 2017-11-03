@@ -27,6 +27,8 @@
     <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build110-alpha" />
     <PackageReference Include="reactiveui" Version="8.0.0-alpha0089" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
+    <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Security.Principal" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AvalonStudio.MSBuildHost\AvalonStudio.MSBuildHost.csproj" />
