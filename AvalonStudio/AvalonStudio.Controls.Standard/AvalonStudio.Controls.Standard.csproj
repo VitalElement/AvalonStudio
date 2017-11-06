@@ -19,7 +19,7 @@
     <EmbeddedResource Include="AboutScreen\Assets\logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.2-build4186-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.2-build4207-alpha" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>
