@@ -66,13 +66,16 @@ namespace AvalonStudio
     {
         public static AppBuilder AvalonStudioPlatformDetect(this AppBuilder builder)
         {
-            if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+            switch(Platform.PlatformIdentifier)
             {
-                return builder.UseWin32().UseSkia();
-            }
-            else
-            {
-                return builder.UseGtk3().UseSkia();
+                case Platforms.PlatformID.Win32NT:
+                    return builder.UseWin32().UseSkia();
+
+                case Platforms.PlatformID.Unix:
+                    return builder.UseGtk3().UseSkia();
+
+                default:
+                    return builder.UsePlatformDetect();
             }
         }
     }
