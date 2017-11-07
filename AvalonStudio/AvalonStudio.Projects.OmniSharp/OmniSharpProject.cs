@@ -91,7 +91,16 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override dynamic DebugSettings { get; set; }
 
-        public override string Executable { get; set; }
+        public override string Executable
+        {
+            get
+            {
+                var objPath = Path.Combine(CurrentDirectory, RoslynProject.OutputFilePath);
+
+                return objPath.Replace("obj", "bin");
+            }
+            set { }
+        }
 
         public override string Extension
         {
