@@ -95,6 +95,11 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             get
             {
+                if(RoslynProject.OutputFilePath == null)
+                {
+                    return null;
+                }
+
                 var objPath = Path.Combine(CurrentDirectory, RoslynProject.OutputFilePath);
 
                 return objPath.Replace("obj", "bin");

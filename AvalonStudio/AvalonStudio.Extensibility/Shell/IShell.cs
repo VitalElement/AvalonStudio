@@ -27,6 +27,10 @@ namespace AvalonStudio.Shell
         IObservable<ISolution> OnSolutionChanged { get; }
 
         event EventHandler<SolutionChangedEventArgs> SolutionChanged;
+        
+        event EventHandler<BuildEventArgs> BuildStarting;
+
+        event EventHandler<BuildEventArgs> BuildCompleted;
 
         IWorkspaceTaskRunner TaskRunner { get; }
 

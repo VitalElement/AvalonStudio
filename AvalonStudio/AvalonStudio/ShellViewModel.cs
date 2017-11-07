@@ -288,6 +288,8 @@ namespace AvalonStudio
         public ReactiveCommand EnableDebugModeCommand { get; }
 
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
+        public event EventHandler<BuildEventArgs> BuildStarting;
+        public event EventHandler<BuildEventArgs> BuildCompleted;
 
         public IObservable<ISolution> OnSolutionChanged { get; }
 
@@ -497,7 +499,17 @@ namespace AvalonStudio
 
             if (project.ToolChain != null)
             {
-                TaskRunner.RunTask(() => project.ToolChain.Clean(Console, project).Wait());
+                BuildStarting?.Invoke(this, new BuildEventArgs(BuildType.Clean, project));
+
+                TaskRunner.RunTask(() =>
+                {
+                    project.ToolChain.Clean(Console, project).Wait();
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        BuildCompleted?.Invoke(this, new BuildEventArgs(BuildType.Clean, project));
+                    });
+                });
             }
             else
             {
@@ -513,9 +525,16 @@ namespace AvalonStudio
 
             if (project.ToolChain != null)
             {
+                BuildStarting?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
+
                 TaskRunner.RunTask(() =>
                 {
                     project.ToolChain.Build(Console, project).Wait();
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        BuildCompleted?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
+                    });
                 });
             }
             else

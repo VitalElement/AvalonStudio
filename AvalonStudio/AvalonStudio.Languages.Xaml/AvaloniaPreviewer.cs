@@ -15,6 +15,7 @@ using System.Net;
 using System.Net.Sockets;
 using AvalonStudio.Extensibility;
 using Avalonia.Data;
+using AvalonStudio.Shell;
 
 namespace AvalonStudio.Languages.Xaml
 {
@@ -35,16 +36,10 @@ namespace AvalonStudio.Languages.Xaml
 
     public class AvaloniaPreviewer : TemplatedControl
     {
-        static AvaloniaPreviewer()
-        {
-            
-        }
-
         private IAvaloniaRemoteTransportConnection _connection;
         private RemoteWidget _remote;
         private Center _remoteContainer;
         private Process _currentHost;
-        private ISourceFile _sourceFile;
 
         private static int FreeTcpPort()
         {
@@ -74,18 +69,17 @@ namespace AvalonStudio.Languages.Xaml
 
         private void OnSourceFileChanged(ISourceFile file)
         {
-            if (_currentHost != null)
-            {
-                _currentHost.Kill();
-                _currentHost = null;
-            }
-
-            if (_connection != null)
-            {
-                _connection.Dispose();
-            }
+            KillHost();
 
             if (file != null)
+            {
+                StartPreviewerProcess(file);
+            }
+        }
+
+        private void StartPreviewerProcess (ISourceFile file)
+        {
+            if (File.Exists(file.Project.Executable))
             {
                 var port = FreeTcpPort();
 
@@ -93,12 +87,6 @@ namespace AvalonStudio.Languages.Xaml
                 {
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        if (_connection != null)
-                        {
-                            _connection.Dispose();
-                            _connection.OnMessage -= OnMessage;
-                        }
-
                         _connection = t;
 
                         _remoteContainer.Child = _remote = new RemoteWidget(t);
@@ -125,6 +113,30 @@ namespace AvalonStudio.Languages.Xaml
             }
         }
 
+        private void KillHost()
+        {
+            if(_connection != null)
+            {
+                _connection.Dispose();
+                _connection.OnMessage -= OnMessage;
+            }
+
+            if (_currentHost != null)
+            {
+                if (!_currentHost.HasExited)
+                {
+                    _currentHost?.Kill();
+                }
+
+                _currentHost = null;
+            }
+
+            if (_remote != null)
+            {
+                _remote.IsVisible = false;
+            }
+        }
+
         public AvaloniaPreviewer()
         {
             this.GetObservable(XamlProperty).Subscribe(xaml =>
@@ -139,6 +151,29 @@ namespace AvalonStudio.Languages.Xaml
             {
                 OnSourceFileChanged(file);
             });
+
+            var shell = IoC.Get<IShell>();
+
+            shell.BuildStarting += (sender, e) =>
+            {
+                if (SourceFile.Project == e.Project && _currentHost != null)
+                {
+                    KillHost();
+                }
+            };
+
+            shell.BuildCompleted += (sender, e) =>
+            {
+                if (SourceFile != null  && SourceFile.Project == e.Project)
+                {
+                    StartPreviewerProcess(SourceFile);
+                }
+            };
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            KillHost();
         }
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
