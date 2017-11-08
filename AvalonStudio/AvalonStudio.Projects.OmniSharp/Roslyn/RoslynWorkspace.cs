@@ -124,7 +124,7 @@ namespace RoslynPad.Roslyn
             return _compositionContext.GetExport<TService>();
         }
 
-        public async Task<(Project project, List<string> projectReferences)> AddProject(string solutionDir, string projectFile)
+        public async Task<(Project project, List<string> projectReferences, string targetPath)> AddProject(string solutionDir, string projectFile)
         {
             if (buildHost == null)
             {
@@ -136,7 +136,7 @@ namespace RoslynPad.Roslyn
 
             OnProjectAdded(loadData.info);
 
-            return (CurrentSolution.GetProject(loadData.info.Id), loadData.projectReferences);
+            return (CurrentSolution.GetProject(loadData.info.Id), loadData.projectReferences, loadData.targetPath);
         }
 
         public ProjectId GetProjectId(AvalonStudio.Projects.IProject project)

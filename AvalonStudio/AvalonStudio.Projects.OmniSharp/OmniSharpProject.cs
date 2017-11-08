@@ -17,18 +17,19 @@ namespace AvalonStudio.Projects.OmniSharp
 {
     public class OmniSharpProject : FileSystemProject
     {
+        private string detectedTargetPath;
         public static async Task<OmniSharpProject> Create(ISolution solution, string path)
         {
-            var (project, projectReferences) = await RoslynWorkspace.GetWorkspace(solution).AddProject(solution.CurrentDirectory, path);
+            var (project, projectReferences, targetPath) = await RoslynWorkspace.GetWorkspace(solution).AddProject(solution.CurrentDirectory, path);
             var roslynProject = project;
             var references = projectReferences;
-
             OmniSharpProject result = new OmniSharpProject
             {
                 Solution = solution,
                 Location = path,
                 RoslynProject = roslynProject,
-                UnresolvedReferences = references
+                UnresolvedReferences = references,
+                detectedTargetPath = targetPath
             };
 
             return result;
@@ -95,6 +96,8 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             get
             {
+                if (detectedTargetPath != null)
+                    return detectedTargetPath;
                 if(RoslynProject.OutputFilePath == null)
                 {
                     return null;
