@@ -7,7 +7,6 @@ using AvalonStudio.Utils;
 using Microsoft.CodeAnalysis;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -15,6 +14,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.CodeAnalysis.CSharp;
 using AvalonStudio.Shell;
+using CorApi.Portable;
+using Process = System.Diagnostics.Process;
 
 namespace AvalonStudio.Projects.OmniSharp.MSBuild
 {
@@ -90,7 +91,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
             }
         }
 
-        public async Task<(ProjectInfo info, List<string> projectReferences)> LoadProject(string solutionDirectory, string projectFile)
+        public async Task<(ProjectInfo info, List<string> projectReferences, string targetPath)> LoadProject(string solutionDirectory, string projectFile)
         {
             lock (outputLines)
             {
@@ -142,9 +143,9 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                     outputFilePath: projectOptions.outputFile,
                     compilationOptions: projectOptions.compilationOptions,
                     parseOptions: projectOptions.parseOptions,
-                    metadataReferences: loadData.metaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly)));
+                    metadataReferences: loadData.MetaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly)));
 
-                return (projectInfo, loadData.projectReferences);
+                return (projectInfo, loadData.ProjectReferences, loadData.TargetPath);
             }
             else
             {
@@ -154,10 +155,10 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                     Path.GetFileNameWithoutExtension(projectFile), Path.GetFileNameWithoutExtension(projectFile),
                     LanguageNames.CSharp,
                     projectFile,
-                    metadataReferences: loadData.metaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly))
+                    metadataReferences: loadData.MetaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly))
                     );
 
-                return (projectInfo, loadData.projectReferences);
+                return (projectInfo, loadData.ProjectReferences, loadData.TargetPath);
             }
         }
 
