@@ -75,11 +75,19 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                 }
             }, false, Platforms.Platform.ExecutionPath, false);
 
-            await serverStarted.Task;
+            hostProcess.Exited += (sender, e) =>
+            {
+                serverStarted.SetResult(false);
+            };
 
-            msBuildHostService = new Engine().CreateProxy<IMsBuildHostService>(new TcpClientTransport(IPAddress.Loopback, 9000));
-
-            var res = await msBuildHostService.GetVersion();
+            if (await serverStarted.Task)
+            {
+                msBuildHostService = new Engine().CreateProxy<IMsBuildHostService>(new TcpClientTransport(IPAddress.Loopback, 9000));                
+            }
+            else
+            {
+                throw new Exception("AvalonStudio MSBuild Host failed to start or crashed.");
+            }
         }
 
         public async Task<(ProjectInfo info, List<string> projectReferences)> LoadProject(string solutionDirectory, string projectFile)
