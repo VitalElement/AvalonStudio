@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.CSharp;
 using RoslynPad.Editor.Windows;
 using RoslynPad.Roslyn.Diagnostics;
 using System;
@@ -22,6 +23,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Threading;
 
 namespace RoslynPad.Roslyn
 {
@@ -60,21 +63,25 @@ namespace RoslynPad.Roslyn
             {
                 //await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
 
-                var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
-                var dotnet = new DotNetCliService(Path.Combine(dotnetDirectory, "dotnet"));
+                //var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
+                var dotnet = new DotNetCliService("dotnet");
 
                 var dotnetInfo = dotnet.GetInfo();
 
                 var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
 
-                var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+                var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();                
 
                 var assemblies = new[]
                 {
-                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis")),
-                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis.CSharp")),
-                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis.Features")),
-                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis.CSharp.Features")),
+                    // Microsoft.CodeAnalysis.Workspaces
+                    typeof(WorkspacesResources).GetTypeInfo().Assembly,
+                    // Microsoft.CodeAnalysis.CSharp.Workspaces 
+                    typeof(CSharpWorkspaceResources).GetTypeInfo().Assembly,
+                    // Microsoft.CodeAnalysis.Features
+                    typeof(FeaturesResources).GetTypeInfo().Assembly,
+                    // Microsoft.CodeAnalysis.CSharp.Features
+                    typeof(CSharpFeaturesResources).GetTypeInfo().Assembly,                
                     typeof(RoslynWorkspace).Assembly,
                 };
 
@@ -90,7 +97,7 @@ namespace RoslynPad.Roslyn
 
                 var host = MefHostServices.Create(compositionContext);
 
-                var workspace = new RoslynWorkspace(host, null, compositionContext, Path.Combine(dotnetDirectory, "dotnet"), dotnetInfo.BasePath);
+                var workspace = new RoslynWorkspace(host, null, compositionContext, Path.Combine(dotnetInfo.BasePath, "..\\..\\dotnet").NormalizePath(), dotnetInfo.BasePath);
 
                 workspace.RegisterWorkspace(solution);
             }
