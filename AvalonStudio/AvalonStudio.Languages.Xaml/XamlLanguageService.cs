@@ -86,7 +86,7 @@ namespace AvalonStudio.Languages.Xaml
                 var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
                 var currentFileConts = currentUnsavedFile.Contents;
 
-                var completionSet = engine.GetCompletions(metaData, currentFileConts, index + 1);
+                var completionSet = engine.GetCompletions(metaData, currentFileConts, index);
 
                 if (completionSet != null)
                 {
