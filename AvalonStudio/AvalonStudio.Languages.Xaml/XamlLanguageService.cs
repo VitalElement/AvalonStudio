@@ -133,9 +133,8 @@ namespace AvalonStudio.Languages.Xaml
         public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument)
         {
             engine = new CompletionEngine();
-
-            var path = Assembly.GetEntryAssembly().GetModules()[0].FullyQualifiedName;
-            metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(path);
+            
+            metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(file.Project.Solution.StartupProject.Executable);
         }
         
         public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
