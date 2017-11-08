@@ -66,7 +66,7 @@ namespace AvalonStudio
     {
         public static AppBuilder AvalonStudioPlatformDetect(this AppBuilder builder)
         {
-            switch(Platform.PlatformIdentifier)
+            switch (Platform.PlatformIdentifier)
             {
                 case Platforms.PlatformID.Win32NT:
                     return builder.UseWin32().UseSkia();

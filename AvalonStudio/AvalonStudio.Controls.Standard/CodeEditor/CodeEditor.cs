@@ -113,7 +113,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _lineNumberMargin = new LineNumberMargin(this);
 
-            _breakpointMargin = new BreakPointMargin(this, IoC.Get<IDebugManager2>().Breakpoints);
+            _breakpointMargin = new BreakPointMargin(this, IoC.Get<IDebugManager2>()?.Breakpoints);
 
             _selectedLineBackgroundRenderer = new SelectedLineBackgroundRenderer(this);
 
