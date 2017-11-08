@@ -16,6 +16,8 @@ using System.Net.Sockets;
 using AvalonStudio.Extensibility;
 using Avalonia.Data;
 using AvalonStudio.Shell;
+using AvalonStudio.Controls.Standard.ErrorList;
+using AvalonStudio.Utils;
 
 namespace AvalonStudio.Languages.Xaml
 {
@@ -103,10 +105,9 @@ namespace AvalonStudio.Languages.Xaml
 
                 var executingDir = Platforms.Platform.ExecutionPath;
 
-                var projectVariables = file.Project.GetEnvironmentVariables();
+                var projectVariables = file.Project.Solution.StartupProject.GetEnvironmentVariables();
 
-
-                var projectDir = Path.GetDirectoryName(file.Project.Executable);
+                var projectDir = Path.GetDirectoryName(file.Project.Solution.StartupProject.Executable);
 
                 var args = $@"exec --runtimeconfig $(TargetDir)$(TargetName).runtimeconfig.json --depsfile $(TargetDir)$(TargetName).deps.json {executingDir}\HostApp\Avalonia.Designer.HostApp.dll --transport tcp-bson://127.0.0.1:{port}/ $(TargetPath)".ExpandVariables(projectVariables);
                 _currentHost = Process.Start("dotnet", args);
@@ -156,7 +157,7 @@ namespace AvalonStudio.Languages.Xaml
 
             shell.BuildStarting += (sender, e) =>
             {
-                if (SourceFile.Project == e.Project && _currentHost != null)
+                if (SourceFile.Project.Solution.StartupProject == e.Project && _currentHost != null)
                 {
                     KillHost();
                 }
@@ -164,7 +165,7 @@ namespace AvalonStudio.Languages.Xaml
 
             shell.BuildCompleted += (sender, e) =>
             {
-                if (SourceFile != null  && SourceFile.Project == e.Project)
+                if (SourceFile != null  && SourceFile.Project.Solution.StartupProject == e.Project)
                 {
                     StartPreviewerProcess(SourceFile);
                 }
@@ -195,6 +196,10 @@ namespace AvalonStudio.Languages.Xaml
                     return;
                 if (obj is UpdateXamlResultMessage result)
                 {
+                    if (result.Error != null)
+                    {
+                        IoC.Get<IConsole>().WriteLine(result.Error);
+                    }
                     //_errorsContainer.IsVisible = result.Error != null;
                     //_errors.Text = result.Error ?? "";
                 }
