@@ -29,7 +29,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
         {
             System.Console.WriteLine($"Roslyn is Loading file async {_path}");
             var fileInfo = new System.IO.FileInfo(_path);
-            DateTime prevLastWriteTime = fileInfo.LastWriteTime;
+            DateTime prevLastWriteTime = fileInfo.LastWriteTimeUtc;
 
             TextAndVersion textAndVersion;
 
@@ -46,7 +46,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
             // If the file hasn't been closed yet and there's another writer, we will rely on file change notifications to notify us
             // and reload the file.
             fileInfo = new System.IO.FileInfo(_path);
-            DateTime newLastWriteTime = fileInfo.LastWriteTime;
+            DateTime newLastWriteTime = fileInfo.LastWriteTimeUtc;
             if (!newLastWriteTime.Equals(prevLastWriteTime))
             {
                 var message = string.Format(WorkspacesResources.File_was_externally_modified_colon_0, _path);

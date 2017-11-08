@@ -32,7 +32,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
             outputLines = new List<string>();
             errorLines = new List<string>();            
             
-            hostProcess = PlatformSupport.LaunchShellCommand(dotnetPath, $"\"{sdkPath}MSBuild.dll\" avalonstudio-intercept.csproj",
+            hostProcess = PlatformSupport.LaunchShellCommand("dotnet", $"\"{sdkPath}MSBuild.dll\" avalonstudio-intercept.csproj",
             (sender, e) =>
             {
                 if(e.Data != null)
