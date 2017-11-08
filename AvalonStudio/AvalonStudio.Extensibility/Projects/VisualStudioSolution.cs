@@ -151,7 +151,7 @@ namespace AvalonStudio.Extensibility.Projects
 
                 SetItemParent(newProject, placeHolder.Parent);
 
-                SetItemParent(placeHolder, null);
+                placeHolder.SetParentInternal(null);
                 _solutionItems.Remove(placeHolder.Id);
 
                 _solutionItems.Add(newProject.Id, newProject);
