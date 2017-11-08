@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects
 {
@@ -16,7 +17,7 @@ namespace AvalonStudio.Projects
             Location = location;
             LocationDirectory = Path.GetDirectoryName(location);
             Project = this;
-            Parent = this;            
+            Parent = this;
         }
 
         public ObservableCollection<IProject> References => null;
@@ -127,8 +128,9 @@ namespace AvalonStudio.Projects
             return this.DefaultCompareTo(other);
         }
 
-        public void LoadFiles()
+        public Task LoadFilesAsync()
         {
+            return Task.CompletedTask;
         }
     }
 }

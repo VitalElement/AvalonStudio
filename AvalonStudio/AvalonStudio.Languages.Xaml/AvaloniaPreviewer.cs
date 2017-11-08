@@ -95,7 +95,8 @@ namespace AvalonStudio.Languages.Xaml
 
                         t.Send(new UpdateXamlMessage
                         {
-                            Xaml = Xaml
+                            Xaml = Xaml,
+                            AssemblyPath = SourceFile.Project.Executable
                         });
 
                         t.OnMessage += OnMessage;

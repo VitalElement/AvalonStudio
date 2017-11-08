@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     internal class CPlusPlusProjectType : IProjectType
     {
@@ -24,9 +25,9 @@
         {
         }
 
-        public IProject Load(ISolution solution, string filePath)
+        public Task<IProject> LoadAsync(ISolution solution, string filePath)
         {
-            return CPlusPlusProject.LoadFromFile(filePath);
+            return Task.Run(()=> CPlusPlusProject.LoadFromFile(filePath) as IProject);
         }
     }
 }

@@ -762,6 +762,10 @@ namespace AvalonStudio
                 if (solutionType != null)
                 {
                     CurrentSolution = await solutionType.LoadAsync(path);
+
+                    await CurrentSolution.LoadSolutionAsync();
+
+                    await CurrentSolution.LoadProjectsAsync();
                 }
             }
         }

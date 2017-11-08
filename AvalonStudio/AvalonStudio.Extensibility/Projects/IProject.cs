@@ -4,6 +4,7 @@ using AvalonStudio.Toolchains;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects
 {
@@ -59,7 +60,7 @@ namespace AvalonStudio.Projects
         /// <summary>
         /// This is called only once when a project is loaded and is used to populate the files.
         /// </summary>
-        void LoadFiles();
+        Task LoadFilesAsync();
 
         void Save();
     }
