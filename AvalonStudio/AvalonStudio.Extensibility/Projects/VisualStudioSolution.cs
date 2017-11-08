@@ -8,6 +8,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using AvalonStudio.Platforms;
+using System.Threading.Tasks;
+using Avalonia.Threading;
 
 namespace AvalonStudio.Extensibility.Projects
 {
@@ -55,23 +57,35 @@ namespace AvalonStudio.Extensibility.Projects
             Id = Guid.NewGuid();
 
             Items = new ObservableCollection<ISolutionItem>();
-
-            LoadFolders();
-
-            LoadProjects();
-
-            ResolveReferences();
-
-            LoadFiles();
-
-            BuildTree();
         }
 
-        private void LoadFiles()
+        public async Task LoadSolutionAsync ()
+        {
+            await Task.Run(async () =>
+            {
+                await LoadFoldersAsync();
+
+                await LoadProjectLoadingPlaceholdersAsync();
+
+                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                {
+                    BuildTree();
+                });
+            });
+        }
+
+        public async Task LoadProjectsAsync ()
+        {
+            await LoadProjectsAsyncImpl();
+
+            ResolveReferences();
+        }
+
+        private async Task LoadFilesAsync()
         {
             foreach (var project in Projects)
             {
-                project.LoadFiles();
+                await project.LoadFilesAsync();
             }
         }
 
@@ -88,9 +102,11 @@ namespace AvalonStudio.Extensibility.Projects
             }
         }
 
-        private void LoadFolders()
+        private async Task LoadFoldersAsync()
         {
             var solutionFolders = _solutionModel.Projects.Where(p => p.TypeGuid == ProjectTypeGuids.SolutionFolderGuid);
+
+            var newItems = new List<ISolutionItem>();
 
             foreach (var solutionFolder in solutionFolders)
             {
@@ -99,8 +115,17 @@ namespace AvalonStudio.Extensibility.Projects
                 newItem.Parent = this;
                 newItem.Solution = this;
                 _solutionItems.Add(newItem.Id, newItem);
-                Items.InsertSorted(newItem, false);
+
+                newItems.Add(newItem);
             }
+
+            await Dispatcher.UIThread.InvokeTaskAsync(() =>
+            {
+                foreach (var newItem in newItems)
+                {
+                    Items.InsertSorted(newItem, false);
+                }
+            });
         }
 
         private void ResolveReferences()
@@ -111,21 +136,55 @@ namespace AvalonStudio.Extensibility.Projects
             }
         }
 
-        private void LoadProjects()
+        private async Task LoadProjectsAsyncImpl()
         {
             var solutionProjects = _solutionModel.Projects.Where(p => p.TypeGuid != ProjectTypeGuids.SolutionFolderGuid);
 
             foreach (var project in solutionProjects)
             {
-                IProject newProject = Project.LoadProjectFile(this, Guid.Parse(project.TypeGuid), Path.Combine(this.CurrentDirectory, project.FilePath));
+                var placeHolder = _solutionItems[Guid.Parse(project.Id)];
+
+                var newProject = await Project.LoadProjectFileAsync(this, Guid.Parse(project.TypeGuid), Path.Combine(this.CurrentDirectory, project.FilePath));
+
+                newProject.Id = placeHolder.Id;
+                newProject.Solution = this;
+
+                SetItemParent(newProject, placeHolder.Parent);
+
+                SetItemParent(placeHolder, null);
+                _solutionItems.Remove(placeHolder.Id);
+
+                _solutionItems.Add(newProject.Id, newProject);
+
+                await newProject.LoadFilesAsync();
+            }
+        }
+
+        private async Task LoadProjectLoadingPlaceholdersAsync ()
+        {
+            var solutionProjects = _solutionModel.Projects.Where(p => p.TypeGuid != ProjectTypeGuids.SolutionFolderGuid);
+
+            var newItems = new List<ISolutionItem>();
+
+            foreach (var project in solutionProjects)
+            {
+                var newProject = new LoadingProject(this, project.FilePath);
 
                 newProject.Id = Guid.Parse(project.Id);
                 newProject.Solution = this;
                 (newProject as ISolutionItem).Parent = this;
 
                 _solutionItems.Add(newProject.Id, newProject);
-                Items.InsertSorted(newProject);
+                newItems.Add(newProject);
             }
+            
+            await Dispatcher.UIThread.InvokeTaskAsync(() =>
+            {
+                foreach (var newItem in newItems)
+                {
+                    Items.InsertSorted(newItem);
+                }
+            });
         }
 
         public bool CanRename => true;

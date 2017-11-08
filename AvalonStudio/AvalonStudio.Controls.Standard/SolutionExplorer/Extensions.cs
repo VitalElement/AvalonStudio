@@ -35,6 +35,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 return "UnknownProjectIcon".GetIcon();
             }
+            else if (name.EndsWith("LoadingProject"))
+            {
+                return "LoadingProjectIcon".GetIcon();
+            }
 
             return null;
         }

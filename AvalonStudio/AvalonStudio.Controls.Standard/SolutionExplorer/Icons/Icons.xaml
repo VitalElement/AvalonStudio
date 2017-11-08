@@ -3,6 +3,13 @@
         xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard">
     <Style>
         <Style.Resources>
+            <DrawingGroup x:Key="LoadingProjectIcon">
+                <GeometryDrawing Brush="Transparent" Geometry="F1M16,16L0,16 0,0 16,0z" />
+                <GeometryDrawing Brush="Transparent" Geometry="F1M0,15L16,15 16,1.001 0,1.001z" />
+                <GeometryDrawing Brush="#FFA2A2A2" Geometry="F1M12,11L8,11 8,9 12,9z M7,10L4,10 4,8 7,8z M9,6L3,6 3,11 7,11 7,12 13,12 13,7 9,7z M14,13L2,13 2,5 14,5z M1,14L15,14 15,2 1,2z" />
+                <GeometryDrawing Brush="Transparent" Geometry="F1M8,11L12,11 12,9 8,9z M13,7L9,7 9,6 3,6 3,11 7,11 7,12 13,12z M14,13L2,13 2,5 14,5z M4,8L7,8 7,10 4,10z" />
+            </DrawingGroup>
+            
             <DrawingGroup x:Key="UnknownProjectIcon">
                 <GeometryDrawing Brush="Transparent" Geometry="F1M16,2L16,16 0,16 0,2 0.76,2C1.567,0.794 2.94,0 4.5,0 6.06,0 7.433,0.794 8.24,2z" />
                 <GeometryDrawing Brush="#FFA2A2A2" Geometry="F1M15,3L15,15 1,15 1,7.297C1.288,7.657,1.616,7.983,2,8.24L2,14 14,14 14,6 8.725,6C8.892,5.529 9,5.029 9,4.5 9,3.971 8.892,3.471 8.725,3z" />

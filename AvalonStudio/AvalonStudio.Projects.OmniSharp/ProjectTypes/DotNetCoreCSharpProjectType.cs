@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects.OmniSharp.ProjectTypes
 {
@@ -24,9 +25,9 @@ namespace AvalonStudio.Projects.OmniSharp.ProjectTypes
         {
         }
 
-        public IProject Load(ISolution solution, string filePath)
+        public async Task<IProject> LoadAsync(ISolution solution, string filePath)
         {
-            return OmniSharpProject.Create(solution, filePath).GetAwaiter().GetResult();
+            return await OmniSharpProject.Create(solution, filePath);
         }
     }
 }
