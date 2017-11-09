@@ -67,7 +67,7 @@ namespace AvalonStudio.Languages.Xaml
                                 if (lineStartIdx != -1)
                                 {
                                     //TODO: Do something about '\t' characters
-                                    var prefixLength = idx - lineStartIdx;
+                                    var prefixLength = (idx - lineStartIdx) - 1;
                                     _editor.Document.Replace(_editor.TextArea.Caret.Offset, 0,
                                         new string(' ', prefixLength));
                                 }
