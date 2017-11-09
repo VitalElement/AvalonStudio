@@ -69,7 +69,7 @@ namespace AvalonStudio.Languages.Xaml
         {
             bool result = false;
 
-            if(currentChar == '<')
+            if(currentChar == '<' || currentChar == ' ')
             {
                 return true;
             }
