@@ -17,7 +17,7 @@
                                    
                                    FontFamily="{Binding FontFamily}" 
                                    FontSize="{Binding VisualFontSize}"
-                                  
+                                  HighlightSelectedWord="False"
                                   SourceFile="{Binding SourceFile}" 
                                   IsDirty="{Binding IsDirty}"
                                   SourceText="{Binding SourceText}">
