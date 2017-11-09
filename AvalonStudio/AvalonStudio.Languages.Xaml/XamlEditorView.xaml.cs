@@ -36,6 +36,39 @@ namespace AvalonStudio.Languages.Xaml
                     }
                 }
             }
+
+            if (args.Text == "/")
+            {
+                var textBefore = _editor.Text.Substring(0, Math.Max(0, _editor.TextArea.Caret.Offset - 1));
+                if (textBefore.Length > 2 && textBefore[textBefore.Length - 1] != '/')
+                {
+                    var state = XmlParser.Parse(textBefore);
+                    if (state.State == XmlParser.ParserState.InsideElement
+                        || state.State == XmlParser.ParserState.StartElement
+                        || state.State == XmlParser.ParserState.AfterAttributeValue)
+                    {
+                        var caret = _editor.TextArea.Caret.Offset;
+                        _editor.Document.Replace(_editor.TextArea.Caret.Offset, 0, $">");
+                        _editor.TextArea.Caret.Offset = caret + 1;
+                    }
+                }
+            }
+
+            if (args.Text == "=")
+            {
+                var textBefore = _editor.Text.Substring(0, Math.Max(0, _editor.TextArea.Caret.Offset - 1));
+                if (textBefore.Length > 2 && textBefore[textBefore.Length - 1] != '/')
+                {
+                    var state = XmlParser.Parse(textBefore);
+                    if (state.State == XmlParser.ParserState.StartAttribute)
+                    {
+                        var caret = _editor.TextArea.Caret.Offset;
+                        _editor.Document.Replace(_editor.TextArea.Caret.Offset, 0, "\"\" ");
+                        _editor.TextArea.Caret.Offset = caret+1;
+                    }
+                }
+            }
+
             if (args.Text == "\n")
             {
                 //Check if we are not inside a tag
