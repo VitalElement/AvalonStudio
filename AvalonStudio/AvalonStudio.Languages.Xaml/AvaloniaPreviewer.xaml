@@ -4,7 +4,21 @@
         <Setter Property="Padding" Value="0"/>
         <Setter Property="Template">
             <ControlTemplate>
-                <ScrollViewer Name="PART_Remote"/>
+                <ScrollViewer Name="PART_Remote">
+                    <ScrollViewer.Background>
+                        <VisualBrush DestinationRect="0,0,20,20" TileMode="Tile">
+                            <VisualBrush.Visual>
+                                <Canvas Width="20" Height="20"  Background="#3d3d3d">
+                                    <Rectangle Height="10" Width="10" Fill="#4d4d4d" />
+                                    <Rectangle Height="10" Width="10" Canvas.Left="10" Canvas.Top="10" Fill="#4d4d4d" />
+                                </Canvas>
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </ScrollViewer.Background>
+                    <Border CornerRadius="20" BorderThickness="20" Margin="40" BorderBrush="#1d1d1d">
+                        <local:Center Name="PART_Center" />
+                    </Border>
+                </ScrollViewer>
             </ControlTemplate>
         </Setter>
     </Style>

@@ -182,11 +182,7 @@ namespace AvalonStudio.Languages.Xaml
         {
             base.OnTemplateApplied(e);
 
-            var scrollViewer = e.NameScope.Find<ScrollViewer>("PART_Remote");
-
-            _remoteContainer = new Center();
-
-            scrollViewer.Content = _remoteContainer;
+            _remoteContainer = e.NameScope.Find<Center>("PART_Center");
         }
 
         private void OnMessage(IAvaloniaRemoteTransportConnection transport, object obj)
