@@ -8,16 +8,14 @@
                     <ScrollViewer.Background>
                         <VisualBrush DestinationRect="0,0,20,20" TileMode="Tile">
                             <VisualBrush.Visual>
-                                <Canvas Width="20" Height="20"  Background="#3d3d3d">
-                                    <Rectangle Height="10" Width="10" Fill="#4d4d4d" />
-                                    <Rectangle Height="10" Width="10" Canvas.Left="10" Canvas.Top="10" Fill="#4d4d4d" />
+                                <Canvas Width="16" Height="16"  Background="#f0f0f0">
+                                    <Rectangle Height="8" Width="8" Fill="#f5f5f5" />
+                                    <Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#f5f5f5" />
                                 </Canvas>
                             </VisualBrush.Visual>
                         </VisualBrush>
                     </ScrollViewer.Background>
-                    <Border CornerRadius="20" BorderThickness="20" Margin="40" BorderBrush="#1d1d1d">
-                        <local:Center Name="PART_Center" />
-                    </Border>
+                    <local:Center Name="PART_Center"  Margin="40" />
                 </ScrollViewer>
             </ControlTemplate>
         </Setter>
