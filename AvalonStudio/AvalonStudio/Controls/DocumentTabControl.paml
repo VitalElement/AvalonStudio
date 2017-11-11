@@ -36,7 +36,7 @@
             <TextBlock Text="{Binding Title}" />
             <TextBlock Text="*" IsVisible="{Binding IsDirty, FallbackValue=False}" />
           </StackPanel>          
-          <Button IsVisible="{Binding IsSelected}" Height="14" Width="14" Command="{Binding CloseCommand}">
+          <Button IsVisible="{Binding IsSelected}" Height="14" Width="14" Command="{Binding Close}">
             <Button.Styles>
               <Style Selector="Button">
                 <Setter Property="BorderThickness" Value="0"/>

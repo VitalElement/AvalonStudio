@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Diagnostics;
 using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
+using AvalonStudio.Controls;
 using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
@@ -42,6 +43,8 @@ namespace AvalonStudio
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
+
+            DataTemplates.Add(new ViewLocatorDataTemplate());
         }
 
         private static void InitializeLogging()
