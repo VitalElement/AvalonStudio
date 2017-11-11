@@ -6,7 +6,7 @@ namespace AvalonStudio.Controls
 {
     public class ViewLocatorDataTemplate : IDataTemplate
     {
-        public bool SupportsRecycling => throw new System.NotImplementedException();
+        public bool SupportsRecycling => false;
 
         public IControl Build(object data)
         {
@@ -15,12 +15,18 @@ namespace AvalonStudio.Controls
 
             if (type != null)
             {
-                return (Control)Activator.CreateInstance(type);
+                if (typeof(Control).IsAssignableFrom(type))
+                {
+                    var constructor = type.GetConstructor(Type.EmptyTypes);
+
+                    if (constructor != null)
+                    {
+                        return (Control)Activator.CreateInstance(type);
+                    }
+                }                
             }
-            else
-            {
-                return new TextBlock { Text = name };
-            }
+            
+            return new TextBlock { Text = name };            
         }
 
         public bool Match(object data)

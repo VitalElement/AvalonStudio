@@ -49,11 +49,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             disposables.Add(RequestBringIntoViewEvent.AddClassHandler<Intellisense>(i => OnRequesteBringIntoView));
+
+            base.OnAttachedToVisualTree(e);
         }
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
             disposables.Dispose();
+
+            base.OnDetachedFromVisualTree(e);
         }
 
         private void OnRequesteBringIntoView(RequestBringIntoViewEventArgs e)

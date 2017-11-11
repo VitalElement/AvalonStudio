@@ -48,6 +48,11 @@ namespace AvalonStudio.Extensibility.Editor
             //ZoomLevel = _shell.GlobalZoomLevel;
         }
 
+        ~TextEditorViewModel()
+        {
+            System.Console.WriteLine("TextEditorVM Disposed");
+        }
+
         public string SourceText
         {
             get { return _sourceText; }

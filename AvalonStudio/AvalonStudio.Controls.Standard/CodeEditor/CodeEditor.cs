@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -94,6 +95,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private LineNumberMargin _lineNumberMargin;
         private BreakPointMargin _breakpointMargin;
         private SelectedLineBackgroundRenderer _selectedLineBackgroundRenderer;
+        private CompositeDisposable _disposables;
 
         /// <summary>
         ///     Write lock must be held before calling this.
@@ -132,258 +134,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             TextArea.SelectionBrush = Brush.Parse("#AA569CD6");
             TextArea.SelectionCornerRadius = 0;
-
-            this.GetObservable(LineNumbersVisibleProperty).Subscribe(s =>
-            {
-                if (s)
-                {
-                    TextArea.LeftMargins.Add(_lineNumberMargin);
-                }
-                else
-                {
-                    TextArea.LeftMargins.Remove(_lineNumberMargin);
-                }
-            });
-
-            this.GetObservable(ShowBreakpointsProperty).Subscribe(s =>
-            {
-                if (s)
-                {
-                    TextArea.LeftMargins.Insert(0, _breakpointMargin);
-                }
-                else
-                {
-                    TextArea.LeftMargins.Remove(_breakpointMargin);
-                }
-            });
-
-            this.GetObservable(HighlightSelectedWordProperty).Subscribe(s =>
-            {
-                if (s)
-                {
-                    TextArea.TextView.BackgroundRenderers.Add(_selectedWordBackgroundRenderer);
-                }
-                else
-                {
-                    TextArea.TextView.BackgroundRenderers.Remove(_selectedWordBackgroundRenderer);
-                }
-            });
-
-            this.GetObservable(HighlightSelectedLineProperty).Subscribe(s =>
-            {
-                if (s)
-                {
-                    TextArea.TextView.BackgroundRenderers.Insert(0, _selectedLineBackgroundRenderer);
-                }
-                else
-                {
-                    TextArea.TextView.BackgroundRenderers.Remove(_selectedLineBackgroundRenderer);
-                }
-            });
-
-            this.GetObservable(ShowColumnLimitProperty).Subscribe(s =>
-            {
-                if (s)
-                {
-                    TextArea.TextView.BackgroundRenderers.Add(_columnLimitBackgroundRenderer);
-                }
-                else
-                {
-                    TextArea.TextView.BackgroundRenderers.Remove(_columnLimitBackgroundRenderer);
-                }
-            });
-
-            this.GetObservable(ColumnLimitProperty).Subscribe(limit =>
-            {
-                _columnLimitBackgroundRenderer.Column = limit;
-                this.TextArea.TextView.InvalidateLayer(KnownLayer.Background);
-            });
-
-            this.GetObservable(ColorSchemeProperty).Subscribe(colorScheme =>
-            {
-                if (colorScheme != null)
-                {
-                    Background = colorScheme.Background;
-                    Foreground = colorScheme.Text;
-
-                    _lineNumberMargin.Background = colorScheme.BackgroundAccent;
-                    if (_textColorizer != null)
-                    {
-                        _textColorizer.ColorScheme = colorScheme;
-                    }
-                    
-                    TextArea.TextView.InvalidateLayer(KnownLayer.Background);
-
-                    TriggerCodeAnalysis();
-                }
-            });
-
-            Options = new AvaloniaEdit.TextEditorOptions
-            {
-                ConvertTabsToSpaces = true,
-                IndentationSize = 4,
-                EnableHyperlinks = false,
-                EnableEmailHyperlinks = false,
-            };
-
-            BackgroundRenderersProperty.Changed.Subscribe(s =>
-            {
-                if (s.Sender == this)
-                {
-                    if (s.OldValue != null)
-                    {
-                        foreach (var renderer in (ObservableCollection<IBackgroundRenderer>)s.OldValue)
-                        {
-                            TextArea.TextView.BackgroundRenderers.Remove(renderer);
-                        }
-                    }
-
-                    if (s.NewValue != null)
-                    {
-                        foreach (var renderer in (ObservableCollection<IBackgroundRenderer>)s.NewValue)
-                        {
-                            TextArea.TextView.BackgroundRenderers.Add(renderer);
-                        }
-                    }
-                }
-            });
-
-            DocumentLineTransformersProperty.Changed.Subscribe(s =>
-            {
-                if (s.Sender == this)
-                {
-                    if (s.OldValue != null)
-                    {
-                        foreach (var renderer in (ObservableCollection<IVisualLineTransformer>)s.OldValue)
-                        {
-                            TextArea.TextView.LineTransformers.Remove(renderer);
-                        }
-                    }
-
-                    if (s.NewValue != null)
-                    {
-                        foreach (var renderer in (ObservableCollection<IVisualLineTransformer>)s.NewValue)
-                        {
-                            TextArea.TextView.LineTransformers.Add(renderer);
-                        }
-                    }
-                }
-            });
-
-            this.GetObservable(CaretOffsetProperty).Subscribe(s =>
-            {
-                if (Document?.TextLength > s)
-                {
-                    CaretOffset = s;
-                }
-            });
-
-            /*_analysisTriggerEvents.Select(_ => Observable.Timer(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance)
-            .SelectMany(o => DoCodeAnalysisAsync())).Switch().Subscribe(_ => { });*/
-
-            _analysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(async _ =>
-            {
-                await DoCodeAnalysisAsync();
-            });
-
-            this.GetObservableWithHistory(SourceFileProperty).Subscribe((file) =>
-            {
-                if (file.Item1 != file.Item2)
-                {
-                    if (System.IO.File.Exists(file.Item2.Location))
-                    {
-                        using (var fs = System.IO.File.OpenText(file.Item2.Location))
-                        {
-                            Document = new TextDocument(fs.ReadToEnd())
-                            {
-                                FileName = file.Item2.Location
-                            };
-
-                            DocumentAccessor = new CodeEditorDocumentAdaptor(this);
-                        }
-                    }
-
-                    _isLoaded = true;
-
-                    RegisterLanguageService(file.Item2);
-
-                    TextArea.TextView.Redraw();
-
-                    SourceText = Text;
-                }
-            });
-
-            TextArea.TextEntering += (sender, e) =>
-            {
-                _textEntering = true;
-            };
-
-            Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Subscribe(e =>
-            {
-                if (TextArea.Caret.Line != _lastLine && LanguageService != null)
-                {
-                    var line = Document.GetLineByNumber(TextArea.Caret.Line);
-
-                    if (line.Length == 0)
-                    {
-                        _suppressIsDirtyNotifications = true;
-                        LanguageService.IndentationStrategy?.IndentLine(Document, line);
-                        _suppressIsDirtyNotifications = false;
-                    }
-                }
-
-                _lastLine = TextArea.Caret.Line;
-            });
-
-
-            Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Throttle(TimeSpan.FromMilliseconds(100)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(e =>
-            {
-                if (_intellisenseManager != null && !_textEntering)
-                {
-                    if (TextArea.Selection.IsEmpty)
-                    {
-                        var location = Document.GetLocation(CaretOffset);
-                        _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, UnsavedFiles.ToList());
-                    }
-                    else if (_currentSnippetContext != null)
-                    {
-                        var offset = Document.GetOffset(TextArea.Selection.StartPosition.Location);
-                        _intellisenseManager.SetCursor(offset, TextArea.Selection.StartPosition.Line, TextArea.Selection.StartPosition.Column, UnsavedFiles.ToList());
-                    }
-                }
-
-                if (CaretOffset > 0)
-                {
-                    var prevLocation = new TextViewPosition(Document.GetLocation(CaretOffset - 1));
-
-                    var visualLocation = TextArea.TextView.GetVisualPosition(prevLocation, VisualYPosition.LineBottom);
-                    var visualLocationTop = TextArea.TextView.GetVisualPosition(prevLocation, VisualYPosition.LineTop);
-
-                    var position = visualLocation - TextArea.TextView.ScrollOffset;
-                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
-
-                    _intellisenseControl.SetLocation(position);
-                    _completionAssistantControl.SetLocation(position);
-
-                    _selectedWordBackgroundRenderer.SelectedWord = GetWordAtOffset(CaretOffset);
-
-                    Line = TextArea.Caret.Line;
-                    Column = TextArea.Caret.Column;
-                    EditorCaretOffset = TextArea.Caret.Offset;
-
-                    TextArea.TextView.InvalidateLayer(KnownLayer.Background);
-                }
-            });
-
-            TextArea.TextEntered += (sender, e) =>
-            {
-                _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
-                _textEntering = false;
-            };
-
-            _intellisense = new IntellisenseViewModel();
-
-            _completionAssistant = new CompletionAssistantViewModel(_intellisense);
 
             EventHandler<KeyEventArgs> tunneledKeyUpHandler = (send, ee) =>
             {
@@ -446,8 +196,256 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             };
 
-            AddHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel);
-            AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel);
+            _disposables = new CompositeDisposable {
+            this.GetObservable(LineNumbersVisibleProperty).Subscribe(s =>
+            {
+                if (s)
+                {
+                    TextArea.LeftMargins.Add(_lineNumberMargin);
+                }
+                else
+                {
+                    TextArea.LeftMargins.Remove(_lineNumberMargin);
+                }
+            }),
+
+            this.GetObservable(ShowBreakpointsProperty).Subscribe(s =>
+            {
+                if (s)
+                {
+                    TextArea.LeftMargins.Insert(0, _breakpointMargin);
+                }
+                else
+                {
+                    TextArea.LeftMargins.Remove(_breakpointMargin);
+                }
+            }),
+
+            this.GetObservable(HighlightSelectedWordProperty).Subscribe(s =>
+            {
+                if (s)
+                {
+                    TextArea.TextView.BackgroundRenderers.Add(_selectedWordBackgroundRenderer);
+                }
+                else
+                {
+                    TextArea.TextView.BackgroundRenderers.Remove(_selectedWordBackgroundRenderer);
+                }
+            }),
+
+            this.GetObservable(HighlightSelectedLineProperty).Subscribe(s =>
+            {
+                if (s)
+                {
+                    TextArea.TextView.BackgroundRenderers.Insert(0, _selectedLineBackgroundRenderer);
+                }
+                else
+                {
+                    TextArea.TextView.BackgroundRenderers.Remove(_selectedLineBackgroundRenderer);
+                }
+            }),
+
+            this.GetObservable(ShowColumnLimitProperty).Subscribe(s =>
+            {
+                if (s)
+                {
+                    TextArea.TextView.BackgroundRenderers.Add(_columnLimitBackgroundRenderer);
+                }
+                else
+                {
+                    TextArea.TextView.BackgroundRenderers.Remove(_columnLimitBackgroundRenderer);
+                }
+            }),
+
+            this.GetObservable(ColumnLimitProperty).Subscribe(limit =>
+            {
+                _columnLimitBackgroundRenderer.Column = limit;
+                this.TextArea.TextView.InvalidateLayer(KnownLayer.Background);
+            }),
+
+            this.GetObservable(ColorSchemeProperty).Subscribe(colorScheme =>
+            {
+                if (colorScheme != null)
+                {
+                    Background = colorScheme.Background;
+                    Foreground = colorScheme.Text;
+
+                    _lineNumberMargin.Background = colorScheme.BackgroundAccent;
+                    if (_textColorizer != null)
+                    {
+                        _textColorizer.ColorScheme = colorScheme;
+                    }
+
+                    TextArea.TextView.InvalidateLayer(KnownLayer.Background);
+
+                    TriggerCodeAnalysis();
+                }
+            }),
+
+            this.GetObservable(CaretOffsetProperty).Subscribe(s =>
+            {
+                if (Document?.TextLength > s)
+                {
+                    CaretOffset = s;
+                }
+            }),
+
+            _analysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(async _ =>
+            {
+                await DoCodeAnalysisAsync();
+            }),
+
+             this.GetObservableWithHistory(SourceFileProperty).Subscribe((file) =>
+            {
+                if (file.Item1 != file.Item2)
+                {
+                    if (System.IO.File.Exists(file.Item2.Location))
+                    {
+                        using (var fs = System.IO.File.OpenText(file.Item2.Location))
+                        {
+                            Document = new TextDocument(fs.ReadToEnd())
+                            {
+                                FileName = file.Item2.Location
+                            };
+
+                            DocumentAccessor = new CodeEditorDocumentAdaptor(this);
+                        }
+                    }
+
+                    _isLoaded = true;
+
+                    RegisterLanguageService(file.Item2);
+
+                    TextArea.TextView.Redraw();
+
+                    SourceText = Text;
+                }
+            }),
+
+            Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Subscribe(e =>
+            {
+                if (TextArea.Caret.Line != _lastLine && LanguageService != null)
+                {
+                    var line = Document.GetLineByNumber(TextArea.Caret.Line);
+
+                    if (line.Length == 0)
+                    {
+                        _suppressIsDirtyNotifications = true;
+                        LanguageService.IndentationStrategy?.IndentLine(Document, line);
+                        _suppressIsDirtyNotifications = false;
+                    }
+                }
+
+                _lastLine = TextArea.Caret.Line;
+            }),
+
+            Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Throttle(TimeSpan.FromMilliseconds(100)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(e =>
+            {
+                if (_intellisenseManager != null && !_textEntering)
+                {
+                    if (TextArea.Selection.IsEmpty)
+                    {
+                        var location = Document.GetLocation(CaretOffset);
+                        _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, UnsavedFiles.ToList());
+                    }
+                    else if (_currentSnippetContext != null)
+                    {
+                        var offset = Document.GetOffset(TextArea.Selection.StartPosition.Location);
+                        _intellisenseManager.SetCursor(offset, TextArea.Selection.StartPosition.Line, TextArea.Selection.StartPosition.Column, UnsavedFiles.ToList());
+                    }
+                }
+
+                if (CaretOffset > 0)
+                {
+                    var prevLocation = new TextViewPosition(Document.GetLocation(CaretOffset - 1));
+
+                    var visualLocation = TextArea.TextView.GetVisualPosition(prevLocation, VisualYPosition.LineBottom);
+                    var visualLocationTop = TextArea.TextView.GetVisualPosition(prevLocation, VisualYPosition.LineTop);
+
+                    var position = visualLocation - TextArea.TextView.ScrollOffset;
+                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
+
+                    _intellisenseControl.SetLocation(position);
+                    _completionAssistantControl.SetLocation(position);
+
+                    _selectedWordBackgroundRenderer.SelectedWord = GetWordAtOffset(CaretOffset);
+
+                    Line = TextArea.Caret.Line;
+                    Column = TextArea.Caret.Column;
+                    EditorCaretOffset = TextArea.Caret.Offset;
+
+                    TextArea.TextView.InvalidateLayer(KnownLayer.Background);
+                }
+            }),
+
+            AddHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel),
+            AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel)
+        };
+
+            Options = new AvaloniaEdit.TextEditorOptions
+            {
+                ConvertTabsToSpaces = true,
+                IndentationSize = 4,
+                EnableHyperlinks = false,
+                EnableEmailHyperlinks = false,
+            };
+
+            //BackgroundRenderersProperty.Changed.Subscribe(s =>
+            //{
+            //    if (s.Sender == this)
+            //    {
+            //        if (s.OldValue != null)
+            //        {
+            //            foreach (var renderer in (ObservableCollection<IBackgroundRenderer>)s.OldValue)
+            //            {
+            //                TextArea.TextView.BackgroundRenderers.Remove(renderer);
+            //            }
+            //        }
+
+            //        if (s.NewValue != null)
+            //        {
+            //            foreach (var renderer in (ObservableCollection<IBackgroundRenderer>)s.NewValue)
+            //            {
+            //                TextArea.TextView.BackgroundRenderers.Add(renderer);
+            //            }
+            //        }
+            //    }
+            //});
+
+            //DocumentLineTransformersProperty.Changed.Subscribe(s =>
+            //{
+            //    if (s.Sender == this)
+            //    {
+            //        if (s.OldValue != null)
+            //        {
+            //            foreach (var renderer in (ObservableCollection<IVisualLineTransformer>)s.OldValue)
+            //            {
+            //                TextArea.TextView.LineTransformers.Remove(renderer);
+            //            }
+            //        }
+
+            //        if (s.NewValue != null)
+            //        {
+            //            foreach (var renderer in (ObservableCollection<IVisualLineTransformer>)s.NewValue)
+            //            {
+            //                TextArea.TextView.LineTransformers.Add(renderer);
+            //            }
+            //        }
+            //    }
+            //});
+
+
+            /*_analysisTriggerEvents.Select(_ => Observable.Timer(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance)
+            .SelectMany(o => DoCodeAnalysisAsync())).Switch().Subscribe(_ => { });*/                       
+
+            _intellisense = new IntellisenseViewModel();
+
+            _completionAssistant = new CompletionAssistantViewModel(_intellisense);
+        }
+
+        ~CodeEditor()
+        {
+            System.Console.WriteLine("Code Editor disposed");
         }
 
         protected override void OnTextChanged(EventArgs e)
@@ -587,15 +585,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (Settings.GetSettings<EditorSettings>().AutoFormat)
                 {
-                var caretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
+                    var caretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
 
-                // some language services manually set the caret themselves and return -1 to indicate this.
-                if(caretOffset >= 0)
-                {
-                    CaretOffset = caretOffset;
-                }
+                    // some language services manually set the caret themselves and return -1 to indicate this.
+                    if (caretOffset >= 0)
+                    {
+                        CaretOffset = caretOffset;
+                    }
 
-                Focus();
+                    Focus();
                 }
             }
         }
@@ -718,6 +716,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
 
+                _disposables.Add(_intellisenseManager);
+
                 TextArea.IndentationStrategy = LanguageService.IndentationStrategy;
 
                 LanguageService.Diagnostics?.ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
@@ -750,9 +750,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private void TextArea_TextEntered(object sender, TextInputEventArgs e)
         {
-            if(LanguageService != null && LanguageService.InputHelpers != null)
+            _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+            _textEntering = false;
+
+            if (LanguageService != null && LanguageService.InputHelpers != null)
             {
-                foreach(var helper in LanguageService.InputHelpers)
+                foreach (var helper in LanguageService.InputHelpers)
                 {
                     helper.AfterTextInput(LanguageService, DocumentAccessor, e);
                 }
@@ -761,6 +764,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private void TextArea_TextEntering(object sender, TextInputEventArgs e)
         {
+            _textEntering = true;
+
             if (LanguageService != null && LanguageService.InputHelpers != null)
             {
                 foreach (var helper in LanguageService.InputHelpers)
@@ -815,6 +820,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             TextArea.TextEntering -= TextArea_TextEntering;
             TextArea.TextEntered -= TextArea_TextEntered;
+
+            _intellisenseManager = null;
         }
 
         private void TextDocument_TextChanged(object sender, EventArgs e)
@@ -1013,7 +1020,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         }
 
         public static readonly AvaloniaProperty<string> SourceTextProperty =
-            AvaloniaProperty.Register<CodeEditor, string>(nameof(SourceText), defaultBindingMode:BindingMode.TwoWay);
+            AvaloniaProperty.Register<CodeEditor, string>(nameof(SourceText), defaultBindingMode: BindingMode.TwoWay);
 
         public string SourceText
         {
@@ -1021,7 +1028,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             set => SetValue(SourceTextProperty, value);
         }
 
-        public static readonly AvaloniaProperty<ITextDocument> DocumentAccessorProperty = 
+        public static readonly AvaloniaProperty<ITextDocument> DocumentAccessorProperty =
             AvaloniaProperty.Register<CodeEditor, ITextDocument>(nameof(DocumentAccessor), defaultBindingMode: BindingMode.TwoWay);
 
         public ITextDocument DocumentAccessor
@@ -1116,7 +1123,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             UnRegisterLanguageService();
 
+            _disposables.Dispose();
+
             DocumentAccessor?.Dispose();
+
+            TextArea.TextView.BackgroundRenderers.Clear();
+            TextArea.TextView.LineTransformers.Clear();
+            TextArea.LeftMargins.Clear();
+
+            _breakpointMargin.Dispose();
+            _lineNumberMargin.Dispose();
 
             base.OnDetachedFromVisualTree(e);
         }

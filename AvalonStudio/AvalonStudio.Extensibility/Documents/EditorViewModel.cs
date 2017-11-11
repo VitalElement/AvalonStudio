@@ -1,5 +1,6 @@
 ﻿using AvalonStudio.Projects;
 using ReactiveUI;
+using System;
 
 namespace AvalonStudio.Controls
 {
@@ -11,6 +12,11 @@ namespace AvalonStudio.Controls
         public EditorViewModel(ISourceFile file)
         {            
             _sourceFile = file;            
+        }
+
+        ~EditorViewModel()
+        {
+            Console.WriteLine("Dispose VM");
         }
 
         public bool IsDirty

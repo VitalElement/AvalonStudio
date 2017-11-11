@@ -19,7 +19,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    internal class IntellisenseManager
+    internal class IntellisenseManager : IDisposable
     {
         private IShell _shell;
         private IConsole _console;
@@ -29,6 +29,7 @@
         private readonly ICompletionAssistant completionAssistant;
         private AvaloniaEdit.TextEditor editor;
         private IList<CodeSnippet> _snippets;
+        private CancellationTokenSource _cancelRunners;
 
         private bool _requestingData;
         private bool _hidden; // i.e. can be technically open, but hidden awaiting completion data..
@@ -72,8 +73,10 @@
             intellisenseJobRunner = new JobRunner();
             intellisenseQueryRunner = new JobRunner(1);
 
-            Task.Factory.StartNew(() => { intellisenseJobRunner.RunLoop(new CancellationToken()); });
-            Task.Factory.StartNew(() => { intellisenseQueryRunner.RunLoop(new CancellationToken()); });
+            _cancelRunners = new CancellationTokenSource();
+
+            Task.Factory.StartNew(() => { intellisenseJobRunner.RunLoop(_cancelRunners.Token); });
+            Task.Factory.StartNew(() => { intellisenseQueryRunner.RunLoop(_cancelRunners.Token); });
 
             this.intellisenseControl = intellisenseControl;
             this.completionAssistant = completionAssistant;
@@ -97,6 +100,8 @@
         {
             editor.LostFocus -= Editor_LostFocus;
             editor = null;
+
+            _cancelRunners.Cancel();
         }
 
         ~IntellisenseManager()

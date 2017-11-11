@@ -15,7 +15,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
     /// <summary>
     /// Margin showing line numbers.
     /// </summary>
-    public class LineNumberMargin : AbstractMargin
+    public class LineNumberMargin : AbstractMargin, IDisposable
     {
         private TextArea _textArea;
         private CodeEditor _editor;
@@ -243,6 +243,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 e.Handled = true;
             }
             base.OnPointerReleased(e);
+        }
+
+        public void Dispose()
+        {
+            _editor = null;
+            _textArea = null;
         }
     }
 }

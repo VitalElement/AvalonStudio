@@ -9,6 +9,12 @@ namespace AvalonStudio.Extensibility.Editor
         {
             InitializeComponent();
         }
+
+        ~TextEditorView ()
+        {
+            System.Console.WriteLine("TextEditorView disposed");
+        }
+
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);

@@ -175,6 +175,7 @@ namespace AvalonStudio.Languages.Xaml
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
+            base.OnDetachedFromVisualTree(e);
             KillHost();
         }
 

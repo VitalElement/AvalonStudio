@@ -44,7 +44,7 @@ namespace AvalonStudio
         {
             AvaloniaXamlLoader.Load(this);
 
-            DataTemplates.Add(new ViewLocatorDataTemplate());
+           // DataTemplates.Add(new ViewLocatorDataTemplate());
         }
 
         private static void InitializeLogging()

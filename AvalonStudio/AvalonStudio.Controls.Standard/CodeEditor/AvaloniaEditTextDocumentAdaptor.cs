@@ -14,7 +14,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _codeEditor.TextArea.TextEntering += TextEntering;
             _codeEditor.TextArea.TextEntered += TextEntered;
-        }        
+        }
+
+        ~CodeEditorDocumentAdaptor()
+        {
+            System.Console.WriteLine("Adaptor Disposed");
+        }
 
         /// <summary>
         /// Occurs when the TextArea receives text input.
