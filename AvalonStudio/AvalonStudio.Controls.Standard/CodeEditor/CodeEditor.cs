@@ -15,6 +15,7 @@ using AvalonStudio.CodeEditor;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Documents;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.GlobalSettings;
@@ -296,6 +297,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             {
                                 FileName = file.Item2.Location
                             };
+
+                            DocumentAccessor = new CodeEditorDocumentAdaptor(this);
                         }
                     }
 
@@ -984,6 +987,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get => GetValue(SourceTextProperty);
             set => SetValue(SourceTextProperty, value);
+        }
+
+        public static readonly AvaloniaProperty<ITextDocument> DocumentAccessorProperty = 
+            AvaloniaProperty.Register<CodeEditor, ITextDocument>(nameof(DocumentAccessor), defaultBindingMode: BindingMode.TwoWay);
+
+        public ITextDocument DocumentAccessor
+        {
+            get => GetValue(DocumentAccessorProperty);
+            set => SetValue(DocumentAccessorProperty, value);
         }
 
         public static readonly StyledProperty<bool> IsDirtyProperty =

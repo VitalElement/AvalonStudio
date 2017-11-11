@@ -47,8 +47,7 @@ namespace AvalonStudio.Controls
             }
             else
             {
-
-                if (TemporaryDocument != null)
+                if (TemporaryDocument != null && TemporaryDocument.IsTemporary)
                 {
                     CloseDocument(TemporaryDocument);
                 }

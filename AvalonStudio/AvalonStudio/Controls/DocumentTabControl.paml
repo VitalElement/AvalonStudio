@@ -32,7 +32,10 @@
     <cont:DocumentTabControl.HeaderTemplate>
       <DataTemplate>
         <StackPanel Orientation="Horizontal" Gap="2">
-          <TextBlock Text="{Binding Title}" Margin="2" FontSize="12"/>
+          <StackPanel Orientation="Horizontal" Margin="2" TextBlock.FontSize="12">
+            <TextBlock Text="{Binding Title}" />
+            <TextBlock Text="*" IsVisible="{Binding IsDirty, FallbackValue=False}" />
+          </StackPanel>          
           <Button IsVisible="{Binding IsSelected}" Height="14" Width="14" Command="{Binding CloseCommand}">
             <Button.Styles>
               <Style Selector="Button">

@@ -32,6 +32,11 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref dock, value); }
         }
 
+        public virtual void Save()
+        {
+
+        }
+
         public ReactiveCommand CloseCommand { get; protected set; }
 
         public string Title

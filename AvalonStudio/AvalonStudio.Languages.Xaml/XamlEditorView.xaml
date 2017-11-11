@@ -20,7 +20,7 @@
                                   HighlightSelectedWord="False"
                                   SourceFile="{Binding SourceFile}" 
                                   IsDirty="{Binding IsDirty}"
-                                  SourceText="{Binding SourceText}">
+                                  SourceText="{Binding SourceText}" DocumentAccessor="{Binding DocumentAccessor}">
             </editor:CodeEditor>
         </Grid>
     </Border>

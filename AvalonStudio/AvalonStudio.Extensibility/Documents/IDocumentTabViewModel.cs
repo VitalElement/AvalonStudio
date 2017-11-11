@@ -26,5 +26,7 @@ namespace AvalonStudio.Controls
         Dock Dock { get; set; }
 
         void OnClose();
+
+        void Save();
     }
 }

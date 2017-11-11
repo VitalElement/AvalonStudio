@@ -459,15 +459,12 @@ namespace AvalonStudio
 
         public void Save()
         {
-            if (SelectedDocument is ICodeEditor)
-            {
-                (SelectedDocument as ICodeEditor).Save();
-            }
+            SelectedDocument?.Save();            
         }
 
         public void SaveAll()
         {
-            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>().Where(d => d.IsDirty && d.IsVisible))
+            foreach (var document in DocumentTabs.Documents)
             {
                 document.Save();
             }
