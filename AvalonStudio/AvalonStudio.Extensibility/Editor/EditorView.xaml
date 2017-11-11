@@ -6,10 +6,6 @@
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
              xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard" Name="Editor">
-    <UserControl.KeyBindings>
-        <KeyBinding Command="{Binding SaveCommand}" Gesture="CTRL+S" />
-    </UserControl.KeyBindings>
-    
     <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
         <Grid>
             <DockPanel>

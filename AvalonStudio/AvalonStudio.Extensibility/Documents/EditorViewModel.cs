@@ -19,11 +19,6 @@ namespace AvalonStudio.Controls
         {            
             _sourceFile = file;
 
-            SaveCommand = ReactiveCommand.Create(() =>
-            {
-                Save(); 
-            });
-
             this.WhenAnyValue(x => x.DocumentAccessor).Subscribe(accessor =>
             {
                 _disposables?.Dispose();
@@ -73,7 +68,5 @@ namespace AvalonStudio.Controls
             get { return _documentAccessor; }
             set { this.RaiseAndSetIfChanged(ref _documentAccessor, value); }
         }
-
-        public ReactiveCommand SaveCommand { get; }
     }
 }
