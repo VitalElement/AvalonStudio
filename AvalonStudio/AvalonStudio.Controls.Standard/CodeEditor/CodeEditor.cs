@@ -1116,6 +1116,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             UnRegisterLanguageService();
 
+            DocumentAccessor?.Dispose();
+
             base.OnDetachedFromVisualTree(e);
         }
     }

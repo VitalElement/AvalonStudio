@@ -1,9 +1,6 @@
 ﻿using Avalonia.Input;
-using AvaloniaEdit.Document;
 using AvalonStudio.Extensibility.Documents;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -17,13 +14,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _codeEditor.TextArea.TextEntering += TextEntering;
             _codeEditor.TextArea.TextEntered += TextEntered;
-        }
-
-        ~CodeEditorDocumentAdaptor()
-        {
-            _codeEditor.TextArea.TextEntering -= TextEntering;
-            _codeEditor.TextArea.TextEntered -= TextEntered;
-        }
+        }        
 
         /// <summary>
         /// Occurs when the TextArea receives text input.
@@ -49,6 +40,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public void Replace(int offset, int length, string text)
         {
             _codeEditor.Document.Replace(offset, length, text);
+        }
+
+        public void Dispose()
+        {
+            _codeEditor.TextArea.TextEntering -= TextEntering;
+            _codeEditor.TextArea.TextEntered -= TextEntered;
+            _codeEditor = null;
         }
     }
 }

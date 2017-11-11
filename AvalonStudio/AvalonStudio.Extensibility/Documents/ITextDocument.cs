@@ -3,7 +3,7 @@ using System;
 
 namespace AvalonStudio.Extensibility.Documents
 {
-    public interface ITextDocument
+    public interface ITextDocument : IDisposable
     {
         /// <summary>
         /// Occurs when the TextArea receives text input.
