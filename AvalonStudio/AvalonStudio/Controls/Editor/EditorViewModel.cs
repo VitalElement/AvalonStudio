@@ -125,7 +125,7 @@ namespace AvalonStudio.Controls
         {
         }
 
-        public override void OnClose()
+        public override void Close()
         {
             _shell.InvalidateErrors();
         }

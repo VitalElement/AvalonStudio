@@ -9,6 +9,7 @@ using Avalonia.Threading;
 using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
+using AvaloniaEdit.Highlighting;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
 using AvalonStudio.CodeEditor;
@@ -701,6 +702,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             if (LanguageService != null)
             {
+                SyntaxHighlighting = HighlightingManager.Instance.GetDefinition(LanguageService.LanguageId.ToUpper());
+
                 LanguageServiceName = LanguageService.Title;
 
                 LanguageService.RegisterSourceFile(this, sourceFile, Document);
@@ -738,7 +741,33 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             Document.TextChanged += TextDocument_TextChanged;
 
+            TextArea.TextEntering += TextArea_TextEntering;
+
+            TextArea.TextEntered += TextArea_TextEntered;
+
             DoCodeAnalysisAsync().GetAwaiter();
+        }
+
+        private void TextArea_TextEntered(object sender, TextInputEventArgs e)
+        {
+            if(LanguageService != null && LanguageService.InputHelpers != null)
+            {
+                foreach(var helper in LanguageService.InputHelpers)
+                {
+                    helper.AfterTextInput(LanguageService, DocumentAccessor, e);
+                }
+            }
+        }
+
+        private void TextArea_TextEntering(object sender, TextInputEventArgs e)
+        {
+            if (LanguageService != null && LanguageService.InputHelpers != null)
+            {
+                foreach (var helper in LanguageService.InputHelpers)
+                {
+                    helper.BeforeTextInput(LanguageService, DocumentAccessor, e);
+                }
+            }
         }
 
         private void UnRegisterLanguageService()
@@ -783,6 +812,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
 
             Document.TextChanged -= TextDocument_TextChanged;
+
+            TextArea.TextEntering -= TextArea_TextEntering;
+            TextArea.TextEntered -= TextArea_TextEntered;
         }
 
         private void TextDocument_TextChanged(object sender, EventArgs e)
@@ -1083,6 +1115,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
             UnRegisterLanguageService();
+
+            DocumentAccessor?.Dispose();
 
             base.OnDetachedFromVisualTree(e);
         }

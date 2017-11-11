@@ -13,11 +13,20 @@ using Avalonia.Ide.CompletionEngine.AssemblyMetadata;
 using Avalonia.Ide.CompletionEngine.SrmMetadataProvider;
 using System.Reflection;
 using System.Linq;
+using AvalonStudio.Editor;
 
 namespace AvalonStudio.Languages.Xaml
 {
     class XamlLanguageService : ILanguageService
     {
+        private static List<ICodeEditorInputHelper> s_InputHelpers = new List<ICodeEditorInputHelper>
+        {
+            new CompleteCloseTagCodeEditorHelper(),
+            new TerminateElementCodeEditorHelper(),
+            new InsertQuotesForPropertyValueCodeEditorHelper(),
+            new XamlIndentationCodeEditorHelper()
+        };
+
         public IIndentationStrategy IndentationStrategy => null;
 
         public string Title => "XAML";
@@ -25,6 +34,8 @@ namespace AvalonStudio.Languages.Xaml
         public string LanguageId => "xaml";
 
         public Type BaseTemplateType => null;
+
+        public IEnumerable<ICodeEditorInputHelper> InputHelpers => s_InputHelpers;
 
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => new Dictionary<string, Func<string, string>>();
 
@@ -132,9 +143,15 @@ namespace AvalonStudio.Languages.Xaml
 
         public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument)
         {
-            engine = new CompletionEngine();
-            
-            metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(file.Project.Solution.StartupProject.Executable);
+            if (engine == null)
+            {
+                engine = new CompletionEngine();
+            }
+
+            if(metaData == null)
+            { 
+                metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(file.Project.Solution.StartupProject.Executable);
+            }
         }
         
         public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)

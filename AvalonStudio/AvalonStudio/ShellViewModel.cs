@@ -459,12 +459,15 @@ namespace AvalonStudio
 
         public void Save()
         {
-            SelectedDocument?.Save();            
+            if (SelectedDocument is IFileDocumentTabViewModel document)
+            {
+                document.Save();
+            }
         }
 
         public void SaveAll()
         {
-            foreach (var document in DocumentTabs.Documents)
+            foreach (var document in DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>())
             {
                 document.Save();
             }
@@ -640,11 +643,6 @@ namespace AvalonStudio
             {
                 if (DocumentTabs != null)
                 {
-                    if (value == null || (DocumentTabs.TemporaryDocument == value && !value.IsTemporary))
-                    {
-                        DocumentTabs.TemporaryDocument = null;
-                    }
-
                     DocumentTabs.SelectedDocument = value;
                 }
             }

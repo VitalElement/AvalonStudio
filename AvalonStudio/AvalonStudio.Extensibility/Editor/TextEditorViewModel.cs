@@ -1,9 +1,13 @@
-﻿using AvalonStudio.Controls;
+﻿using Avalonia.Input;
+using AvalonStudio.Controls;
 using AvalonStudio.Extensibility.Documents;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
+using System;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 
 namespace AvalonStudio.Extensibility.Editor
 {
@@ -14,8 +18,9 @@ namespace AvalonStudio.Extensibility.Editor
         private double _zoomLevel;
         private double _visualFontSize;
         private IShell _shell;
-        private ITextDocument _document;
         private string _sourceText;
+        private ITextDocument _documentAccessor;
+        private CompositeDisposable _disposables;
 
         public TextEditorViewModel(ISourceFile file) : base(file)
         {
@@ -23,18 +28,24 @@ namespace AvalonStudio.Extensibility.Editor
             _visualFontSize = _fontSize = 14;
             _zoomLevel = 1;
             Title = file.Name;
+
+            this.WhenAnyValue(x => x.DocumentAccessor).Subscribe(accessor =>
+            {
+                _disposables?.Dispose();
+                _disposables = null;
+
+                if (accessor != null)
+                {
+                    _disposables = new CompositeDisposable
+                    {
+                        Observable.FromEventPattern<TextInputEventArgs>(accessor, nameof(accessor.TextEntered)).Subscribe(args =>
+                        {
+                            IsDirty = true;
+                        })
+                    };
+                }
+            });
             //ZoomLevel = _shell.GlobalZoomLevel;
-        }
-
-        public void Save ()
-        {
-            _document?.Save();
-        }
-
-        public ITextDocument Document
-        {
-            get { return _document; }
-            set { this.RaiseAndSetIfChanged(ref _document, value); }
         }
 
         public string SourceText
@@ -108,6 +119,19 @@ namespace AvalonStudio.Extensibility.Editor
         private void InvalidateVisualFontSize()
         {
             VisualFontSize = (ZoomLevel / 100) * FontSize;
+        }
+
+        public ITextDocument DocumentAccessor
+        {
+            get { return _documentAccessor; }
+            set { this.RaiseAndSetIfChanged(ref _documentAccessor, value); }
+        }
+
+        public override void Save()
+        {
+            base.Save();
+
+            _documentAccessor?.Save();
         }
     }
 }

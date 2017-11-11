@@ -16,11 +16,6 @@ namespace AvalonStudio.Controls
 
         public DocumentTabViewModel(T model) : base(model)
         {
-            CloseCommand = ReactiveCommand.Create(() =>
-            {
-                IoC.Get<IShell>().RemoveDocument(this);
-            });
-
             Dock = Dock.Left;
 
             IsVisible = true;
@@ -35,9 +30,7 @@ namespace AvalonStudio.Controls
         public virtual void Save()
         {
 
-        }
-
-        public ReactiveCommand CloseCommand { get; protected set; }
+        }        
 
         public string Title
         {
@@ -81,8 +74,9 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref _isSelected, value); }
         }
 
-        public virtual void OnClose()
+        public virtual void Close()
         {
+            IoC.Get<IShell>().RemoveDocument(this);
         }
     }
 }

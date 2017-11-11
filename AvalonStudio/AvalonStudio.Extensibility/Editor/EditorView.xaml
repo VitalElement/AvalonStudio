@@ -6,27 +6,24 @@
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
              xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard" Name="Editor">
-    <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
-        <Grid>
-            <DockPanel>
-                <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
-                    <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
-                </Grid>
+    <Grid>
+        <DockPanel>
+            <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
+                <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
+            </Grid>
 
-                <editor:CodeEditor Name="editor"
+            <editor:CodeEditor Name="editor"
                                    BorderThickness="0" Margin="0"
                                    VerticalAlignment="Stretch"
-                                   Background="{DynamicResource ThemeEditorBackground}"
-                                   
+                                   Background="{DynamicResource ThemeEditorBackground}"                                   
                                    FontFamily="{Binding FontFamily}" 
-                                   FontSize="{Binding VisualFontSize}"
-                                  
-                                  SourceFile="{Binding SourceFile}" 
-                                  IsDirty="{Binding IsDirty}"
-                                   
+                                   FontSize="{Binding VisualFontSize}"                                  
+                                   SourceFile="{Binding SourceFile}" 
+                                   IsDirty="{Binding IsDirty}"
+                                   SourceText="{Binding SourceText}"                                   
+                                   HighlightSelectedWord="False"                   
                                    DocumentAccessor="{Binding DocumentAccessor}">
-                </editor:CodeEditor>
-            </DockPanel>
-        </Grid>
-    </Border>
+            </editor:CodeEditor>
+        </DockPanel>
+    </Grid>
 </UserControl>

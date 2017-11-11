@@ -47,18 +47,16 @@ namespace AvalonStudio.Controls
             }
             else
             {
-                if (TemporaryDocument != null && TemporaryDocument.IsTemporary)
+                if (TemporaryDocument != null)
                 {
                     CloseDocument(TemporaryDocument);
                 }
-
-                document.IsVisible = true;
+                
                 Documents.Add(document);
                 SelectedDocument = document;
 
                 if (temporary)
                 {
-                    document.IsTemporary = true;
                     TemporaryDocument = document;
                 }
             }
@@ -88,12 +86,9 @@ namespace AvalonStudio.Controls
 
                     if (index < Documents.Count)
                     {
-                        if (Documents[index].IsVisible)
-                        {
-                            foundTab = true;
-                            newSelectedTab = Documents[index];
-                            break;
-                        }
+                        foundTab = true;
+                        newSelectedTab = Documents[index];
+                        break;
                     }
                     else
                     {
@@ -109,12 +104,9 @@ namespace AvalonStudio.Controls
 
                     if (index >= 0)
                     {
-                        if (Documents[index].IsVisible)
-                        {
-                            foundTab = true;
-                            newSelectedTab = Documents[index];
-                            break;
-                        }
+                        foundTab = true;
+                        newSelectedTab = Documents[index];
+                        break;
                     }
                     else
                     {
@@ -131,7 +123,7 @@ namespace AvalonStudio.Controls
             }
 
             Documents.Remove(document);
-            document.OnClose();
+            document.Close();
 
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
@@ -162,21 +154,11 @@ namespace AvalonStudio.Controls
             }
             set
             {
-                if(_selectedDocument != null)
-                {
-                    _selectedDocument.IsSelected = false;
-                }
-
                 this.RaiseAndSetIfChanged(ref _selectedDocument, value);
 
                 if (value is ICodeEditor editor)
                 {
                     editor.TriggerCodeAnalysis();
-                }
-
-                if(_selectedDocument != null)
-                {
-                    value.IsSelected = true;
                 }
             }
         }
@@ -186,17 +168,7 @@ namespace AvalonStudio.Controls
             get { return _temporaryDocument; }
             set
             {
-                if(_temporaryDocument != null)
-                {
-                    _temporaryDocument.IsSelected = false;
-                }
-
                 this.RaiseAndSetIfChanged(ref _temporaryDocument, value);
-
-                if (_temporaryDocument != null)
-                {
-                    _temporaryDocument.IsSelected = true;
-                }
             }
         }
 
