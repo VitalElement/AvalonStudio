@@ -1,7 +1,5 @@
 ﻿using Avalonia.Input;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AvalonStudio.Extensibility.Documents
 {
@@ -20,5 +18,11 @@ namespace AvalonStudio.Extensibility.Documents
         event EventHandler<TextInputEventArgs> TextEntered;
 
         void Save();
+
+        void Replace(int offset, int length, string text);
+
+        string Text { get; }
+
+        int Caret { get; set; }
     }
 }

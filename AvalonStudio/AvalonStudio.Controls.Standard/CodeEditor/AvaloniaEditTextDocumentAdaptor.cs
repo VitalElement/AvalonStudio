@@ -37,10 +37,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         /// </summary>
         public event EventHandler<TextInputEventArgs> TextEntered;
 
+        public string Text => _codeEditor.Text;
+
+        public int Caret { get => _codeEditor.CaretOffset; set => _codeEditor.CaretOffset = value; }
 
         public void Save()
         {
             _codeEditor.Save();
+        }
+
+        public void Replace(int offset, int length, string text)
+        {
+            _codeEditor.Document.Replace(offset, length, text);
         }
     }
 }

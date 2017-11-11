@@ -5,6 +5,7 @@ using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.CodeEditor;
+using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
@@ -146,6 +147,9 @@ namespace AvalonStudio.Languages.CPlusPlus
         public string LanguageId => "cpp";
 
         public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics => null;
+
+        public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
+
         private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
             switch (kind)

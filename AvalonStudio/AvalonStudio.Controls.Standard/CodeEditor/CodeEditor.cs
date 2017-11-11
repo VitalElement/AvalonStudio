@@ -741,7 +741,33 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             Document.TextChanged += TextDocument_TextChanged;
 
+            TextArea.TextEntering += TextArea_TextEntering;
+
+            TextArea.TextEntered += TextArea_TextEntered;
+
             DoCodeAnalysisAsync().GetAwaiter();
+        }
+
+        private void TextArea_TextEntered(object sender, TextInputEventArgs e)
+        {
+            if(LanguageService != null && LanguageService.InputHelpers != null)
+            {
+                foreach(var helper in LanguageService.InputHelpers)
+                {
+                    helper.AfterTextInput(LanguageService, DocumentAccessor, e);
+                }
+            }
+        }
+
+        private void TextArea_TextEntering(object sender, TextInputEventArgs e)
+        {
+            if (LanguageService != null && LanguageService.InputHelpers != null)
+            {
+                foreach (var helper in LanguageService.InputHelpers)
+                {
+                    helper.BeforeTextInput(LanguageService, DocumentAccessor, e);
+                }
+            }
         }
 
         private void UnRegisterLanguageService()
@@ -786,6 +812,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
 
             Document.TextChanged -= TextDocument_TextChanged;
+
+            TextArea.TextEntering -= TextArea_TextEntering;
+            TextArea.TextEntered -= TextArea_TextEntered;
         }
 
         private void TextDocument_TextChanged(object sender, EventArgs e)

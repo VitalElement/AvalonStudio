@@ -18,6 +18,8 @@ namespace AvalonStudio.Languages.Xaml
         public XamlEditorViewModel(ISourceFile file)
         {
             _textEditor = new TextEditorViewModel(file);
+            
+
         }
 
         public string SouceText => _textEditor.SourceText;
