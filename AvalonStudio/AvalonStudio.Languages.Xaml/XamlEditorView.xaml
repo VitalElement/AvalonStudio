@@ -1,5 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:previewer="clr-namespace:AvalonStudio.Languages.Xaml"
+             xmlns:as="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
              >
     <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
@@ -10,7 +11,9 @@
 
             <GridSplitter Grid.Row="1" Height="4" />
 
-            <editor:CodeEditor Grid.Row="2" Name="editor"
+            <ContentPresenter as:View.View="{Binding CodeEditor}" />
+
+            <!--<editor:CodeEditor Grid.Row="2" Name="editor"
                                    BorderThickness="0" Margin="0"
                                    VerticalAlignment="Stretch"
                                    Background="{DynamicResource ThemeEditorBackground}"
@@ -21,7 +24,7 @@
                                   SourceFile="{Binding SourceFile}" 
                                   IsDirty="{Binding IsDirty}"
                                   SourceText="{Binding SourceText}" DocumentAccessor="{Binding DocumentAccessor}">
-            </editor:CodeEditor>
+            </editor:CodeEditor>-->
         </Grid>
     </Border>
 </UserControl>
