@@ -27,7 +27,7 @@ namespace AvalonStudio.Languages.Xaml
             new XamlIndentationCodeEditorHelper()
         };
 
-        public IIndentationStrategy IndentationStrategy => null;
+        public IIndentationStrategy IndentationStrategy { get; } = new XamlIndentationStrategy();
 
         public string Title => "XAML";
 
