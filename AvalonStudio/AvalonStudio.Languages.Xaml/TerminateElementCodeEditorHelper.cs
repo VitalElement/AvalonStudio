@@ -14,7 +14,7 @@ namespace AvalonStudio.Languages.Xaml
             {
                 var textBefore = editor.Document.GetText(0, Math.Max(0, editor.Offset - 1));
 
-                if (textBefore.Length > 2 && textBefore[textBefore.Length - 1] != '/')
+                if (textBefore.Length > 2 && textBefore[textBefore.Length - 1] != '/' && editor.Document.GetCharAt(editor.Offset) != '>')
                 {
                     var state = XmlParser.Parse(textBefore);
                     if (state.State == XmlParser.ParserState.InsideElement
