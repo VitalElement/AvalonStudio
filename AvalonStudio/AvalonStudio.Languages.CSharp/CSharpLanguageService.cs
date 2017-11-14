@@ -81,12 +81,12 @@
 
         public IEnumerable<char> IntellisenseTriggerCharacters => new[]
         {
-            '.', '>', ':'
+            '.', '<', ':'
         };
 
         public IEnumerable<char> IntellisenseSearchCharacters => new[]
         {
-            '(', ')', '.', ':', '-', '>', ';'
+            '(', ')', '.', ':', '-', '>', ';', '<'
         };
 
         public IEnumerable<char> IntellisenseCompleteCharacters => new[]
