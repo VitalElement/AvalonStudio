@@ -2,8 +2,6 @@
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AvalonStudio.Languages.Xaml
 {
@@ -12,7 +10,7 @@ namespace AvalonStudio.Languages.Xaml
         public override void IndentLine(TextDocument document, DocumentLine line)
         {
             //Check if we are not inside a tag
-            var textBefore = document.Text.Substring(0, Math.Max(0, line.EndOffset));
+            var textBefore = document.GetText(0, Math.Max(0, line.EndOffset));
             var state = XmlParser.Parse(textBefore);
             if (state.State == XmlParser.ParserState.None)
             {
@@ -20,7 +18,7 @@ namespace AvalonStudio.Languages.Xaml
                 var idx = textBefore.LastIndexOf('>');
                 if (idx != -1)
                 {
-                    state = XmlParser.Parse(textBefore.Substring(0, Math.Max(0, idx)));
+                    state = XmlParser.Parse(document.GetText(0, Math.Max(0, idx)));
                     if (state.TagName.StartsWith('/'))
                     {
                         //TODO: find matching starting tag. XmlParser can't do that right now.

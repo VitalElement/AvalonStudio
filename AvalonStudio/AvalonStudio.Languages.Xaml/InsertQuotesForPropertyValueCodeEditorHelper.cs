@@ -20,7 +20,7 @@ namespace AvalonStudio.Languages.Xaml
                     if (state.State == XmlParser.ParserState.StartAttribute)
                     {
                         var caret = editor.Offset;
-                        editor.Document.Replace(caret, 0, "\"\"");
+                        editor.Document.Insert(caret, "\"\"");
                         editor.Offset = caret + 1;
                     }
                 }
