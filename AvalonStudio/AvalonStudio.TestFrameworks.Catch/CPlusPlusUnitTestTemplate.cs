@@ -76,7 +76,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
 
             // Add project
-            var catchProject = Project.LoadProjectFile(catchProjectFile);
+            var catchProject = await Project.LoadProjectFileAsync(solutionFolder.Solution, catchProjectFile);
             catchProject.Hidden = true;
 
             solutionFolder.Solution.AddItem(catchProject);
