@@ -37,6 +37,20 @@ namespace AvalonStudio.Extensibility.Documents
         {
             document.Replace(segment.Offset, segment.Length, text);
         }
+
+        public static ISegment GetWhitespaceAfter(this ITextDocument textSource, int offset)
+        {
+            if (textSource == null)
+                throw new ArgumentNullException(nameof(textSource));
+            int pos;
+            for (pos = offset; pos < textSource.TextLength; pos++)
+            {
+                char c = textSource.GetCharAt(pos);
+                if (c != ' ' && c != '\t')
+                    break;
+            }
+            return new SimpleSegment(offset, pos - offset);
+        }
     }
 
     /// <summary>
@@ -110,11 +124,15 @@ namespace AvalonStudio.Extensibility.Documents
 
         string Text { get; }
 
+        int TextLength { get; }
+
         IIndexableList<IDocumentLine> Lines { get; }
 
         int LineCount { get; }
 
         string GetText(int offset, int length);
+
+        char GetCharAt(int offset);
 
         IDisposable RunUpdate();
     }

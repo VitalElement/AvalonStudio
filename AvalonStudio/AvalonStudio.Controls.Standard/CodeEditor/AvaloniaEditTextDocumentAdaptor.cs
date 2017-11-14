@@ -136,6 +136,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private AvaloniaEdit.Document.TextDocument _document;
         private DocumentLinesCollection _lines;
 
+        internal AvaloniaEdit.Document.TextDocument Document => _document;
+
         public DocumentAdaptor(AvaloniaEdit.Document.TextDocument document)
         {
             _document = document;
@@ -153,14 +155,21 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public int LineCount => _document.LineCount;
 
+        public int TextLength => _document.TextLength;
+
+        public void Insert(int offset, string text)
+        {
+            Replace(offset, 0, text);
+        }
+
         public void Replace(int offset, int length, string text)
         {
             _document.Replace(offset, length, text);
         }
 
-        public void Insert(int offset, string text)
+        public char GetCharAt(int offset)
         {
-            Replace(offset, 0, text);
+            return _document.GetCharAt(offset);
         }
 
         public string GetText(int offset, int length)
