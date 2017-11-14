@@ -308,7 +308,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                                 FileName = file.Item2.Location
                             };
 
-                            DocumentAccessor = new CodeEditorDocumentAdaptor(this);
+                            DocumentAccessor = new EditorAdaptor(this);
                         }
                     }
 
@@ -1028,10 +1028,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             set => SetValue(SourceTextProperty, value);
         }
 
-        public static readonly AvaloniaProperty<ITextDocument> DocumentAccessorProperty =
-            AvaloniaProperty.Register<CodeEditor, ITextDocument>(nameof(DocumentAccessor), defaultBindingMode: BindingMode.TwoWay);
+        public static readonly AvaloniaProperty<IEditor> DocumentAccessorProperty =
+            AvaloniaProperty.Register<CodeEditor, IEditor>(nameof(DocumentAccessor), defaultBindingMode: BindingMode.TwoWay);
 
-        public ITextDocument DocumentAccessor
+        public IEditor DocumentAccessor
         {
             get => GetValue(DocumentAccessorProperty);
             set => SetValue(DocumentAccessorProperty, value);

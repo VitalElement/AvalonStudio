@@ -19,7 +19,7 @@ namespace AvalonStudio.Extensibility.Editor
         private double _visualFontSize;
         private IShell _shell;
         private string _sourceText;
-        private ITextDocument _documentAccessor;
+        private IEditor _documentAccessor;
         private CompositeDisposable _disposables;
 
         public TextEditorViewModel(ISourceFile file) : base(file)
@@ -126,7 +126,7 @@ namespace AvalonStudio.Extensibility.Editor
             VisualFontSize = (ZoomLevel / 100) * FontSize;
         }
 
-        public ITextDocument DocumentAccessor
+        public IEditor DocumentAccessor
         {
             get { return _documentAccessor; }
             set { this.RaiseAndSetIfChanged(ref _documentAccessor, value); }

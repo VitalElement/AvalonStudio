@@ -9,7 +9,7 @@ namespace AvalonStudio.Editor
 {
     public interface ICodeEditorInputHelper
     {
-        void BeforeTextInput(ILanguageService languageService, ITextDocument document, TextInputEventArgs args);
-        void AfterTextInput(ILanguageService languageServivce, ITextDocument document, TextInputEventArgs args);
+        void BeforeTextInput(ILanguageService languageService, IEditor document, TextInputEventArgs args);
+        void AfterTextInput(ILanguageService languageServivce, IEditor document, TextInputEventArgs args);
     }
 }

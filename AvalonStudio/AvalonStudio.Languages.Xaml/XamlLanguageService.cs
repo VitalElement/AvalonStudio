@@ -24,7 +24,7 @@ namespace AvalonStudio.Languages.Xaml
             new CompleteCloseTagCodeEditorHelper(),
             new TerminateElementCodeEditorHelper(),
             new InsertQuotesForPropertyValueCodeEditorHelper(),
-            new XamlIndentationCodeEditorHelper()
+            new InsertExtraNewLineBetweenAttributesOnEnterCodeInputHelper()
         };
 
         public IIndentationStrategy IndentationStrategy { get; } = new XamlIndentationStrategy();

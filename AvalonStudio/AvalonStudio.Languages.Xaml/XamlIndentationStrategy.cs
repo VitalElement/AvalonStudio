@@ -29,19 +29,33 @@ namespace AvalonStudio.Languages.Xaml
                     }
                     //Find starting '<'
                     bool insideAttribute = false;
+                    bool attributeTerminatorDetected = false;
+
                     for (; idx >= 0; idx--)
                     {
                         var ch = textBefore[idx];
                         if (ch == '"')
                             insideAttribute = !insideAttribute;
+
+                        if (ch == '/' && textBefore[idx + 1] == '>')
+                        {
+                            attributeTerminatorDetected = true;
+                        }
+
                         if (ch == '<' && !insideAttribute)
                         {
                             var textBeforeTag = textBefore.Substring(0, idx);
                             var lineStartIdx = textBeforeTag.LastIndexOf('\n');
-                            if (lineStartIdx != -1)
+                            if (lineStartIdx != -1 || textBeforeTag == "")
                             {
                                 //TODO: Do something about '\t' characters
                                 var prefixLength = (idx - lineStartIdx) + 1;
+
+                                if (attributeTerminatorDetected)
+                                {
+                                    prefixLength -= 2;
+                                }
+
                                 document.Replace(line.EndOffset, 0,
                                     new string(' ', prefixLength));
                             }
