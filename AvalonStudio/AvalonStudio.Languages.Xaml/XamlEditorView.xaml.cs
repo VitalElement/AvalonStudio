@@ -1,5 +1,9 @@
+using System;
 using Avalonia.Controls;
+using Avalonia.Ide.CompletionEngine;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using AvaloniaEdit.Highlighting;
 
 namespace AvalonStudio.Languages.Xaml
 {

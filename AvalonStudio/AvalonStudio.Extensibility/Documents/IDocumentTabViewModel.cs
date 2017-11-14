@@ -1,6 +1,4 @@
-﻿using Avalonia.Controls;
-using AvalonStudio.Projects;
-using ReactiveUI;
+﻿using AvalonStudio.Projects;
 
 namespace AvalonStudio.Controls
 {
@@ -9,22 +7,14 @@ namespace AvalonStudio.Controls
         ISourceFile SourceFile { get; }
 
         bool IsDirty { get; set; }
+
+        void Save();
     }
 
     public interface IDocumentTabViewModel
     {
         string Title { get; set; }
 
-        ReactiveCommand CloseCommand { get; }
-
-        bool IsTemporary { get; set; }
-
-        bool IsVisible { get; set; }
-
-        bool IsSelected { get; set; }
-
-        Dock Dock { get; set; }
-
-        void OnClose();
+        void Close();
     }
 }

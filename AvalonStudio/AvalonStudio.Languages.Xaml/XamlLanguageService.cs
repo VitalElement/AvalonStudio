@@ -1,30 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using AvaloniaEdit;
-using AvaloniaEdit.Document;
-using AvaloniaEdit.Indentation;
-using AvalonStudio.Extensibility.Languages.CompletionAssistance;
-using AvalonStudio.Projects;
-using System.IO;
-using Avalonia.Ide.CompletionEngine;
+﻿using Avalonia.Ide.CompletionEngine;
 using Avalonia.Ide.CompletionEngine.AssemblyMetadata;
 using Avalonia.Ide.CompletionEngine.SrmMetadataProvider;
-using System.Reflection;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Indentation;
+using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+using AvalonStudio.Projects;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.Xaml
 {
     class XamlLanguageService : ILanguageService
     {
-        public IIndentationStrategy IndentationStrategy => null;
+        private static List<ICodeEditorInputHelper> s_InputHelpers = new List<ICodeEditorInputHelper>
+        {
+            new CompleteCloseTagCodeEditorHelper(),
+            new TerminateElementCodeEditorHelper(),
+            new InsertQuotesForPropertyValueCodeEditorHelper(),
+            new InsertExtraNewLineBetweenAttributesOnEnterCodeInputHelper()
+        };
+
+        public IIndentationStrategy IndentationStrategy { get; } = new XamlIndentationStrategy();
 
         public string Title => "XAML";
 
         public string LanguageId => "xaml";
 
         public Type BaseTemplateType => null;
+
+        public IEnumerable<ICodeEditorInputHelper> InputHelpers => s_InputHelpers;
 
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => new Dictionary<string, Func<string, string>>();
 
@@ -69,7 +77,7 @@ namespace AvalonStudio.Languages.Xaml
         {
             bool result = false;
 
-            if(currentChar == '<')
+            if (currentChar == '<' || currentChar == ' ' || currentChar == '.')
             {
                 return true;
             }
@@ -92,7 +100,12 @@ namespace AvalonStudio.Languages.Xaml
                 {
                     foreach (var completion in completionSet.Completions)
                     {
-                        results.Completions.Add(new CodeCompletionData { Suggestion = completion.DisplayText, BriefComment = completion.Description, Kind = CodeCompletionKind.PropertyPublic });
+                        results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
+                        {
+                            BriefComment = completion.Description,
+                            Kind = CodeCompletionKind.PropertyPublic,
+                            RecommendImmediateSuggestions = completion.InsertText.Contains("=") || completion.InsertText.EndsWith('.')
+                        });
                     }
                 }
             }
@@ -132,14 +145,20 @@ namespace AvalonStudio.Languages.Xaml
 
         public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument)
         {
-            engine = new CompletionEngine();
-            
-            metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(file.Project.Solution.StartupProject.Executable);
+            if (engine == null)
+            {
+                engine = new CompletionEngine();
+            }
+
+            if (metaData == null)
+            {
+                metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(file.Project.Solution.StartupProject.Executable);
+            }
         }
-        
+
         public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
         {
-            
+
         }
 
         public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)

@@ -10,10 +10,10 @@ using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
-    public class BreakPointMargin : AbstractMargin
+    public class BreakPointMargin : AbstractMargin, IDisposable
     {
-        private readonly BreakpointStore _manager;
-        private readonly CodeEditor _editor;
+        private BreakpointStore _manager;
+        private CodeEditor _editor;
 
         private int previewLine;
         private bool previewPointVisible;
@@ -141,6 +141,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             InvalidateVisual();
             e.Handled = true;
+        }
+
+        public void Dispose()
+        {
+            _manager = null;
+            _editor = null;
         }
     }
 }

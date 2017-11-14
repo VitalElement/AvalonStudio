@@ -24,7 +24,10 @@ namespace AvalonStudio.Extensibility.Threading
 
         public void RunLoop(CancellationToken cancellationToken)
         {
-            cancellationToken.Register(() => { _event.Set(); });
+            cancellationToken.Register(() =>
+            {
+                _event.Set();
+            });
 
             while (!cancellationToken.IsCancellationRequested)
             {

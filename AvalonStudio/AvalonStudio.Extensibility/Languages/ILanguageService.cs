@@ -1,5 +1,6 @@
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
+using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Projects;
@@ -45,6 +46,7 @@ namespace AvalonStudio.Languages
         bool CanTriggerIntellisense(char currentChar, char previousChar);
         IEnumerable<char> IntellisenseSearchCharacters { get; }
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
+        IEnumerable<ICodeEditorInputHelper> InputHelpers { get; }        
 
         bool IsValidIdentifierCharacter(char data);
 

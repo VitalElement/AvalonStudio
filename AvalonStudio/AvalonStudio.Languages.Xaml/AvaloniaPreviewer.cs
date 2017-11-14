@@ -110,7 +110,7 @@ namespace AvalonStudio.Languages.Xaml
 
                 var projectDir = Path.GetDirectoryName(file.Project.Solution.StartupProject.Executable);
 
-                var args = $@"exec --runtimeconfig $(TargetDir)$(TargetName).runtimeconfig.json --depsfile $(TargetDir)$(TargetName).deps.json {executingDir}/HostApp/Avalonia.Designer.HostApp.dll --transport tcp-bson://127.0.0.1:{port}/ $(TargetPath)".ExpandVariables(projectVariables);
+                var args = $@"exec --runtimeconfig $(TargetDir)$(TargetName).runtimeconfig.json --depsfile $(TargetDir)$(TargetName).deps.json {executingDir}/Avalonia.Designer.HostApp.dll --transport tcp-bson://127.0.0.1:{port}/ $(TargetPath)".ExpandVariables(projectVariables);
                 _currentHost = Process.Start("dotnet", args);
             }
         }
@@ -175,6 +175,7 @@ namespace AvalonStudio.Languages.Xaml
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
+            base.OnDetachedFromVisualTree(e);
             KillHost();
         }
 
@@ -182,11 +183,7 @@ namespace AvalonStudio.Languages.Xaml
         {
             base.OnTemplateApplied(e);
 
-            var scrollViewer = e.NameScope.Find<ScrollViewer>("PART_Remote");
-
-            _remoteContainer = new Center();
-
-            scrollViewer.Content = _remoteContainer;
+            _remoteContainer = e.NameScope.Find<Center>("PART_Center");
         }
 
         private void OnMessage(IAvaloniaRemoteTransportConnection transport, object obj)

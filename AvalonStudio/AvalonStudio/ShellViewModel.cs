@@ -459,15 +459,15 @@ namespace AvalonStudio
 
         public void Save()
         {
-            if (SelectedDocument is ICodeEditor)
+            if (SelectedDocument is IFileDocumentTabViewModel document)
             {
-                (SelectedDocument as ICodeEditor).Save();
+                document.Save();
             }
         }
 
         public void SaveAll()
         {
-            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>().Where(d => d.IsDirty && d.IsVisible))
+            foreach (var document in DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>())
             {
                 document.Save();
             }
@@ -643,11 +643,6 @@ namespace AvalonStudio
             {
                 if (DocumentTabs != null)
                 {
-                    if (value == null || (DocumentTabs.TemporaryDocument == value && !value.IsTemporary))
-                    {
-                        DocumentTabs.TemporaryDocument = null;
-                    }
-
                     DocumentTabs.SelectedDocument = value;
                 }
             }

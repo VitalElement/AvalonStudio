@@ -7,6 +7,7 @@
     using AvaloniaEdit.Indentation.CSharp;
     using AvaloniaEdit.Rendering;
     using AvalonStudio.CodeEditor;
+    using AvalonStudio.Editor;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
@@ -59,6 +60,8 @@
                 return typeof(BlankOmniSharpProjectTemplate);
             }
         }
+
+        public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
 
         public bool CanTriggerIntellisense(char currentChar, char previousChar)
         {
@@ -193,11 +196,7 @@
             {
                 foreach (var completion in data.Items)
                 {
-                    var newCompletion = new CodeCompletionData()
-                    {
-                        Suggestion = completion.FilterText,
-                        Hint = completion.DisplayText
-                    };
+                    var newCompletion = new CodeCompletionData(completion.DisplayText, completion.DisplayText);
 
                     if (completion.Properties.ContainsKey("SymbolKind"))
                     {

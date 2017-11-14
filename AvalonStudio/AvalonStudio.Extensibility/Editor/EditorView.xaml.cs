@@ -10,6 +10,12 @@ namespace AvalonStudio.Extensibility.Editor
         {
             InitializeComponent();
         }
+
+        ~EditorView ()
+        {
+            System.Console.WriteLine("EditorView Disposed");
+        }
+
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
@@ -17,6 +23,8 @@ namespace AvalonStudio.Extensibility.Editor
 
         protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
         {
+            base.OnAttachedToLogicalTree(e);
+
             /* _editor = this.FindControl<Standard.CodeEditor.CodeEditor>("editor");
 
              _editor.RequestTooltipContent += _editor_RequestTooltipContent;

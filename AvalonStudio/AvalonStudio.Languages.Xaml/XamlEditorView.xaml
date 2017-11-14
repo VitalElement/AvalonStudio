@@ -1,27 +1,16 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:previewer="clr-namespace:AvalonStudio.Languages.Xaml"
-             xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
-             >
-    <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
-        <Grid RowDefinitions="*,10,*">
-            <Grid DockPanel.Dock="Top" Background="{DynamicResource ThemeEditorBackground}">
-                <previewer:AvaloniaPreviewer Xaml="{Binding SourceText}" SourceFile="{Binding SourceFile}" />
-            </Grid>
-
-            <GridSplitter Grid.Row="1" Height="4" />
-
-            <editor:CodeEditor Grid.Row="2" Name="editor"
-                                   BorderThickness="0" Margin="0"
-                                   VerticalAlignment="Stretch"
-                                   Background="{DynamicResource ThemeEditorBackground}"
-                                   
-                                   FontFamily="{Binding FontFamily}" 
-                                   FontSize="{Binding VisualFontSize}"
-                                  
-                                  SourceFile="{Binding SourceFile}" 
-                                  IsDirty="{Binding IsDirty}"
-                                  SourceText="{Binding SourceText}">
-            </editor:CodeEditor>
+             xmlns:as="clr-namespace:AvalonStudio.Extensibility.Controls;assembly=AvalonStudio.Extensibility"
+             xmlns:local="clr-namespace:AvalonStudio.Extensibility.Editor;assembly=AvalonStudio.Extensibility">
+    <Grid RowDefinitions="*,5,*">
+        <Grid DockPanel.Dock="Top" Background="{DynamicResource ThemeEditorBackground}">
+            <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
+                <previewer:AvaloniaPreviewer Xaml="{Binding CodeEditor.SourceText}" SourceFile="{Binding SourceFile}" />
+            </Border>
         </Grid>
-    </Border>
+
+        <GridSplitter Grid.Row="1" />
+
+        <local:EditorView Grid.Row="2"  DataContext="{Binding CodeEditor}" />
+    </Grid>
 </UserControl>

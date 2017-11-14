@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Avalonia.Designer.HostApp\Avalonia.Designer.HostApp.csproj" />
     <ProjectReference Include="..\Avalonia.Ide\src\Avalonia.Ide.CompletionEngine.SrmMetadataProvider\Avalonia.Ide.CompletionEngine.SrmMetadataProvider.csproj" />
     <ProjectReference Include="..\Avalonia.Ide\src\Avalonia.Ide.CompletionEngine\Avalonia.Ide.CompletionEngine.csproj" />
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
