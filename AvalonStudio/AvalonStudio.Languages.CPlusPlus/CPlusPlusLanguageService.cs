@@ -234,8 +234,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                     {
                         var typedText = string.Empty;
 
-                        var hint = string.Empty;
-
                         if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available || codeCompletion.CompletionString.Availability == AvailabilityKind.Deprecated)
                         {
                             foreach (var chunk in codeCompletion.CompletionString.Chunks)
@@ -244,8 +242,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 {
                                     typedText = chunk.Text;
                                 }
-
-                                hint += chunk.Text;
 
                                 switch (chunk.Kind)
                                 {
@@ -260,21 +256,15 @@ namespace AvalonStudio.Languages.CPlusPlus
                                     case CompletionChunkKind.Placeholder:
                                     case CompletionChunkKind.Comma:
                                         break;
-
-                                    default:
-                                        hint += " ";
-                                        break;
                                 }
                             }
 
                             if (filter == string.Empty || typedText.StartsWith(filter))
                             {
-                                var completion = new CodeCompletionData
+                                var completion = new CodeCompletionData (typedText, typedText)
                                 {
-                                    Suggestion = typedText,
                                     Priority = codeCompletion.CompletionString.Priority,
                                     Kind = FromClangKind(codeCompletion.CursorKind),
-                                    Hint = hint,
                                     BriefComment = codeCompletion.CompletionString.BriefComment
                                 };
 

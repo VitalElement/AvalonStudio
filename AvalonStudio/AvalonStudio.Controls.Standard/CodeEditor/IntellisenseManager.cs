@@ -134,7 +134,7 @@
                 {
                     CompletionDataViewModel currentCompletion = null;
 
-                    currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.Suggestion);
+                    currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.DisplayText);
 
                     if (currentCompletion == null)
                     {
@@ -302,9 +302,16 @@
                 if (caretIndex - wordStart - offset >= 0 && intellisenseControl.SelectedCompletion != null)
                 {
                     editor.Document.Replace(wordStart, caretIndex - wordStart - offset,
-                            intellisenseControl.SelectedCompletion.Title);
+                            intellisenseControl.SelectedCompletion.Model.InsertionText);
 
-                    caretIndex = wordStart + intellisenseControl.SelectedCompletion.Title.Length + offset;
+                    var length = intellisenseControl.SelectedCompletion.Model.InsertionText.Length;
+
+                    if(intellisenseControl.SelectedCompletion.Model.RecommendedCaretPosition.HasValue)
+                    {
+                        length = intellisenseControl.SelectedCompletion.Model.RecommendedCaretPosition.Value;
+                    }
+
+                    caretIndex = wordStart + length + offset;
 
                     editor.CaretOffset = caretIndex;
                 }
@@ -324,7 +331,7 @@
         {
             foreach (var snippet in _snippets)
             {
-                var current = sortedResults.InsertSortedExclusive(new CodeCompletionData { Kind = CodeCompletionKind.Snippet, Suggestion = snippet.Name, BriefComment = snippet.Description });
+                var current = sortedResults.InsertSortedExclusive(new CodeCompletionData (snippet.Name, snippet.Name) { Kind = CodeCompletionKind.Snippet, BriefComment = snippet.Description });
 
                 if (current != null && current.Kind != CodeCompletionKind.Snippet)
                 {

@@ -196,11 +196,7 @@
             {
                 foreach (var completion in data.Items)
                 {
-                    var newCompletion = new CodeCompletionData()
-                    {
-                        Suggestion = completion.FilterText,
-                        Hint = completion.DisplayText
-                    };
+                    var newCompletion = new CodeCompletionData(completion.DisplayText, completion.DisplayText);
 
                     if (completion.Properties.ContainsKey("SymbolKind"))
                     {

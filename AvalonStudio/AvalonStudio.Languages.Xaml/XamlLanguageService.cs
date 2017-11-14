@@ -77,7 +77,7 @@ namespace AvalonStudio.Languages.Xaml
         {
             bool result = false;
 
-            if(currentChar == '<' || currentChar == ' ')
+            if (currentChar == '<' || currentChar == ' ')
             {
                 return true;
             }
@@ -100,7 +100,11 @@ namespace AvalonStudio.Languages.Xaml
                 {
                     foreach (var completion in completionSet.Completions)
                     {
-                        results.Completions.Add(new CodeCompletionData { Suggestion = completion.DisplayText, BriefComment = completion.Description, Kind = CodeCompletionKind.PropertyPublic });
+                        results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
+                        {
+                            BriefComment = completion.Description,
+                            Kind = CodeCompletionKind.PropertyPublic
+                        });
                     }
                 }
             }
@@ -145,15 +149,15 @@ namespace AvalonStudio.Languages.Xaml
                 engine = new CompletionEngine();
             }
 
-            if(metaData == null)
-            { 
+            if (metaData == null)
+            {
                 metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(file.Project.Solution.StartupProject.Executable);
             }
         }
-        
+
         public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
         {
-            
+
         }
 
         public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
