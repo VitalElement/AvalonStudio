@@ -43,7 +43,7 @@ namespace AvalonStudio.Projects.OmniSharp
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
             Settings = new ExpandoObject();
-            Project = this;
+            Project = this;            
 
             FileAdded += (sender, e) =>
             {
@@ -55,6 +55,8 @@ namespace AvalonStudio.Projects.OmniSharp
                 }
             };
         }
+
+        protected override bool FilterProjectFile => false;
 
         public List<string> UnresolvedReferences { get; set; }
 
