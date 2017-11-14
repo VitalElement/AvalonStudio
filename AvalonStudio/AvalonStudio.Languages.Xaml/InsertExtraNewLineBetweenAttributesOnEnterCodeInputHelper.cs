@@ -34,15 +34,26 @@ namespace AvalonStudio.Languages.Xaml
                         {
                             var newline = "\n";
 
-                            editor.Document.TrimTrailingWhiteSpace(editor.Line);
+                            bool indentEnd = false;
+
+                            if (editor.Line < editor.Document.LineCount)
+                            {
+                                indentEnd = true;
+                                editor.Document.TrimTrailingWhiteSpace(editor.Line + 1);
+                            }
 
                             editor.Document.Insert(editor.Offset, newline);
 
-                            editor.Document.TrimTrailingWhiteSpace(editor.Line - 1);
+                            editor.Document.TrimTrailingWhiteSpace(editor.Line);
 
                             editor.Offset -= newline.Length;
 
                             editor.IndentLine(editor.Line);
+
+                            if (indentEnd)
+                            {
+                                editor.IndentLine(editor.Line + 1);
+                            }
                         }
                     }
                 }

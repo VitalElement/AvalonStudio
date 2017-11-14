@@ -102,7 +102,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void IndentLine(int line)
         {
-            _codeEditor.LanguageService?.IndentationStrategy.IndentLine(_codeEditor.Document, _codeEditor.Document.Lines[line]);
+            _codeEditor.LanguageService?.IndentationStrategy.IndentLine(_codeEditor.Document, _codeEditor.Document.GetLineByNumber(line));
         }
 
         public int Offset { get => _codeEditor.CaretOffset; set => _codeEditor.CaretOffset = value; }
@@ -181,5 +181,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             return _document.RunUpdate();
         }
+
+        public IDocumentLine GetLineByNumber(int lineNumber) => Lines[lineNumber - 1];
     }
 }

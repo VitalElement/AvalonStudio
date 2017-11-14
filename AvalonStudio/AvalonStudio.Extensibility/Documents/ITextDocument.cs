@@ -13,7 +13,7 @@ namespace AvalonStudio.Extensibility.Documents
 
         public static void TrimTrailingWhiteSpace(this ITextDocument document, int lineNumber)
         {
-            var line = document.Lines[lineNumber];
+            var line = document.GetLineByNumber(lineNumber);
             document.TrimTrailingWhiteSpace(line);
         }
 
@@ -23,7 +23,7 @@ namespace AvalonStudio.Extensibility.Documents
             {
                 foreach (var line in document.Lines)
                 {
-                    document.Replace(line, document.GetText(line).TrimEnd());
+                    TrimTrailingWhiteSpace(document, line);
                 }
             }
         }
@@ -127,6 +127,8 @@ namespace AvalonStudio.Extensibility.Documents
         int TextLength { get; }
 
         IIndexableList<IDocumentLine> Lines { get; }
+
+        IDocumentLine GetLineByNumber(int lineNumber);
 
         int LineCount { get; }
 
