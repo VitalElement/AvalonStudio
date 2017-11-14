@@ -759,11 +759,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
             _textEntering = false;
 
-            if (LanguageService != null && LanguageService.InputHelpers != null)
+            if (TextArea.Selection.IsEmpty)
             {
-                foreach (var helper in LanguageService.InputHelpers)
+                if (LanguageService != null && LanguageService.InputHelpers != null)
                 {
-                    helper.AfterTextInput(LanguageService, DocumentAccessor, e);
+                    foreach (var helper in LanguageService.InputHelpers)
+                    {
+                        helper.AfterTextInput(LanguageService, DocumentAccessor, e);
+                    }
                 }
             }
         }
@@ -772,11 +775,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             _textEntering = true;
 
-            if (LanguageService != null && LanguageService.InputHelpers != null)
+            if (TextArea.Selection.IsEmpty)
             {
-                foreach (var helper in LanguageService.InputHelpers)
+                if (LanguageService != null && LanguageService.InputHelpers != null)
                 {
-                    helper.BeforeTextInput(LanguageService, DocumentAccessor, e);
+                    foreach (var helper in LanguageService.InputHelpers)
+                    {
+                        helper.BeforeTextInput(LanguageService, DocumentAccessor, e);
+                    }
                 }
             }
         }
