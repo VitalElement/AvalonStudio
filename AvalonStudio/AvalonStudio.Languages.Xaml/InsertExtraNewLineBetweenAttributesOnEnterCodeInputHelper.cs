@@ -28,7 +28,7 @@ namespace AvalonStudio.Languages.Xaml
                     {
                         state = XmlParser.Parse(textBefore.Substring(0, Math.Max(0, idx)));
 
-                        if (state.State == XmlParser.ParserState.StartElement && editor.Document.Text[editor.Offset] == '<')
+                        if ((state.State == XmlParser.ParserState.StartElement || state.State == XmlParser.ParserState.AfterAttributeValue) && editor.Document.Text[editor.Offset] == '<')
                         {
                             var newline = "\n";
 
