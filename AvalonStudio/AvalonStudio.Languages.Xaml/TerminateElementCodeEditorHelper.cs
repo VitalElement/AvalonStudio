@@ -3,8 +3,6 @@ using Avalonia.Input;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Documents;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AvalonStudio.Languages.Xaml
 {
@@ -14,7 +12,8 @@ namespace AvalonStudio.Languages.Xaml
         {
             if (args.Text == "/")
             {
-                var textBefore = editor.Document.Text.Substring(0, Math.Max(0, editor.Offset - 1));
+                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.Offset - 1));
+
                 if (textBefore.Length > 2 && textBefore[textBefore.Length - 1] != '/')
                 {
                     var state = XmlParser.Parse(textBefore);

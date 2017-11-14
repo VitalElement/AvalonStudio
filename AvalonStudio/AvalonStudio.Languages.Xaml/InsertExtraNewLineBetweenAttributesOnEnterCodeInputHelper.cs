@@ -15,18 +15,20 @@ namespace AvalonStudio.Languages.Xaml
 
         public void BeforeTextInput(ILanguageService languageService, IEditor editor, TextInputEventArgs args)
         {
-              if (args.Text == "\n")
+            if (args.Text == "\n")
             {
                 //Check if we are not inside a tag
-                var textBefore = editor.Document.Text.Substring(0, Math.Max(0, editor.Offset));
+                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.Offset));
+
                 var state = XmlParser.Parse(textBefore);
                 if (state.State == XmlParser.ParserState.None)
                 {
                     //Find latest tag end
                     var idx = textBefore.LastIndexOf('>');
+
                     if (idx != -1)
                     {
-                        state = XmlParser.Parse(textBefore.Substring(0, Math.Max(0, idx)));
+                        state = XmlParser.Parse(editor.Document.GetText(0, Math.Max(0, idx)));
 
                         if ((state.State == XmlParser.ParserState.StartElement || state.State == XmlParser.ParserState.AfterAttributeValue) && editor.Document.Text[editor.Offset] == '<')
                         {
