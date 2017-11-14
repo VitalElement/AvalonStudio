@@ -81,6 +81,8 @@ namespace AvalonStudio.Languages
             RecommendedCaretPosition = recommendedCaretOffset;
         }
 
+        public bool RecommendImmediateSuggestions { get; set; }
+
         public uint Priority { get; set; }
 
         public string DisplayText { get; set; }

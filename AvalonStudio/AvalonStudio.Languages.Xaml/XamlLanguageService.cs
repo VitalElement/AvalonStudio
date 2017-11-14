@@ -77,7 +77,7 @@ namespace AvalonStudio.Languages.Xaml
         {
             bool result = false;
 
-            if (currentChar == '<' || currentChar == ' ')
+            if (currentChar == '<' || currentChar == ' ' || currentChar == '.')
             {
                 return true;
             }
@@ -103,7 +103,8 @@ namespace AvalonStudio.Languages.Xaml
                         results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
                         {
                             BriefComment = completion.Description,
-                            Kind = CodeCompletionKind.PropertyPublic
+                            Kind = CodeCompletionKind.PropertyPublic,
+                            RecommendImmediateSuggestions = completion.InsertText.Contains("=") || completion.InsertText.EndsWith('.')
                         });
                     }
                 }

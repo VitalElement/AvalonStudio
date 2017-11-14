@@ -151,19 +151,32 @@
         private void OpenIntellisense(char currentChar, char previousChar, int caretIndex)
         {
             _justOpened = true;
-            _hidden = false;
 
-            if (_shell.DebugMode)
+            if (_hidden)
             {
-                _console.WriteLine($"Open Intellisense {caretIndex}");
-            }
+                _hidden = false;
 
-            UpdateFilter(caretIndex);
+                if (_shell.DebugMode)
+                {
+                    _console.WriteLine($"Open Intellisense {caretIndex}");
+                }
+
+                UpdateFilter(caretIndex);
+            }
+            else
+            {
+                if (_shell.DebugMode)
+                {
+                    _console.WriteLine($"Reopen Intellisense {caretIndex}");
+                }
+
+                currentFilter = "";
+            }
         }
 
         public void CloseIntellisense()
         {
-            currentFilter = string.Empty;
+          currentFilter = string.Empty;
 
             intellisenseControl.SelectedCompletion = null;
             _hidden = true;
@@ -283,6 +296,7 @@
             caretIndex = editor.CaretOffset;
 
             var result = false;
+            bool hiddenOverride = false;
 
             if (intellisenseControl.CompletionData.Count > 0 && intellisenseControl.SelectedCompletion != null && intellisenseControl.SelectedCompletion != null)
             {
@@ -314,12 +328,19 @@
                     caretIndex = wordStart + length + offset;
 
                     editor.CaretOffset = caretIndex;
+
+                    if (intellisenseControl.SelectedCompletion.Model.RecommendImmediateSuggestions)
+                    {
+                        hiddenOverride = true;
+                    }
                 }
 
                 editor.Document.EndUpdate();
             }
 
             CloseIntellisense();
+
+            _hidden = !hiddenOverride;
 
             var location = editor.Document.GetLocation(editor.CaretOffset);
             SetCursor(editor.CaretOffset, location.Line, location.Column, CodeEditor.UnsavedFiles.ToList());
@@ -344,7 +365,7 @@
         {
             if (!intellisenseControl.IsVisible)
             {
-                unfilteredCompletions.Clear();
+               unfilteredCompletions.Clear();
 
                 if (_shell.DebugMode)
                 {
@@ -380,7 +401,7 @@
                     {
                         if (_shell.DebugMode)
                         {
-                            _console.WriteLine("Set Completion Data");
+                            _console.WriteLine($"Set Completion Data {_hidden}");
                         }
 
                         SetCompletionData(result);
@@ -631,7 +652,7 @@
         {
             if (e.Source == editor.TextArea)
             {
-                if (!_justOpened && !_hidden && currentFilter == "" && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down)
+                if (!_justOpened && !_hidden && currentFilter == "" && e.Key != Key.LeftShift && e.Key != Key.RightShift && e.Key != Key.Up && e.Key != Key.Down && e.Key != Key.Enter)
                 {
                     CloseIntellisense();
 
