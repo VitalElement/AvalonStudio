@@ -5,6 +5,7 @@ using AvalonStudio.Projects;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AvaloniaEdit.Document;
+using AvalonStudio.Editor;
 
 namespace AvalonStudio.Controls.Standard.Tests
 {
@@ -29,6 +30,10 @@ namespace AvalonStudio.Controls.Standard.Tests
         public IEnumerable<char> IntellisenseCompleteCharacters => throw new NotImplementedException();        
 
         public string LanguageId => "cpp";
+
+        public IEnumerable<ICodeEditorInputHelper> InputHelpers => throw new NotImplementedException();
+
+        public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics => throw new NotImplementedException();
 
         public void Activation()
         {
