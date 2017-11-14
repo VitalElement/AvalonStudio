@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using AvaloniaEdit;
-using AvaloniaEdit.Document;
-using AvaloniaEdit.Indentation;
-using AvalonStudio.Extensibility.Languages.CompletionAssistance;
-using AvalonStudio.Projects;
-using System.IO;
-using Avalonia.Ide.CompletionEngine;
+﻿using Avalonia.Ide.CompletionEngine;
 using Avalonia.Ide.CompletionEngine.AssemblyMetadata;
 using Avalonia.Ide.CompletionEngine.SrmMetadataProvider;
-using System.Reflection;
-using System.Linq;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Indentation;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+using AvalonStudio.Projects;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.Xaml
 {
