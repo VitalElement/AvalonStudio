@@ -14,12 +14,13 @@ namespace AvalonStudio.Languages.Xaml
     public class XamlEditorViewModel : ReactiveObject, IFileDocumentTabViewModel
     {
         private TextEditorViewModel _textEditor;
+        private bool _isDirty;
 
         public XamlEditorViewModel(ISourceFile file)
         {
             _textEditor = new TextEditorViewModel(file);
-            
 
+            _textEditor.ObservableForProperty(te => te.IsDirty).Subscribe(value => IsDirty = value.Value);
         }
 
         public string SouceText => _textEditor.SourceText;
@@ -30,11 +31,10 @@ namespace AvalonStudio.Languages.Xaml
 
         public bool IsDirty
         {
-            get => ((IFileDocumentTabViewModel)_textEditor).IsDirty;
+            get => _isDirty;
             set
             {
-                ((IFileDocumentTabViewModel)_textEditor).IsDirty = value;
-                this.RaisePropertyChanged();
+                this.RaiseAndSetIfChanged(ref _isDirty, value);
             }
         }
 

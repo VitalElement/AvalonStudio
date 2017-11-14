@@ -134,9 +134,9 @@ namespace AvalonStudio.Extensibility.Editor
 
         public override void Save()
         {
-            base.Save();
-
             _documentAccessor?.Save();
+
+            base.Save();
         }
     }
 }
