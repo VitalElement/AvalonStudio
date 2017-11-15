@@ -40,7 +40,7 @@
 					<Begin>'</Begin>
 					<End>'|(?=&lt;)</End>
 				</Span>
-				<Rule color="xml.property">[\d\w_\-\.]+(?=(\s*=))</Rule>
+				<Rule color="xml.property">[\d\w_:\-\.]+(?=(\s*=))</Rule>
 				<Rule color="xml.property.value">=</Rule>
 			</RuleSet>
 		</Span>
