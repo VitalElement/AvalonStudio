@@ -12,11 +12,13 @@
     <None Remove="AboutScreen\Assets\logo-256.png" />
     <None Remove="AboutScreen\Assets\logo-65.png" />
     <None Remove="AboutScreen\Assets\logo.png" />
+    <None Remove="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AboutScreen\Assets\logo-256.png" />
     <EmbeddedResource Include="AboutScreen\Assets\logo-65.png" />
     <EmbeddedResource Include="AboutScreen\Assets\logo.png" />
+    <EmbeddedResource Include="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.5.2-build4207-alpha" />
