@@ -51,6 +51,9 @@ namespace AvalonStudio.Extensibility.Editor
             s_colorAccessors["interface"] = () => CurrentColorScheme.InterfaceType;
             s_colorAccessors["punctuation"] = () => CurrentColorScheme.Punctuation;
             s_colorAccessors["type"] = () => CurrentColorScheme.Type;
+            s_colorAccessors["xml.tag"] = () => CurrentColorScheme.XmlTag;
+            s_colorAccessors["xml.property"] = () => CurrentColorScheme.XmlProperty;
+            s_colorAccessors["xml.property.value"] = () => CurrentColorScheme.XmlPropertyValue;
         }
 
         public static void Register(ColorScheme colorScheme)
@@ -65,7 +68,7 @@ namespace AvalonStudio.Extensibility.Editor
             Background = Brush.Parse("#1e1e1e"),
             BackgroundAccent = Brush.Parse("#1e1e1e"),
             Text = Brush.Parse("#DCDCDC"),
-            Comment = Brush.Parse("#559A3F"),
+            Comment = Brush.Parse("#57A64A"),
             Keyword = Brush.Parse("#569CD6"),
             Literal = Brush.Parse("#D69D85"),
             Identifier = Brush.Parse("#C8C8C8"),
@@ -78,7 +81,10 @@ namespace AvalonStudio.Extensibility.Editor
             Type = Brush.Parse("#4EC9B0"),
             StructName = Brush.Parse("#4EC9B0"),
             Operator = Brush.Parse("#B4B4B4"),
-            DelegateName = Brush.Parse("#4EC9B0")
+            DelegateName = Brush.Parse("#4EC9B0"),
+            XmlTag = Brush.Parse("#E6E6E6"),
+            XmlProperty= Brush.Parse ("#90C7EA"),
+            XmlPropertyValue = Brush.Parse("#569CD6")
         };
 
         public static readonly ColorScheme SolarizedDark = new ColorScheme {
@@ -119,7 +125,10 @@ namespace AvalonStudio.Extensibility.Editor
             Punctuation = Brush.Parse("#839496"),
             Type = Brush.Parse("#b58900"),
             StructName = Brush.Parse("Red"),
-            Operator = Brush.Parse("Red")
+            Operator = Brush.Parse("Red"),
+            XmlTag = Brush.Parse("DarkMagenta"),
+            XmlProperty = Brush.Parse("Red"),
+            XmlPropertyValue = Brush.Parse("Blue")
         };
 
         public static ColorScheme LoadColorScheme(string name)
@@ -157,7 +166,7 @@ namespace AvalonStudio.Extensibility.Editor
                     return s_colorAccessors[key]();
                 }
 
-                return null;
+                return Brushes.Red;
             }
         }
 
@@ -215,6 +224,15 @@ namespace AvalonStudio.Extensibility.Editor
 
         [JsonProperty(PropertyName = "editor.type")]
         public IBrush Type { get; set; }
+
+        [JsonProperty(PropertyName = "editor.xml.tag")]
+        public IBrush XmlTag { get; set; }
+
+        [JsonProperty(PropertyName = "editor.xml.property")]
+        public IBrush XmlProperty { get; set; }
+
+        [JsonProperty(PropertyName = "editor.xml.property.value")]
+        public IBrush XmlPropertyValue { get; set; }
 
         public void Save(string fileName)
         {
