@@ -19,7 +19,7 @@ namespace AvalonStudio.Languages.Xaml
                 if (idx != -1)
                 {
                     state = XmlParser.Parse(document.GetText(0, Math.Max(0, idx)));
-                    if (state.TagName.StartsWith('/'))
+                    if (state.TagName == null || state.TagName.StartsWith('/'))
                     {
                         //TODO: find matching starting tag. XmlParser can't do that right now.
                         base.IndentLine(document, line);
