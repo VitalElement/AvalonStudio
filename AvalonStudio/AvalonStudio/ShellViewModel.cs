@@ -266,7 +266,7 @@ namespace AvalonStudio
             {
                 foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
                 {
-                    document.ZoomLevel = zoomLevel;
+                    //document.ZoomLevel = zoomLevel;
                 }
             });
 
@@ -610,7 +610,7 @@ namespace AvalonStudio
             {
                 this.RaiseAndSetIfChanged(ref _currentColorScheme, value);
 
-                foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
+                foreach (var document in DocumentTabs.Documents.OfType<AvalonStudio.Controls.EditorViewModel>())
                 {
                     document.ColorScheme = value;
                 }
@@ -702,7 +702,7 @@ namespace AvalonStudio
 
             foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
             {
-                if (document.Diagnostics != null)
+                /*if (document.Diagnostics != null)
                 {
                     foreach (var diagnostic in document.Diagnostics)
                     {
@@ -714,7 +714,7 @@ namespace AvalonStudio
                             allErrors.Add(error);
                         }
                     }
-                }
+                }*/
             }
 
             foreach (var error in ErrorList.Errors)

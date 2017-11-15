@@ -22,7 +22,7 @@ namespace AvalonStudio.Shell.Commands
             {
                 var shell = IoC.Get<IShell>();
 
-                (shell.SelectedDocument as EditorViewModel)?.Undo();
+                //(shell.SelectedDocument as EditorViewModel)?.Undo();
             });
         }
 

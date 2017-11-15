@@ -19,7 +19,7 @@ namespace AvalonStudio.Shell.Commands
             {
                 var shell = IoC.Get<IShell>();
 
-                (shell.SelectedDocument as EditorViewModel)?.Comment();
+                //(shell.SelectedDocument as EditorViewModel)?.Comment();
             });
         }
 
