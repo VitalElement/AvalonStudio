@@ -85,10 +85,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                         break;
                     case "Property":
                         c.Add(ParseProperty(reader));
-                        break;
-                    case "Color":
-                        c.Add(ParseNamedColor(reader));
-                        break;
+                        break;                    
                     case "Keywords":
                         c.Add(ParseKeywords(reader));
                         break;
@@ -288,20 +285,22 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             var color = reader.GetAttribute("color");
             if (color != null)
             {
-                var pos = color.LastIndexOf('/');
-                if (pos >= 0)
-                {
-                    return new XshdReference<XshdColor>(color.Substring(0, pos), color.Substring(pos + 1));
-                }
-                else
-                {
-                    return new XshdReference<XshdColor>(null, color);
-                }
+                return new XshdReference<XshdColor>(ParseThemeColorReference(color));                
             }
             else
             {
-                return new XshdReference<XshdColor>(ParseColorAttributes(reader));
+                return new XshdReference<XshdColor>();
             }
+        }
+
+        private static XshdColor ParseThemeColorReference(string colorKey)
+        {
+            var color = new XshdColor
+            {
+                Foreground = ParseColorName(colorKey)
+            };
+
+            return color;
         }
 
         private static XshdColor ParseColorAttributes(XmlReader reader)
