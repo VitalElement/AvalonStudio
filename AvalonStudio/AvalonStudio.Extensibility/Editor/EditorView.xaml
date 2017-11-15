@@ -21,7 +21,8 @@
                                    SourceFile="{Binding SourceFile}" 
                                    IsDirty="{Binding IsDirty}"
                                    SourceText="{Binding SourceText}"                                   
-                                   HighlightSelectedWord="False"                   
+                                   HighlightSelectedWord="False"     
+                                   ColorScheme="{Binding ColorScheme}"
                                    DocumentAccessor="{Binding DocumentAccessor}">
             </editor:CodeEditor>
         </DockPanel>
