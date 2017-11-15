@@ -1,0 +1,67 @@
+<SyntaxDefinition name="XML" extensions=".xml;.xsl;.xslt;.xsd;.manifest;.config;.addin;.xshd;.wxs;.wxi;.wxl;.proj;.csproj;.vbproj;.ilproj;.booproj;.build;.xfrm;.targets;.xaml;.xpt;.xft;.map;.wsdl;.disco;.ps1xml;.nuspec" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  <RuleSet>
+    <Span color="comment" multiline="true">
+      <Begin>&lt;!--</Begin>
+      <End>--&gt;</End>
+    </Span>
+    <Span color="comment" multiline="true">
+      <Begin>&lt;!\[CDATA\[</Begin>
+      <End>]]&gt;</End>
+    </Span>
+    <Span color="DocType" multiline="true">
+      <Begin>&lt;!DOCTYPE</Begin>
+      <End>&gt;</End>
+    </Span>
+    <Span color="comment" multiline="true">
+      <Begin>&lt;\?</Begin>
+      <End>\?&gt;</End>
+    </Span>
+    <Span color="xml.tag" multiline="true">
+      <Begin>(?&lt;=&lt;)</Begin>
+      <End>(?=&gt;)</End>
+      <RuleSet>
+        <!-- Treat the position before '<' as end, as that's not a valid character
+				     in attribute names and indicates the user forgot a closing quote. -->
+        <Span color="xml.property.value" multiline="true" ruleSet="EntitySet">
+          <Begin>"</Begin>
+          <End>"|(?=&lt;)</End>
+        </Span>
+        <Span color="xml.property.value" multiline="true" ruleSet="EntitySet">
+          <Begin>'</Begin>
+          <End>'|(?=&lt;)</End>
+        </Span>
+        <Rule color="xml.property">[\d\w_:\-\.]+(?=(\s*=))</Rule>
+        <Rule color="xml.property.value">=</Rule>
+        <Rule color="punctuation">\/|:</Rule>
+      </RuleSet>
+    </Span>
+    <Import ruleSet="EntitySet"/>
+    <Rule color="punctuation">&lt;|&gt;</Rule>
+  </RuleSet>
+
+  <RuleSet name="EntitySet">
+    <Rule color="comment">
+      &amp;
+      [\w\d\#]+
+      ;
+    </Rule>
+
+    <Rule color="comment">
+      &amp;
+      [\w\d\#]*
+      #missing ;
+    </Rule>
+
+    <Span color="punctuation" multiline="true" ruleSet="MarkupExt">
+      <Begin>{</Begin>
+      <End>}|(?=&lt;)</End>
+    </Span>
+  </RuleSet>
+
+  <RuleSet name="MarkupExt">
+    <Rule color="xaml.markupextension">^\w+</Rule>
+    <Rule color="xaml.markupextension.property">[\d\w_:\-\.]+(?=(\s*=))</Rule>
+    <Rule color="xaml.markupextension.property.value">(?&lt;==)(\w+)</Rule>
+    <Rule color="xaml.markupextension.property.value">(?&lt;= )(\w+)</Rule>
+  </RuleSet>
+</SyntaxDefinition>

@@ -54,6 +54,9 @@ namespace AvalonStudio.Extensibility.Editor
             s_colorAccessors["xml.tag"] = () => CurrentColorScheme.XmlTag;
             s_colorAccessors["xml.property"] = () => CurrentColorScheme.XmlProperty;
             s_colorAccessors["xml.property.value"] = () => CurrentColorScheme.XmlPropertyValue;
+            s_colorAccessors["xaml.markupextension"] = () => CurrentColorScheme.XamlMarkupExtension;
+            s_colorAccessors["xaml.markupextension.property"] = () => CurrentColorScheme.XamlMarkupExtensionProperty;
+            s_colorAccessors["xaml.markupextension.property.value"] = () => CurrentColorScheme.XamlMarkupExtensionPropertyValue;
         }
 
         public static void Register(ColorScheme colorScheme)
@@ -77,14 +80,17 @@ namespace AvalonStudio.Extensibility.Editor
             InterfaceType = Brush.Parse("#B5CEA8"),
             EnumType = Brush.Parse("#B5CEA8"),
             NumericLiteral = Brush.Parse("#B5CEA8"),
-            Punctuation = Brush.Parse("#C8C8C8"),
+            Punctuation = Brush.Parse("#808080"),
             Type = Brush.Parse("#4EC9B0"),
             StructName = Brush.Parse("#4EC9B0"),
             Operator = Brush.Parse("#B4B4B4"),
             DelegateName = Brush.Parse("#4EC9B0"),
-            XmlTag = Brush.Parse("#E6E6E6"),
-            XmlProperty= Brush.Parse ("#90C7EA"),
-            XmlPropertyValue = Brush.Parse("#569CD6")
+            XmlTag = Brush.Parse("#DCDCDC"),
+            XmlProperty = Brush.Parse("#90C7EA"),
+            XmlPropertyValue = Brush.Parse("#569CD6"),
+            XamlMarkupExtension = Brush.Parse("#BBA08C"),
+            XamlMarkupExtensionProperty = Brush.Parse("#D4B765"),
+            XamlMarkupExtensionPropertyValue = Brush.Parse("#B1B1B1")
         };
 
         public static readonly ColorScheme SolarizedDark = new ColorScheme {
@@ -233,6 +239,15 @@ namespace AvalonStudio.Extensibility.Editor
 
         [JsonProperty(PropertyName = "editor.xml.property.value")]
         public IBrush XmlPropertyValue { get; set; }
+
+        [JsonProperty(PropertyName = "editor.xaml.markupext")]
+        public IBrush XamlMarkupExtension { get; set; }
+
+        [JsonProperty(PropertyName = "editor.xaml.markupext.property")]
+        public IBrush XamlMarkupExtensionProperty { get; set; }
+
+        [JsonProperty(PropertyName = "editor.xaml.markupext.property.value")]
+        public IBrush XamlMarkupExtensionPropertyValue { get; set; }
 
         public void Save(string fileName)
         {

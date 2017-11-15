@@ -10,10 +10,12 @@ using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvaloniaEdit.Highlighting;
+using AvaloniaEdit.Highlighting.Xshd;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
 using AvalonStudio.CodeEditor;
+using AvalonStudio.Controls.Standard.CodeEditor.Highlighting;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
@@ -701,7 +703,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             if (LanguageService != null)
             {
-                SyntaxHighlighting = HighlightingManager.Instance.GetDefinition(LanguageService.LanguageId.ToUpper());
+                SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(LanguageService.LanguageId.ToUpper());
 
                 LanguageServiceName = LanguageService.Title;
 

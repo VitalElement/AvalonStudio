@@ -8,9 +8,9 @@
                     <ScrollViewer.Background>
                         <VisualBrush DestinationRect="0,0,20,20" TileMode="Tile">
                             <VisualBrush.Visual>
-                                <Canvas Width="16" Height="16"  Background="#f0f0f0">
-                                    <Rectangle Height="8" Width="8" Fill="#f5f5f5" />
-                                    <Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#f5f5f5" />
+                                <Canvas Width="16" Height="16"  Background="#1a1a1a">
+                                    <Rectangle Height="8" Width="8" Fill="#1c1c1c" />
+                                    <Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
                                 </Canvas>
                             </VisualBrush.Visual>
                         </VisualBrush>
