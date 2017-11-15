@@ -6,6 +6,7 @@ using Avalonia.Media;
 using System.Collections.Generic;
 using Avalonia;
 using AvalonStudio.Extensibility.Plugin;
+using System;
 
 namespace AvalonStudio.Extensibility.Editor
 {
@@ -28,8 +29,29 @@ namespace AvalonStudio.Extensibility.Editor
         private static List<ColorScheme> s_colorSchemes = new List<ColorScheme>();
         private static Dictionary<string, ColorScheme> s_colorSchemeIDs = new Dictionary<string, ColorScheme>();
         private static readonly ColorScheme DefaultColorScheme = ColorScheme.SolarizedLight;
-
+        private static readonly Dictionary<string, Func<IBrush>> s_colorAccessors = new Dictionary<string, Func<IBrush>>();
         public static IEnumerable<ColorScheme> ColorSchemes => s_colorSchemes;
+
+        static ColorScheme()
+        {
+            s_colorAccessors["background"] = () => CurrentColorScheme.Background;
+            s_colorAccessors["background.accented"] = () => CurrentColorScheme.BackgroundAccent;
+            s_colorAccessors["text"] = () => CurrentColorScheme.Text;
+            s_colorAccessors["comment"] = () => CurrentColorScheme.Comment;
+            s_colorAccessors["delegate.name"] = () => CurrentColorScheme.DelegateName;
+            s_colorAccessors["keyword"] = () => CurrentColorScheme.Keyword;
+            s_colorAccessors["literal"] = () => CurrentColorScheme.Literal;
+            s_colorAccessors["identifier"] = () => CurrentColorScheme.Identifier;
+            s_colorAccessors["callexpression"] = () => CurrentColorScheme.CallExpression;
+            s_colorAccessors["numericliteral"] = () => CurrentColorScheme.NumericLiteral;
+            s_colorAccessors["enumconst"] = () => CurrentColorScheme.EnumConstant;
+            s_colorAccessors["enum"] = () => CurrentColorScheme.EnumType;
+            s_colorAccessors["operator"] = () => CurrentColorScheme.Operator;
+            s_colorAccessors["struct.name"] = () => CurrentColorScheme.StructName;
+            s_colorAccessors["interface"] = () => CurrentColorScheme.InterfaceType;
+            s_colorAccessors["punctuation"] = () => CurrentColorScheme.Punctuation;
+            s_colorAccessors["type"] = () => CurrentColorScheme.Type;
+        }
 
         public static void Register(ColorScheme colorScheme)
         {
@@ -123,6 +145,21 @@ namespace AvalonStudio.Extensibility.Editor
         }
 
         public static ColorScheme CurrentColorScheme { get; private set; }
+
+        public IBrush this[string key]
+        {
+            get
+            {
+                key = key.ToLower();
+
+                if(s_colorAccessors.ContainsKey(key))
+                {
+                    return s_colorAccessors[key]();
+                }
+
+                return null;
+            }
+        }
 
         public string Name { get; private set; }
 
