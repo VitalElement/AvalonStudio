@@ -123,7 +123,6 @@ namespace AvalonStudio.Controls
             }
 
             Documents.Remove(document);
-            document.Close();
 
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
