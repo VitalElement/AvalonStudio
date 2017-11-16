@@ -23,10 +23,9 @@ namespace AvalonStudio.Projects.OmniSharp
             var (project, projectReferences, targetPath) = await RoslynWorkspace.GetWorkspace(solution).AddProject(solution.CurrentDirectory, path);
             var roslynProject = project;
             var references = projectReferences;
-            OmniSharpProject result = new OmniSharpProject
+            OmniSharpProject result = new OmniSharpProject(path)
             {
                 Solution = solution,
-                Location = path,
                 RoslynProject = roslynProject,
                 UnresolvedReferences = references,
                 detectedTargetPath = targetPath
@@ -35,15 +34,29 @@ namespace AvalonStudio.Projects.OmniSharp
             return result;
         }
 
-        public OmniSharpProject() : base(true)
+        public OmniSharpProject(string location) : base(true)
         {
+            Location = location;
             ExcludedFiles = new List<string>();
             Items = new ObservableCollection<IProjectItem>();
             References = new ObservableCollection<IProject>();
             ToolchainSettings = new ExpandoObject();
             DebugSettings = new ExpandoObject();
             Settings = new ExpandoObject();
-            Project = this;            
+            Project = this;
+
+            var fileWatcher = new FileSystemWatcher(CurrentDirectory, Path.GetFileName(Location))
+            {
+                EnableRaisingEvents = true,
+                IncludeSubdirectories = false,
+
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
+            };
+
+            fileWatcher.Changed += async (sender, e) =>
+            {
+                // todo restore packages and re-evaluate.
+            };
 
             FileAdded += (sender, e) =>
             {
