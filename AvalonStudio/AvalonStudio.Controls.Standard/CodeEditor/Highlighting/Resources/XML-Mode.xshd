@@ -54,7 +54,7 @@
 
     <Span color="punctuation" multiline="true" ruleSet="MarkupExt">
       <Begin>{</Begin>
-      <End>}|(?=&lt;)</End>
+      <End>}|(?=&lt;)|"|'</End>
     </Span>
   </RuleSet>
 
@@ -62,6 +62,8 @@
     <Rule color="xaml.markupextension">^\w+</Rule>
     <Rule color="xaml.markupextension.property">[\d\w_:\-\.]+(?=(\s*=))</Rule>
     <Rule color="xaml.markupextension.property.value">(?&lt;==)(\w+)</Rule>
-    <Rule color="xaml.markupextension.property.value">(?&lt;= )(\w+)</Rule>
+    <Rule color="xaml.markupextension.property.value">(?&lt;=\.)(\w+)</Rule>
+    <Rule color="xaml.markupextension.property" pattern="(?&lt;= )(#\w+|\w+)" />
+    <Rule color="xaml.markupextension.property.value" pattern="(?&lt;==)(#\w+|\w+)" />
   </RuleSet>
 </SyntaxDefinition>
