@@ -2,22 +2,22 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Remote;
+using Avalonia.Data;
 using Avalonia.Remote.Protocol;
 using Avalonia.Remote.Protocol.Designer;
 using Avalonia.Remote.Protocol.Viewport;
 using Avalonia.Threading;
+using AvalonStudio.CommandLineTools;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
+using AvalonStudio.Shell;
+using AvalonStudio.Utils;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using AvalonStudio.Extensibility;
-using Avalonia.Data;
-using AvalonStudio.Shell;
-using AvalonStudio.Controls.Standard.ErrorList;
-using AvalonStudio.Utils;
 
 namespace AvalonStudio.Languages.Xaml
 {
@@ -42,6 +42,8 @@ namespace AvalonStudio.Languages.Xaml
         private RemoteWidget _remote;
         private Center _remoteContainer;
         private Process _currentHost;
+        private Grid _overlay;
+        private TextBlock _statusText;
 
         private static int FreeTcpPort()
         {
@@ -108,10 +110,29 @@ namespace AvalonStudio.Languages.Xaml
 
                 var projectVariables = file.Project.Solution.StartupProject.GetEnvironmentVariables();
 
-                var projectDir = Path.GetDirectoryName(file.Project.Solution.StartupProject.Executable);
+                var projectDir = System.IO.Path.GetDirectoryName(file.Project.Solution.StartupProject.Executable);
 
                 var args = $@"exec --runtimeconfig $(TargetDir)$(TargetName).runtimeconfig.json --depsfile $(TargetDir)$(TargetName).deps.json {executingDir}/Avalonia.Designer.HostApp.dll --transport tcp-bson://127.0.0.1:{port}/ $(TargetPath)".ExpandVariables(projectVariables);
-                _currentHost = Process.Start("dotnet", args);
+
+                if (_overlay != null)
+                {
+                    _overlay.IsVisible = false;
+                }
+
+                _currentHost = PlatformSupport.LaunchShellCommand("dotnet", args, (sender, e) =>
+                {
+                },
+                (sender, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            _statusText.Text = e.Data;
+                            _overlay.IsVisible = true;
+                        });
+                    }
+                }, false, executeInShell: false);
             }
         }
 
@@ -184,6 +205,10 @@ namespace AvalonStudio.Languages.Xaml
             base.OnTemplateApplied(e);
 
             _remoteContainer = e.NameScope.Find<Center>("PART_Center");
+
+            _overlay = e.NameScope.Find<Grid>("PART_Overlay");
+
+            _statusText = e.NameScope.Find<TextBlock>("PART_Status");
         }
 
         private void OnMessage(IAvaloniaRemoteTransportConnection transport, object obj)
