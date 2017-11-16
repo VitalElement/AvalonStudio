@@ -3,18 +3,16 @@ using AsyncRpc.Transport.Tcp;
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MSBuildHost;
+using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.CodeAnalysis.CSharp;
-using AvalonStudio.Shell;
-using CorApi.Portable;
+using System.Net;
+using System.Threading.Tasks;
 using Process = System.Diagnostics.Process;
 
 namespace AvalonStudio.Projects.OmniSharp.MSBuild
@@ -33,7 +31,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
             outputLines = new List<string>();
             errorLines = new List<string>();
 
-            var serverStarted = new TaskCompletionSource<bool>();
+            var serverStarted = new TaskCompletionSource<Int32>();
             
             hostProcess = PlatformSupport.LaunchShellCommand("dotnet", $"\"{sdkPath}MSBuild.dll\" avalonstudio-intercept.csproj",
             (sender, e) =>
@@ -42,9 +40,10 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                 {
                     lock (outputLines)
                     {
-                        if (e.Data == "AvalonStudio MSBuild Host Started:")
+                        if (e.Data.StartsWith("AvalonStudio MSBuild Host Started:"))
                         {
-                            serverStarted.SetResult(true);
+                            var serverPort = Int32.Parse(e.Data.Replace("AvalonStudio MSBuild Host Started: ", ""));
+                            serverStarted.SetResult(serverPort);
                         }
                         else
                         {
@@ -78,12 +77,14 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
 
             hostProcess.Exited += (sender, e) =>
             {
-                serverStarted.SetResult(false);
+                serverStarted.SetResult(-1);
             };
 
-            if (await serverStarted.Task)
+            var port = await serverStarted.Task;
+
+            if (port > 0)
             {
-                msBuildHostService = new Engine().CreateProxy<IMsBuildHostService>(new TcpClientTransport(IPAddress.Loopback, 9000));                
+                msBuildHostService = new Engine().CreateProxy<IMsBuildHostService>(new TcpClientTransport(IPAddress.Loopback, port));                
             }
             else
             {
