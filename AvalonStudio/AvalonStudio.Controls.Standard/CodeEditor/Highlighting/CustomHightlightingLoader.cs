@@ -130,6 +130,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             var rule = new XshdRule();
             SetPosition(rule, reader);
             rule.ColorReference = ParseColorReference(reader);
+
+            var pattern = reader.GetAttribute("pattern");
+
             if (!reader.IsEmptyElement)
             {
                 reader.Read();
@@ -139,6 +142,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                     rule.RegexType = XshdRegexType.IgnorePatternWhitespace;
                 }
             }
+            else if(pattern != null)
+            {
+                rule.Regex = pattern;
+            }
+
             return rule;
         }
 
