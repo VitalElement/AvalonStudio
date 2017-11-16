@@ -1,0 +1,5 @@
+{
+  "Name": "proprxui",
+  "Description": "Reactive Property",
+  "Snippet": "private ${type} ${ToFieldName(property)};\n\npublic ${type=int} ${property=MyProperty}\n{\n\tget { return ${ToFieldName(property)}; }\n\tset { this.RaiseAndSetIfChanged(ref ${ToFieldName(property)}, value); }\n}\n${Caret}"
+}
