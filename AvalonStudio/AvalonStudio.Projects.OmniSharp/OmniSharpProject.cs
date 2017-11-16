@@ -56,6 +56,7 @@ namespace AvalonStudio.Projects.OmniSharp
             fileWatcher.Changed += async (sender, e) =>
             {
                 // todo restore packages and re-evaluate.
+                RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
             };
 
             FileAdded += (sender, e) =>

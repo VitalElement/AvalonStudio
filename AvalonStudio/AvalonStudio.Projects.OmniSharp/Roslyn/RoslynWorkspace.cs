@@ -25,6 +25,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Threading;
+using AvalonStudio.Projects.OmniSharp;
 
 namespace RoslynPad.Roslyn
 {
@@ -137,6 +138,13 @@ namespace RoslynPad.Roslyn
             OnProjectAdded(loadData.info);
 
             return (CurrentSolution.GetProject(loadData.info.Id), loadData.projectReferences, loadData.targetPath);
+        }
+
+        public async Task ReevaluateProject(AvalonStudio.Projects.IProject project)
+        {
+            var proj = project as OmniSharpProject;
+
+            var loadData = await buildHost.LoadProject(project.Solution.CurrentDirectory, project.Location);
         }
 
         public ProjectId GetProjectId(AvalonStudio.Projects.IProject project)

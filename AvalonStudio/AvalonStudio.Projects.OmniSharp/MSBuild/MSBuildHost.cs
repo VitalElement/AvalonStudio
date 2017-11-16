@@ -17,7 +17,7 @@ using Process = System.Diagnostics.Process;
 
 namespace AvalonStudio.Projects.OmniSharp.MSBuild
 {
-    public class MSBuildHost
+    public class MSBuildHost : IDisposable
     {
         private IMsBuildHostService msBuildHostService;
         private Process hostProcess;
@@ -286,6 +286,14 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                     return Platform.Arm;
                 default:
                     return Platform.AnyCpu;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (!hostProcess.HasExited)
+            {
+                hostProcess?.Kill();
             }
         }
 
