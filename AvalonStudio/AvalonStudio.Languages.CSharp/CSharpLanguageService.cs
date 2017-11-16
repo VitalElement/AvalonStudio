@@ -46,10 +46,7 @@
                 if (string.IsNullOrEmpty(propertyName))
                     return propertyName;
                 string newName = Char.ToLower(propertyName[0]) + propertyName.Substring(1);
-                if (newName == propertyName)
-                    return "_" + newName;
-                else
-                    return newName;
+                return "_" + newName;
             });
         }
 
