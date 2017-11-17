@@ -60,9 +60,9 @@ namespace AvalonStudio.Shell
 
         IEnumerable<ITestFramework> TestFrameworks { get; }
 
-        ICodeEditor GetDocument(string path);
+        IEditor GetDocument(string path);
 
-        ICodeEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true);
+        IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true);
 
         void CloseDocumentsForProject(IProject project);
 

@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Extensibility.Editor;
+﻿using AvalonStudio.Documents;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Projects;
 using ReactiveUI;
 using System;
@@ -39,11 +40,6 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public override void Save()
-        {
-            IsDirty = false;
-        }
-
         public ISourceFile SourceFile
         {
             get { return _sourceFile; }
@@ -55,5 +51,7 @@ namespace AvalonStudio.Controls
             get { return _colorScheme; }
             set { this.RaiseAndSetIfChanged(ref _colorScheme, value); }
         }
+
+        public abstract IEditor Editor { get; }
     }
 }

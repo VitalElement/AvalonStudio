@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using AvalonStudio.Controls;
+using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Projects;
@@ -38,16 +39,13 @@ namespace AvalonStudio.Languages.Xaml
             }
         }
 
-        public string Title { get => ((IFileDocumentTabViewModel)_textEditor).Title; set => ((IFileDocumentTabViewModel)_textEditor).Title = value; }        
+        public string Title { get => ((IFileDocumentTabViewModel)_textEditor).Title; set => ((IFileDocumentTabViewModel)_textEditor).Title = value; }
+
+        public IEditor Editor => _textEditor.DocumentAccessor;
 
         public void Close()
         {
             IoC.Get<IShell>().RemoveDocument(this);
-        }
-
-        public void Save()
-        {
-            ((IFileDocumentTabViewModel)_textEditor).Save();
         }
     }
 }

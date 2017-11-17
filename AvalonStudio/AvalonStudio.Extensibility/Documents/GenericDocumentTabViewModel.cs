@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
@@ -26,11 +27,6 @@ namespace AvalonStudio.Controls
             get { return dock; }
             set { this.RaiseAndSetIfChanged(ref dock, value); }
         }
-
-        public virtual void Save()
-        {
-
-        }        
 
         public string Title
         {

@@ -1,8 +1,11 @@
 ﻿using Avalonia.Input;
+using AvalonStudio.Languages;
+using AvalonStudio.Projects;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace AvalonStudio.Extensibility.Documents
+namespace AvalonStudio.Documents
 {
     public static class ITextDocumentExtensions
     {
@@ -28,12 +31,12 @@ namespace AvalonStudio.Extensibility.Documents
             }
         }
 
-        public static string GetText (this ITextDocument document, ISegment segment)
+        public static string GetText(this ITextDocument document, ISegment segment)
         {
             return document.GetText(segment.Offset, segment.Length);
         }
 
-        public static void Replace (this ITextDocument document, ISegment segment, string text)
+        public static void Replace(this ITextDocument document, ISegment segment, string text)
         {
             document.Replace(segment.Offset, segment.Length, text);
         }
@@ -49,6 +52,7 @@ namespace AvalonStudio.Extensibility.Documents
                 if (c != ' ' && c != '\t')
                     break;
             }
+
             return new SimpleSegment(offset, pos - offset);
         }
     }
@@ -147,11 +151,35 @@ namespace AvalonStudio.Extensibility.Documents
 
         int Column { get; set; }
 
+        ISourceFile SourceFile { get; }
+
         ITextDocument Document { get; }
+
+        void IndentLine(int line);
+
+        void FormatAll();
+
+        void Focus();
+
+        void TriggerCodeAnalysis();
 
         void Save();
 
-        void IndentLine(int line);
+        void Comment();
+
+        void UnComment();
+
+        void Undo();
+
+        void Redo();
+
+        void SetDebugHighlight(int line, int startColumn, int endColumn);
+
+        void ClearDebugHighlight();
+
+        void GotoOffset(int offset);
+
+        void GotoPosition(int line, int column);
 
         /// <summary>
         /// Occurs when the TextArea receives text input.

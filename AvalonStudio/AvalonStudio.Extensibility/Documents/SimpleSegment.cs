@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace AvalonStudio.Extensibility.Documents
+namespace AvalonStudio.Documents
 {
     public struct SimpleSegment : IEquatable<SimpleSegment>, ISegment
     {

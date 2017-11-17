@@ -18,8 +18,8 @@ using AvalonStudio.CodeEditor;
 using AvalonStudio.Controls.Standard.CodeEditor.Highlighting;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.Debugging;
+using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Documents;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.GlobalSettings;
@@ -439,7 +439,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
 
             /*_analysisTriggerEvents.Select(_ => Observable.Timer(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance)
-            .SelectMany(o => DoCodeAnalysisAsync())).Switch().Subscribe(_ => { });*/                       
+            .SelectMany(o => DoCodeAnalysisAsync())).Switch().Subscribe(_ => { });*/
 
             _intellisense = new IntellisenseViewModel();
 
@@ -627,6 +627,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (SourceFile != null && Document != null && IsDirty)
             {
+                FormatAll();
+
                 if (Settings.GetSettings<EditorSettings>().RemoveTrailingWhitespaceOnSave)
                 {
                     Document.TrimTrailingWhiteSpace();

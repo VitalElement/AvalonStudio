@@ -1,7 +1,7 @@
 ﻿using Avalonia.Ide.CompletionEngine;
 using Avalonia.Input;
+using AvalonStudio.Documents;
 using AvalonStudio.Editor;
-using AvalonStudio.Extensibility.Documents;
 using System;
 
 namespace AvalonStudio.Languages.Xaml

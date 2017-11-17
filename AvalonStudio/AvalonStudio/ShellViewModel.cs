@@ -392,13 +392,13 @@ namespace AvalonStudio
 
             if (document is EditorViewModel doc)
             {
-                doc.Save();
+                doc.Editor.Save();
             }
 
             DocumentTabs.CloseDocument(document);
         }
 
-        public ICodeEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
+        public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
         {
             var currentTab = DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(t => t.SourceFile?.FilePath == file.FilePath);
 
@@ -426,11 +426,11 @@ namespace AvalonStudio
                 AddDocument(currentTab);
             }
 
-            if (DocumentTabs.SelectedDocument is ICodeEditor editor)
+            if (DocumentTabs.SelectedDocument is IEditor editor)
             {
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    await editor.WaitForEditorToLoadAsync();
+                    //await editor.WaitForEditorToLoadAsync();
 
                     if (debugHighlight)
                     {
@@ -449,19 +449,19 @@ namespace AvalonStudio
                 });
             }
 
-            return currentTab as ICodeEditor;
+            return currentTab as IEditor;
         }
 
-        public ICodeEditor GetDocument(string path)
+        public IEditor GetDocument(string path)
         {
-            return DocumentTabs.Documents.OfType<ICodeEditor>().FirstOrDefault(d => d.SourceFile?.FilePath == path);
+            return DocumentTabs.Documents.OfType<IEditor>().FirstOrDefault(d => d.SourceFile?.FilePath == path);
         }
 
         public void Save()
         {
             if (SelectedDocument is IFileDocumentTabViewModel document)
             {
-                document.Save();
+                document.Editor.Save();
             }
         }
 
@@ -469,7 +469,7 @@ namespace AvalonStudio
         {
             foreach (var document in DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>())
             {
-                document.Save();
+                document.Editor.Save();
             }
         }
 

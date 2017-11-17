@@ -22,7 +22,7 @@
 
         private IShell _shell;
         private IConsole _console;
-        private ICodeEditor _lastDocument;
+        private IEditor _lastDocument;
 
         public event EventHandler DebugSessionStarted;
 

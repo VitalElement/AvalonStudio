@@ -1,5 +1,6 @@
 ﻿using Avalonia.Input;
-using AvalonStudio.Extensibility.Documents;
+using AvalonStudio.Documents;
+using AvalonStudio.Projects;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -111,6 +112,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public int Column { get => _codeEditor.TextArea.Caret.Column; set => _codeEditor.TextArea.Caret.Column = value; }
 
+        public ISourceFile SourceFile => throw new NotImplementedException();
+
         /// <summary>
         /// Occurs when the TextArea receives text input.
         /// but occurs immediately before the TextArea handles the TextInput event.
@@ -128,6 +131,62 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _codeEditor.TextArea.TextEntering -= TextEntering;
             _codeEditor.TextArea.TextEntered -= TextEntered;
             _codeEditor = null;
+        }
+
+        public void FormatAll()
+        {
+            _codeEditor.FormatAll();
+        }
+
+        public void Focus()
+        {
+            _codeEditor.Focus();
+        }
+
+        public void TriggerCodeAnalysis()
+        {
+            _codeEditor.TriggerCodeAnalysis();
+        }
+
+        public void Comment()
+        {
+            _codeEditor.CommentSelection();
+        }
+
+        public void UnComment()
+        {
+            _codeEditor.UncommentSelection();
+        }
+
+        public void Undo()
+        {
+            _codeEditor.Document.UndoStack.Undo();
+        }
+
+        public void Redo()
+        {
+            _codeEditor.Document.UndoStack.Redo();
+        }
+
+        public void SetDebugHighlight(int line, int startColumn, int endColumn)
+        {
+            _codeEditor.SetDebugHighlight(line, startColumn, endColumn);
+        }
+
+        public void ClearDebugHighlight()
+        {
+            _codeEditor.ClearDebugHighlight();
+        }
+
+        public void GotoOffset(int offset)
+        {
+            _codeEditor.CaretOffset = offset;
+        }
+
+        public void GotoPosition(int line, int column)
+        {
+            _codeEditor.Line = line;
+            _codeEditor.Column = column;
         }
     }
 

@@ -1,6 +1,6 @@
 ﻿using Avalonia.Input;
 using AvalonStudio.Controls;
-using AvalonStudio.Extensibility.Documents;
+using AvalonStudio.Documents;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
@@ -132,11 +132,6 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _documentAccessor, value); }
         }
 
-        public override void Save()
-        {
-            _documentAccessor?.Save();
-
-            base.Save();
-        }
+        public override IEditor Editor => _documentAccessor;
     }
 }

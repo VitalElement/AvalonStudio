@@ -1,9 +1,6 @@
 ﻿using Avalonia.Input;
-using AvalonStudio.Extensibility.Documents;
+using AvalonStudio.Documents;
 using AvalonStudio.Languages;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AvalonStudio.Editor
 {

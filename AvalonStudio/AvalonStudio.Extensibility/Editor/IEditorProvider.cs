@@ -1,4 +1,5 @@
 ﻿using AvalonStudio.Controls;
+using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Projects;
 

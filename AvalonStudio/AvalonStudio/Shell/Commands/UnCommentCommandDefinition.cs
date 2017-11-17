@@ -1,6 +1,7 @@
 using Avalonia.Controls.Shapes;
 using Avalonia.Media;
 using AvalonStudio.Controls;
+using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using ReactiveUI;
@@ -19,7 +20,7 @@ namespace AvalonStudio.Shell.Commands
             {
                 var shell = IoC.Get<IShell>();
 
-                //(shell.SelectedDocument as EditorViewModel)?.UnComment();
+                (shell.SelectedDocument as IFileDocumentTabViewModel)?.Editor?.UnComment();
             });
         }
 

@@ -1,14 +1,14 @@
 ﻿using AvalonStudio.Projects;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Documents
 {
     public interface IFileDocumentTabViewModel : IDocumentTabViewModel
     {
         ISourceFile SourceFile { get; }
 
-        bool IsDirty { get; set; }
-
-        void Save();
+        IEditor Editor { get; }
+        
+        bool IsDirty { get; set; }        
     }
 
     public interface IDocumentTabViewModel

@@ -155,7 +155,7 @@ namespace AvalonStudio.Controls
             {
                 this.RaiseAndSetIfChanged(ref _selectedDocument, value);
 
-                if (value is ICodeEditor editor)
+                if (value is IEditor editor)
                 {
                     editor.TriggerCodeAnalysis();
                 }
