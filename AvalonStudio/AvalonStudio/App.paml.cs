@@ -14,6 +14,7 @@ namespace AvalonStudio
 {
     internal class App : Application
     {
+        [STAThread]
         private static void Main(string[] args)
         {
             if (args == null)
