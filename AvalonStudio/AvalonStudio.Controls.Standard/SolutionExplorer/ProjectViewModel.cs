@@ -11,15 +11,15 @@ using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    public abstract class ProjectViewModel : ViewModel<IProject>
+    public abstract class ProjectViewModel : SolutionItemViewModel<IProject>
     {
         private readonly IShell shell;
         private ProjectConfigurationDialogViewModel configuration;
 
         private bool visibility;
 
-        public ProjectViewModel(SolutionViewModel solutionViewModel, IProject model)
-            : base(model)
+        public ProjectViewModel(ISolutionParentViewModel parent, IProject model)
+            : base(parent, model)
         {
             shell = IoC.Get<IShell>();
 
@@ -63,10 +63,16 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 shell.InvalidateCodeAnalysis();
 
-                foreach (var project in solutionViewModel.Projects)
+                var root = this.FindRoot();
+
+                if(root != null)
                 {
-                    project.Invalidate();
+                    root.VisitChildren(solutionItem =>
+                    {
+                        solutionItem.RaisePropertyChanged(nameof(FontWeight));
+                    });
                 }
+                
             });
 
             OpenInExplorerCommand = ReactiveCommand.Create(() => Platform.OpenFolderInExplorer(Model.CurrentDirectory));
@@ -77,10 +83,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 shell.ModalDialog.ShowDialog();
             });
 
-            RemoveCommand = ReactiveCommand.Create(async () =>
+            RemoveCommand = ReactiveCommand.Create(() =>
             {
-                await shell.CloseDocumentsForProjectAsync(Model);
-                Model.Solution.RemoveProject(Model);
+                shell.CloseDocumentsForProject(Model);
+                Model.Solution.RemoveItem(Model);
                 Model.Solution.Save();
             });
 
@@ -90,11 +96,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             });
         }
 
-        public DrawingGroup Icon => Model.GetIcon();
-
         public bool IsExpanded { get; set; }
-
-        public string Title => Model.Name;
 
         public bool IsVisible => !Model.Hidden;
 
@@ -139,12 +141,5 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         }
 
         public ObservableCollection<string> IncludePaths { get; private set; }
-
-        public static ProjectViewModel Create(SolutionViewModel solutionViewModel, IProject model)
-        {
-            ProjectViewModel result = new StandardProjectViewModel(solutionViewModel, model);
-
-            return result;
-        }
     }
 }

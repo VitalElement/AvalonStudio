@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Diagnostics;
 using Avalonia.Markup.Xaml;
+using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
 using System;
@@ -28,7 +29,7 @@ namespace AvalonStudio
                 ShellViewModel.Instance = container.GetExport<ShellViewModel>();
             });
 
-            builder.Start<MainWindow>();            
+            builder.Start<MainWindow>();
         }
 
         public override void Initialize()
@@ -52,13 +53,16 @@ namespace AvalonStudio
     {
         public static AppBuilder AvalonStudioPlatformDetect(this AppBuilder builder)
         {
-            if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+            switch(Platform.PlatformIdentifier)
             {
-                return builder.UseWin32().UseSkia();
-            }
-            else
-            {
-                return builder.UseGtk3().UseSkia();
+                case Platforms.PlatformID.Win32NT:
+                    return builder.UseWin32().UseSkia();
+
+                case Platforms.PlatformID.Unix:
+                    return builder.UseGtk3().UseSkia();
+
+                default:
+                    return builder.UsePlatformDetect();
             }
         }
     }

@@ -30,6 +30,28 @@ namespace AvalonStudio.GlobalSettings
             return result;
         }
 
+        public static T GetSettingsIfExists<T>(Func<dynamic> getRoot) where T : new()
+        {
+            T result = default(T);
+
+            var rootIndex = (IDictionary<string, object>)getRoot();
+            var root = getRoot();
+
+            if (rootIndex.ContainsKey(typeof(T).FullName))
+            {
+                if (rootIndex[typeof(T).FullName] is ExpandoObject)
+                {
+                    result = (rootIndex[typeof(T).FullName] as ExpandoObject).GetConcreteType<T>();
+                }
+                else
+                {
+                    result = (T)rootIndex[typeof(T).FullName];
+                }
+            }
+
+            return result;
+        }
+
         public static void SetSettings<T>(Func<dynamic> getRoot, Action save, T value) where T : new()
         {
             var rootIndex = (IDictionary<string, object>)getRoot();

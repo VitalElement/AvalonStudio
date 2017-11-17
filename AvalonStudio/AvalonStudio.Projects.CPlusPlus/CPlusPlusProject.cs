@@ -228,18 +228,33 @@ namespace AvalonStudio.Projects.CPlusPlus
         public override ISolution Solution { get; set; }
 
         [JsonIgnore]
-        public override string CurrentDirectory
-        {
-            get { return Path.GetDirectoryName(Location) + Platform.DirectorySeperator; }
-        }
+        public override string CurrentDirectory => Path.GetDirectoryName(Location) + Platform.DirectorySeperator;
 
         [JsonIgnore]
         public override string Location { get; set; }
 
         [JsonIgnore]
+        public override bool CanRename => true;
+
+        [JsonIgnore]
         public override string Name
         {
             get { return Path.GetFileNameWithoutExtension(Location); }
+            set
+            {
+                if (value != Name)
+                {
+                    var newLocation = Path.Combine(CurrentDirectory, value + Path.GetExtension(Location));
+
+                    var current = Location;
+
+                    Location = newLocation;
+
+                    File.Move(current, newLocation);
+
+                    Solution?.UpdateItem(this);
+                }
+            }
         }
 
         public ProjectType Type { get; set; }
@@ -300,11 +315,9 @@ namespace AvalonStudio.Projects.CPlusPlus
         public string LinkerScript { get; set; }
         public override string Executable { get; set; }
 
-        public override IProject Load(ISolution solution, string filePath)
+        public override IProject Load(string filePath)
         {
-            var result = Load(filePath, solution);
-
-            return result;
+            return LoadFromFile(filePath);
         }
 
         public override int CompareTo(IProject other)
@@ -433,7 +446,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                 if (!string.IsNullOrEmpty(settings.PreBuildCommands))
                 {
-                    result.AddRange(settings.PreBuildCommands.Split(Environment.NewLine));
+                    result.AddRange(settings.PreBuildCommands.Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
                 }
 
                 return result;
@@ -451,19 +464,22 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                 if (!string.IsNullOrEmpty(settings.PostBuildCommands))
                 {
-                    result.AddRange(settings.PostBuildCommands.Split(Environment.NewLine));
+                    result.AddRange(settings.PostBuildCommands.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)); 
                 }
 
                 return result;
             }
         }
 
+        [JsonIgnore]
+        public override Guid ProjectTypeId => CPlusPlusProjectType.TypeId; 
+
         public static string GenerateProjectFileName(string name)
         {
             return string.Format("{0}.{1}", name, ProjectExtension);
         }
 
-        public static CPlusPlusProject Load(string filename, ISolution solution)
+        public static CPlusPlusProject LoadFromFile(string filename)
         {
             if (!System.IO.File.Exists(filename))
             {
@@ -484,7 +500,6 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             project.Project = project;
             project.Location = filename;
-            project.Solution = solution;
 
             project.Items.InsertSorted(new ReferenceFolder(project));
             project.LoadFiles();
@@ -492,7 +507,7 @@ namespace AvalonStudio.Projects.CPlusPlus
             return project;
         }
 
-        public static CPlusPlusProject Create(ISolution solution, string directory, string name)
+        public static CPlusPlusProject Create(string directory, string name)
         {
             CPlusPlusProject result = null;
 
@@ -500,8 +515,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             if (!System.IO.File.Exists(projectFile))
             {
-                var project = new CPlusPlusProject();
-                project.Solution = solution;
+                var project = new CPlusPlusProject();                
                 project.Location = projectFile;
 
                 project.Save();

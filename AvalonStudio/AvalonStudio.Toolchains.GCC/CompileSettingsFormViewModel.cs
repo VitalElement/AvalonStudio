@@ -34,18 +34,29 @@ namespace AvalonStudio.Toolchains.GCC
 
         private ObservableCollection<string> includePaths;
 
+        private ObservableCollection<string> compileExtensions;
+
+        private ObservableCollection<string> assembleExtensions;
+
         private string miscOptions;
 
         private int optimizationLevelSelectedIndex;
-
-        private int optimizationPreferenceSelectedIndex;
 
         private bool rtti;
 
         private string selectedDefine;
 
         private string selectedInclude;
+
         private readonly CompileSettings settings = new CompileSettings();
+
+        private string _selectedCompileExtension;
+
+        private string _compileExtensionText;
+
+        private string _selectedAssembleExtension;
+
+        private string _assembleExtensionText;
 
         public CompileSettingsFormViewModel(IProject project) : base("Compiler", project)
         {
@@ -53,6 +64,8 @@ namespace AvalonStudio.Toolchains.GCC
 
             defines = new ObservableCollection<string>(settings.Defines);
             includePaths = new ObservableCollection<string>(settings.Includes);
+            compileExtensions = new ObservableCollection<string>(settings.CompileExtensions);
+            assembleExtensions = new ObservableCollection<string>(settings.AssembleExtensions);
 
             miscOptions = settings.CustomFlags;
 
@@ -72,6 +85,10 @@ namespace AvalonStudio.Toolchains.GCC
 
             RemoveIncludePathCommand = ReactiveCommand.Create(RemoveIncludePath);
 
+            AddCompileExtensionCommand = ReactiveCommand.Create(AddCompileExtension, this.WhenAnyValue(x => x.CompileExtensionText, compileExtension => !string.IsNullOrEmpty(compileExtension) && !CompileExtensions.Contains(compileExtension)));
+
+            AddAssembleExtensionCommand = ReactiveCommand.Create(AddAssembleExtension, this.WhenAnyValue(x => x.AssembleExtensionText, asmExt => !string.IsNullOrEmpty(asmExt) && !CompileExtensions.Contains(asmExt)));
+
             UpdateCompileString();
         }
 
@@ -79,6 +96,10 @@ namespace AvalonStudio.Toolchains.GCC
         public ReactiveCommand RemoveIncludePathCommand { get; }
         public ReactiveCommand AddDefineCommand { get; }
         public ReactiveCommand RemoveDefineCommand { get; }
+        public ReactiveCommand AddCompileExtensionCommand { get; }
+        public ReactiveCommand RemoveCompileExtensionCommand { get; }
+        public ReactiveCommand AddAssembleExtensionCommand { get; }
+        public ReactiveCommand RemoveAssembleExtensionCommand { get; }
 
         public string[] CLanguageStandards
         {
@@ -256,6 +277,36 @@ namespace AvalonStudio.Toolchains.GCC
             }
         }
 
+        public string CompileExtensionText
+        {
+            get { return _compileExtensionText; }
+            set { this.RaiseAndSetIfChanged(ref _compileExtensionText, value); }
+        }
+
+        public ObservableCollection<string> CompileExtensions
+        {
+            get => compileExtensions;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref compileExtensions, value);
+            }
+        }
+
+        public string AssembleExtensionText
+        {
+            get { return _assembleExtensionText; }
+            set { this.RaiseAndSetIfChanged(ref _assembleExtensionText, value); }
+        }
+
+        public ObservableCollection<string> AssembleExtensions
+        {
+            get => assembleExtensions;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref assembleExtensions, value);
+            }
+        }
+
         public ObservableCollection<string> IncludePaths
         {
             get
@@ -292,6 +343,18 @@ namespace AvalonStudio.Toolchains.GCC
             }
         }
 
+        public string SelectedAssembleExtension
+        {
+            get { return _selectedAssembleExtension; }
+            set { this.RaiseAndSetIfChanged(ref _selectedAssembleExtension, value); }
+        }
+
+        public string SelectedCompileExtension
+        {
+            get { return _selectedCompileExtension; }
+            set { this.RaiseAndSetIfChanged(ref _selectedCompileExtension, value); }
+        }
+
         public void UpdateCompileString()
         {
             Save();
@@ -301,6 +364,32 @@ namespace AvalonStudio.Toolchains.GCC
                 CompilerArguments = (Model.ToolChain as StandardToolChain).GetCompilerArguments(Model as IStandardProject,
                     Model as IStandardProject, null);
             }
+        }
+
+        private void AddCompileExtension()
+        {
+            CompileExtensions.Add(CompileExtensionText);
+            CompileExtensionText = string.Empty;
+            Save();
+        }
+
+        private void RemoveCompileExtension()
+        {
+            CompileExtensions.Remove(SelectedCompileExtension);
+            Save();
+        }
+
+        private void AddAssembleExtension()
+        {
+            AssembleExtensions.Add(AssembleExtensionText);
+            AssembleExtensionText = string.Empty;
+            Save();
+        }
+
+        private void RemoveAssembleExtension()
+        {
+            AssembleExtensions.Remove(SelectedAssembleExtension);
+            Save();
         }
 
         private void AddDefine()
@@ -359,6 +448,8 @@ namespace AvalonStudio.Toolchains.GCC
         public void Save()
         {
             settings.Defines = defines.ToList();
+            settings.CompileExtensions = compileExtensions.ToList();
+            settings.AssembleExtensions = assembleExtensions.ToList();
             settings.CustomFlags = miscOptions;
             settings.CppLanguageStandard = (CppLanguageStandard)cppLanguageStandardSelectedIndex;
             settings.CLanguageStandard = (CLanguageStandard)clanguageStandardSelectedIndex;

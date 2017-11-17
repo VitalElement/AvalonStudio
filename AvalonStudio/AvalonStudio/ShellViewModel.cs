@@ -70,6 +70,8 @@ namespace AvalonStudio
 
         private ModalDialogViewModelBase modalDialog;
 
+        private QuickCommanderViewModel _quickCommander;
+
         private ObservableCollection<object> tools;
 
         [ImportingConstructor]
@@ -93,7 +95,8 @@ namespace AvalonStudio
             _toolBarItemGroupDefinitions = new List<ToolBarItemGroupDefinition>();
             _toolBarItemDefinitions = new List<ToolBarItemDefinition>();
 
-            IoC.RegisterConstant(this, typeof(IShell));
+            IoC.RegisterConstant<IShell>(this);
+            IoC.RegisterConstant(this);
 
             foreach (var extension in extensions)
             {
@@ -126,6 +129,8 @@ namespace AvalonStudio
             OnSolutionChanged = Observable.FromEventPattern<SolutionChangedEventArgs>(this, nameof(SolutionChanged)).Select(s => s.EventArgs.NewValue);
 
             _taskRunner = new WorkspaceTaskRunner();
+
+            QuickCommander = new QuickCommanderViewModel();
 
             foreach (var extension in extensions)
             {
@@ -161,9 +166,9 @@ namespace AvalonStudio
                 menuItemDefinition.Activation();
             }
 
-            foreach (var menuItemDefinition in _menuItemGroupDefinitions)
+            foreach (var menuItemAsReadOnlyDefinition in _menuItemGroupDefinitions)
             {
-                menuItemDefinition.Activation();
+                menuItemAsReadOnlyDefinition.Activation();
             }
 
             foreach (var extension in _menuItemDefinitions)
@@ -386,7 +391,7 @@ namespace AvalonStudio
             DocumentTabs.CloseDocument(document);
         }
 
-        public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
+        public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
         {
             var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
 
@@ -396,14 +401,14 @@ namespace AvalonStudio
 
                 AddDocument(currentTab);
 
-                currentTab.OpenFile(file);                
-            }            
+                currentTab.OpenFile(file);
+            }
             else
             {
                 AddDocument(currentTab);
             }
 
-            if (currentTab is IEditor editor)
+            if (DocumentTabs.SelectedDocument is IEditor editor)
             {
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
@@ -417,6 +422,11 @@ namespace AvalonStudio
                     if (selectLine || debugHighlight)
                     {
                         editor.GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                    }
+
+                    if (focus)
+                    {
+                        editor.Focus();
                     }
                 });
             }
@@ -498,6 +508,11 @@ namespace AvalonStudio
             }
         }
 
+        public void ShowQuickCommander()
+        {
+            this._quickCommander.IsVisible = true;
+        }
+
         public ObservableCollection<object> Tools
         {
             get { return tools; }
@@ -535,6 +550,13 @@ namespace AvalonStudio
             set { this.RaiseAndSetIfChanged(ref modalDialog, value); }
         }
 
+        public QuickCommanderViewModel QuickCommander
+        {
+            get { return _quickCommander; }
+            set { this.RaiseAndSetIfChanged(ref _quickCommander, value); }
+        }
+
+
         public void InvalidateCodeAnalysis()
         {
             foreach (var document in DocumentTabs.Documents)
@@ -553,7 +575,7 @@ namespace AvalonStudio
             {
                 this.RaiseAndSetIfChanged(ref _currentColorScheme, value);
 
-                foreach(var document in DocumentTabs.Documents.OfType<EditorViewModel>())
+                foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
                 {
                     document.ColorScheme = value;
                 }
@@ -566,7 +588,7 @@ namespace AvalonStudio
             {
                 return currentSolution;
             }
-            set
+            private set
             {
                 var oldValue = CurrentSolution;
 
@@ -695,7 +717,7 @@ namespace AvalonStudio
         {
             if (CurrentSolution != null)
             {
-                await CloseSolutionAsync();
+                CloseSolution();
             }
 
             if (System.IO.File.Exists(path))
@@ -709,22 +731,22 @@ namespace AvalonStudio
             }
         }
 
-        public async Task CloseSolutionAsync()
+        public void CloseSolution()
         {
             var documentsToClose = DocumentTabs.Documents.ToList();
 
             foreach (var document in documentsToClose)
             {
-                if (document is EditorViewModel)
+                if (document is EditorViewModel evm)
                 {
-                    //await (document as EditorViewModel).CloseCommand.ExecuteAsyncTask();
+                    DocumentTabs.CloseDocument(evm);
                 }
             }
 
             CurrentSolution = null;
         }
 
-        public async Task CloseDocumentsForProjectAsync(IProject project)
+        public void CloseDocumentsForProject(IProject project)
         {
             var documentsToClose = DocumentTabs.Documents.ToList();
 
@@ -732,9 +754,7 @@ namespace AvalonStudio
             {
                 if (document is EditorViewModel evm && evm.ProjectFile.Project == project)
                 {
-                    //await evm.CloseCommand.ExecuteAsyncTask();
-
-                    evm.OnClose();
+                    DocumentTabs.CloseDocument(evm);
                 }
             }
         }

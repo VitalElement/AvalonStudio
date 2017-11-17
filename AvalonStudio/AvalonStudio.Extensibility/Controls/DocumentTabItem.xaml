@@ -5,7 +5,7 @@
         <Setter Property="Focusable" Value="True" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Border BorderThickness="1" BorderBrush="{StyleResource ApplicationBorderBrush}" Background="{StyleResource ControlBackgroundBrush}">
+                <Border BorderThickness="1" BorderBrush="{DynamicResource ApplicationBorderBrush}" Background="{StyleResource ControlBackgroundBrush}">
                     <Grid Margin="4">
                         <ContentPresenter  Grid.Row="1" Name="PART_ContentPresenter"
                          Background="{TemplateBinding Background}"

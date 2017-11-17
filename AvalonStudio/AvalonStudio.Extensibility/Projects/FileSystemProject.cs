@@ -34,39 +34,54 @@
                 uiDispatcher = Dispatcher.UIThread;
             }
         }
+
         ~FileSystemProject()
         {
             Dispose();
         }
 
-        public static void PopulateFiles(FileSystemProject project, IProjectFolder folder)
+        protected virtual bool FilterProjectFile => true;
+
+        [JsonIgnore]
+        public Guid Id { get; set; }
+
+        public void PopulateFiles(IProjectFolder folder)
         {
             var files = Directory.EnumerateFiles(folder.Location);
 
-            files = files.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath()) && f != project.Location);
+            files = files.Where(f => !IsExcluded(f));
 
             foreach (var file in files)
             {
-                var sourceFile = File.FromPath(project, folder, file.ToPlatformPath().NormalizePath());
-                project.SourceFiles.InsertSorted(sourceFile);
+                var sourceFile = FileSystemFile.FromPath(this, folder, file.ToPlatformPath().NormalizePath());
+                SourceFiles.InsertSorted(sourceFile);
                 folder.Items.InsertSorted(sourceFile);
             }
         }
 
-        private static bool IsExcluded(List<string> exclusionFilters, string path)
+        private bool IsExcluded(string fullPath)
         {
             var result = false;
 
-            var filter = exclusionFilters.FirstOrDefault(f => path.Contains(f));
+            if(FilterProjectFile && fullPath == Location)
+            {
+                result = true;
+            }
+            else
+            {
+                var path = CurrentDirectory.MakeRelativePath(fullPath).ToAvalonPath();
 
-            result = !string.IsNullOrEmpty(filter);
+                var filter = ExcludedFiles.FirstOrDefault(f => path.Contains(f));
+
+                result = !string.IsNullOrEmpty(filter);
+            }
 
             return result;
         }
 
-        public static IProjectFolder GetSubFolders(FileSystemProject project, IProjectFolder parent, string path)
+        public IProjectFolder GetSubFolders(IProjectFolder parent, string path)
         {
-            var result = new StandardProjectFolder(path);
+            var result = new FileSystemFolder(path);
 
             try
             {
@@ -74,17 +89,17 @@
 
                 if (folders.Count() > 0)
                 {
-                    foreach (var folder in folders.Where(f => !IsExcluded(project.ExcludedFiles, project.CurrentDirectory.MakeRelativePath(f).ToAvalonPath())))
+                    foreach (var folder in folders.Where(f => !IsExcluded(f)))
                     {
-                        result.Items.InsertSorted(GetSubFolders(project, result, folder));
+                        result.Items.InsertSorted(GetSubFolders(result, folder));
                     }
                 }
 
-                PopulateFiles(project, result);
+                PopulateFiles(result);
 
-                project.Folders.InsertSorted(result);
+                Folders.InsertSorted(result);
                 result.Parent = parent;
-                result.Project = project;
+                result.Project = this;
             }
             catch (Exception)
             {
@@ -95,7 +110,7 @@
 
         protected void LoadFiles()
         {
-            var folders = GetSubFolders(this, this, CurrentDirectory);
+            var folders = GetSubFolders(this, CurrentDirectory);
 
             foreach (var item in folders.Items)
             {
@@ -218,25 +233,29 @@
 
         public void AddFile(string fullPath)
         {
-            var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
-
-            var sourceFile = File.FromPath(this, folder, fullPath.ToPlatformPath().NormalizePath());
-            SourceFiles.InsertSorted(sourceFile);
-
-            if (folder != null)
+            if(!IsExcluded(fullPath))
             {
-                if (folder.Location == Project.CurrentDirectory)
-                {
-                    Project.Items.InsertSorted(sourceFile);
-                    sourceFile.Parent = Project;
-                }
-                else
-                {
-                    folder.Items.InsertSorted(sourceFile);
-                    sourceFile.Parent = folder;
-                }
+                var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
 
-                FileAdded?.Invoke(this, new EventArgs());
+                var sourceFile = FileSystemFile.FromPath(this, folder, fullPath.ToPlatformPath().NormalizePath());
+                
+                SourceFiles.InsertSorted(sourceFile);
+
+                if (folder != null)
+                {
+                    if (folder.Location == Project.CurrentDirectory)
+                    {
+                        Project.Items.InsertSorted(sourceFile);
+                        sourceFile.Parent = Project;
+                    }
+                    else
+                    {
+                        folder.Items.InsertSorted(sourceFile);
+                        sourceFile.Parent = folder;
+                    }
+
+                    FileAdded?.Invoke(this, new EventArgs());
+                }
             }
         }
 
@@ -262,25 +281,28 @@
 
         public void AddFolder(string fullPath)
         {
-            var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
-
-            if (folder != null)
+            if (!IsExcluded(fullPath))
             {
-                var existing = FindFolder(fullPath);
+                var folder = FindFolder(Path.GetDirectoryName(fullPath) + "\\");
 
-                if (existing == null)
+                if (folder != null)
                 {
-                    var newFolder = GetSubFolders(this, folder, fullPath);
+                    var existing = FindFolder(fullPath);
 
-                    if (folder.Location == Project.CurrentDirectory)
+                    if (existing == null)
                     {
-                        newFolder.Parent = Project;
-                        Project.Items.InsertSorted(newFolder);
-                    }
-                    else
-                    {
-                        newFolder.Parent = folder;
-                        folder.Items.InsertSorted(newFolder);
+                        var newFolder = GetSubFolders(folder, fullPath);
+
+                        if (folder.Location == Project.CurrentDirectory)
+                        {
+                            newFolder.Parent = Project;
+                            Project.Items.InsertSorted(newFolder);
+                        }
+                        else
+                        {
+                            newFolder.Parent = folder;
+                            folder.Items.InsertSorted(newFolder);
+                        }
                     }
                 }
             }
@@ -343,7 +365,7 @@
         }
 
         [JsonIgnore]
-        public IList<ISourceFile> SourceFiles { get; private set; }
+        public List<ISourceFile> SourceFiles { get; private set; }
 
         [JsonIgnore]
         public IList<IProjectFolder> Folders { get; private set; }
@@ -374,7 +396,9 @@
 
         public abstract string LocationDirectory { get; }
 
-        public abstract string Name { get; }
+        public abstract bool CanRename { get; }
+
+        public abstract string Name { get; set; }
 
         public abstract IProjectFolder Parent { get; set; }
 
@@ -395,6 +419,11 @@
         }
 
         public abstract dynamic ToolchainSettings { get; set; }
+        ISolutionFolder ISolutionItem.Parent { get; set; }
+
+        public abstract Guid ProjectTypeId { get; }        
+
+        IReadOnlyList<ISourceFile> IProject.SourceFiles => SourceFiles.AsReadOnly();
 
         public event EventHandler FileAdded;
 
@@ -418,7 +447,7 @@
 
         public abstract void Save();
 
-        public abstract IProject Load(ISolution solution, string filePath);
+        public abstract IProject Load(string filePath);
 
         public void Dispose()
         {
@@ -432,5 +461,10 @@
         }
 
         #endregion IProject Implementation
+
+        public int CompareTo(ISolutionItem other)
+        {
+            return this.DefaultCompareTo(other);
+        }
     }
 }

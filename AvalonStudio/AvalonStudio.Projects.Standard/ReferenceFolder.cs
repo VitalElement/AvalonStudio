@@ -12,9 +12,12 @@ namespace AvalonStudio.Projects.Standard
             Project = project;
         }
 
+        public bool CanRename => false;
+
         public string Name
         {
             get { return "References"; }
+            set { }
         }
 
         public ObservableCollection<IProject> References { get; set; }

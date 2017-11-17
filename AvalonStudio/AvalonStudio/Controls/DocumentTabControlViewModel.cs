@@ -50,11 +50,10 @@ namespace AvalonStudio.Controls
             }
             else
             {
-                IDocumentTabViewModel documentToClose = null;
 
                 if (TemporaryDocument != null)
                 {
-                    documentToClose = TemporaryDocument;
+                    CloseDocument(TemporaryDocument);
                 }
 
                 document.IsTemporary = true;
@@ -171,7 +170,6 @@ namespace AvalonStudio.Controls
 
                 if (value is IEditor editor)
                 {
-                    editor.Focus();
                     editor.TriggerCodeAnalysis();
                 }
 

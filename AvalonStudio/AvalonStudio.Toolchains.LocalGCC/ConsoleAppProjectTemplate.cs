@@ -25,10 +25,10 @@ namespace AvalonStudio.Toolchains.LocalGCC
             get { return "Creates a simple console application."; }
         }
 
-        public override async Task<IProject> Generate(ISolution solution, string name)
+        public override async Task<IProject> Generate(ISolutionFolder solutionFolder, string name)
         {
             var shell = IoC.Get<IShell>();
-            var project = await base.Generate(solution, name);
+            var project = await base.Generate(solutionFolder, name);
 
             project.ToolChain = shell.ToolChains.FirstOrDefault(tc => tc is LocalGCCToolchain);
 
