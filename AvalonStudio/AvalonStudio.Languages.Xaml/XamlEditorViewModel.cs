@@ -9,6 +9,7 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.Xaml
 {
@@ -46,6 +47,11 @@ namespace AvalonStudio.Languages.Xaml
         public void Close()
         {
             IoC.Get<IShell>().RemoveDocument(this);
+        }
+
+        public Task WaitForEditorToLoadAsync()
+        {
+            return ((IFileDocumentTabViewModel)_textEditor).WaitForEditorToLoadAsync();
         }
     }
 }

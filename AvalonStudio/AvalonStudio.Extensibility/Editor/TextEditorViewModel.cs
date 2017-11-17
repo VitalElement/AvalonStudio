@@ -8,6 +8,7 @@ using ReactiveUI;
 using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Extensibility.Editor
 {
@@ -124,6 +125,20 @@ namespace AvalonStudio.Extensibility.Editor
         private void InvalidateVisualFontSize()
         {
             VisualFontSize = (ZoomLevel / 100) * FontSize;
+        }
+
+        public override async Task WaitForEditorToLoadAsync()
+        {
+            if (_documentAccessor == null)
+            {
+                await Task.Run(() =>
+                {
+                    while (_documentAccessor == null)
+                    {
+                        Task.Delay(50);
+                    }
+                });
+            }
         }
 
         public IEditor DocumentAccessor

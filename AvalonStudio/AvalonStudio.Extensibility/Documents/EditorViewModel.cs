@@ -3,6 +3,7 @@ using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Projects;
 using ReactiveUI;
 using System;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
@@ -53,5 +54,7 @@ namespace AvalonStudio.Controls
         }
 
         public abstract IEditor Editor { get; }
+
+        public abstract Task WaitForEditorToLoadAsync();
     }
 }

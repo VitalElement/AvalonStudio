@@ -426,25 +426,25 @@ namespace AvalonStudio
                 AddDocument(currentTab);
             }
 
-            if (DocumentTabs.SelectedDocument is IEditor editor)
+            if (DocumentTabs.SelectedDocument is IFileDocumentTabViewModel fileTab)
             {
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    //await editor.WaitForEditorToLoadAsync();
+                    await fileTab.WaitForEditorToLoadAsync();
 
                     if (debugHighlight)
                     {
-                        editor.SetDebugHighlight(line, startColumn, endColumn);
+                        fileTab.Editor.SetDebugHighlight(line, startColumn, endColumn);
                     }
 
                     if (selectLine || debugHighlight)
                     {
-                        editor.GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                        fileTab.Editor.GotoPosition(line, startColumn != -1 ? 1 : startColumn);
                     }
 
                     if (focus)
                     {
-                        editor.Focus();
+                        fileTab.Editor.Focus();
                     }
                 });
             }
