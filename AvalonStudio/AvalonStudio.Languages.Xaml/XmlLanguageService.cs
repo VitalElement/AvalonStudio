@@ -65,6 +65,7 @@ namespace AvalonStudio.Languages.Xaml
             switch (Path.GetExtension(file.Location))
             {
                 case ".xml":
+                case ".csproj":
                     result = true;
                     break;
             }
