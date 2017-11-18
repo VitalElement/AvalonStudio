@@ -1,24 +1,23 @@
-﻿using Avalonia.Controls;
-using ReactiveUI;
+﻿using AvalonStudio.Projects;
+using System.Threading.Tasks;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Documents
 {
-    public interface IDocumentTabViewModel
+    public interface IFileDocumentTabViewModel : IDocumentTabViewModel
     {
+        ISourceFile SourceFile { get; }
+
+        IEditor Editor { get; }
+        
         bool IsDirty { get; set; }
 
+        Task WaitForEditorToLoadAsync();
+    }
+
+    public interface IDocumentTabViewModel
+    {
         string Title { get; set; }
 
-        ReactiveCommand CloseCommand { get; }
-
-        bool IsTemporary { get; set; }
-
-        bool IsVisible { get; set; }
-
-        bool IsSelected { get; set; }
-
-        Dock Dock { get; set; }
-
-        void OnClose();
+        void Close();
     }
 }

@@ -8,6 +8,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     {
         public abstract DrawingGroup Icon { get; }
 
+        public virtual bool IsExpanded { get; set; } = false;
+
         public static ProjectItemViewModel Create(IProjectItem item)
         {
             ProjectItemViewModel result = null;

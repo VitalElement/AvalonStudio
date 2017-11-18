@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.CSharp;
 using RoslynPad.Editor.Windows;
 using RoslynPad.Roslyn.Diagnostics;
 using System;
@@ -22,6 +23,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Threading;
+using AvalonStudio.Projects.OmniSharp;
 
 namespace RoslynPad.Roslyn
 {
@@ -60,10 +64,7 @@ namespace RoslynPad.Roslyn
             {
                 //await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
 
-                var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
-                var dotnet = new DotNetCliService(Path.Combine(dotnetDirectory, "dotnet"));
-
-                var dotnetInfo = dotnet.GetInfo();
+                //var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
 
                 var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
 
@@ -71,10 +72,14 @@ namespace RoslynPad.Roslyn
 
                 var assemblies = new[]
                 {
-                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis")),
-                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis.CSharp")),
-                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis.Features")),
-                    Assembly.Load(new AssemblyName("Microsoft.CodeAnalysis.CSharp.Features")),
+                    // Microsoft.CodeAnalysis.Workspaces
+                    typeof(WorkspacesResources).GetTypeInfo().Assembly,
+                    // Microsoft.CodeAnalysis.CSharp.Workspaces 
+                    typeof(CSharpWorkspaceResources).GetTypeInfo().Assembly,
+                    // Microsoft.CodeAnalysis.Features
+                    typeof(FeaturesResources).GetTypeInfo().Assembly,
+                    // Microsoft.CodeAnalysis.CSharp.Features
+                    typeof(CSharpFeaturesResources).GetTypeInfo().Assembly,
                     typeof(RoslynWorkspace).Assembly,
                 };
 
@@ -90,7 +95,7 @@ namespace RoslynPad.Roslyn
 
                 var host = MefHostServices.Create(compositionContext);
 
-                var workspace = new RoslynWorkspace(host, null, compositionContext, Path.Combine(dotnetDirectory, "dotnet"), dotnetInfo.BasePath);
+                var workspace = new RoslynWorkspace(host, null, compositionContext, DotNetCliService.Instance.Info.Executable, DotNetCliService.Instance.Info.BasePath);
 
                 workspace.RegisterWorkspace(solution);
             }
@@ -117,7 +122,7 @@ namespace RoslynPad.Roslyn
             return _compositionContext.GetExport<TService>();
         }
 
-        public async Task<(Project project, List<string> projectReferences)> AddProject(string solutionDir, string projectFile)
+        public async Task<(Project project, List<string> projectReferences, string targetPath)> AddProject(string solutionDir, string projectFile)
         {
             if (buildHost == null)
             {
@@ -129,7 +134,14 @@ namespace RoslynPad.Roslyn
 
             OnProjectAdded(loadData.info);
 
-            return (CurrentSolution.GetProject(loadData.info.Id), loadData.projectReferences);
+            return (CurrentSolution.GetProject(loadData.info.Id), loadData.projectReferences, loadData.targetPath);
+        }
+
+        public async Task ReevaluateProject(AvalonStudio.Projects.IProject project)
+        {
+            var proj = project as OmniSharpProject;
+
+            var loadData = await buildHost.LoadProject(project.Solution.CurrentDirectory, project.Location);
         }
 
         public ProjectId GetProjectId(AvalonStudio.Projects.IProject project)

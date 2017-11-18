@@ -1,6 +1,7 @@
 ﻿using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Rendering;
+using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Languages;
 using AvalonStudio.LanguageSupport.TypeScript.Projects;
@@ -32,6 +33,8 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             new ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation>();
 
         public Type BaseTemplateType => typeof(BlankTypeScriptProjectTemplate);
+
+        public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
 
         public bool CanTriggerIntellisense(char currentChar, char previousChar)
         {
@@ -147,12 +150,10 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
             var editorCompletions = completions.Entries.Select(cc =>
                 {
-                    var ccData = new CodeCompletionData
+                    var ccData = new CodeCompletionData (cc.Name, cc.Name)
                     {
                         Kind = ConvertCodeCompletionKind(cc.Kind),
-                        Hint = cc.KindModifiers,
-                        BriefComment = cc.Name,
-                        Suggestion = cc.Name
+                        BriefComment = cc.Name
                     };
                     return ccData;
                 })

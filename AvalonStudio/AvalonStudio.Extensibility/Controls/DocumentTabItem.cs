@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using System;
 
 namespace AvalonStudio.Controls
 {
@@ -14,6 +15,14 @@ namespace AvalonStudio.Controls
             PseudoClass(DockPanel.DockProperty, o => o == Dock.Left, ":dockleft");
             PseudoClass(DockPanel.DockProperty, o => o == Dock.Top, ":docktop");
             PseudoClass(DockPanel.DockProperty, o => o == Dock.Bottom, ":dockbottom");
+        }
+
+        public DocumentTabItem()
+        {
+            this.GetObservable(DockPanel.DockProperty).Subscribe(dock =>
+            {
+                var parent = Parent;
+            });
         }
 
         public static readonly AvaloniaProperty<string> TitleProprty =

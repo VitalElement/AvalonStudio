@@ -31,7 +31,7 @@ namespace AvalonStudio
 
             if (System.IO.File.Exists(solutionFile))
             {
-                return AvalonStudioSolution.Load(solutionFile);
+                return AvalonStudioSolution.LoadAsync(solutionFile).GetAwaiter().GetResult();
             }
 
             throw new Exception("Solution file: " + options.Solution + "could not be found.");

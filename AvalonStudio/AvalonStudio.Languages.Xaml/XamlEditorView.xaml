@@ -1,0 +1,16 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:previewer="clr-namespace:AvalonStudio.Languages.Xaml"
+             xmlns:as="clr-namespace:AvalonStudio.Extensibility.Controls;assembly=AvalonStudio.Extensibility"
+             xmlns:local="clr-namespace:AvalonStudio.Extensibility.Editor;assembly=AvalonStudio.Extensibility">
+    <Grid RowDefinitions="*,5,*">
+        <Grid DockPanel.Dock="Top" Background="{DynamicResource ThemeEditorBackground}">
+            <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
+                <previewer:AvaloniaPreviewer Xaml="{Binding CodeEditor.SourceText}" SourceFile="{Binding SourceFile}" />
+            </Border>
+        </Grid>
+
+        <GridSplitter Grid.Row="1" />
+
+        <local:EditorView Grid.Row="2"  DataContext="{Binding CodeEditor}" />
+    </Grid>
+</UserControl>

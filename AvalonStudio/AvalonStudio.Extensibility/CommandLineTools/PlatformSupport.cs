@@ -82,7 +82,7 @@ namespace AvalonStudio.CommandLineTools
            outputReceivedCallback, Action<object, DataReceivedEventArgs> errorReceivedCallback = null, bool resolveExecutable = true,
            string workingDirectory = "", bool executeInShell = true, params string[] extraPaths)
         {
-            using (var shellProc = new Process
+            var shellProc = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
@@ -91,52 +91,52 @@ namespace AvalonStudio.CommandLineTools
                     UseShellExecute = false,
                     WorkingDirectory = workingDirectory
                 }
-            })
-            {
-                foreach (var extraPath in extraPaths)
-                {
-                    if (extraPath != null)
-                    {
-                        shellProc.StartInfo.Environment["PATH"] += $"{Platform.PathSeperator}{extraPath}";
-                    }
-                }
+            };
 
-                if (executeInShell)
+
+            foreach (var extraPath in extraPaths)
+            {
+                if (extraPath != null)
                 {
-                    if (executorType == ShellExecutorType.Windows)
-                    {
-                        shellProc.StartInfo.FileName = ResolveFullExecutablePath("cmd.exe");
-                        shellProc.StartInfo.Arguments = $"/C {(resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName)} {args}";
-                        shellProc.StartInfo.CreateNoWindow = true;
-                    }
-                    else //Unix
-                    {
-                        shellProc.StartInfo.FileName = "sh";
-                        shellProc.StartInfo.Arguments = $"-c \"{(resolveExecutable ? ResolveFullExecutablePath(commandName) : commandName)} {args}\"";
-                        shellProc.StartInfo.CreateNoWindow = true;
-                    }
+                    shellProc.StartInfo.Environment["PATH"] += $"{Platform.PathSeperator}{extraPath}";
                 }
-                else
+            }
+
+            if (executeInShell)
+            {
+                if (executorType == ShellExecutorType.Windows)
                 {
-                    shellProc.StartInfo.FileName = (resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName);
-                    shellProc.StartInfo.Arguments = args;
+                    shellProc.StartInfo.FileName = ResolveFullExecutablePath("cmd.exe");
+                    shellProc.StartInfo.Arguments = $"/C {(resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName)} {args}";
                     shellProc.StartInfo.CreateNoWindow = true;
                 }
-
-                shellProc.OutputDataReceived += (s, a) => outputReceivedCallback(s, a);
-
-                if (errorReceivedCallback != null)
+                else //Unix
                 {
-                    shellProc.ErrorDataReceived += (s, a) => errorReceivedCallback(s, a);
+                    shellProc.StartInfo.FileName = "sh";
+                    shellProc.StartInfo.Arguments = $"-c \"{(resolveExecutable ? ResolveFullExecutablePath(commandName) : commandName)} {args}\"";
+                    shellProc.StartInfo.CreateNoWindow = true;
                 }
-
-                shellProc.Start();
-
-                shellProc.BeginOutputReadLine();
-                shellProc.BeginErrorReadLine();
-
-                return shellProc;
             }
+            else
+            {
+                shellProc.StartInfo.FileName = (resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName);
+                shellProc.StartInfo.Arguments = args;
+                shellProc.StartInfo.CreateNoWindow = true;
+            }
+
+            shellProc.OutputDataReceived += (s, a) => outputReceivedCallback(s, a);
+
+            if (errorReceivedCallback != null)
+            {
+                shellProc.ErrorDataReceived += (s, a) => errorReceivedCallback(s, a);
+            }
+
+            shellProc.Start();
+
+            shellProc.BeginOutputReadLine();
+            shellProc.BeginErrorReadLine();
+
+            return shellProc;
         }
 
         public static int ExecuteShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs>

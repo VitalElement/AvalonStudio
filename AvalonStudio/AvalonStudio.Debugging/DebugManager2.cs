@@ -310,7 +310,7 @@
                     if (document != null)
                     {
                         _lastDocument = document;
-                        file = document?.ProjectFile;
+                        file = document?.SourceFile;
                     }
 
                     if (file == null)

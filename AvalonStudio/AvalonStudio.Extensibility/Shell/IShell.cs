@@ -27,6 +27,10 @@ namespace AvalonStudio.Shell
         IObservable<ISolution> OnSolutionChanged { get; }
 
         event EventHandler<SolutionChangedEventArgs> SolutionChanged;
+        
+        event EventHandler<BuildEventArgs> BuildStarting;
+
+        event EventHandler<BuildEventArgs> BuildCompleted;
 
         IWorkspaceTaskRunner TaskRunner { get; }
 
@@ -37,6 +41,8 @@ namespace AvalonStudio.Shell
         object BottomSelectedTool { get; set; }
 
         ColorScheme CurrentColorScheme { get; set; }
+
+        IEnumerable<IEditorProvider> EditorProviders { get; }
 
         IEnumerable<ISolutionType> SolutionTypes { get; }
 
@@ -64,7 +70,7 @@ namespace AvalonStudio.Shell
 
         void CloseSolution();
 
-        void AddDocument(IDocumentTabViewModel document);
+        void AddDocument(IDocumentTabViewModel document, bool temporary = true);
 
         void RemoveDocument(IDocumentTabViewModel document);
 

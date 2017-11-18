@@ -7,6 +7,7 @@
     using AvaloniaEdit.Indentation.CSharp;
     using AvaloniaEdit.Rendering;
     using AvalonStudio.CodeEditor;
+    using AvalonStudio.Editor;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
@@ -45,10 +46,7 @@
                 if (string.IsNullOrEmpty(propertyName))
                     return propertyName;
                 string newName = Char.ToLower(propertyName[0]) + propertyName.Substring(1);
-                if (newName == propertyName)
-                    return "_" + newName;
-                else
-                    return newName;
+                return "_" + newName;
             });
         }
 
@@ -59,6 +57,8 @@
                 return typeof(BlankOmniSharpProjectTemplate);
             }
         }
+
+        public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
 
         public bool CanTriggerIntellisense(char currentChar, char previousChar)
         {
@@ -78,12 +78,12 @@
 
         public IEnumerable<char> IntellisenseTriggerCharacters => new[]
         {
-            '.', '>', ':'
+            '.', '<', ':'
         };
 
         public IEnumerable<char> IntellisenseSearchCharacters => new[]
         {
-            '(', ')', '.', ':', '-', '>', ';'
+            '(', ')', '.', ':', '-', '>', ';', '<'
         };
 
         public IEnumerable<char> IntellisenseCompleteCharacters => new[]
@@ -193,11 +193,7 @@
             {
                 foreach (var completion in data.Items)
                 {
-                    var newCompletion = new CodeCompletionData()
-                    {
-                        Suggestion = completion.FilterText,
-                        Hint = completion.DisplayText
-                    };
+                    var newCompletion = new CodeCompletionData(completion.DisplayText, completion.DisplayText);
 
                     if (completion.Properties.ContainsKey("SymbolKind"))
                     {

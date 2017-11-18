@@ -41,7 +41,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand NewItemCommand { get; }
         public ReactiveCommand RemoveCommand { get; }
 
-        public bool IsExpanded
+        public override bool IsExpanded
         {
             get { return _isExpanded; }
             set

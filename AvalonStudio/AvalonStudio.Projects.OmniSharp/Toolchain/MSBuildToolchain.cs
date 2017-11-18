@@ -5,6 +5,7 @@
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
     using AvalonStudio.Projects.OmniSharp;
+    using AvalonStudio.Projects.OmniSharp.DotnetCli;
     using AvalonStudio.Utils;
     using System;
     using System.Collections.Generic;
@@ -33,9 +34,7 @@
         {
             return await Task.Factory.StartNew(() =>
             {
-                var settings = Settings.GetSettings<DotNetToolchainSettings>();
-
-                var exitCode = PlatformSupport.ExecuteShellCommand(settings.DotNetPath, "build", (s, e) =>
+                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, "build", (s, e) =>
                 {
                     console.WriteLine(e.Data);
 

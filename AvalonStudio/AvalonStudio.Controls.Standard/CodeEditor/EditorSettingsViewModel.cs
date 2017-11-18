@@ -28,7 +28,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             base.OnDialogLoaded();
 
-            var settings = Settings.GetSettings<Controls.Standard.CodeEditor.EditorSettings>();
+            var settings = Settings.GetSettings<EditorSettings>();
 
             SelectedColorSchemeIndex = ColorSchemes.IndexOf(settings.ColorScheme);
 
@@ -42,7 +42,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (!_loading)
             {
-                var settings = Settings.GetSettings<Controls.Standard.CodeEditor.EditorSettings>();
+                var settings = Settings.GetSettings<EditorSettings>();
 
                 settings.RemoveTrailingWhitespaceOnSave = RemoveTrailingWhiteSpaceOnSave;
                 settings.AutoFormat = AutoFormat;

@@ -29,9 +29,12 @@ namespace AvalonStudio.Shell
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
         private List<ITestFramework> _testFrameworks;
+        private List<IEditorProvider> _editorProviders;
 
         public event EventHandler<FileOpenedEventArgs> FileOpened;
         public event EventHandler<FileOpenedEventArgs> FileClosed;
+        public event EventHandler<BuildEventArgs> BuildStarting;
+        public event EventHandler<BuildEventArgs> BuildCompleted;
 
         [ImportingConstructor]
         public MinimalShell([ImportMany] IEnumerable<IExtension> extensions)
@@ -61,6 +64,7 @@ namespace AvalonStudio.Shell
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
+                _editorProviders.ConsumeExtension(extension);
             }
 
             IoC.RegisterConstant(this);
@@ -148,7 +152,9 @@ namespace AvalonStudio.Shell
 
         public ColorScheme CurrentColorScheme { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false,
+        public IEnumerable<IEditorProvider> EditorProviders => _editorProviders;
+
+        public ICodeEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false,
             bool selectLine = false, bool focus = true)
         {
             throw new NotImplementedException();
@@ -194,7 +200,7 @@ namespace AvalonStudio.Shell
             throw new NotImplementedException();
         }
 
-        public IEditor GetDocument(string path)
+        public ICodeEditor GetDocument(string path)
         {
             throw new NotImplementedException();
         }
@@ -240,6 +246,21 @@ namespace AvalonStudio.Shell
         }
 
         public void CloseDocument(ISourceFile file)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CloseDocumentsForProject(IProject project)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CloseSolution()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddDocument(IDocumentTabViewModel document, bool temporary = true)
         {
             throw new NotImplementedException();
         }

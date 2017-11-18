@@ -11,6 +11,7 @@
     <AssemblyVersion>0.3.0.0</AssemblyVersion>
     <FileVersion>0.3.0.0</FileVersion>
     <NoWarn>NU1701</NoWarn>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemGroup>
@@ -23,9 +24,12 @@
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.57.1.4" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.2-build474-alpha" />
     <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="0.5.2-build474-alpha" />
+    <PackageReference Include="Serilog.Sinks.Trace" Version="2.0.0" />
     <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build110-alpha" />
     <PackageReference Include="reactiveui" Version="8.0.0-alpha0089" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
+    <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Security.Principal" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AvalonStudio.MSBuildHost\AvalonStudio.MSBuildHost.csproj" />
@@ -39,6 +43,7 @@
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Languages.CPlusPlus\AvalonStudio.Languages.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Languages.CSharp\AvalonStudio.Languages.CSharp.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Languages.Xaml\AvalonStudio.Languages.Xaml.csproj" />
     <ProjectReference Include="..\AvalonStudio.LanguageSupport.TypeScript\AvalonStudio.LanguageSupport.TypeScript.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.OmniSharp\AvalonStudio.Projects.OmniSharp.csproj" />

@@ -47,6 +47,7 @@ namespace AvalonStudio
         private List<ILanguageService> _languageServices;
         private List<IProjectTemplate> _projectTemplates;
         private List<ISolutionType> _solutionTypes;
+        private List<IEditorProvider> _editorProviders;
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
@@ -82,6 +83,7 @@ namespace AvalonStudio
             _debugger2s = new List<IDebugger>();
             _codeTemplates = new List<ICodeTemplate>();
             _projectTypes = new List<IProjectType>();
+            _editorProviders = new List<IEditorProvider>();
             _solutionTypes = new List<ISolutionType>();
             _testFrameworks = new List<ITestFramework>();
             _toolChains = new List<IToolChain>();
@@ -143,6 +145,7 @@ namespace AvalonStudio
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
+                _editorProviders.ConsumeExtension(extension);
 
                 _commandDefinitions.ConsumeExtension(extension);
             }
@@ -263,7 +266,7 @@ namespace AvalonStudio
             {
                 foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
                 {
-                    document.ZoomLevel = zoomLevel;
+                    //document.ZoomLevel = zoomLevel;
                 }
             });
 
@@ -285,6 +288,8 @@ namespace AvalonStudio
         public ReactiveCommand EnableDebugModeCommand { get; }
 
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
+        public event EventHandler<BuildEventArgs> BuildStarting;
+        public event EventHandler<BuildEventArgs> BuildCompleted;
 
         public IObservable<ISolution> OnSolutionChanged { get; }
 
@@ -355,6 +360,8 @@ namespace AvalonStudio
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
+        public IEnumerable<IEditorProvider> EditorProviders => _editorProviders;
+
         public IEnumerable<ISolutionType> SolutionTypes => _solutionTypes;
 
         public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
@@ -371,9 +378,9 @@ namespace AvalonStudio
 
         public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
 
-        public void AddDocument(IDocumentTabViewModel document)
+        public void AddDocument(IDocumentTabViewModel document, bool temporary = false)
         {
-            DocumentTabs.OpenDocument(document);
+            DocumentTabs.OpenDocument(document, temporary);
         }
 
         public void RemoveDocument(IDocumentTabViewModel document)
@@ -385,7 +392,7 @@ namespace AvalonStudio
 
             if (document is EditorViewModel doc)
             {
-                doc.Save();
+                doc.Editor.Save();
             }
 
             DocumentTabs.CloseDocument(document);
@@ -393,40 +400,51 @@ namespace AvalonStudio
 
         public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
         {
-            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
+            var currentTab = DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(t => t.SourceFile?.FilePath == file.FilePath);
 
             if (currentTab == null)
             {
-                currentTab = new EditorViewModel();
+                var provider = EditorProviders.FirstOrDefault(p => p.CanEdit(file));
 
-                AddDocument(currentTab);
+                if (provider != null)
+                {
+                    currentTab = provider.CreateViewModel(file);
 
-                currentTab.OpenFile(file);
+                    AddDocument(currentTab);
+                }
+                else
+                {
+                    var newTab = new TextEditorViewModel(file);
+
+                    AddDocument(newTab);
+
+                    currentTab = newTab;
+                }
             }
             else
             {
                 AddDocument(currentTab);
             }
 
-            if (DocumentTabs.SelectedDocument is IEditor editor)
+            if (DocumentTabs.SelectedDocument is IFileDocumentTabViewModel fileTab)
             {
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    await editor.WaitForEditorToLoadAsync();
+                    await fileTab.WaitForEditorToLoadAsync();
 
                     if (debugHighlight)
                     {
-                        editor.SetDebugHighlight(line, startColumn, endColumn);
+                        fileTab.Editor.SetDebugHighlight(line, startColumn, endColumn);
                     }
 
                     if (selectLine || debugHighlight)
                     {
-                        editor.GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                        fileTab.Editor.GotoPosition(line, startColumn != -1 ? 1 : startColumn);
                     }
 
                     if (focus)
                     {
-                        editor.Focus();
+                        fileTab.Editor.Focus();
                     }
                 });
             }
@@ -436,22 +454,22 @@ namespace AvalonStudio
 
         public IEditor GetDocument(string path)
         {
-            return DocumentTabs.Documents.OfType<IEditor>().FirstOrDefault(d => d.ProjectFile?.FilePath == path);
+            return DocumentTabs.Documents.OfType<IEditor>().FirstOrDefault(d => d.SourceFile?.FilePath == path);
         }
 
         public void Save()
         {
-            if (SelectedDocument is IEditor)
+            if (SelectedDocument is IFileDocumentTabViewModel document)
             {
-                (SelectedDocument as IEditor).Save();
+                document.Editor.Save();
             }
         }
 
         public void SaveAll()
         {
-            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>().Where(d => d.IsDirty && d.IsVisible))
+            foreach (var document in DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>())
             {
-                document.Save();
+                document.Editor.Save();
             }
         }
 
@@ -481,7 +499,17 @@ namespace AvalonStudio
 
             if (project.ToolChain != null)
             {
-                TaskRunner.RunTask(() => project.ToolChain.Clean(Console, project).Wait());
+                BuildStarting?.Invoke(this, new BuildEventArgs(BuildType.Clean, project));
+
+                TaskRunner.RunTask(() =>
+                {
+                    project.ToolChain.Clean(Console, project).Wait();
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        BuildCompleted?.Invoke(this, new BuildEventArgs(BuildType.Clean, project));
+                    });
+                });
             }
             else
             {
@@ -497,9 +525,16 @@ namespace AvalonStudio
 
             if (project.ToolChain != null)
             {
+                BuildStarting?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
+
                 TaskRunner.RunTask(() =>
                 {
                     project.ToolChain.Build(Console, project).Wait();
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        BuildCompleted?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
+                    });
                 });
             }
             else
@@ -575,7 +610,7 @@ namespace AvalonStudio
             {
                 this.RaiseAndSetIfChanged(ref _currentColorScheme, value);
 
-                foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
+                foreach (var document in DocumentTabs.Documents.OfType<AvalonStudio.Controls.EditorViewModel>())
                 {
                     document.ColorScheme = value;
                 }
@@ -608,11 +643,6 @@ namespace AvalonStudio
             {
                 if (DocumentTabs != null)
                 {
-                    if (value == null || (DocumentTabs.TemporaryDocument == value && !value.IsTemporary))
-                    {
-                        DocumentTabs.TemporaryDocument = null;
-                    }
-
                     DocumentTabs.SelectedDocument = value;
                 }
             }
@@ -672,7 +702,7 @@ namespace AvalonStudio
 
             foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
             {
-                if (document.Diagnostics != null)
+                /*if (document.Diagnostics != null)
                 {
                     foreach (var diagnostic in document.Diagnostics)
                     {
@@ -684,7 +714,7 @@ namespace AvalonStudio
                             allErrors.Add(error);
                         }
                     }
-                }
+                }*/
             }
 
             foreach (var error in ErrorList.Errors)
@@ -758,7 +788,7 @@ namespace AvalonStudio
 
             foreach (var document in documentsToClose)
             {
-                if (document is EditorViewModel evm && evm.ProjectFile.Project == project)
+                if (document is EditorViewModel evm && evm.SourceFile.Project == project)
                 {
                     DocumentTabs.CloseDocument(evm);
                 }

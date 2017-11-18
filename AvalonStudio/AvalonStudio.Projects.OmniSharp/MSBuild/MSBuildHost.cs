@@ -3,22 +3,21 @@ using AsyncRpc.Transport.Tcp;
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MSBuildHost;
+using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.CodeAnalysis.CSharp;
-using AvalonStudio.Shell;
+using System.Net;
+using System.Threading.Tasks;
+using Process = System.Diagnostics.Process;
 
 namespace AvalonStudio.Projects.OmniSharp.MSBuild
 {
-    public class MSBuildHost
+    public class MSBuildHost : IDisposable
     {
         private IMsBuildHostService msBuildHostService;
         private Process hostProcess;
@@ -30,16 +29,26 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
             bool debugMode = IoC.Get<IShell>().DebugMode;
 
             outputLines = new List<string>();
-            errorLines = new List<string>();            
+            errorLines = new List<string>();
+
+            var serverStarted = new TaskCompletionSource<Int32>();
             
-            hostProcess = PlatformSupport.LaunchShellCommand(dotnetPath, $"\"{sdkPath}MSBuild.dll\" avalonstudio-intercept.csproj",
+            hostProcess = PlatformSupport.LaunchShellCommand("dotnet", $"\"{sdkPath}MSBuild.dll\" avalonstudio-intercept.csproj",
             (sender, e) =>
             {
                 if(e.Data != null)
                 {
                     lock (outputLines)
                     {
-                        outputLines.Add(e.Data);
+                        if (e.Data.StartsWith("AvalonStudio MSBuild Host Started:"))
+                        {
+                            var serverPort = Int32.Parse(e.Data.Replace("AvalonStudio MSBuild Host Started: ", ""));
+                            serverStarted.SetResult(serverPort);
+                        }
+                        else
+                        {
+                            outputLines.Add(e.Data);
+                        }
                     }
 
                     if (debugMode)
@@ -66,12 +75,24 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                 }
             }, false, Platforms.Platform.ExecutionPath, false);
 
-            msBuildHostService = new Engine().CreateProxy<IMsBuildHostService>(new TcpClientTransport(IPAddress.Loopback, 9000));
+            hostProcess.Exited += (sender, e) =>
+            {
+                serverStarted.SetResult(-1);
+            };
 
-            var res = await msBuildHostService.GetVersion();
+            var port = await serverStarted.Task;
+
+            if (port > 0)
+            {
+                msBuildHostService = new Engine().CreateProxy<IMsBuildHostService>(new TcpClientTransport(IPAddress.Loopback, port));                
+            }
+            else
+            {
+                throw new Exception("AvalonStudio MSBuild Host failed to start or crashed.");
+            }
         }
 
-        public async Task<(ProjectInfo info, List<string> projectReferences)> LoadProject(string solutionDirectory, string projectFile)
+        public async Task<(ProjectInfo info, List<string> projectReferences, string targetPath)> LoadProject(string solutionDirectory, string projectFile)
         {
             lock (outputLines)
             {
@@ -123,9 +144,9 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                     outputFilePath: projectOptions.outputFile,
                     compilationOptions: projectOptions.compilationOptions,
                     parseOptions: projectOptions.parseOptions,
-                    metadataReferences: loadData.metaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly)));
+                    metadataReferences: loadData.MetaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly)));
 
-                return (projectInfo, loadData.projectReferences);
+                return (projectInfo, loadData.ProjectReferences, loadData.TargetPath);
             }
             else
             {
@@ -135,10 +156,10 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                     Path.GetFileNameWithoutExtension(projectFile), Path.GetFileNameWithoutExtension(projectFile),
                     LanguageNames.CSharp,
                     projectFile,
-                    metadataReferences: loadData.metaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly))
+                    metadataReferences: loadData.MetaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly))
                     );
 
-                return (projectInfo, loadData.projectReferences);
+                return (projectInfo, loadData.ProjectReferences, loadData.TargetPath);
             }
         }
 
@@ -265,6 +286,14 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                     return Platform.Arm;
                 default:
                     return Platform.AnyCpu;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (!hostProcess.HasExited)
+            {
+                hostProcess?.Kill();
             }
         }
 

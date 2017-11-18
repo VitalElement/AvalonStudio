@@ -1,12 +1,9 @@
-using Avalonia.Media;
 using Avalonia.Threading;
 using AvalonStudio.Documents;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -37,7 +34,7 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public void OpenDocument(IDocumentTabViewModel document)
+        public void OpenDocument(IDocumentTabViewModel document, bool temporary)
         {
             if (document == null)
             {
@@ -50,16 +47,18 @@ namespace AvalonStudio.Controls
             }
             else
             {
-
                 if (TemporaryDocument != null)
                 {
                     CloseDocument(TemporaryDocument);
                 }
-
-                document.IsTemporary = true;
+                
                 Documents.Add(document);
                 SelectedDocument = document;
-                TemporaryDocument = document;
+
+                if (temporary)
+                {
+                    TemporaryDocument = document;
+                }
             }
 
             InvalidateSeperatorVisibility();
@@ -87,12 +86,9 @@ namespace AvalonStudio.Controls
 
                     if (index < Documents.Count)
                     {
-                        if (Documents[index].IsVisible)
-                        {
-                            foundTab = true;
-                            newSelectedTab = Documents[index];
-                            break;
-                        }
+                        foundTab = true;
+                        newSelectedTab = Documents[index];
+                        break;
                     }
                     else
                     {
@@ -108,12 +104,9 @@ namespace AvalonStudio.Controls
 
                     if (index >= 0)
                     {
-                        if (Documents[index].IsVisible)
-                        {
-                            foundTab = true;
-                            newSelectedTab = Documents[index];
-                            break;
-                        }
+                        foundTab = true;
+                        newSelectedTab = Documents[index];
+                        break;
                     }
                     else
                     {
@@ -130,7 +123,6 @@ namespace AvalonStudio.Controls
             }
 
             Documents.Remove(document);
-            document.OnClose();
 
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
@@ -161,21 +153,11 @@ namespace AvalonStudio.Controls
             }
             set
             {
-                if(_selectedDocument != null)
-                {
-                    _selectedDocument.IsSelected = false;
-                }
-
                 this.RaiseAndSetIfChanged(ref _selectedDocument, value);
 
                 if (value is IEditor editor)
                 {
                     editor.TriggerCodeAnalysis();
-                }
-
-                if(_selectedDocument != null)
-                {
-                    value.IsSelected = true;
                 }
             }
         }
@@ -185,17 +167,7 @@ namespace AvalonStudio.Controls
             get { return _temporaryDocument; }
             set
             {
-                if(_temporaryDocument != null)
-                {
-                    _temporaryDocument.IsSelected = false;
-                }
-
                 this.RaiseAndSetIfChanged(ref _temporaryDocument, value);
-
-                if (_temporaryDocument != null)
-                {
-                    _temporaryDocument.IsSelected = true;
-                }
             }
         }
 

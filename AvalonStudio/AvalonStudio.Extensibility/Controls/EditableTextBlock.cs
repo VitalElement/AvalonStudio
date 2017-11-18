@@ -66,12 +66,7 @@ namespace AvalonStudio.Controls
             base.OnTemplateApplied(e);
 
             _textBox = e.NameScope.Find<TextBox>("PART_TextBox");
-        }
-
-        protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
-        {
-            base.OnDetachedFromLogicalTree(e);
-        }
+        }        
 
         protected override void OnKeyUp(KeyEventArgs e)
         {

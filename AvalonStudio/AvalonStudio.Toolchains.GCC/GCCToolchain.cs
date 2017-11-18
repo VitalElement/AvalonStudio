@@ -114,7 +114,7 @@ namespace AvalonStudio.Toolchains.GCC
         {
             var result = new CompileResult();
 
-            var settings = superProject.Project.GetToolchainSettingsIfExists<GccToolchainSettings>().CompileSettings;
+            var settings = superProject.GetToolchainSettingsIfExists<GccToolchainSettings>().CompileSettings;
 
             string commandName = file.Extension == ".cpp" ? CPPExecutable : CCExecutable;
 

@@ -1,0 +1,33 @@
+﻿<Styles  xmlns="https://github.com/avaloniaui" 
+         xmlns:local="clr-namespace:AvalonStudio.Languages.Xaml;assembly=AvalonStudio.Languages.Xaml"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style Selector="local|AvaloniaPreviewer">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Grid>
+                    <ScrollViewer Name="PART_Remote">
+                        <ScrollViewer.Background>
+                            <VisualBrush DestinationRect="0,0,20,20" TileMode="Tile">
+                                <VisualBrush.Visual>
+                                    <Canvas Width="16" Height="16"  Background="#1a1a1a">
+                                        <Rectangle Height="8" Width="8" Fill="#1c1c1c" />
+                                        <Rectangle Height="8" Width="8" Canvas.Left="8" Canvas.Top="8" Fill="#1c1c1c" />
+                                    </Canvas>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </ScrollViewer.Background>
+                        <local:Center Name="PART_Center"  Margin="40" />
+                    </ScrollViewer>
+                    <Grid Background="#0fffffff" x:Name="PART_Overlay" IsVisible="False">
+                        <StackPanel Gap="4" VerticalAlignment="Center">
+                            <TextBlock Text="Unable to Load Previewer" FontSize="18"  HorizontalAlignment="Center" />
+                            <TextBlock x:Name="PART_Status" HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

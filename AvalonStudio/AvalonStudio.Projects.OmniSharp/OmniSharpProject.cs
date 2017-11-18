@@ -17,25 +17,26 @@ namespace AvalonStudio.Projects.OmniSharp
 {
     public class OmniSharpProject : FileSystemProject
     {
+        private string detectedTargetPath;
         public static async Task<OmniSharpProject> Create(ISolution solution, string path)
         {
-            var (project, projectReferences) = await RoslynWorkspace.GetWorkspace(solution).AddProject(solution.CurrentDirectory, path);
+            var (project, projectReferences, targetPath) = await RoslynWorkspace.GetWorkspace(solution).AddProject(solution.CurrentDirectory, path);
             var roslynProject = project;
             var references = projectReferences;
-
-            OmniSharpProject result = new OmniSharpProject
+            OmniSharpProject result = new OmniSharpProject(path)
             {
                 Solution = solution,
-                Location = path,
                 RoslynProject = roslynProject,
-                UnresolvedReferences = references
+                UnresolvedReferences = references,
+                detectedTargetPath = targetPath
             };
 
             return result;
         }
 
-        public OmniSharpProject() : base(true)
+        public OmniSharpProject(string location) : base(true)
         {
+            Location = location;
             ExcludedFiles = new List<string>();
             Items = new ObservableCollection<IProjectItem>();
             References = new ObservableCollection<IProject>();
@@ -43,6 +44,20 @@ namespace AvalonStudio.Projects.OmniSharp
             DebugSettings = new ExpandoObject();
             Settings = new ExpandoObject();
             Project = this;
+
+            var fileWatcher = new FileSystemWatcher(CurrentDirectory, Path.GetFileName(Location))
+            {
+                EnableRaisingEvents = true,
+                IncludeSubdirectories = false,
+
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
+            };
+
+            fileWatcher.Changed += async (sender, e) =>
+            {
+                // todo restore packages and re-evaluate.
+                RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
+            };
 
             FileAdded += (sender, e) =>
             {
@@ -54,6 +69,8 @@ namespace AvalonStudio.Projects.OmniSharp
                 }
             };
         }
+
+        protected override bool FilterProjectFile => false;
 
         public List<string> UnresolvedReferences { get; set; }
 
@@ -91,7 +108,23 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override dynamic DebugSettings { get; set; }
 
-        public override string Executable { get; set; }
+        public override string Executable
+        {
+            get
+            {
+                if (detectedTargetPath != null)
+                    return detectedTargetPath;
+                if(RoslynProject.OutputFilePath == null)
+                {
+                    return null;
+                }
+
+                var objPath = Path.Combine(CurrentDirectory, RoslynProject.OutputFilePath);
+
+                return objPath.Replace("obj", "bin");
+            }
+            set { }
+        }
 
         public override string Extension
         {

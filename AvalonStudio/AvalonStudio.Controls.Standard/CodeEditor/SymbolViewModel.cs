@@ -1,10 +1,10 @@
-using AvalonStudio.Controls.Standard.CodeEditor;
-using AvalonStudio.Languages;
+﻿using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System.Collections.ObjectModel;
+using System;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public class SymbolViewModel : ViewModel<Symbol>
     {
@@ -201,7 +201,7 @@ namespace AvalonStudio.Controls
             set
             {
                 this.RaiseAndSetIfChanged(ref description, value);
-                this.RaisePropertyChanged(() => DescriptionVisibility);
+                this.RaisePropertyChanged(nameof(DescriptionVisibility));
             }
         }
 
@@ -297,4 +297,5 @@ namespace AvalonStudio.Controls
             }
         }
     }
+
 }

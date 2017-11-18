@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Extensibility.Tests
 {
@@ -72,9 +73,9 @@ namespace AvalonStudio.Extensibility.Tests
 
         public IReadOnlyList<ISourceFile> SourceFiles => throw new NotImplementedException();
 
-        ISolutionFolder ISolutionItem.Parent { get; set; }
+        ISolutionFolder ISolutionItem.Parent { get; set; }        
 
-        public event EventHandler FileAdded;
+        public event EventHandler<ISourceFile> FileAdded;
 
         public void AddReference(IProject project)
         {
@@ -120,6 +121,11 @@ namespace AvalonStudio.Extensibility.Tests
         public ISourceFile FindFile(string path)
         {
             return null;
+        }
+
+        public Task LoadFilesAsync()
+        {
+            throw new NotImplementedException();
         }
 
         public void RemoveReference(IProject project)

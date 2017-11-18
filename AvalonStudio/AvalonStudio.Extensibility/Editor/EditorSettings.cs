@@ -1,7 +1,4 @@
-﻿using AvalonStudio.Extensibility.Editor;
-using Newtonsoft.Json;
-
-namespace AvalonStudio.Controls.Standard.CodeEditor
+﻿namespace AvalonStudio.Extensibility.Editor
 {
     public class EditorSettings
     {
@@ -11,6 +8,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public bool AutoFormat { get; set; } = true;
 
-        public string ColorScheme { get; set; } = AvalonStudio.Extensibility.Editor.ColorScheme.Default.Name;
+        public string ColorScheme { get; set; } = Editor.ColorScheme.Default.Name;
     }
 }
