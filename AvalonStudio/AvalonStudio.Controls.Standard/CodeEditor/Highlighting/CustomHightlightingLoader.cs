@@ -387,34 +387,32 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             }
         }
 
-        internal void RegisterHighlighting(string name, string resourceName)
+        internal void RegisterHighlighting(string resourceName, params string[] names)
         {
             try
             {
 
-                RegisterHighlighting(name, Load(resourceName));
+                RegisterHighlighting(Load(resourceName), names);
             }
             catch (HighlightingDefinitionInvalidException ex)
             {
-                throw new InvalidOperationException("The built-in highlighting '" + name + "' is invalid.", ex);
+                throw new InvalidOperationException("The built-in highlighting '" + names[0] + "' is invalid.", ex);
             }
         }
 
-        public void RegisterHighlighting(string name, IHighlightingDefinition highlighting)
+        public void RegisterHighlighting(IHighlightingDefinition highlighting, params string[] names)
         {
             if (highlighting == null)
             {
                 throw new ArgumentNullException(nameof(highlighting));
             }
 
-            if (string.IsNullOrEmpty(name))
+            foreach (var name in names)
             {
-                throw new ArgumentException(nameof(name));
-            }
-
-            lock (this)
-            {
-                _highlightingsByName[name] = highlighting;
+                lock (this)
+                {
+                    _highlightingsByName[name] = highlighting;
+                }
             }
         }
 

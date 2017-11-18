@@ -17,7 +17,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.Resources
 
         internal static void RegisterBuiltInHighlightings(CustomHighlightingManager hlm)
         {
-            hlm.RegisterHighlighting("XAML", "XML-Mode.xshd");
+            hlm.RegisterHighlighting("XML-Mode.xshd", "XAML", "XML");
         }
     }
 }
