@@ -42,6 +42,10 @@ namespace AvalonStudio.Extensibility.Editor
                         Observable.FromEventPattern<TextInputEventArgs>(accessor, nameof(accessor.TextEntered)).Subscribe(args =>
                         {
                             IsDirty = true;
+                        }),
+                        Observable.FromEventPattern<TooltipDataRequestEventArgs>(accessor, nameof(accessor.RequestTooltipContent)).Subscribe(args =>
+                        {
+
                         })
                     };
                 }

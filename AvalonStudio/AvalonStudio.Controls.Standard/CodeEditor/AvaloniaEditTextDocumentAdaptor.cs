@@ -92,6 +92,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _codeEditor.TextArea.TextEntering += TextEntering;
             _codeEditor.TextArea.TextEntered += TextEntered;
+            _codeEditor.RequestTooltipContent += RequestTooltipContent;
         }
 
         public ITextDocument Document => _document;
@@ -125,6 +126,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         /// but occurs immediately after the TextArea handles the TextInput event.
         /// </summary>
         public event EventHandler<TextInputEventArgs> TextEntered;
+        
+        public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
 
         public void Dispose()
         {

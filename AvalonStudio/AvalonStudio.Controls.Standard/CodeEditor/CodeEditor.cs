@@ -499,6 +499,29 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     return new ErrorProbeViewModel(matching);
                 }
 
+                var symbol = await LanguageService?.GetSymbolAsync(SourceFile, UnsavedFiles, offset);
+
+                if(symbol != null)
+                {
+                    switch (symbol.Kind)
+                    {
+                        case CursorKind.CompoundStatement:
+                        case CursorKind.NoDeclarationFound:
+                        case CursorKind.NotImplemented:
+                        case CursorKind.FirstDeclaration:
+                        case CursorKind.InitListExpression:
+                        case CursorKind.IntegerLiteral:
+                        case CursorKind.ReturnStatement:
+                        case CursorKind.WhileStatement:
+                        case CursorKind.BinaryOperator:
+                            return null;
+
+                        default:
+                            return new SymbolViewModel(symbol);
+                    }
+
+                }
+
                 var tooltipRequestEventArgs = new TooltipDataRequestEventArgs();
 
                 RequestTooltipContent?.Invoke(this, tooltipRequestEventArgs);

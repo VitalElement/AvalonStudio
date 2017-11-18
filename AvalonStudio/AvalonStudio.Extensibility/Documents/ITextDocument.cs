@@ -181,6 +181,8 @@ namespace AvalonStudio.Documents
 
         void GotoPosition(int line, int column);
 
+        event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
+
         /// <summary>
         /// Occurs when the TextArea receives text input.
         /// but occurs immediately before the TextArea handles the TextInput event.
