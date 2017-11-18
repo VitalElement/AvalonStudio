@@ -154,7 +154,7 @@ namespace AvalonStudio.Shell
 
         public IEnumerable<IEditorProvider> EditorProviders => _editorProviders;
 
-        public ICodeEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false,
+        public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false,
             bool selectLine = false, bool focus = true)
         {
             throw new NotImplementedException();
@@ -200,7 +200,7 @@ namespace AvalonStudio.Shell
             throw new NotImplementedException();
         }
 
-        public ICodeEditor GetDocument(string path)
+        public IEditor GetDocument(string path)
         {
             throw new NotImplementedException();
         }
