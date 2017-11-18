@@ -69,9 +69,15 @@ namespace AvalonStudio.Debugging
 
         private void DebugManager_FrameChanged(object sender, System.EventArgs e)
         {
-            var expressions = DebugManager.SelectedFrame.GetExpressionValues(_expressions.ToArray(), false);
+            Task.Run(() =>
+            {
+                var expressions = DebugManager.SelectedFrame.GetExpressionValues(_expressions.ToArray(), false);
 
-            InvalidateObjects(expressions);
+                //Dispatcher.UIThread.InvokeAsync(() =>
+                //{
+                    InvalidateObjects(expressions);
+                //});
+            });
         }
 
         public void InvalidateObjects(params ObjectValue[] variables)
@@ -123,7 +129,10 @@ namespace AvalonStudio.Debugging
         {
             var newWatch = new ObjectValueViewModel(this, model);
 
-            Children.Add(newWatch);
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Children.Add(newWatch);
+            });
         }
 
         public void Remove(ObjectValue value)

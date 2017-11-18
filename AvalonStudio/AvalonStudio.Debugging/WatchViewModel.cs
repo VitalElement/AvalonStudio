@@ -6,6 +6,7 @@ using Mono.Debugging.Client;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging
 {
@@ -184,12 +185,18 @@ namespace AvalonStudio.Debugging
         {
             Children.Remove(DummyChild);
 
-            var children = Model.GetAllChildren();
-
-            foreach (var child in children)
+            Task.Run(() =>
             {
-                Children.Add(new ObjectValueViewModel(watchList, child));
-            }
+                var children = Model.GetAllChildren();
+
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    foreach (var child in children)
+                    {
+                        Children.Add(new ObjectValueViewModel(watchList, child));
+                    }
+                });
+            });
         }
 
         public bool ApplyChange(ObjectValue newValue)
@@ -240,12 +247,15 @@ namespace AvalonStudio.Debugging
                 IsExpanded = false;
             }
 
-            HasChanged = hasChanged;
-
-            if (hasChanged)
+            Dispatcher.UIThread.InvokeAsync(() =>
             {
-                Invalidate();
-            }
+                HasChanged = hasChanged;
+
+                if (hasChanged)
+                {
+                    Invalidate();
+                }
+            });
 
             return result;
         }
