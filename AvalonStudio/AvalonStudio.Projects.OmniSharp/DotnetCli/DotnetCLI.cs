@@ -18,13 +18,17 @@ namespace AvalonStudio.Projects.OmniSharp.DotnetCli
         private readonly ConcurrentDictionary<string, object> _locks;
         private readonly SemaphoreSlim _semaphore;
         private readonly IConsole _console;
+        private DotNetInfo _info;
 
         private string _dotnetPath = "dotnet";
 
         public string DotNetPath => _dotnetPath;
+
+        public static DotNetCliService Instance { get; } = new DotNetCliService();
+
+        public DotNetInfo Info => _info;
         
-        
-        public DotNetCliService(string dotnetPath = null)
+        private DotNetCliService(string dotnetPath = null)
         {            
             this._locks = new ConcurrentDictionary<string, object>();
             this._semaphore = new SemaphoreSlim(Environment.ProcessorCount / 2);
@@ -34,6 +38,12 @@ namespace AvalonStudio.Projects.OmniSharp.DotnetCli
             {
                 _dotnetPath = dotnetPath;
             }
+            else
+            {
+                SetDotNetPath("");
+            }
+
+            _info = GetInfo();
         }
 
         private static void RemoveMSBuildEnvironmentVariables(IDictionary<string, string> environment)

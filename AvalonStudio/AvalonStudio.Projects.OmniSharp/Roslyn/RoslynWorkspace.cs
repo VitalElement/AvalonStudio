@@ -65,13 +65,10 @@ namespace RoslynPad.Roslyn
                 //await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
 
                 //var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
-                var dotnet = new DotNetCliService("dotnet");
-
-                var dotnetInfo = dotnet.GetInfo();
 
                 var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
 
-                var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();                
+                var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
 
                 var assemblies = new[]
                 {
@@ -82,7 +79,7 @@ namespace RoslynPad.Roslyn
                     // Microsoft.CodeAnalysis.Features
                     typeof(FeaturesResources).GetTypeInfo().Assembly,
                     // Microsoft.CodeAnalysis.CSharp.Features
-                    typeof(CSharpFeaturesResources).GetTypeInfo().Assembly,                
+                    typeof(CSharpFeaturesResources).GetTypeInfo().Assembly,
                     typeof(RoslynWorkspace).Assembly,
                 };
 
@@ -98,7 +95,7 @@ namespace RoslynPad.Roslyn
 
                 var host = MefHostServices.Create(compositionContext);
 
-                var workspace = new RoslynWorkspace(host, null, compositionContext, Path.Combine(dotnetInfo.BasePath, "..\\..\\dotnet").NormalizePath(), dotnetInfo.BasePath);
+                var workspace = new RoslynWorkspace(host, null, compositionContext, DotNetCliService.Instance.Info.Executable, DotNetCliService.Instance.Info.BasePath);
 
                 workspace.RegisterWorkspace(solution);
             }

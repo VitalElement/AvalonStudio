@@ -1,6 +1,8 @@
-﻿using NuGet.Versioning;
+﻿using AvalonStudio.Platforms;
+using NuGet.Versioning;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace AvalonStudio.Projects.OmniSharp.DotnetCli
 {
@@ -16,6 +18,8 @@ namespace AvalonStudio.Projects.OmniSharp.DotnetCli
         public string OSPlatform { get; }
         public string RID { get; }
         public string BasePath { get; }
+        public string RootPath => Path.Combine(BasePath, "../../").NormalizePath();
+        public string Executable => Path.Combine(RootPath, "dotnet");
 
         private DotNetInfo()
         {
