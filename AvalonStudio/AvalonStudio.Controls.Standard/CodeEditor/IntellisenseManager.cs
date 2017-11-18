@@ -397,27 +397,30 @@
                         result = task.Result;
                     }).Wait();
 
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    if (result != null)
                     {
-                        if (_shell.DebugMode)
+                        Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            _console.WriteLine($"Set Completion Data {_hidden}");
-                        }
+                            if (_shell.DebugMode)
+                            {
+                                _console.WriteLine($"Set Completion Data {_hidden}");
+                            }
 
-                        SetCompletionData(result);
+                            SetCompletionData(result);
 
-                        _requestingData = false;
+                            _requestingData = false;
 
-                        if (unfilteredCompletions.Count > 0)
-                        {
-                            UpdateFilter(editor.CaretOffset, false);
-                            intellisenseControl.IsVisible = !_hidden;
-                        }
-                        else
-                        {
-                            _hidden = true;
-                        }
-                    });
+                            if (unfilteredCompletions.Count > 0)
+                            {
+                                UpdateFilter(editor.CaretOffset, false);
+                                intellisenseControl.IsVisible = !_hidden;
+                            }
+                            else
+                            {
+                                _hidden = true;
+                            }
+                        });
+                    }
                 });
             }
             else
