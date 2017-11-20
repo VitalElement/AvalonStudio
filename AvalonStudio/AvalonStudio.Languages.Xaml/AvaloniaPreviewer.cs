@@ -117,6 +117,7 @@ namespace AvalonStudio.Languages.Xaml
                 if (_overlay != null)
                 {
                     _overlay.IsVisible = false;
+                    _statusText.Text = "";
                 }
 
                 _currentHost = PlatformSupport.LaunchShellCommand("dotnet", args, (sender, e) =>
@@ -128,7 +129,7 @@ namespace AvalonStudio.Languages.Xaml
                     {
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            _statusText.Text = e.Data;
+                            _statusText.Text += e.Data + "\r\n";
                             _overlay.IsVisible = true;
                         });
                     }
