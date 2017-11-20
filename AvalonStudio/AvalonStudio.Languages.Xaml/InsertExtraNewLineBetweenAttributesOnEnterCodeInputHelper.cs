@@ -26,7 +26,7 @@ namespace AvalonStudio.Languages.Xaml
                     //Find latest tag end
                     var idx = textBefore.LastIndexOf('>');
 
-                    if (idx != -1)
+                    if (idx != -1 && editor.Document.TextLength > editor.Offset)
                     {
                         state = XmlParser.Parse(editor.Document.GetText(0, Math.Max(0, idx)));
 
