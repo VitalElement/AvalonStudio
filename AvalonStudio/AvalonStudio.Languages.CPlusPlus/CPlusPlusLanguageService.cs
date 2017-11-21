@@ -487,39 +487,39 @@ namespace AvalonStudio.Languages.CPlusPlus
             }, IntPtr.Zero);
         }
 
-        //private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result)
-        //{
-        //    foreach (var diagnostic in clangDiagnostics)
-        //    {
-        //        if (diagnostic.Location.IsFromMainFile)
-        //        {
-        //            var diag = new Diagnostic
-        //            {
-        //                Project = project,
-        //                StartOffset = diagnostic.Location.FileLocation.Offset,
-        //                Line = diagnostic.Location.FileLocation.Line,
-        //                Spelling = diagnostic.Spelling,
-        //                File = diagnostic.Location.FileLocation.File.FileName,
-        //                Level = (DiagnosticLevel)diagnostic.Severity
-        //            };
+        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, List<Diagnostic> result)
+        {
+            foreach (var diagnostic in clangDiagnostics)
+            {
+                if (diagnostic.Location.IsFromMainFile)
+                {
+                    var diag = new Diagnostic
+                    {
+                        Project = project,
+                        StartOffset = diagnostic.Location.FileLocation.Offset,
+                        Line = diagnostic.Location.FileLocation.Line,
+                        Spelling = diagnostic.Spelling,
+                        File = diagnostic.Location.FileLocation.File.FileName,
+                        Level = (DiagnosticLevel)diagnostic.Severity
+                    };
 
-        //            var cursor = translationUnit.GetCursor(diagnostic.Location);
+                    var cursor = translationUnit.GetCursor(diagnostic.Location);
 
-        //            var tokens = translationUnit.Tokenize(cursor.CursorExtent);
+                    var tokens = translationUnit.Tokenize(cursor.CursorExtent);
 
-        //            foreach (var token in tokens.Tokens)
-        //            {
-        //                if (token.Location == diagnostic.Location)
-        //                {
-        //                    diag.EndOffset = diag.StartOffset + token.Spelling.Length;
-        //                }
-        //            }
+                    foreach (var token in tokens.Tokens)
+                    {
+                        if (token.Location == diagnostic.Location)
+                        {
+                            diag.EndOffset = diag.StartOffset + token.Spelling.Length;
+                        }
+                    }
 
-        //            result.Add(diag);
-        //            tokens.Dispose();
-        //        }
-        //    }
-        //}
+                    result.Add(diag);
+                    tokens.Dispose();
+                }
+            }
+        }
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles,
             Func<bool> interruptRequested)
@@ -547,7 +547,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                             GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.IndexItems);
                         }
 
-                        //GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, editor.SourceFile.Project, result.Diagnostics);
+                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, editor.SourceFile.Project, result.Diagnostics);
                     }
                 }
                 catch (Exception e)
@@ -585,7 +585,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public void RegisterSourceFile(IEditor editor)
         {
-            if (clangAccessJobRunner != null)
+            if (clangAccessJobRunner == null)
             {
                 clangAccessJobRunner = new JobRunner();
 

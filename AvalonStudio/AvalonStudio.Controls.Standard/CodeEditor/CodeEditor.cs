@@ -688,21 +688,26 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
 
-                    //if (LanguageService.Diagnostics == null)
-                    //{
-                    //    _diagnosticMarkersRenderer?.SetDiagnostics(result.Diagnostics);
-                    //}
+                    TextSegmentCollection<Diagnostic> diagnostics = null;
+
+                    await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                    {
+                        diagnostics = new TextSegmentCollection<Diagnostic>(Document);
+                    });
+
+                    foreach (var diagnostic in result.Diagnostics)
+                    {
+                        diagnostics.Add(diagnostic);
+                    }
+
+                    _diagnosticMarkersRenderer?.SetDiagnostics(diagnostics);
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        //    if (LanguageService.Diagnostics == null)
-                        //    {
-                        //        Diagnostics = result.Diagnostics;
+                        Diagnostics = diagnostics;
 
-                        //        _shell.InvalidateErrors();
-                        //    }
+                        _shell.InvalidateErrors();
 
-                        //TextArea.TextView.InvalidateLayer(KnownLayer.Text);
                         TextArea.TextView.Redraw();
                     });
                 }
