@@ -6,8 +6,9 @@ dist: trusty
 
 script:
   - ./install-latest-dotnet.sh
-  - ./build.sh --configuration "Release"
-
+  - cd ./AvalonStudio/AvalonStudio
+  - dotnet restore AvalonStudio.csproj
+  - dotnet build AvalonStudio.csproj
 notifications:
   webhooks:
     urls:
