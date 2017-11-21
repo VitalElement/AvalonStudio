@@ -398,7 +398,7 @@ namespace AvalonStudio
             DocumentTabs.CloseDocument(document);
         }
 
-        public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
+        public IFileDocumentTabViewModel OpenDocument (ISourceFile file)
         {
             var currentTab = DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(t => t.SourceFile?.FilePath == file.FilePath);
 
@@ -426,35 +426,44 @@ namespace AvalonStudio
                 AddDocument(currentTab);
             }
 
+            return currentTab;
+        }
+
+        public async Task<IEditor> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
+        {
+            var currentTab = OpenDocument(file);
+
             if (DocumentTabs.SelectedDocument is IFileDocumentTabViewModel fileTab)
             {
-                Dispatcher.UIThread.InvokeAsync(async () =>
+                await fileTab.WaitForEditorToLoadAsync();
+
+                if (debugHighlight)
                 {
-                    await fileTab.WaitForEditorToLoadAsync();
+                    fileTab.Editor.SetDebugHighlight(line, startColumn, endColumn);
+                }
 
-                    if (debugHighlight)
-                    {
-                        fileTab.Editor.SetDebugHighlight(line, startColumn, endColumn);
-                    }
+                if (selectLine || debugHighlight)
+                {
+                    fileTab.Editor.GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                }
 
-                    if (selectLine || debugHighlight)
-                    {
-                        fileTab.Editor.GotoPosition(line, startColumn != -1 ? 1 : startColumn);
-                    }
+                if (focus)
+                {
+                    fileTab.Editor.Focus();
+                }
 
-                    if (focus)
-                    {
-                        fileTab.Editor.Focus();
-                    }
-                });
+                if (currentTab is TextEditorViewModel editor)
+                {
+                    return editor.DocumentAccessor;
+                }
             }
-
-            return currentTab as IEditor;
+            
+            return null;
         }
 
         public IEditor GetDocument(string path)
         {
-            return DocumentTabs.Documents.OfType<IEditor>().FirstOrDefault(d => d.SourceFile?.FilePath == path);
+            return DocumentTabs.Documents.OfType<TextEditorViewModel>().Where(d => d.SourceFile?.FilePath == path).Select(d=>d.DocumentAccessor).FirstOrDefault();
         }
 
         public void Save()

@@ -281,8 +281,11 @@
         {
             if (_lastDocument != null)
             {
-                _lastDocument.ClearDebugHighlight();
-                _lastDocument = null;
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _lastDocument.ClearDebugHighlight();
+                    _lastDocument = null;
+                });
             }
 
             TargetStarted?.Invoke(this, e);
@@ -322,7 +325,10 @@
 
                     if (file != null)
                     {
-                        Dispatcher.UIThread.InvokeTaskAsync(() => { _lastDocument = _shell.OpenDocument(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true); }).Wait();
+                        Dispatcher.UIThread.InvokeTaskAsync(async () => 
+                        {
+                            _lastDocument = await _shell.OpenDocumentAsync(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true);
+                        }).Wait();
                     }
                     else
                     {
