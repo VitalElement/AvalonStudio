@@ -1,17 +1,16 @@
 using Avalonia.Controls;
 using System;
 using System.Linq;
-using System.Reflection;
 
 namespace AvalonStudio.MVVM
 {
     public class ViewLocator
     {
         public static IControl Build(object data)
-        {
+        {            
             var name = data.GetType().FullName.Replace("ViewModel", "View");
 
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => name.Contains(a.GetName().Name));
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => name.StartsWith(a.GetName().Name));
 
             Type type = null;
 
