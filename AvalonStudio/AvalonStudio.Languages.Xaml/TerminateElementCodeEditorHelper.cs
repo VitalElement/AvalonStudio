@@ -12,13 +12,13 @@ namespace AvalonStudio.Languages.Xaml
         {
             if (args.Text == "/")
             {
-                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.Offset - 1));
+                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.CaretOffset - 1));
 
                 var nextChar = '\0';
 
-                if(editor.Offset < editor.Document.TextLength)
+                if(editor.CaretOffset < editor.Document.TextLength)
                 {
-                    nextChar = editor.Document.GetCharAt(editor.Offset);
+                    nextChar = editor.Document.GetCharAt(editor.CaretOffset);
                 }
 
                 if (textBefore.Length > 2 && textBefore[textBefore.Length - 1] != '/' && nextChar != '>')
@@ -28,9 +28,9 @@ namespace AvalonStudio.Languages.Xaml
                         || state.State == XmlParser.ParserState.StartElement
                         || state.State == XmlParser.ParserState.AfterAttributeValue)
                     {
-                        var caret = editor.Offset;
+                        var caret = editor.CaretOffset;
                         editor.Document.Insert(caret, ">");
-                        editor.Offset = caret + 1;
+                        editor.CaretOffset = caret + 1;
                     }
                 }
             }

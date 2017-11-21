@@ -1,9 +1,8 @@
-using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
+using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Plugin;
-using AvalonStudio.Projects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -41,35 +40,35 @@ namespace AvalonStudio.Languages
         /// </summary>
         IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables { get; }
 
-        Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "");
+        Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "");
 
         bool CanTriggerIntellisense(char currentChar, char previousChar);
         IEnumerable<char> IntellisenseSearchCharacters { get; }
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
-        IEnumerable<ICodeEditorInputHelper> InputHelpers { get; }        
+        IEnumerable<ICodeEditorInputHelper> InputHelpers { get; }
 
         bool IsValidIdentifierCharacter(char data);
 
-        Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
+        Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
-        IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; }
+        //IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; }
 
-        void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument);
+        void RegisterSourceFile(IEditor editor);
 
-        void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file);
+        void UnregisterSourceFile(IEditor editor);
 
-        bool CanHandle(ISourceFile file);
+        bool CanHandle(IEditor editor);
 
-        int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor);
+        int Format(IEditor editor, uint offset, uint length, int cursor);
 
-        int Comment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
+        int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
 
-        int UnComment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
+        int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
 
-        Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName);
+        Task<SignatureHelp> SignatureHelp(IEditor editor, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName);
 
-        Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
+        Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset);
 
-        Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name);
+        Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name);
     }
 }

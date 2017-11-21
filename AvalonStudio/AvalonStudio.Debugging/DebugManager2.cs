@@ -55,7 +55,7 @@
         {
             _currentStackFrame = frame;
 
-            FrameChanged?.Invoke(this, new EventArgs());
+            FrameChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public StackFrame SelectedFrame
@@ -179,7 +179,7 @@
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                DebugSessionEnded?.Invoke(this, new EventArgs());
+                DebugSessionEnded?.Invoke(this, EventArgs.Empty);
 
                 _shell.CurrentPerspective = Perspective.Editor;
 
@@ -269,7 +269,7 @@
 
             _shell.CurrentPerspective = Perspective.Debug;
 
-            DebugSessionStarted?.Invoke(this, new EventArgs());
+            DebugSessionStarted?.Invoke(this, EventArgs.Empty);
         }
 
         private void _session_TargetReady(object sender, TargetEventArgs e)

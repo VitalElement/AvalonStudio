@@ -1,8 +1,7 @@
 ﻿using Avalonia.Ide.CompletionEngine;
 using Avalonia.Ide.CompletionEngine.AssemblyMetadata;
 using Avalonia.Ide.CompletionEngine.SrmMetadataProvider;
-using AvaloniaEdit.Document;
-using AvalonStudio.Projects;
+using AvalonStudio.Documents;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,11 +15,11 @@ namespace AvalonStudio.Languages.Xaml
 
         public override string LanguageId => "xaml";
 
-        public override bool CanHandle(ISourceFile file)
+        public override bool CanHandle(IEditor editor)
         {
             var result = false;
 
-            switch (Path.GetExtension(file.Location))
+            switch (Path.GetExtension(editor.SourceFile.Location))
             {
                 case ".xaml":
                 case ".paml":
@@ -43,13 +42,13 @@ namespace AvalonStudio.Languages.Xaml
             return result;
         }
 
-        public override Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
+        public override Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             var results = new CodeCompletionResults();
 
             if (unsavedFiles.Count > 0)
             {
-                var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == sourceFile.FilePath);
+                var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == editor.SourceFile.FilePath);
                 var currentFileConts = currentUnsavedFile.Contents;
 
                 var completionSet = engine.GetCompletions(metaData, currentFileConts, index);
@@ -76,7 +75,7 @@ namespace AvalonStudio.Languages.Xaml
         private static CompletionEngine engine = null;
         private static Metadata metaData = null;
 
-        public override void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument)
+        public override void RegisterSourceFile(IEditor editor)
         {
             if (engine == null)
             {
@@ -85,11 +84,11 @@ namespace AvalonStudio.Languages.Xaml
 
             if (metaData == null)
             {
-                metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(file.Project.Solution.StartupProject.Executable);
+                metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(editor.SourceFile.Project.Solution.StartupProject.Executable);
             }
         }
 
-        public override void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
+        public override void UnregisterSourceFile(IEditor editor)
         {
 
         }

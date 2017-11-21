@@ -1,12 +1,10 @@
 ﻿namespace AvalonStudio.Languages.CSharp
 {
-    using Avalonia.Media;
     using Avalonia.Threading;
-    using AvaloniaEdit.Document;
     using AvaloniaEdit.Indentation;
     using AvaloniaEdit.Indentation.CSharp;
-    using AvaloniaEdit.Rendering;
     using AvalonStudio.CodeEditor;
+    using AvalonStudio.Documents;
     using AvalonStudio.Editor;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Languages;
@@ -30,8 +28,8 @@
 
     public class CSharpLanguageService : ILanguageService
     {
-        private static readonly ConditionalWeakTable<ISourceFile, CSharpDataAssociation> dataAssociations =
-            new ConditionalWeakTable<ISourceFile, CSharpDataAssociation>();
+        private static readonly ConditionalWeakTable<IEditor, CSharpDataAssociation> dataAssociations =
+            new ConditionalWeakTable<IEditor, CSharpDataAssociation>();
 
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
@@ -115,13 +113,13 @@
 
         public string LanguageId => "cs";
 
-        public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; } = new Subject<TextSegmentCollection<Diagnostic>>();
+        //public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; } = new Subject<TextSegmentCollection<Diagnostic>>();
 
-        public bool CanHandle(ISourceFile file)
+        public bool CanHandle(IEditor editor)
         {
             var result = false;
 
-            switch (Path.GetExtension(file.Location))
+            switch (Path.GetExtension(editor.SourceFile.Location))
             {
                 case ".cs":
                     result = true;
@@ -173,14 +171,14 @@
                 : CompletionTrigger.Invoke;
         }
 
-        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, char previousChar, string filter)
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char previousChar, string filter)
         {
             var result = new CodeCompletionResults();
 
-            var dataAssociation = GetAssociatedData(sourceFile);
+            var dataAssociation = GetAssociatedData(editor);
 
-            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(sourceFile);
-            
+            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(editor.SourceFile);
+
             var completionService = CompletionService.GetService(document);
             var completionTrigger = GetCompletionTrigger(null);
             var data = await completionService.GetCompletionsAsync(
@@ -234,11 +232,11 @@
             return result;
         }
 
-        public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
+        public int Format(IEditor editor, uint offset, uint length, int cursor)
         {
-            var dataAssociation = GetAssociatedData(file);
+            var dataAssociation = GetAssociatedData(editor);
 
-            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(file);
+            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(editor.SourceFile);
             var formattedDocument = Formatter.FormatAsync(document).GetAwaiter().GetResult();
 
             RoslynWorkspace.GetWorkspace(dataAssociation.Solution).TryApplyChanges(formattedDocument.Project.Solution);
@@ -246,11 +244,11 @@
             return -1;
         }
 
-        public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
-            var dataAssociation = GetAssociatedData(file);
+            var dataAssociation = GetAssociatedData(editor);
 
-            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(file);
+            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(editor.SourceFile);
 
             var semanticModel = await document.GetSemanticModelAsync();
 
@@ -260,9 +258,10 @@
 
             if (symbol != null)
             {
-                result = new Symbol {
+                result = new Symbol
+                {
                     Name = symbol.ToDisplayString(),
-                    TypeDescription = symbol.Kind == Microsoft.CodeAnalysis.SymbolKind.NamedType ? symbol.ToDisplayString() : symbol.ToMinimalDisplayString(semanticModel, offset),                    
+                    TypeDescription = symbol.Kind == Microsoft.CodeAnalysis.SymbolKind.NamedType ? symbol.ToDisplayString() : symbol.ToMinimalDisplayString(semanticModel, offset),
                     BriefComment = symbol.GetDocumentationCommentXml()
                 };
             }
@@ -270,13 +269,13 @@
             return result;
         }
 
-        public Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
+        public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
         {
             return null;
             //throw new NotImplementedException();
         }
 
-        private void OpenBracket(AvaloniaEdit.TextEditor editor, TextDocument document, string text)
+        private void OpenBracket(IEditor editor, ITextDocument document, string text)
         {
             if (text[0].IsOpenBracketChar() && editor.CaretOffset <= document.TextLength && editor.CaretOffset > 0)
             {
@@ -299,11 +298,8 @@
 
                         if (IndentationStrategy != null)
                         {
-                            var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
-                            // use indentation strategy only if the line is not read-only
-                            IndentationStrategy.IndentLine(editor.Document, line);
+                            editor.IndentLine(editor.Line);
                         }
-
 
                         editor.CaretOffset = offset + 1;
                     }
@@ -319,7 +315,7 @@
             }
         }
 
-        private void CloseBracket(AvaloniaEdit.TextEditor editor, TextDocument document, string text)
+        private void CloseBracket(IEditor editor, ITextDocument document, string text)
         {
             if (text[0].IsCloseBracketChar() && editor.CaretOffset < document.TextLength && editor.CaretOffset > 0)
             {
@@ -344,68 +340,59 @@
             }
         }
 
-        public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument doc)
+        public void RegisterSourceFile(IEditor editor)
         {
             CSharpDataAssociation association = null;
 
-            if (dataAssociations.TryGetValue(file, out association))
+            if (dataAssociations.TryGetValue(editor, out association))
             {
                 throw new Exception("Source file already registered with language service.");
             }
 
-            IndentationStrategy = new CSharpIndentationStrategy(editor.Options);
+            IndentationStrategy = new CSharpIndentationStrategy(new AvaloniaEdit.TextEditorOptions { IndentationSize = 4 });
 
-            association = new CSharpDataAssociation();
-            association.Solution = file.Project.Solution;
+            association = new CSharpDataAssociation
+            {
+                Solution = editor.SourceFile.Project.Solution
+            };
 
             var avaloniaEditTextContainer = new AvalonEditTextContainer(editor.Document) { Editor = editor };
 
-            RoslynWorkspace.GetWorkspace(association.Solution).OpenDocument(file, avaloniaEditTextContainer, (diagnostics) =>
+            RoslynWorkspace.GetWorkspace(association.Solution).OpenDocument(editor.SourceFile, avaloniaEditTextContainer, (diagnostics) =>
             {
-                var dataAssociation = GetAssociatedData(file);
+                var dataAssociation = GetAssociatedData(editor);
 
-                var results = new TextSegmentCollection<Diagnostic>();
+                //var results = new TextSegmentCollection<Diagnostic>();
 
-                foreach (var diagnostic in diagnostics.Diagnostics)
-                {
-                    results.Add(FromRoslynDiagnostic(diagnostic, file.Location, file.Project));
-                }
+                //foreach (var diagnostic in diagnostics.Diagnostics)
+                //{
+                //    results.Add(FromRoslynDiagnostic(diagnostic, editor.SourceFile.Location, editor.SourceFile.Project));
+                //}
 
-                (Diagnostics as Subject<TextSegmentCollection<Diagnostic>>).OnNext(results);
+                //(Diagnostics as Subject<TextSegmentCollection<Diagnostic>>).OnNext(results);
             });
 
-            dataAssociations.Add(file, association);
+            dataAssociations.Add(editor, association);
 
             association.TextInputHandler = (sender, e) =>
             {
-                if (editor.Document == doc)
+                switch (e.Text)
                 {
-                    if (IndentationStrategy != null)
-                    {
-                        var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
+                    case "}":
+                    case ";":
+                        editor.IndentLine(editor.Line);
+                        break;
 
-                        switch (e.Text)
+                    case "{":
+                        if (IndentationStrategy != null)
                         {
-                            case "}":
-                            case ";":
-                                if (IndentationStrategy != null)
-                                {
-                                    IndentationStrategy.IndentLine(editor.Document, line);
-                                }
-                                break;
-
-                            case "{":
-                                if (IndentationStrategy != null)
-                                {
-                                    IndentationStrategy.IndentLine(editor.Document, line);
-                                }
-                                break;
+                            editor.IndentLine(editor.Line);
                         }
-                    }
-
-                    OpenBracket(editor, editor.Document, e.Text);
-                    CloseBracket(editor, editor.Document, e.Text);
+                        break;
                 }
+
+                OpenBracket(editor, editor.Document, e.Text);
+                CloseBracket(editor, editor.Document, e.Text);
             };
 
             association.BeforeTextInputHandler = (sender, e) =>
@@ -423,14 +410,12 @@
 
                         if (nextChar == '}')
                         {
-                            var newline = TextUtilities.GetNewLineFromDocument(editor.Document, editor.TextArea.Caret.Line);
+                            var newline = "\r\n"; // TextUtilities.GetNewLineFromDocument(editor.Document, editor.TextArea.Caret.Line);
                             editor.Document.Insert(editor.CaretOffset, newline);
 
-                            editor.Document.TrimTrailingWhiteSpace(editor.TextArea.Caret.Line - 1);
+                            editor.Document.TrimTrailingWhiteSpace(editor.Line - 1);
 
-                            var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
-                            // use indentation strategy only if the line is not read-only
-                            IndentationStrategy.IndentLine(editor.Document, line);
+                            editor.IndentLine(editor.Line);
 
                             editor.CaretOffset -= newline.Length;
                         }
@@ -438,15 +423,13 @@
                 }
             };
 
-            editor.TextArea.TextEntered += association.TextInputHandler;
-            editor.TextArea.TextEntering += association.BeforeTextInputHandler;
+            editor.TextEntered += association.TextInputHandler;
+            editor.TextEntering += association.BeforeTextInputHandler;
         }
 
-        private CSharpDataAssociation GetAssociatedData(ISourceFile sourceFile)
+        private CSharpDataAssociation GetAssociatedData(IEditor editor)
         {
-            CSharpDataAssociation result = null;
-
-            if (!dataAssociations.TryGetValue(sourceFile, out result))
+            if (!dataAssociations.TryGetValue(editor, out CSharpDataAssociation result))
             {
                 throw new Exception("Tried to parse file that has not been registered with the language service.");
             }
@@ -544,20 +527,20 @@
 
             return result;
         }
-        
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
 
             var textLength = 0;
 
-            await Dispatcher.UIThread.InvokeTaskAsync(() => { textLength = textDocument.TextLength; });
+            await Dispatcher.UIThread.InvokeTaskAsync(() => { textLength = editor.Document.TextLength; });
 
-            var dataAssociation = GetAssociatedData(file);
+            var dataAssociation = GetAssociatedData(editor);
 
             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
 
-            var document = workspace.GetDocument(file);
+            var document = workspace.GetDocument(editor.SourceFile);
 
             if (document == null)
             {
@@ -576,7 +559,7 @@
                 foreach (var span in highlightData)
                 {
                     result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
-                }   
+                }
             }
             catch (NullReferenceException)
             {
@@ -585,71 +568,72 @@
             return result;
         }
 
-        public int Comment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
+            var textDocument = editor.Document;
 
-            textDocument.BeginUpdate();
-
-            for (int line = firstLine; line <= endLine; line++)
+            using (textDocument.RunUpdate())
             {
-                textDocument.Insert(textDocument.GetLineByNumber(line).Offset, "//");
-            }
+                for (int line = firstLine; line <= endLine; line++)
+                {
+                    textDocument.Insert(textDocument.GetLineByNumber(line).Offset, "//");
+                }
 
-            if (format)
-            {
-                var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
-                var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                if (format)
+                {
+                    var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
+                    var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
+                    result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                }
             }
-
-            textDocument.EndUpdate();
             return result;
         }
 
-        public int UnComment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
-            textDocument.BeginUpdate();
+            var textDocument = editor.Document;
 
-            for (int line = firstLine; line <= endLine; line++)
+            using (textDocument.RunUpdate())
             {
-                var docLine = textDocument.GetLineByNumber(firstLine);
-                var index = textDocument.GetText(docLine).IndexOf("//");
-
-                if (index >= 0)
+                for (int line = firstLine; line <= endLine; line++)
                 {
-                    textDocument.Replace(docLine.Offset + index, 2, string.Empty);
+                    var docLine = textDocument.GetLineByNumber(firstLine);
+                    var index = textDocument.GetText(docLine).IndexOf("//");
+
+                    if (index >= 0)
+                    {
+                        textDocument.Replace(docLine.Offset + index, 2, string.Empty);
+                    }
+                }
+
+                if (format)
+                {
+                    var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
+                    var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
+                    result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
                 }
             }
 
-            if (format)
-            {
-                var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
-                var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
-            }
-
-            textDocument.EndUpdate();
-
             return result;
         }
 
-        public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
+        public void UnregisterSourceFile(IEditor editor)
         {
-            var association = GetAssociatedData(file);
+            var association = GetAssociatedData(editor);
 
-            editor.TextArea.TextEntered -= association.TextInputHandler;
-            editor.TextArea.TextEntering -= association.BeforeTextInputHandler;
+            editor.TextEntered -= association.TextInputHandler;
+            editor.TextEntering -= association.BeforeTextInputHandler;
 
-            RoslynWorkspace.GetWorkspace(association.Solution).CloseDocument(file);
+            RoslynWorkspace.GetWorkspace(association.Solution).CloseDocument(editor.SourceFile);
 
             association.Solution = null;
-            dataAssociations.Remove(file);
+            dataAssociations.Remove(editor);
         }
 
-        public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
+        public async Task<SignatureHelp> SignatureHelp(IEditor editor, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
         {
             SignatureHelp result = null;
 

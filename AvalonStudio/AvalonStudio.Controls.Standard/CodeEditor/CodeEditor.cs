@@ -9,8 +9,6 @@ using Avalonia.Threading;
 using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
-using AvaloniaEdit.Highlighting;
-using AvaloniaEdit.Highlighting.Xshd;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
@@ -472,7 +470,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (LanguageService != null)
             {
-                return await LanguageService.GetSymbolAsync(SourceFile, UnsavedFiles, offset);
+                return await LanguageService.GetSymbolAsync(DocumentAccessor, UnsavedFiles, offset);
             }
 
             return null;
@@ -499,11 +497,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     return new ErrorProbeViewModel(matching);
                 }
 
-                if(LanguageService != null)
+                if (LanguageService != null)
                 {
-                    var symbol = await LanguageService?.GetSymbolAsync(SourceFile, UnsavedFiles, offset);
+                    var symbol = await LanguageService?.GetSymbolAsync(DocumentAccessor, UnsavedFiles, offset);
 
-                    if(symbol != null)
+                    if (symbol != null)
                     {
                         switch (symbol.Kind)
                         {
@@ -592,7 +590,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 ModifySelectedLines((start, end) =>
                 {
-                    LanguageService.Comment(SourceFile, Document, start, end, CaretOffset);
+                    LanguageService.Comment(DocumentAccessor, start, end, CaretOffset);
                 });
             }
         }
@@ -603,7 +601,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 ModifySelectedLines((start, end) =>
                 {
-                    LanguageService.UnComment(SourceFile, Document, start, end, CaretOffset);
+                    LanguageService.UnComment(DocumentAccessor, start, end, CaretOffset);
                 });
             }
         }
@@ -614,7 +612,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (Settings.GetSettings<EditorSettings>().AutoFormat)
                 {
-                    var caretOffset = LanguageService.Format(SourceFile, Document, 0, (uint)Document.TextLength, CaretOffset);
+                    var caretOffset = LanguageService.Format(DocumentAccessor, 0, (uint)Document.TextLength, CaretOffset);
 
                     // some language services manually set the caret themselves and return -1 to indicate this.
                     if (caretOffset >= 0)
@@ -677,33 +675,38 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private async Task<bool> DoCodeAnalysisAsync()
         {
-            var sourceFile = SourceFile;
+            var editor = DocumentAccessor;
             var unsavedFiles = UnsavedFiles.ToList();
-            var document = Document;
 
             await _codeAnalysisRunner.InvokeAsync(async () =>
             {
                 if (LanguageService != null)
                 {
-                    var result = await LanguageService.RunCodeAnalysisAsync(sourceFile, document, unsavedFiles, () => false);
+                    var result = await LanguageService.RunCodeAnalysisAsync(editor, unsavedFiles, () => false);
 
                     _textColorizer?.SetTransformations(result.SyntaxHighlightingData);
 
                     _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
 
-                    if (LanguageService.Diagnostics == null)
+                    TextSegmentCollection<Diagnostic> diagnostics = null;
+
+                    await Dispatcher.UIThread.InvokeTaskAsync(() =>
                     {
-                        _diagnosticMarkersRenderer?.SetDiagnostics(result.Diagnostics);
+                        diagnostics = new TextSegmentCollection<Diagnostic>(Document);
+                    });
+
+                    foreach (var diagnostic in result.Diagnostics)
+                    {
+                        diagnostics.Add(diagnostic);
                     }
+
+                    _diagnosticMarkersRenderer?.SetDiagnostics(diagnostics);
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        if (LanguageService.Diagnostics == null)
-                        {
-                            Diagnostics = result.Diagnostics;
+                        Diagnostics = diagnostics;
 
-                            _shell.InvalidateErrors();
-                        }
+                        _shell.InvalidateErrors();
 
                         TextArea.TextView.Redraw();
                     });
@@ -727,7 +730,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _snippetManager.InitialiseSnippetsForProject(sourceFile.Project);
             }
 
-            LanguageService = _shell.LanguageServices.FirstOrDefault(o => o.CanHandle(sourceFile));
+            LanguageService = _shell.LanguageServices.FirstOrDefault(o => o.CanHandle(DocumentAccessor));
 
             if (LanguageService != null)
             {
@@ -735,7 +738,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 LanguageServiceName = LanguageService.Title;
 
-                LanguageService.RegisterSourceFile(this, sourceFile, Document);
+                LanguageService.RegisterSourceFile(DocumentAccessor);
 
                 _diagnosticMarkersRenderer = new TextMarkerService(Document);
                 _textColorizer = new TextColoringTransformer(Document);
@@ -745,7 +748,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
                 TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
 
-                _intellisenseManager = new IntellisenseManager(this, _intellisense, _completionAssistant, LanguageService, sourceFile);
+                _intellisenseManager = new IntellisenseManager(DocumentAccessor, _intellisense, _completionAssistant, LanguageService, sourceFile);
 
                 _disposables.Add(_intellisenseManager);
 
@@ -756,16 +759,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     TextArea.IndentationStrategy = new DefaultIndentationStrategy();
                 }
 
-                LanguageService.Diagnostics?.ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
-                {
-                    _diagnosticMarkersRenderer?.SetDiagnostics(d);
+                //LanguageService.Diagnostics?.ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
+                //{
+                //    _diagnosticMarkersRenderer?.SetDiagnostics(d);
 
-                    Diagnostics = d;
+                //    Diagnostics = d;
 
-                    _shell.InvalidateErrors();
+                //    _shell.InvalidateErrors();
 
-                    TextArea.TextView.Redraw();
-                });
+                //    TextArea.TextView.Redraw();
+                //});
             }
             else
             {
@@ -855,7 +858,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             if (LanguageService != null)
             {
-                LanguageService.UnregisterSourceFile(this, SourceFile);
+                LanguageService.UnregisterSourceFile(DocumentAccessor);
             }
 
             Document.TextChanged -= TextDocument_TextChanged;
@@ -1113,17 +1116,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     prevChar = Document.GetCharAt(offset - 1);
                 }
 
-                var charClass = TextUtilities.GetCharacterClass(currentChar);
+                var charClass = AvaloniaEdit.Document.TextUtilities.GetCharacterClass(currentChar);
 
-                if (charClass != CharacterClass.LineTerminator && prevChar != ' ' &&
-                    TextUtilities.GetCharacterClass(prevChar) != CharacterClass.LineTerminator)
+                if (charClass != AvaloniaEdit.Document.CharacterClass.LineTerminator && prevChar != ' ' &&
+                    AvaloniaEdit.Document.TextUtilities.GetCharacterClass(prevChar) != AvaloniaEdit.Document.CharacterClass.LineTerminator)
                 {
-                    start = TextUtilities.GetNextCaretPosition(Document, offset, LogicalDirection.Backward,
-                        CaretPositioningMode.WordStart);
+                    start = AvaloniaEdit.Document.TextUtilities.GetNextCaretPosition(Document, offset, AvaloniaEdit.Document.LogicalDirection.Backward,
+                        AvaloniaEdit.Document.CaretPositioningMode.WordStart);
                 }
 
-                var end = TextUtilities.GetNextCaretPosition(Document, start, LogicalDirection.Forward,
-                    CaretPositioningMode.WordBorder);
+                var end = AvaloniaEdit.Document.TextUtilities.GetNextCaretPosition(Document, start, AvaloniaEdit.Document.LogicalDirection.Forward,
+                    AvaloniaEdit.Document.CaretPositioningMode.WordBorder);
 
                 if (start != -1 && end != -1)
                 {
@@ -1145,9 +1148,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 var docLine = Document.GetLineByNumber(line);
 
-                var leading = TextUtilities.GetLeadingWhitespace(Document, docLine);
+                var leading = AvaloniaEdit.Document.TextUtilities.GetLeadingWhitespace(Document, docLine);
 
-                var trailing = TextUtilities.GetTrailingWhitespace(Document, docLine);
+                var trailing = AvaloniaEdit.Document.TextUtilities.GetTrailingWhitespace(Document, docLine);
 
                 startColumn = Document.GetLocation(leading.EndOffset).Column;
                 endColumn = Document.GetLocation(trailing.Offset).Column;

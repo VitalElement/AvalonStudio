@@ -95,13 +95,30 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
         }
 
-        public static int FindPrevSymbolNameStart(this ITextSource textSource, int offset)
+        public static int FindPrevSymbolNameStart(this IDocument textSource, int offset)
         {
             while(offset > 0)
             {
                 var currentChar = textSource.GetCharAt(offset - 1);
 
                 if(!char.IsLetterOrDigit(currentChar) && currentChar != '_')
+                {
+                    break;
+                }
+
+                offset--;
+            }
+
+            return offset;
+        }
+
+        public static int FindPrevSymbolNameStart(this AvalonStudio.Documents.ITextDocument textSource, int offset)
+        {
+            while (offset > 0)
+            {
+                var currentChar = textSource.GetCharAt(offset - 1);
+
+                if (!char.IsLetterOrDigit(currentChar) && currentChar != '_')
                 {
                     break;
                 }

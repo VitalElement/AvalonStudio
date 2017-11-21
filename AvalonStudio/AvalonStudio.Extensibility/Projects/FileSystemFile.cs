@@ -76,7 +76,7 @@
 
         public void RaiseFileModifiedEvent()
         {
-            FileModifiedExternally?.Invoke(this, new EventArgs());
+            FileModifiedExternally?.Invoke(this, EventArgs.Empty);
         }
     }
 }

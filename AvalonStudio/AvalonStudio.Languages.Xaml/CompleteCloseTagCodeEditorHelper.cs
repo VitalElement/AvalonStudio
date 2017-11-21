@@ -12,7 +12,7 @@ namespace AvalonStudio.Languages.Xaml
         {
             if (args.Text == ">")
             {
-                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.Offset - 1));
+                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.CaretOffset - 1));
 
                 if (textBefore.Length > 2 && textBefore[textBefore.Length - 1] != '/')
                 {
@@ -21,9 +21,9 @@ namespace AvalonStudio.Languages.Xaml
                         || state.State == XmlParser.ParserState.StartElement
                         || state.State == XmlParser.ParserState.AfterAttributeValue)
                     {
-                        var caret = editor.Offset;
+                        var caret = editor.CaretOffset;
                         editor.Document.Insert(caret, $"</{state.TagName}>");
-                        editor.Offset = caret;
+                        editor.CaretOffset = caret;
                     }
                 }
             }

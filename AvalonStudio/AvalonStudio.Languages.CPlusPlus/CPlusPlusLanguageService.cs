@@ -1,12 +1,8 @@
-using Avalonia.Media;
-using Avalonia.Threading;
-using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
-using AvaloniaEdit.Rendering;
 using AvalonStudio.CodeEditor;
+using AvalonStudio.Documents;
 using AvalonStudio.Editor;
-using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
@@ -140,9 +136,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => _snippetDynamicVars;
 
-        public string LanguageId => "cpp";
-
-        public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics => null;
+        public string LanguageId => "cpp";        
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
 
@@ -197,7 +191,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return CodeCompletionKind.None;
         }
 
-        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile file, int index, int line, int column,
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column,
             List<UnsavedFile> unsavedFiles, char lastChar, string filter)
         {
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
@@ -211,11 +205,11 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             await clangAccessJobRunner.InvokeAsync(() =>
             {
-                var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
+                var translationUnit = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
 
                 if (translationUnit != null)
                 {
-                    var completionResults = translationUnit.CodeCompleteAt(file.Location, line, column, clangUnsavedFiles.ToArray(),
+                    var completionResults = translationUnit.CodeCompleteAt(editor.SourceFile.Location, line, column, clangUnsavedFiles.ToArray(),
                         CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
                     completionResults.Sort();
 
@@ -257,7 +251,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                             if (filter == string.Empty || typedText.StartsWith(filter))
                             {
-                                var completion = new CodeCompletionData (typedText, typedText)
+                                var completion = new CodeCompletionData(typedText, typedText)
                                 {
                                     Priority = codeCompletion.CompletionString.Priority,
                                     Kind = FromClangKind(codeCompletion.CursorKind),
@@ -493,7 +487,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }, IntPtr.Zero);
         }
 
-        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, TextSegmentCollection<Diagnostic> result)
+        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, List<Diagnostic> result)
         {
             foreach (var diagnostic in clangDiagnostics)
             {
@@ -527,12 +521,12 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument document, List<UnsavedFile> unsavedFiles,
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles,
             Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
 
-            var dataAssociation = GetAssociatedData(file);
+            var dataAssociation = GetAssociatedData(editor.SourceFile);
 
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
@@ -542,18 +536,18 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 try
                 {
-                    var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
+                    var translationUnit = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
 
                     if (translationUnit != null)
                     {
-                        if (file != null && translationUnit != null)
+                        if (editor.SourceFile != null && translationUnit != null)
                         {
                             ScanTokens(translationUnit, result.SyntaxHighlightingData);
 
                             GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.IndexItems);
                         }
 
-                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, file.Project, result.Diagnostics);
+                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, editor.SourceFile.Project, result.Diagnostics);
                     }
                 }
                 catch (Exception e)
@@ -564,11 +558,11 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public bool CanHandle(ISourceFile file)
+        public bool CanHandle(IEditor editor)
         {
             var result = false;
 
-            switch (Path.GetExtension(file.Location))
+            switch (Path.GetExtension(editor.SourceFile.Location))
             {
                 case ".h":
                 case ".cpp":
@@ -580,7 +574,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             if (result)
             {
-                if (!(file.Project is IStandardProject))
+                if (!(editor.SourceFile.Project is IStandardProject))
                 {
                     result = false;
                 }
@@ -589,55 +583,44 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument doc)
+        public void RegisterSourceFile(IEditor editor)
         {
-            if (clangAccessJobRunner != null)
+            if (clangAccessJobRunner == null)
             {
                 clangAccessJobRunner = new JobRunner();
 
                 Task.Factory.StartNew(() => { clangAccessJobRunner.RunLoop(new CancellationToken()); });
             }
 
-            if (dataAssociations.TryGetValue(file, out CPlusPlusDataAssociation association))
+            if (dataAssociations.TryGetValue(editor.SourceFile, out CPlusPlusDataAssociation association))
             {
                 throw new Exception("Source file already registered with language service.");
             }
 
-            IndentationStrategy = new CSharpIndentationStrategy(editor.Options);
+            IndentationStrategy = new CSharpIndentationStrategy(new AvaloniaEdit.TextEditorOptions { IndentationSize = 4 });
 
             association = new CPlusPlusDataAssociation();
-            dataAssociations.Add(file, association);
+            dataAssociations.Add(editor.SourceFile, association);
 
             association.TextInputHandler = (sender, e) =>
             {
-                if (editor.Document == doc)
+                switch (e.Text)
                 {
-                    if (IndentationStrategy != null)
-                    {
-                        var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
+                    case "}":
+                    case ";":
+                        editor.IndentLine(editor.Line);
+                        break;
 
-                        switch (e.Text)
+                    case "{":
+                        if (IndentationStrategy != null)
                         {
-                            case "}":
-                            case ";":
-                                if (IndentationStrategy != null)
-                                {
-                                    IndentationStrategy.IndentLine(editor.Document, line);
-                                }
-                                break;
-
-                            case "{":
-                                if (IndentationStrategy != null)
-                                {
-                                    IndentationStrategy.IndentLine(editor.Document, line);
-                                }
-                                break;
+                            editor.IndentLine(editor.Line);
                         }
-                    }
-
-                    OpenBracket(editor, editor.Document, e.Text);
-                    CloseBracket(editor, editor.Document, e.Text);
+                        break;
                 }
+
+                OpenBracket(editor, editor.Document, e.Text);
+                CloseBracket(editor, editor.Document, e.Text);
             };
 
             association.BeforeTextInputHandler = (sender, e) =>
@@ -655,14 +638,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                         if (nextChar == '}')
                         {
-                            var newline = TextUtilities.GetNewLineFromDocument(editor.Document, editor.TextArea.Caret.Line);
+                            var newline = "\r\n"; // TextUtilities.GetNewLineFromDocument(editor.Document, editor.TextArea.Caret.Line);
                             editor.Document.Insert(editor.CaretOffset, newline);
 
-                            editor.Document.TrimTrailingWhiteSpace(editor.TextArea.Caret.Line - 1);
+                            editor.Document.TrimTrailingWhiteSpace(editor.Line - 1);
 
-                            var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
-                            // use indentation strategy only if the line is not read-only
-                            IndentationStrategy.IndentLine(editor.Document, line);
+                            editor.IndentLine(editor.Line);
 
                             editor.CaretOffset -= newline.Length;
                         }
@@ -670,16 +651,16 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             };
 
-            editor.TextArea.TextEntered += association.TextInputHandler;
-            editor.TextArea.TextEntering += association.BeforeTextInputHandler;
+            editor.TextEntered += association.TextInputHandler;
+            editor.TextEntering += association.BeforeTextInputHandler;
         }
 
-        public void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
+        public void UnregisterSourceFile(IEditor editor)
         {
-            var association = GetAssociatedData(file);
+            var association = GetAssociatedData(editor.SourceFile);
 
-            editor.TextArea.TextEntered -= association.TextInputHandler;
-            editor.TextArea.TextEntering -= association.BeforeTextInputHandler;
+            editor.TextEntered -= association.TextInputHandler;
+            editor.TextEntering -= association.BeforeTextInputHandler;
 
             var tu = association.TranslationUnit;
 
@@ -688,10 +669,10 @@ namespace AvalonStudio.Languages.CPlusPlus
                 tu?.Dispose();
             });
 
-            dataAssociations.Remove(file);
+            dataAssociations.Remove(editor.SourceFile);
         }
 
-        public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
+        public int Format(IEditor editor, uint offset, uint length, int cursor)
         {
             bool replaceCursor = cursor >= 0 ? true : false;
 
@@ -700,20 +681,20 @@ namespace AvalonStudio.Languages.CPlusPlus
                 cursor = 0;
             }
 
-            var replacements = ClangFormat.FormatXml(file.Location, textDocument.Text, offset, length, (uint)cursor);
+            var replacements = ClangFormat.FormatXml(editor.SourceFile.Location, editor.Document.Text, offset, length, (uint)cursor);
 
             if (replacements != null)
             {
-                return ApplyReplacements(textDocument, cursor, replacements, replaceCursor);
+                return ApplyReplacements(editor.Document, cursor, replacements, replaceCursor);
             }
 
             return cursor;
         }
 
-        public async Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             Symbol result = null;
-            var associatedData = GetAssociatedData(file);
+            var associatedData = GetAssociatedData(editor.SourceFile);
 
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
@@ -724,11 +705,11 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             await clangAccessJobRunner.InvokeAsync(() =>
             {
-                var tu = GetAndParseTranslationUnit(file, clangUnsavedFiles);
+                var tu = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
 
                 if (tu != null)
                 {
-                    var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(file.FilePath), offset));
+                    var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(editor.SourceFile.FilePath), offset));
 
                     switch (cursor.Kind)
                     {
@@ -747,7 +728,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public async Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
+        public async Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
         {
             var results = new List<Symbol>();
 
@@ -762,7 +743,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 await clangAccessJobRunner.InvokeAsync(() =>
                 {
-                    var translationUnit = GetAndParseTranslationUnit(file, clangUnsavedFiles);
+                    var translationUnit = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
 
                     if (translationUnit != null)
                     {
@@ -779,53 +760,53 @@ namespace AvalonStudio.Languages.CPlusPlus
             return results;
         }
 
-        public int Comment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
+            var textDocument = editor.Document;
 
-            textDocument.BeginUpdate();
-
-            for (int line = firstLine; line <= endLine; line++)
+            using (textDocument.RunUpdate())
             {
-                textDocument.Insert(textDocument.GetLineByNumber(line).Offset, "//");
+                for (int line = firstLine; line <= endLine; line++)
+                {
+                    textDocument.Insert(textDocument.GetLineByNumber(line).Offset, "//");
+                }
+
+                if (format)
+                {
+                    var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
+                    var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
+                    result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                }
             }
-
-            textDocument.EndUpdate();
-
-            if (format)
-            {
-                var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
-                var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
-            }
-
             return result;
         }
 
-        public int UnComment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
-            textDocument.BeginUpdate();
+            var textDocument = editor.Document;
 
-            for (int line = firstLine; line <= endLine; line++)
+            using (textDocument.RunUpdate())
             {
-                var docLine = textDocument.GetLineByNumber(line);
-                var index = textDocument.GetText(docLine).IndexOf("//");
-
-                if (index >= 0)
+                for (int line = firstLine; line <= endLine; line++)
                 {
-                    textDocument.Replace(docLine.Offset + index, 2, string.Empty);
+                    var docLine = textDocument.GetLineByNumber(firstLine);
+                    var index = textDocument.GetText(docLine).IndexOf("//");
+
+                    if (index >= 0)
+                    {
+                        textDocument.Replace(docLine.Offset + index, 2, string.Empty);
+                    }
                 }
-            }
 
-            textDocument.EndUpdate();
-
-            if (format)
-            {
-                var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
-                var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                result = Format(file, textDocument, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                if (format)
+                {
+                    var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
+                    var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
+                    result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                }
             }
 
             return result;
@@ -853,9 +834,11 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        private ClangTranslationUnit GenerateTranslationUnit(ISourceFile file, List<ClangUnsavedFile> unsavedFiles)
+        private ClangTranslationUnit GenerateTranslationUnit(IEditor editor, List<ClangUnsavedFile> unsavedFiles)
         {
             ClangTranslationUnit result = null;
+
+            var file = editor.SourceFile;
 
             if (System.IO.File.Exists(file.Location))
             {
@@ -863,7 +846,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 var superProject = file.Project.Solution.StartupProject as IStandardProject;
 
-                if(superProject == null)
+                if (superProject == null)
                 {
                     superProject = file.Project as IStandardProject;
                 }
@@ -956,15 +939,15 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        private ClangTranslationUnit GetAndParseTranslationUnit(ISourceFile sourceFile, List<ClangUnsavedFile> unsavedFiles)
+        private ClangTranslationUnit GetAndParseTranslationUnit(IEditor editor, List<ClangUnsavedFile> unsavedFiles)
         {
-            var dataAssociation = GetAssociatedData(sourceFile);
+            var dataAssociation = GetAssociatedData(editor.SourceFile);
 
             if (dataAssociation != null)
             {
                 if (dataAssociation.TranslationUnit == null)
                 {
-                    dataAssociation.TranslationUnit = GenerateTranslationUnit(sourceFile, unsavedFiles);
+                    dataAssociation.TranslationUnit = GenerateTranslationUnit(editor, unsavedFiles);
                 }
 
                 // Always do a reparse, as a workaround for some issues in libclang 3.7.1
@@ -975,7 +958,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return null;
         }
 
-        private void OpenBracket(AvaloniaEdit.TextEditor editor, TextDocument document, string text)
+        private void OpenBracket(IEditor editor, ITextDocument document, string text)
         {
             if (text[0].IsOpenBracketChar() && editor.CaretOffset <= document.TextLength && editor.CaretOffset > 0)
             {
@@ -998,11 +981,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                         if (IndentationStrategy != null)
                         {
-                            var line = editor.Document.GetLineByNumber(editor.TextArea.Caret.Line);
-                            // use indentation strategy only if the line is not read-only
-                            IndentationStrategy.IndentLine(editor.Document, line);
+                            editor.IndentLine(editor.Line);
                         }
-
 
                         editor.CaretOffset = offset + 1;
                     }
@@ -1018,7 +998,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        private void CloseBracket(AvaloniaEdit.TextEditor editor, TextDocument document, string text)
+        private void CloseBracket(IEditor editor, ITextDocument document, string text)
         {
             if (text[0].IsCloseBracketChar() && editor.CaretOffset < document.TextLength && editor.CaretOffset > 0)
             {
@@ -1043,48 +1023,48 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        public static int ApplyReplacements(TextDocument document, int cursor, XDocument replacements, bool replaceCursor = true)
+        public static int ApplyReplacements(ITextDocument document, int cursor, XDocument replacements, bool replaceCursor = true)
         {
             var elements = replacements.Elements().First().Elements();
 
-            document.BeginUpdate();
-
-            var offsetChange = 0;
-            foreach (var element in elements)
+            using (document.RunUpdate())
             {
-                switch (element.Name.LocalName)
+                var offsetChange = 0;
+
+                foreach (var element in elements)
                 {
-                    case "cursor":
-                        cursor = Convert.ToInt32(element.Value);
-                        break;
+                    switch (element.Name.LocalName)
+                    {
+                        case "cursor":
+                            cursor = Convert.ToInt32(element.Value);
+                            break;
 
-                    case "replacement":
-                        var offset = -1;
-                        var replacementLength = -1;
-                        var attributes = element.Attributes();
+                        case "replacement":
+                            var offset = -1;
+                            var replacementLength = -1;
+                            var attributes = element.Attributes();
 
-                        foreach (var attribute in attributes)
-                        {
-                            switch (attribute.Name.LocalName)
+                            foreach (var attribute in attributes)
                             {
-                                case "offset":
-                                    offset = Convert.ToInt32(attribute.Value);
-                                    break;
+                                switch (attribute.Name.LocalName)
+                                {
+                                    case "offset":
+                                        offset = Convert.ToInt32(attribute.Value);
+                                        break;
 
-                                case "length":
-                                    replacementLength = Convert.ToInt32(attribute.Value);
-                                    break;
+                                    case "length":
+                                        replacementLength = Convert.ToInt32(attribute.Value);
+                                        break;
+                                }
                             }
-                        }
 
-                        document.Replace(offsetChange + offset, replacementLength, element.Value);
+                            document.Replace(offsetChange + offset, replacementLength, element.Value);
 
-                        offsetChange += element.Value.Length - replacementLength;
-                        break;
+                            offsetChange += element.Value.Length - replacementLength;
+                            break;
+                    }
                 }
             }
-
-            document.EndUpdate();
 
             return replaceCursor ? cursor : -1;
         }
@@ -1284,7 +1264,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public async Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
+        public async Task<SignatureHelp> SignatureHelp(IEditor editor, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
         {
             SignatureHelp result = null;
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
@@ -1299,7 +1279,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             }
 
-            var symbols = await GetSymbolsAsync(file, unsavedFiles, methodName);
+            var symbols = await GetSymbolsAsync(editor, unsavedFiles, methodName);
 
             if (symbols.Count > 0)
             {

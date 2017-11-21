@@ -94,8 +94,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _codeEditor.TextArea.TextEntering += TextEntering;
             _codeEditor.TextArea.TextEntered += TextEntered;
             _codeEditor.RequestTooltipContent += RequestTooltipContent;
+            _codeEditor.LostFocus += _codeEditor_LostFocus;
 
             _sourceFile = _codeEditor.SourceFile;
+        }
+
+        private void _codeEditor_LostFocus(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        {
+            LostFocus?.Invoke(this, EventArgs.Empty);
         }
 
         public ITextDocument Document => _document;
@@ -110,7 +116,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _codeEditor.LanguageService?.IndentationStrategy.IndentLine(_codeEditor.Document, _codeEditor.Document.GetLineByNumber(line));
         }
 
-        public int Offset { get => _codeEditor.CaretOffset; set => _codeEditor.CaretOffset = value; }
+        public int CaretOffset { get => _codeEditor.CaretOffset; set => _codeEditor.CaretOffset = value; }
 
         public int Line { get => _codeEditor.TextArea.Caret.Line; set => _codeEditor.TextArea.Caret.Line = value; }
 
@@ -129,14 +135,19 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         /// but occurs immediately after the TextArea handles the TextInput event.
         /// </summary>
         public event EventHandler<TextInputEventArgs> TextEntered;
-        
+
         public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
+        public event EventHandler LostFocus;
 
         public void Dispose()
         {
             _codeEditor.TextArea.TextEntering -= TextEntering;
             _codeEditor.TextArea.TextEntered -= TextEntered;
+            _codeEditor.LostFocus -= _codeEditor_LostFocus;
             _codeEditor = null;
+
+            _document.Dispose();
+            _document = null;
         }
 
         public void FormatAll()
@@ -195,10 +206,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         }
     }
 
-    public class DocumentAdaptor : ITextDocument
+    public class DocumentAdaptor : ITextDocument, IDisposable
     {
         private AvaloniaEdit.Document.TextDocument _document;
         private DocumentLinesCollection _lines;
+
+        public event EventHandler<DocumentChangeEventArgs> Changed;
 
         internal AvaloniaEdit.Document.TextDocument Document => _document;
 
@@ -206,6 +219,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             _document = document;
             _lines = new DocumentLinesCollection(document);
+            _document.Changed += _document_Changed;
+        }
+
+        private void _document_Changed(object sender, AvaloniaEdit.Document.DocumentChangeEventArgs e)
+        {
+            Changed?.Invoke(this, new DocumentChangeEventArgs(e.Offset, e.RemovedText.Text, e.InsertedText.Text));
         }
 
         ~DocumentAdaptor()
@@ -247,5 +266,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         }
 
         public IDocumentLine GetLineByNumber(int lineNumber) => Lines[lineNumber - 1];
+
+        public TextLocation GetLocation(int offset)
+        {
+            var loc = _document.GetLocation(offset);
+
+            return new TextLocation(loc.Line, loc.Column);
+        }
+
+        public void Dispose()
+        {
+            _document.Changed -= _document_Changed;
+            _document = null;
+        }
     }
 }
