@@ -137,7 +137,10 @@ namespace AvalonStudio.Debugging
 
         public void Remove(ObjectValue value)
         {
-            Children.Remove(Children.FirstOrDefault(c => c.Model.Name == value.Name));
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Children.Remove(Children.FirstOrDefault(c => c.Model.Name == value.Name));
+            });
         }
 
         private void ApplyChange(ObjectValue change)
