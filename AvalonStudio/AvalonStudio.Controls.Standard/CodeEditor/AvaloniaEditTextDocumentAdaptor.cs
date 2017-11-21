@@ -84,6 +84,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
     {
         private CodeEditor _codeEditor;
         private DocumentAdaptor _document;
+        private ISourceFile _sourceFile;
 
         public EditorAdaptor(CodeEditor editor)
         {
@@ -93,6 +94,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _codeEditor.TextArea.TextEntering += TextEntering;
             _codeEditor.TextArea.TextEntered += TextEntered;
             _codeEditor.RequestTooltipContent += RequestTooltipContent;
+
+            _sourceFile = _codeEditor.SourceFile;
         }
 
         public ITextDocument Document => _document;
@@ -113,7 +116,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public int Column { get => _codeEditor.TextArea.Caret.Column; set => _codeEditor.TextArea.Caret.Column = value; }
 
-        public ISourceFile SourceFile => throw new NotImplementedException();
+        public ISourceFile SourceFile => _sourceFile;
 
         /// <summary>
         /// Occurs when the TextArea receives text input.
@@ -188,8 +191,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void GotoPosition(int line, int column)
         {
-            _codeEditor.Line = line;
-            _codeEditor.Column = column;
+            _codeEditor.CaretOffset = _codeEditor.Document.GetOffset(line, column);
         }
     }
 
