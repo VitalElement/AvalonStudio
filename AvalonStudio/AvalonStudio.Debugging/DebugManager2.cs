@@ -192,6 +192,7 @@
                 if (_session != null)
                 {
                     _session.Exit();
+                    _session.TargetUnhandledException -= _session_TargetStopped;
                     _session.TargetStopped -= _session_TargetStopped;
                     _session.TargetHitBreakpoint -= _session_TargetStopped;
                     _session.TargetSignaled -= _session_TargetStopped;
@@ -253,6 +254,7 @@
 
             _session = debugger2.CreateSession(project);
 
+            _session.TargetUnhandledException += _session_TargetStopped;
             _session.TargetStopped += _session_TargetStopped;
             _session.TargetHitBreakpoint += _session_TargetStopped;
             _session.TargetSignaled += _session_TargetStopped;
