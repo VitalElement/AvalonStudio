@@ -233,18 +233,15 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             }
             catch (JavaScriptException)
             {
-                //result.Diagnostics = new TextSegmentCollection<Diagnostic>
-                //{
-                //    new Diagnostic
-                //    {
-                //        Project = editor.SourceFile.Project,
-                //        Line = 1,
-                //        Spelling = "Code analysis language service call failed.",
-                //        StartOffset = 0,
-                //        File = editor.SourceFile.Name,
-                //        Level = DiagnosticLevel.Error,
-                //    }
-                //};
+                result.Diagnostics.Add(new Diagnostic
+                {
+                    Project = editor.SourceFile.Project,
+                    Line = 1,
+                    Spelling = "Code analysis language service call failed.",
+                    StartOffset = 0,
+                    File = editor.SourceFile.Name,
+                    Level = DiagnosticLevel.Error,
+                });                
 
                 return new CodeAnalysisResults
                 {
@@ -299,34 +296,32 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 HighlightNode(rootStatement, result);
             }
 
-            // Diagnostics
-           // var diagnostics = new TextSegmentCollection<Diagnostic>(document);
-            // Language service has diagnostics
-            //foreach (var diagnostic in syntaxTree.ParseDiagnostics)
-            //{
-            //    // Convert diagnostics
-            //    diagnostics.Add(new Diagnostic
-            //    {
-            //        Project = editor.SourceFile.Project,
-            //        Line = GetLineNumber(currentFileConts, diagnostic.Start), // TODO
-            //        StartOffset = diagnostic.Start,
-            //        EndOffset = diagnostic.Start + diagnostic.Length,
-            //        Spelling = diagnostic.MessageText,
-            //        Level = diagnostic.Category == TSBridge.Ast.Diagnostics.Diagnostic.DiagnosticCategory.Error
-            //            ? DiagnosticLevel.Error
-            //            : DiagnosticLevel.Warning
-            //    });
-            //}
+            // Diagnostics            
+            foreach (var diagnostic in syntaxTree.ParseDiagnostics)
+            {
+                // Convert diagnostics
+                result.Diagnostics.Add(new Diagnostic
+                {
+                    Project = editor.SourceFile.Project,
+                    Line = GetLineNumber(currentFileConts, diagnostic.Start), // TODO
+                    StartOffset = diagnostic.Start,
+                    EndOffset = diagnostic.Start + diagnostic.Length,
+                    Spelling = diagnostic.MessageText,
+                    Level = diagnostic.Category == TSBridge.Ast.Diagnostics.Diagnostic.DiagnosticCategory.Error
+                        ? DiagnosticLevel.Error
+                        : DiagnosticLevel.Warning
+                });
+            }
 
-            //diagnostics.Add(new Diagnostic
-            //{
-            //    Project = editor.SourceFile.Project,
-            //    Line = 1,
-            //    Spelling = "Code analysis for TypeScript is experimental and unstable. Use with caution.",
-            //    StartOffset = 0,
-            //    File = editor.SourceFile.Name,
-            //    Level = DiagnosticLevel.Warning,
-            //});
+            result.Diagnostics.Add(new Diagnostic
+            {
+                Project = editor.SourceFile.Project,
+                Line = 1,
+                Spelling = "Code analysis for TypeScript is experimental and unstable. Use with caution.",
+                StartOffset = 0,
+                File = editor.SourceFile.Name,
+                Level = DiagnosticLevel.Warning,
+            });
 
             return result;
         }
