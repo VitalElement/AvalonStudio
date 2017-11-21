@@ -181,11 +181,7 @@
 
             var completionService = CompletionService.GetService(document);
             var completionTrigger = GetCompletionTrigger(null);
-            var data = await completionService.GetCompletionsAsync(
-                document,
-                index,
-                completionTrigger
-                );
+            var data = await completionService.GetCompletionsAsync(document, index, completionTrigger);
 
             if (data != null)
             {

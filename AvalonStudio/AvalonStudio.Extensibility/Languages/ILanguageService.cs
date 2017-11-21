@@ -40,18 +40,24 @@ namespace AvalonStudio.Languages
         /// </summary>
         IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables { get; }
 
-        Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "");
-
         bool CanTriggerIntellisense(char currentChar, char previousChar);
         IEnumerable<char> IntellisenseSearchCharacters { get; }
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
         IEnumerable<ICodeEditorInputHelper> InputHelpers { get; }
 
+        //IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; }
+
         bool IsValidIdentifierCharacter(char data);
+
+        Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "");
 
         Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
-        //IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; }
+        Task<SignatureHelp> SignatureHelp(IEditor editor, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName);
+
+        Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset);
+
+        Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name);
 
         void RegisterSourceFile(IEditor editor);
 
@@ -64,11 +70,5 @@ namespace AvalonStudio.Languages
         int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
 
         int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
-
-        Task<SignatureHelp> SignatureHelp(IEditor editor, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName);
-
-        Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset);
-
-        Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name);
     }
 }
