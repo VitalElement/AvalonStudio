@@ -185,7 +185,7 @@ namespace CorApi.Portable
             {
                 // If you are stopped in the Prolog, the variable may not be available.
                 // CORDBG_E_IL_VAR_NOT_AVAILABLE is returned after dubugee triggers StackOverflowException
-                if (e.HResult == 0x1304) //cordbg_e_il_var_not_available //TODO Generate error codes in mapping.xaml.
+                if (e.HResult == 0x1304 || e.HResult == -2146233596) //cordbg_e_il_var_not_available //TODO Generate error codes in mapping.xaml.
                 {
                     return null;
                 }
