@@ -573,11 +573,17 @@
 
             var diagnostics = model.GetDiagnostics();*/
 
-            var highlightData = await Classifier.GetClassifiedSpansAsync(document, new Microsoft.CodeAnalysis.Text.TextSpan(0, textLength));
-
-            foreach (var span in highlightData)
+            try
             {
-                result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
+                var highlightData = await Classifier.GetClassifiedSpansAsync(document, new Microsoft.CodeAnalysis.Text.TextSpan(0, textLength));
+
+                foreach (var span in highlightData)
+                {
+                    result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
+                }   
+            }
+            catch (NullReferenceException)
+            {
             }
 
             return result;
