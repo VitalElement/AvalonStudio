@@ -238,7 +238,7 @@ namespace RoslynPad.Roslyn
             return CurrentSolution.GetDocument(documentId);
         }
 
-        public void OpenDocument(AvalonStudio.Projects.ISourceFile file, AvalonEditTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated, Action<SourceText> onTextUpdated)
+        public void OpenDocument(AvalonStudio.Projects.ISourceFile file, AvalonEditTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated, Action<SourceText> onTextUpdated = null)
         {
             var documentId = GetDocumentId(file);
 
@@ -252,7 +252,13 @@ namespace RoslynPad.Roslyn
 
             if (onTextUpdated != null)
             {
-                ApplyingTextChange += (d, s) => onTextUpdated(s);
+                ApplyingTextChange += (d, s) =>
+                {
+                    if (documentId == d)
+                    {
+                        onTextUpdated(s);
+                    }
+                };
             }
         }
 

@@ -372,10 +372,6 @@
                 }
 
                 (Diagnostics as Subject<TextSegmentCollection<Diagnostic>>).OnNext(results);
-            }, 
-            (source) => 
-            {
-                avaloniaEditTextContainer.UpdateText(source);
             });
 
             dataAssociations.Add(file, association);
