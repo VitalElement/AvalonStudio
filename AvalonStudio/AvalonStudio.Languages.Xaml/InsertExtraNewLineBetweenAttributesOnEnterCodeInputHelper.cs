@@ -18,7 +18,7 @@ namespace AvalonStudio.Languages.Xaml
             if (args.Text == "\n")
             {
                 //Check if we are not inside a tag
-                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.Offset));
+                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.CaretOffset));
 
                 var state = XmlParser.Parse(textBefore);
                 if (state.State == XmlParser.ParserState.None)
@@ -26,11 +26,11 @@ namespace AvalonStudio.Languages.Xaml
                     //Find latest tag end
                     var idx = textBefore.LastIndexOf('>');
 
-                    if (idx != -1 && editor.Document.TextLength > editor.Offset)
+                    if (idx != -1 && editor.Document.TextLength > editor.CaretOffset)
                     {
                         state = XmlParser.Parse(editor.Document.GetText(0, Math.Max(0, idx)));
 
-                        if ((state.State == XmlParser.ParserState.StartElement || state.State == XmlParser.ParserState.AfterAttributeValue) && editor.Document.Text[editor.Offset] == '<')
+                        if ((state.State == XmlParser.ParserState.StartElement || state.State == XmlParser.ParserState.AfterAttributeValue) && editor.Document.Text[editor.CaretOffset] == '<')
                         {
                             var newline = "\n";
 
@@ -42,11 +42,11 @@ namespace AvalonStudio.Languages.Xaml
                                 editor.Document.TrimTrailingWhiteSpace(editor.Line + 1);
                             }
 
-                            editor.Document.Insert(editor.Offset, newline);
+                            editor.Document.Insert(editor.CaretOffset, newline);
 
                             editor.Document.TrimTrailingWhiteSpace(editor.Line);
 
-                            editor.Offset -= newline.Length;
+                            editor.CaretOffset -= newline.Length;
 
                             editor.IndentLine(editor.Line);
 

@@ -3,29 +3,27 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-
+using AvalonStudio.Documents;
 using Microsoft.CodeAnalysis.Text;
 using TextChangeEventArgs = Microsoft.CodeAnalysis.Text.TextChangeEventArgs;
-using AvaloniaEdit.Document;
-using AvaloniaEdit;
 
 namespace RoslynPad.Editor.Windows
 {
     public sealed class AvalonEditTextContainer : SourceTextContainer, IDisposable
     {
         private SourceText _currentText;
-        private bool _updatding;
+        private bool _updating;
 
-        public TextDocument Document { get; }
+        public ITextDocument Document { get; }
 
         /// <summary>
         /// If set, <see cref="TextEditor.CaretOffset"/> will be updated.
         /// </summary>
-        public TextEditor Editor { get; set; }
+        public IEditor Editor { get; set; }
 
         public override SourceText CurrentText => _currentText;
 
-        public AvalonEditTextContainer(TextDocument document)
+        public AvalonEditTextContainer(ITextDocument document)
         {
             Document = document ?? throw new ArgumentNullException(nameof(document));
             _currentText = new AvalonEditSourceText(this, Document.Text);
@@ -40,13 +38,13 @@ namespace RoslynPad.Editor.Windows
 
         private void DocumentOnChanged(object sender, DocumentChangeEventArgs e)
         {
-            if (_updatding) return;
+            if (_updating) return;
 
             var oldText = _currentText;
 
             var textSpan = new TextSpan(e.Offset, e.RemovalLength);
             var textChangeRange = new TextChangeRange(textSpan, e.InsertionLength);
-            _currentText = _currentText.WithChanges(new TextChange(textSpan, e.InsertedText?.Text ?? string.Empty));
+            _currentText = _currentText.WithChanges(new TextChange(textSpan, e.InsertedText ?? string.Empty));
 
             TextChanged?.Invoke(this, new TextChangeEventArgs(oldText, _currentText, textChangeRange));
         }
@@ -55,49 +53,50 @@ namespace RoslynPad.Editor.Windows
 
         public void UpdateText(SourceText newText)
         {
-            _updatding = true;
-            Document.BeginUpdate();
-            var editor = Editor;
-            var caretOffset = editor?.CaretOffset ?? 0;
-            var documentOffset = 0;
-            try
+            _updating = true;
+            using (Document.RunUpdate())
             {
-                var changes = newText.GetTextChanges(_currentText);
-                
-                foreach (var change in changes)
+                var editor = Editor;
+                var caretOffset = editor?.CaretOffset ?? 0;
+                var documentOffset = 0;
+                try
                 {
-                    Document.Replace(change.Span.Start + documentOffset, change.Span.Length, new StringTextSource(change.NewText));
+                    var changes = newText.GetTextChanges(_currentText);
 
-                    var changeOffset = change.NewText.Length - change.Span.Length;
-                    if (caretOffset >= change.Span.Start + documentOffset + change.Span.Length)
+                    foreach (var change in changes)
                     {
-                        // If caret is after text, adjust it by text size difference
-                        caretOffset += changeOffset;
-                    }
-                    else if (caretOffset >= change.Span.Start + documentOffset)
-                    {
-                        // If caret is inside changed text, but go out of bounds of the replacing text after the change, go back inside
-                        if (caretOffset >= change.Span.Start + documentOffset + change.NewText.Length)
+                        Document.Replace(change.Span.Start + documentOffset, change.Span.Length, change.NewText);
+
+                        var changeOffset = change.NewText.Length - change.Span.Length;
+                        if (caretOffset >= change.Span.Start + documentOffset + change.Span.Length)
                         {
-                            caretOffset = change.Span.Start + documentOffset;
+                            // If caret is after text, adjust it by text size difference
+                            caretOffset += changeOffset;
                         }
+                        else if (caretOffset >= change.Span.Start + documentOffset)
+                        {
+                            // If caret is inside changed text, but go out of bounds of the replacing text after the change, go back inside
+                            if (caretOffset >= change.Span.Start + documentOffset + change.NewText.Length)
+                            {
+                                caretOffset = change.Span.Start + documentOffset;
+                            }
+                        }
+
+                        documentOffset += changeOffset;
                     }
 
-                    documentOffset += changeOffset;
+                    _currentText = newText;
                 }
-
-                _currentText = newText;
-            }
-            finally
-            {
-                _updatding = false;
-                Document.EndUpdate();
-                if (caretOffset < 0)
-                    caretOffset = 0;
-                if (caretOffset > newText.Length)
-                    caretOffset = newText.Length;
-                if (editor != null)
-                    editor.CaretOffset = caretOffset;
+                finally
+                {
+                    _updating = false;                    
+                    if (caretOffset < 0)
+                        caretOffset = 0;
+                    if (caretOffset > newText.Length)
+                        caretOffset = newText.Length;
+                    if (editor != null)
+                        editor.CaretOffset = caretOffset;
+                }
             }
         }
 

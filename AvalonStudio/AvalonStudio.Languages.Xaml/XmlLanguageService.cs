@@ -1,15 +1,10 @@
-﻿using Avalonia.Ide.CompletionEngine;
-using Avalonia.Ide.CompletionEngine.AssemblyMetadata;
-using Avalonia.Ide.CompletionEngine.SrmMetadataProvider;
-using AvaloniaEdit.Document;
-using AvaloniaEdit.Indentation;
+﻿using AvaloniaEdit.Indentation;
+using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
-using AvalonStudio.Projects;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.Xaml
@@ -48,8 +43,6 @@ namespace AvalonStudio.Languages.Xaml
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
-        public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics => null;
-
         public void Activation()
         {
         }
@@ -58,11 +51,11 @@ namespace AvalonStudio.Languages.Xaml
         {
         }
 
-        public virtual bool CanHandle(ISourceFile file)
+        public virtual bool CanHandle(IEditor editor)
         {
             var result = false;
 
-            switch (Path.GetExtension(file.Location))
+            switch (Path.GetExtension(editor.SourceFile.Location))
             {
                 case ".xml":
                 case ".csproj":
@@ -85,27 +78,27 @@ namespace AvalonStudio.Languages.Xaml
             return result;
         }
 
-        public virtual Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
+        public virtual Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             return Task.FromResult<CodeCompletionResults>(null);
         }
 
-        public int Comment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             return caret;
         }
 
-        public int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor)
+        public int Format(IEditor editor, uint offset, uint length, int cursor)
         {
             return cursor;
         }
 
-        public Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             return Task.FromResult<Symbol>(null);
         }
 
-        public Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
+        public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
         {
             return Task.FromResult<List<Symbol>>(null);
         }
@@ -115,26 +108,26 @@ namespace AvalonStudio.Languages.Xaml
             return char.IsLetterOrDigit(data);
         }
 
-        public virtual void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument)
+        public virtual void RegisterSourceFile(IEditor editornew)
         {
         }
 
-        public virtual void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file)
+        public virtual void UnregisterSourceFile(IEditor editor)
         {
 
         }
 
-        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             return Task.FromResult(new CodeAnalysisResults());
         }
 
-        public Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
+        public Task<SignatureHelp> SignatureHelp(IEditor editor, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
         {
             return Task.FromResult<SignatureHelp>(null);
         }
 
-        public int UnComment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             return caret;
         }

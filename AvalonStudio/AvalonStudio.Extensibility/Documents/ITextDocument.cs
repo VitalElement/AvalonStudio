@@ -3,6 +3,7 @@ using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Documents
@@ -54,6 +55,21 @@ namespace AvalonStudio.Documents
             }
 
             return new SimpleSegment(offset, pos - offset);
+        }
+
+        public static ISegment GetWhitespaceBefore(this ITextDocument textSource, int offset)
+        {
+            if (textSource == null)
+                throw new ArgumentNullException(nameof(textSource));
+            int pos;
+            for (pos = offset - 1; pos >= 0; pos--)
+            {
+                char c = textSource.GetCharAt(pos);
+                if (c != ' ' && c != '\t')
+                    break;
+            }
+            pos++; // go back the one character that isn't whitespace
+            return new SimpleSegment(pos, offset - pos);
         }
     }
 
@@ -120,11 +136,180 @@ namespace AvalonStudio.Documents
         int Count { get; }
     }
 
+    public struct TextLocation : IComparable<TextLocation>, IEquatable<TextLocation>
+    {
+        /// <summary>
+        /// Represents no text location (0, 0).
+        /// </summary>
+        public static readonly TextLocation Empty = new TextLocation(0, 0);
+
+        /// <summary>
+        /// Creates a TextLocation instance.
+        /// </summary>
+        public TextLocation(int line, int column)
+        {
+            Line = line;
+            Column = column;
+        }
+
+        /// <summary>
+        /// Gets the line number.
+        /// </summary>
+        public int Line { get; }
+
+        /// <summary>
+        /// Gets the column number.
+        /// </summary>
+        public int Column { get; }
+
+        /// <summary>
+        /// Gets whether the TextLocation instance is empty.
+        /// </summary>
+        public bool IsEmpty => Column <= 0 && Line <= 0;
+
+        /// <summary>
+        /// Gets a string representation for debugging purposes.
+        /// </summary>
+        public override string ToString()
+        {
+            return string.Format(CultureInfo.InvariantCulture, "(Line {1}, Col {0})", Column, Line);
+        }
+
+        /// <summary>
+        /// Gets a hash code.
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return unchecked(191 * Column.GetHashCode() ^ Line.GetHashCode());
+        }
+
+        /// <summary>
+        /// Equality test.
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            if (!(obj is TextLocation)) return false;
+            return (TextLocation)obj == this;
+        }
+
+        /// <summary>
+        /// Equality test.
+        /// </summary>
+        public bool Equals(TextLocation other)
+        {
+            return this == other;
+        }
+
+        /// <summary>
+        /// Equality test.
+        /// </summary>
+        public static bool operator ==(TextLocation left, TextLocation right)
+        {
+            return left.Column == right.Column && left.Line == right.Line;
+        }
+
+        /// <summary>
+        /// Inequality test.
+        /// </summary>
+        public static bool operator !=(TextLocation left, TextLocation right)
+        {
+            return left.Column != right.Column || left.Line != right.Line;
+        }
+
+        /// <summary>
+        /// Compares two text locations.
+        /// </summary>
+        public static bool operator <(TextLocation left, TextLocation right)
+        {
+            if (left.Line < right.Line)
+                return true;
+            if (left.Line == right.Line)
+                return left.Column < right.Column;
+            return false;
+        }
+
+        /// <summary>
+        /// Compares two text locations.
+        /// </summary>
+        public static bool operator >(TextLocation left, TextLocation right)
+        {
+            if (left.Line > right.Line)
+                return true;
+            if (left.Line == right.Line)
+                return left.Column > right.Column;
+            return false;
+        }
+
+        /// <summary>
+        /// Compares two text locations.
+        /// </summary>
+        public static bool operator <=(TextLocation left, TextLocation right)
+        {
+            return !(left > right);
+        }
+
+        /// <summary>
+        /// Compares two text locations.
+        /// </summary>
+        public static bool operator >=(TextLocation left, TextLocation right)
+        {
+            return !(left < right);
+        }
+
+        /// <summary>
+        /// Compares two text locations.
+        /// </summary>
+        public int CompareTo(TextLocation other)
+        {
+            if (this == other)
+                return 0;
+            if (this < other)
+                return -1;
+            return 1;
+        }
+    }
+
+    public class DocumentChangeEventArgs : EventArgs
+    {
+        public DocumentChangeEventArgs(int offset, string removedText, string insertedText)
+        {
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset), offset, "offset must not be negative");
+            Offset = offset;
+            RemovedText = removedText;
+            InsertedText = insertedText;
+        }
+
+        public int Offset { get; }
+
+        /// <summary>
+        /// The text that was removed.
+        /// </summary>
+        public string RemovedText { get; }
+
+        /// <summary>
+        /// The number of characters removed.
+        /// </summary>
+        public int RemovalLength => RemovedText.Length;
+
+        /// <summary>
+        /// The text that was inserted.
+        /// </summary>
+        public string InsertedText { get; }
+
+        /// <summary>
+        /// The number of characters inserted.
+        /// </summary>
+        public int InsertionLength => InsertedText.Length;
+    }
+
     public interface ITextDocument
     {
         void Insert(int offset, string text);
 
         void Replace(int offset, int length, string text);
+
+        TextLocation GetLocation(int offset);
 
         string Text { get; }
 
@@ -141,11 +326,13 @@ namespace AvalonStudio.Documents
         char GetCharAt(int offset);
 
         IDisposable RunUpdate();
+
+        event EventHandler<DocumentChangeEventArgs> Changed;
     }
 
     public interface IEditor : IDisposable
     {
-        int Offset { get; set; }
+        int CaretOffset { get; set; }
 
         int Line { get; set; }
 
@@ -194,5 +381,7 @@ namespace AvalonStudio.Documents
         /// but occurs immediately after the TextArea handles the TextInput event.
         /// </summary>
         event EventHandler<TextInputEventArgs> TextEntered;
+
+        event EventHandler LostFocus;
     }
 }

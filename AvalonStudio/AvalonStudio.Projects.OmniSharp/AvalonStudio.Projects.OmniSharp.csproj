@@ -24,7 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AvaloniaEdit\src\AvaloniaEdit\AvaloniaEdit.csproj" />
     <ProjectReference Include="..\..\AvalonStudio.MSBuildHost\AvalonStudio.MSBuildHost.csproj">
       <Private>true</Private>
     </ProjectReference>
