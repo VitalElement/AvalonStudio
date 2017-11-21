@@ -693,17 +693,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     //    _diagnosticMarkersRenderer?.SetDiagnostics(result.Diagnostics);
                     //}
 
-                    //Dispatcher.UIThread.InvokeAsync(() =>
-                    //{
-                    //    if (LanguageService.Diagnostics == null)
-                    //    {
-                    //        Diagnostics = result.Diagnostics;
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        //    if (LanguageService.Diagnostics == null)
+                        //    {
+                        //        Diagnostics = result.Diagnostics;
 
-                    //        _shell.InvalidateErrors();
-                    //    }
+                        //        _shell.InvalidateErrors();
+                        //    }
 
-                    //    TextArea.TextView.Redraw();
-                    //});
+                        //TextArea.TextView.InvalidateLayer(KnownLayer.Text);
+                        TextArea.TextView.Redraw();
+                    });
                 }
             });
 
