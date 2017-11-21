@@ -236,9 +236,12 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override void ResolveReferences()
         {
-            foreach (var unresolvedReference in UnresolvedReferences)
+            if (UnresolvedReferences != null)
             {
-                RoslynWorkspace.GetWorkspace(Solution).ResolveReference(this, unresolvedReference);
+                foreach (var unresolvedReference in UnresolvedReferences)
+                {
+                    RoslynWorkspace.GetWorkspace(Solution).ResolveReference(this, unresolvedReference);
+                }
             }
         }
 

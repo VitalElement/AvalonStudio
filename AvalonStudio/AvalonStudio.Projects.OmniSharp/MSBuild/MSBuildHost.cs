@@ -155,11 +155,9 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                     VersionStamp.Create(),
                     Path.GetFileNameWithoutExtension(projectFile), Path.GetFileNameWithoutExtension(projectFile),
                     LanguageNames.CSharp,
-                    projectFile,
-                    metadataReferences: loadData.MetaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly))
-                    );
+                    projectFile);
 
-                return (projectInfo, loadData.ProjectReferences, loadData.TargetPath);
+                return (projectInfo, null, null);
             }
         }
 
