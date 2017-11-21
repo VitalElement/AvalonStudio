@@ -34,17 +34,13 @@ namespace AvalonStudio.Languages.CPlusPlus
         private static readonly ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations =
             new ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation>();
 
-        private readonly JobRunner clangAccessJobRunner;
+        private JobRunner clangAccessJobRunner;
 
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
 
         public CPlusPlusLanguageService()
         {
-            clangAccessJobRunner = new JobRunner();
-
-            Task.Factory.StartNew(() => { clangAccessJobRunner.RunLoop(new CancellationToken()); });
-
             _snippetCodeGenerators = new Dictionary<string, Func<string, string>>();
             _snippetDynamicVars = new Dictionary<string, Func<int, int, int, string>>();
 
@@ -595,6 +591,13 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument doc)
         {
+            if (clangAccessJobRunner != null)
+            {
+                clangAccessJobRunner = new JobRunner();
+
+                Task.Factory.StartNew(() => { clangAccessJobRunner.RunLoop(new CancellationToken()); });
+            }
+
             if (dataAssociations.TryGetValue(file, out CPlusPlusDataAssociation association))
             {
                 throw new Exception("Source file already registered with language service.");
