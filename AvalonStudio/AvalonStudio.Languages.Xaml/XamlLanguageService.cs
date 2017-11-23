@@ -46,24 +46,18 @@ namespace AvalonStudio.Languages.Xaml
         {
             var results = new CodeCompletionResults();
 
-            if (unsavedFiles.Count > 0)
+            var completionSet = engine.GetCompletions(metaData, editor.Document.Text, index);
+
+            if (completionSet != null)
             {
-                var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == editor.SourceFile.FilePath);
-                var currentFileConts = currentUnsavedFile.Contents;
-
-                var completionSet = engine.GetCompletions(metaData, currentFileConts, index);
-
-                if (completionSet != null)
+                foreach (var completion in completionSet.Completions)
                 {
-                    foreach (var completion in completionSet.Completions)
+                    results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
                     {
-                        results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
-                        {
-                            BriefComment = completion.Description,
-                            Kind = CodeCompletionKind.PropertyPublic,
-                            RecommendImmediateSuggestions = completion.InsertText.Contains("=") || completion.InsertText.EndsWith('.')
-                        });
-                    }
+                        BriefComment = completion.Description,
+                        Kind = CodeCompletionKind.PropertyPublic,
+                        RecommendImmediateSuggestions = completion.InsertText.Contains("=") || completion.InsertText.EndsWith('.')
+                    });
                 }
             }
 
