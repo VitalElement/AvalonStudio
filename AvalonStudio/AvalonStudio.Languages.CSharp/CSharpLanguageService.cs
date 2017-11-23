@@ -345,7 +345,7 @@
                 throw new Exception("Source file already registered with language service.");
             }
 
-            IndentationStrategy = new CSharpIndentationStrategy(new AvaloniaEdit.TextEditorOptions { IndentationSize = 4 });
+            IndentationStrategy = new CSharpIndentationStrategy(new AvaloniaEdit.TextEditorOptions { ConvertTabsToSpaces = true });
 
             association = new CSharpDataAssociation
             {
