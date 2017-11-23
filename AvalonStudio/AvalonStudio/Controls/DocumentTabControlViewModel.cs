@@ -113,9 +113,16 @@ namespace AvalonStudio.Controls
                         break;
                     }
                 }
-            }
 
-            SelectedDocument = newSelectedTab;
+                if (foundTab)
+                {
+                    SelectedDocument = newSelectedTab;
+                }
+                else
+                {
+                    SelectedDocument = null;
+                }
+            }
 
             if (TemporaryDocument == document)
             {
