@@ -53,6 +53,13 @@ namespace AvalonStudio.Extensibility.Editor
             //ZoomLevel = _shell.GlobalZoomLevel;
         }
 
+        public override void Close()
+        {
+            base.Close();
+
+            _disposables.Dispose();
+        }
+
         ~TextEditorViewModel()
         {
             System.Console.WriteLine("TextEditorVM Disposed");
