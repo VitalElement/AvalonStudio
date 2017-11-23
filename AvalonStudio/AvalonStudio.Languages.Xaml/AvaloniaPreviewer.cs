@@ -18,6 +18,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
 
 namespace AvalonStudio.Languages.Xaml
 {
@@ -44,6 +46,8 @@ namespace AvalonStudio.Languages.Xaml
         private Process _currentHost;
         private Grid _overlay;
         private TextBlock _statusText;
+        private CompositeDisposable _disposables;
+        private IDisposable _listener;
 
         private static int FreeTcpPort()
         {
@@ -81,13 +85,13 @@ namespace AvalonStudio.Languages.Xaml
             }
         }
 
-        private void StartPreviewerProcess (ISourceFile file)
+        private void StartPreviewerProcess(ISourceFile file)
         {
             if (File.Exists(file.Project.Executable))
             {
                 var port = FreeTcpPort();
-
-                new BsonTcpTransport().Listen(IPAddress.Loopback, port, t =>
+                
+                _listener = new BsonTcpTransport().Listen(IPAddress.Loopback, port, t =>
                 {
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
@@ -139,10 +143,12 @@ namespace AvalonStudio.Languages.Xaml
 
         private void KillHost()
         {
-            if(_connection != null)
+            _listener?.Dispose();
+
+            if (_connection != null)
             {
-                _connection.Dispose();
                 _connection.OnMessage -= OnMessage;
+                _connection.Dispose();
             }
 
             if (_currentHost != null)
@@ -163,42 +169,47 @@ namespace AvalonStudio.Languages.Xaml
 
         public AvaloniaPreviewer()
         {
-            this.GetObservable(XamlProperty).Subscribe(xaml =>
-            {
-                _connection?.Send(new UpdateXamlMessage
-                {
-                    Xaml = Xaml
-                });
-            });
-
-            this.GetObservable(SourceFileProperty).Subscribe(file =>
-            {
-                OnSourceFileChanged(file);
-            });
-
             var shell = IoC.Get<IShell>();
 
-            shell.BuildStarting += (sender, e) =>
+            _disposables = new CompositeDisposable
             {
-                if (SourceFile.Project.Solution.StartupProject == e.Project && _currentHost != null)
+                this.GetObservable(XamlProperty).Subscribe(xaml =>
                 {
-                    KillHost();
-                }
-            };
+                    _connection?.Send(new UpdateXamlMessage
+                    {
+                        Xaml = Xaml
+                    });
+                }),
 
-            shell.BuildCompleted += (sender, e) =>
-            {
-                if (SourceFile != null  && SourceFile.Project.Solution.StartupProject == e.Project)
+                this.GetObservable(SourceFileProperty).Subscribe(file =>
                 {
-                    StartPreviewerProcess(SourceFile);
-                }
+                    OnSourceFileChanged(file);
+                }),
+
+                Observable.FromEventPattern<BuildEventArgs>(shell, nameof(shell.BuildStarting)).Subscribe(o =>
+                {
+                    if (SourceFile.Project.Solution.StartupProject == o.EventArgs.Project && _currentHost != null)
+                    {
+                        KillHost();
+                    }
+                }),
+
+                Observable.FromEventPattern<BuildEventArgs>(shell, nameof(shell.BuildCompleted)).Subscribe(o =>
+                {
+                    if (SourceFile != null && SourceFile.Project.Solution.StartupProject == o.EventArgs.Project)
+                    {
+                        StartPreviewerProcess(SourceFile);
+                    }
+                })
             };
         }
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnDetachedFromVisualTree(e);
+
             KillHost();
+            _disposables.Dispose();
         }
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
