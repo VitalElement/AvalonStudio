@@ -91,12 +91,22 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _codeEditor = editor;
             _document = new DocumentAdaptor(editor.Document);
 
-            _codeEditor.TextArea.TextEntering += TextEntering;
-            _codeEditor.TextArea.TextEntered += TextEntered;
+            _codeEditor.TextArea.TextEntering += _codeEditor_TextEntering;
+            _codeEditor.TextArea.TextEntered += _codeEditor_TextEntered;
             _codeEditor.RequestTooltipContent += RequestTooltipContent;
             _codeEditor.LostFocus += _codeEditor_LostFocus;
 
             _sourceFile = _codeEditor.SourceFile;
+        }
+
+        private void _codeEditor_TextEntering (object sender, TextInputEventArgs e)
+        {
+            TextEntering?.Invoke(this, e);
+        }
+
+        private void _codeEditor_TextEntered (object sender, TextInputEventArgs e)
+        {
+            TextEntered?.Invoke(this, e);
         }
 
         private void _codeEditor_LostFocus(object sender, Avalonia.Interactivity.RoutedEventArgs e)
