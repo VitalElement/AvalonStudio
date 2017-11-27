@@ -1,5 +1,5 @@
 BUILD_DIR=$(pwd)/../AvalonStudio/AvalonStudio
-PACK_DIR=$(pwd)/deb
+PACK_DIR=$(pwd)/deb-build
 BUILD_VERSION=$(git describe --tags)
 TARG_DIR=$PACK_DIR/avalon-studio_$BUILD_VERSION/opt/vitalelement/avalonstudio/bin
 
