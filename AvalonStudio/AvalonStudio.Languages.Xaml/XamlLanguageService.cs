@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 
 namespace AvalonStudio.Languages.Xaml
 {
@@ -42,11 +43,18 @@ namespace AvalonStudio.Languages.Xaml
             return result;
         }
 
-        public override Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
+        public override async Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             var results = new CodeCompletionResults();
 
-            var completionSet = engine.GetCompletions(metaData, editor.Document.Text, index);
+            string text = string.Empty;
+
+            await Dispatcher.UIThread.InvokeTaskAsync(()=> 
+            {
+                text = editor.Document.Text;
+            });
+
+            var completionSet = engine.GetCompletions(metaData, text, index);
 
             if (completionSet != null)
             {
@@ -63,7 +71,7 @@ namespace AvalonStudio.Languages.Xaml
 
             results.Contexts = CompletionContext.AnyType;
 
-            return Task.FromResult(results);
+            return await Task.FromResult(results);
         }
 
         private static CompletionEngine engine = null;
