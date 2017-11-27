@@ -291,6 +291,50 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             }),
 
+            BackgroundRenderersProperty.Changed.Subscribe(s =>
+            {
+                if (s.Sender == this)
+                {
+                    if (s.OldValue != null)
+                    {
+                        foreach (var renderer in (ObservableCollection<IBackgroundRenderer>)s.OldValue)
+                        {
+                            TextArea.TextView.BackgroundRenderers.Remove(renderer);
+                        }
+                    }
+
+                    if (s.NewValue != null)
+                    {
+                        foreach (var renderer in (ObservableCollection<IBackgroundRenderer>)s.NewValue)
+                        {
+                            TextArea.TextView.BackgroundRenderers.Add(renderer);
+                        }
+                    }
+                }
+            }),
+
+            DocumentLineTransformersProperty.Changed.Subscribe(s =>
+            {
+                if (s.Sender == this)
+                {
+                    if (s.OldValue != null)
+                    {
+                        foreach (var renderer in (ObservableCollection<IVisualLineTransformer>)s.OldValue)
+                        {
+                            TextArea.TextView.LineTransformers.Remove(renderer);
+                        }
+                    }
+
+                    if (s.NewValue != null)
+                    {
+                        foreach (var renderer in (ObservableCollection<IVisualLineTransformer>)s.NewValue)
+                        {
+                            TextArea.TextView.LineTransformers.Add(renderer);
+                        }
+                    }
+                }
+            }),
+
             _analysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(async _ =>
             {
                 await DoCodeAnalysisAsync();
