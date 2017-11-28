@@ -180,14 +180,37 @@
             var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(editor.SourceFile);
 
             var completionService = CompletionService.GetService(document);
-            var completionTrigger = GetCompletionTrigger(null);
+            var completionTrigger = GetCompletionTrigger(previousChar);
             var data = await completionService.GetCompletionsAsync(document, index, completionTrigger);
 
             if (data != null)
             {
                 foreach (var completion in data.Items)
                 {
-                    var newCompletion = new CodeCompletionData(completion.DisplayText, completion.FilterText);
+                    var insertionText = completion.FilterText;
+
+                    if (completion.Properties.ContainsKey("InsertionText"))
+                    {
+                        insertionText = completion.Properties["InsertionText"];
+                    }
+
+                    var selectionBehavior = Languages.CompletionItemSelectionBehavior.Default;
+                    int priority = 0;
+
+                    if (completion.Rules.SelectionBehavior != Microsoft.CodeAnalysis.Completion.CompletionItemSelectionBehavior.Default)
+                    {
+                        /*if(completion.Properties.ContainsKey("SymbolKind") && completion.Properties["SymbolKind"] == "6")
+                        {
+
+                        }
+                        else
+                        {*/
+                        selectionBehavior = (Languages.CompletionItemSelectionBehavior)completion.Rules.SelectionBehavior;
+                        priority = completion.Rules.MatchPriority;
+                        //}
+                    }
+
+                    var newCompletion = new CodeCompletionData(completion.DisplayText, insertionText, null, selectionBehavior, priority);
 
                     if (completion.Properties.ContainsKey("SymbolKind"))
                     {

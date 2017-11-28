@@ -39,7 +39,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Completion
             get { return Model.DisplayText; }
         }
 
-        public uint Priority
+        public int Priority
         {
             get { return Model.Priority; }
         }

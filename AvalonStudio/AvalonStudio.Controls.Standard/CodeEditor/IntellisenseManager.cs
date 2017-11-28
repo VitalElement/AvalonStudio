@@ -37,6 +37,7 @@
         private string currentFilter = string.Empty;
 
         private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
+        private CompletionDataViewModel recommendedCompletion;
         private Key capturedOnKeyDown;
         private readonly JobRunner intellisenseJobRunner;
         private readonly JobRunner intellisenseQueryRunner;
@@ -130,6 +131,8 @@
                     InsertSnippets(completionData.Completions);
                 }
 
+                recommendedCompletion = null;
+
                 foreach (var result in completionData.Completions)
                 {
                     CompletionDataViewModel currentCompletion = null;
@@ -138,11 +141,20 @@
 
                     if (currentCompletion == null)
                     {
-                        unfilteredCompletions.Add(new CompletionDataViewModel(result));
+                        currentCompletion = new CompletionDataViewModel(result);
+                        unfilteredCompletions.Add(currentCompletion);
                     }
                     else
                     {
                         currentCompletion.Overloads++;
+                    }
+
+                     if(result.SelectionBehavior != CompletionItemSelectionBehavior.Default)
+                    {
+                        if (recommendedCompletion == null || (recommendedCompletion != null && result.Priority > recommendedCompletion.Priority))
+                        {
+                            recommendedCompletion = currentCompletion;
+                        }
                     }
                 }
             }
@@ -248,7 +260,12 @@
                 }
                 else
                 {
-                    suggestion = null;
+                    suggestion = recommendedCompletion;
+
+                    if(suggestion != null)
+                    {
+                        _hidden = false;
+                    }
                 }
 
                 if (filteredResults?.Count() > 0)

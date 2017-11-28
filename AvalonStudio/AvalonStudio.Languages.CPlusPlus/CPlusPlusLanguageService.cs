@@ -253,7 +253,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                             {
                                 var completion = new CodeCompletionData(typedText, typedText)
                                 {
-                                    Priority = codeCompletion.CompletionString.Priority,
+                                    Priority = (int)codeCompletion.CompletionString.Priority,
                                     Kind = FromClangKind(codeCompletion.CursorKind),
                                     BriefComment = codeCompletion.CompletionString.BriefComment
                                 };
