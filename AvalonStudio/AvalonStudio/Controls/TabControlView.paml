@@ -45,11 +45,11 @@
     </StackPanel>
 
     <Carousel Items="{Binding Tools}" SelectedItem="{Binding SelectedTool}" IsVirtualized="false" ZIndex="50">
-      <Carousel.DataTemplates>
+      <Carousel.ItemTemplate>
         <DataTemplate>
           <cont:ViewModelViewHost IsVisible ="{Binding IsVisible}" />
         </DataTemplate>
-      </Carousel.DataTemplates>
+      </Carousel.ItemTemplate>
     </Carousel>
   </DockPanel>
 </UserControl>
