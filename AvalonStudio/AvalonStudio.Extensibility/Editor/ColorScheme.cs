@@ -15,6 +15,7 @@ namespace AvalonStudio.Extensibility.Editor
         public void Activation()
         {
             ColorScheme.Register(ColorScheme.Default);
+            ColorScheme.Register(ColorScheme.Light);
             ColorScheme.Register(ColorScheme.SolarizedDark);
             ColorScheme.Register(ColorScheme.SolarizedLight);
         }
@@ -31,7 +32,7 @@ namespace AvalonStudio.Extensibility.Editor
         private static readonly ColorScheme DefaultColorScheme = ColorScheme.SolarizedLight;
         private static readonly Dictionary<string, Func<IBrush>> s_colorAccessors = new Dictionary<string, Func<IBrush>>();
         public static IEnumerable<ColorScheme> ColorSchemes => s_colorSchemes;
-
+        
         static ColorScheme()
         {
             s_colorAccessors["background"] = () => CurrentColorScheme.Background;
@@ -64,6 +65,34 @@ namespace AvalonStudio.Extensibility.Editor
             s_colorSchemes.Add(colorScheme);
             s_colorSchemeIDs.Add(colorScheme.Name, colorScheme);
         }
+
+        public static readonly ColorScheme Light = new ColorScheme
+        {
+            Name = "Light",
+            Background = Brush.Parse("#FFFFFF"),
+            BackgroundAccent = Brush.Parse("#FFFFFF"),
+            Text = Brush.Parse("#000000"),
+            Comment = Brush.Parse("#008000"),
+            Keyword = Brush.Parse("#0000FF"),
+            Literal = Brush.Parse("#A31515"),
+            Identifier = Brush.Parse("#000000"),
+            CallExpression = Brush.Parse("#000000"),
+            EnumConstant = Brush.Parse("#2B91AF"),
+            InterfaceType = Brush.Parse("#2B91AF"),
+            EnumType = Brush.Parse("#2B91AF"),
+            NumericLiteral = Brush.Parse("#2B91AF"),
+            Punctuation = Brush.Parse("#000000"),
+            Type = Brush.Parse("#2B91AF"),
+            StructName = Brush.Parse("#2B91AF"),
+            Operator = Brush.Parse("#000000"),
+            DelegateName = Brush.Parse("#2B91AF"),
+            XmlTag = Brush.Parse("#A31515"),
+            XmlProperty = Brush.Parse("#FF0000"),
+            XmlPropertyValue = Brush.Parse("#0000FF"),
+            XamlMarkupExtension = Brush.Parse("#A31515"),
+            XamlMarkupExtensionProperty = Brush.Parse("#FF0000"),
+            XamlMarkupExtensionPropertyValue = Brush.Parse("#0000FF")
+        };
 
         public static readonly ColorScheme Default = new ColorScheme
         {
