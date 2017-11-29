@@ -256,7 +256,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
                 case OptimizationLevel.Speed:
                     {
-                        result += "Ofast ";
+                        result += "-Ofast ";
                     }
                     break;
             }            
