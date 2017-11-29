@@ -22,7 +22,6 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Reactive.Subjects;
     using System.Runtime.CompilerServices;
     using System.Threading.Tasks;
 
@@ -103,7 +102,7 @@
         {
             get
             {
-                return "C# (OmniSharp)";
+                return "C#";
             }
         }
 
@@ -583,6 +582,8 @@
             catch (NullReferenceException)
             {
             }
+
+            result.IndexItems = await IndexBuilder.Compute(document);
 
             return result;
         }
