@@ -45,6 +45,13 @@ namespace AvalonStudio.Languages.CSharp
             base.VisitBlock(node);
         }
 
+        public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
+        {
+            AddEntry(node.Identifier.Text, node.GetLocation());
+
+            base.VisitPropertyDeclaration(node);
+        }
+
         public override void VisitClassDeclaration(ClassDeclarationSyntax node)
         {
             AddEntry(node.Identifier.Text, node.GetLocation());
