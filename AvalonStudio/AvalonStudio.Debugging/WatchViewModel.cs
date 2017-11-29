@@ -244,7 +244,10 @@ namespace AvalonStudio.Debugging
             }
             else if (IsExpanded && !Model.HasChildren)
             {
-                IsExpanded = false;
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    IsExpanded = false;
+                });
             }
 
             Dispatcher.UIThread.InvokeAsync(() =>
