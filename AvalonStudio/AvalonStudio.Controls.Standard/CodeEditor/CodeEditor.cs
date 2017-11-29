@@ -686,12 +686,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     _textColorizer?.SetTransformations(result.SyntaxHighlightingData);
 
-                    _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
-
                     TextSegmentCollection<Diagnostic> diagnostics = null;
 
                     await Dispatcher.UIThread.InvokeTaskAsync(() =>
                     {
+                        _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
                         diagnostics = new TextSegmentCollection<Diagnostic>(Document);
                     });
 
