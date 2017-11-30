@@ -49,7 +49,7 @@ namespace AvalonStudio.TextEditor
                         var formattedText = new FormattedText()
                         {
                             Text = (i + firstLine).ToString(),
-                            Typeface = new Typeface("Consolas", textView.FontSize),
+                            Typeface = new Typeface("Source Code Pro", textView.FontSize),
                             TextAlignment = TextAlignment.Right,
                             Constraint = new Size(Width, Bounds.Height)
                         };

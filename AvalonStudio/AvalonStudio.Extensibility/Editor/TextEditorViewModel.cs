@@ -77,8 +77,8 @@ namespace AvalonStudio.Extensibility.Editor
             {
                 switch (Platform.PlatformIdentifier)
                 {
-                    case Platforms.PlatformID.Win32NT:
-                        return "Consolas";
+                    /*case Platforms.PlatformID.Win32NT:
+                        return "Consolas";*/
 
                     default:
                         return "Source Code Pro";
