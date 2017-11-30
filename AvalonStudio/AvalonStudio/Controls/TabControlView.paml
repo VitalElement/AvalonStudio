@@ -4,7 +4,7 @@
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
   <DockPanel>
     <StackPanel DockPanel.Dock="Bottom" ZIndex="100">
-      <TabStrip Name="toolStrip" Items="{Binding Tools}" SelectedItem="{Binding SelectedTool, Mode=TwoWay}" Focusable="false">
+      <TabStrip Name="toolStrip" Items="{Binding Tools}" SelectedItem="{Binding SelectedTool, Mode=TwoWay}" Focusable="false" IsVisible="{Binding TabStripVisible}">
         <TabStrip.ItemsPanel>
           <ItemsPanelTemplate>
             <DockPanel LastChildFill="false" />

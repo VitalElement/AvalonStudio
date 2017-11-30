@@ -6,10 +6,12 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
+    using System.Linq;
 
     public class TabControlViewModel : ViewModel
     {
         private object selectedTool;
+        private bool _tabStripVisible;
 
         private ObservableCollection<object> tools;
 
@@ -64,20 +66,26 @@
         {
             bool result = false;
 
-            foreach (var tool in Tools)
+            TabStripVisible = Tools.OfType<ToolViewModel>().Where(t => t.IsVisible).Count() > 1;
+
+            foreach (var tool in Tools.OfType<ToolViewModel>())
             {
-                if (tool is ToolViewModel)
+                if (tool.IsVisible)
                 {
-                    if ((tool as ToolViewModel).IsVisible)
-                    {
-                        result = true;
-                        break;
-                    }
+                    result = true;
+                    break;
                 }
             }
 
             IsVisible = result;
+        }        
+
+        public bool TabStripVisible
+        {
+            get { return _tabStripVisible; }
+            set { this.RaiseAndSetIfChanged(ref _tabStripVisible, value); }
         }
+
 
         public ObservableCollection<object> Tools
         {
