@@ -264,5 +264,15 @@ namespace AvalonStudio.Shell
         {
             throw new NotImplementedException();
         }
+
+        public IFileDocumentTabViewModel OpenDocument(ISourceFile file)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEditor> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
