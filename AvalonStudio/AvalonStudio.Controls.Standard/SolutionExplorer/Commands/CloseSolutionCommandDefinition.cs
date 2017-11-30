@@ -13,10 +13,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 
         public CloseSolutionCommandDefinition()
         {
-            command = ReactiveCommand.Create(async () =>
+            command = ReactiveCommand.Create(() =>
             {
                 var shell = IoC.Get<IShell>();
-                await shell.CloseSolutionAsync();
+                shell.CloseSolution();
             });
         }
 
