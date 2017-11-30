@@ -81,7 +81,7 @@ namespace AvalonStudio.Extensibility.Editor
                         return "Consolas";
 
                     default:
-                        return "Inconsolata";
+                        return "Source Code Pro";
                 }
             }
         }
