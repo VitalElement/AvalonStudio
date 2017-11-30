@@ -6,7 +6,7 @@
         <TextBlock Text="Mixed Mode" />
         <CheckBox IsChecked="{Binding MixedMode}" />
       </StackPanel>
-      <editor:CodeEditor Grid.Row="1" BorderThickness="0" Background="{DynamicResource ThemeControlDarkBrush}" TextBlock.FontFamily="Source Code Pro"
+      <editor:CodeEditor Grid.Row="1" BorderThickness="0" TextBlock.FontFamily="Source Code Pro" Background="{DynamicResource ThemeControlBackgroundBrush}"
                        TextBlock.FontSize="13" TextBlock.FontWeight="100" TextBlock.Foreground="#D4D4D4" Document="{Binding Document}"
                        EditorCaretOffset="{Binding CaretIndex, Mode=TwoWay}" BackgroundRenderers="{Binding BackgroundRenderers}"
                        DocumentLineTransformers="{Binding LineTransformers}"

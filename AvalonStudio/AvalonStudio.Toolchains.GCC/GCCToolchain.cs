@@ -120,12 +120,12 @@ namespace AvalonStudio.Toolchains.GCC
 
             var fileArguments = string.Empty;
             
-            if (file.Extension == ".cpp")
+            if (file.Extension.ToLower() == ".cpp" || (settings != null && settings.CompileExtensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower())))
             {
                 fileArguments = "-x c++ -fno-use-cxa-atexit";
             }
             
-            if (file.Extension.ToLower() == ".s" || (settings != null && settings.CompileExtensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower())))
+            if (file.Extension.ToLower() == ".s" || (settings != null && settings.AssembleExtensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower())))
             {
                 fileArguments = "-x assembler-with-cpp";
             }

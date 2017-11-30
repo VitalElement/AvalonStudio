@@ -55,7 +55,7 @@ namespace AvalonStudio.Debugging
                 IoC.Get<IDebugManager2>().Breakpoints.Add(new WatchPoint(Model.Name));
             });
 
-            DisplayFormatCommand = ReactiveCommand.Create(() =>
+            DisplayFormatCommand = ReactiveCommand.Create<string>(s =>
             {
                 /*var format = s as string;
 
@@ -80,8 +80,8 @@ namespace AvalonStudio.Debugging
 					case "oct":
 						await Model.SetFormat(WatchFormat.Octal);
 						break;
-				}
-
+                }
+				
 				await Invalidate(debugger);*/
             });
         }

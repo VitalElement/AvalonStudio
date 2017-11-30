@@ -31,6 +31,13 @@ namespace AvalonStudio.Debugging
 
             _expressions = new List<string>();
 
+
+            AddExpressionCommand = ReactiveCommand.Create(() =>
+            {
+                AddWatch(Expression);
+                Expression = "";
+            });
+
             Activation(); // for when we create the part outside of composition.
         }
 
@@ -75,7 +82,7 @@ namespace AvalonStudio.Debugging
 
                 //Dispatcher.UIThread.InvokeAsync(() =>
                 //{
-                    InvalidateObjects(expressions);
+                InvalidateObjects(expressions);
                 //});
             });
         }
@@ -171,7 +178,7 @@ namespace AvalonStudio.Debugging
                 {
                     _expressions.Add(expression);
 
-                    var watch = DebugManager.SelectedFrame.GetExpressionValue(expression, false);
+                    var watch = DebugManager.SelectedFrame.GetExpressionValues(_expressions.ToArray(), false);
 
                     InvalidateObjects(watch);
 
@@ -181,5 +188,15 @@ namespace AvalonStudio.Debugging
 
             return result;
         }
+
+        private string _expression = "";
+        public string Expression
+        {
+            get { return _expression; }
+            set { this.RaiseAndSetIfChanged(ref _expression, value); }
+        }
+
+        public ReactiveCommand AddExpressionCommand { get; }
+
     }
 }
