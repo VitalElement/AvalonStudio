@@ -716,7 +716,7 @@
      <map param="ICorDebugMDA::GetName::pcchName" attribute="out" />
     <map param="ICorDebugMDA::GetName::szName" type="void" attribute="in" />
     <map param="ICorDebugStringValue::GetString::pcchString" attribute="out" />
-    <map param="ICorDebugStringValue::GetString::szString" type="void" attribute="in" />
+    <map param="ICorDebugStringValue::GetString::szString" attribute="out" />
      <map param="ICorDebugMDA::GetXML::pcchName" attribute="out" />
     <map param="ICorDebugMDA::GetXML::szName" type="void" attribute="in" />
     <map param="ICorDebugProcess::GetID::pdwProcessId" attribute="out" />

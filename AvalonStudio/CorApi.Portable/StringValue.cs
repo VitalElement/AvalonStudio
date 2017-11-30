@@ -19,7 +19,7 @@ namespace CorApi.Portable
                 unsafe
                 {
                     int count = 0;
-                    GetString(0, out count, IntPtr.Zero);
+                    GetLength(out count);
 
                     if (count == 0)
                     {
