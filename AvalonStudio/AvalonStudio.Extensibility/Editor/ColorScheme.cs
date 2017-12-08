@@ -80,7 +80,7 @@ namespace AvalonStudio.Extensibility.Editor
             EnumConstant = Brush.Parse("#2B91AF"),
             InterfaceType = Brush.Parse("#2B91AF"),
             EnumType = Brush.Parse("#2B91AF"),
-            NumericLiteral = Brush.Parse("#2B91AF"),
+            NumericLiteral = Brush.Parse("#000000"),
             Punctuation = Brush.Parse("#000000"),
             Type = Brush.Parse("#2B91AF"),
             StructName = Brush.Parse("#2B91AF"),
