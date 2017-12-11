@@ -2,14 +2,18 @@
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public class ParameterViewModel : ViewModel<Parameter>
     {
-        public ParameterViewModel(Parameter model) : base(model)
+        private SignatureViewModel _signature;
+
+        public ParameterViewModel(SignatureViewModel signature, Parameter model) : base(model)
         {
             ResetFontWeight();
+            _signature = signature;
         }
 
         public void ResetFontWeight()
@@ -25,11 +29,20 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             set { this.RaiseAndSetIfChanged(ref fontWeight, value); }
         }
 
-        public string Name
+        public string Name => Model.Name;
+
+        public string DisplayName
         {
             get
             {
-                return Model.Name;
+                if (_signature.Parameters.LastOrDefault() == this)
+                {
+                    return Model.Name;
+                }
+                else
+                {
+                    return Model.Name + ",";
+                }
             }
         }
 

@@ -15,7 +15,7 @@
 
             foreach (var parameter in model.Parameters)
             {
-                Parameters.Add(new ParameterViewModel(parameter));
+                Parameters.Add(new ParameterViewModel(this, parameter));
             }
 
             SelectedParameter = Parameters.FirstOrDefault();

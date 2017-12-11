@@ -362,6 +362,20 @@
             signature.Name = symbol.MethodKind == MethodKind.Constructor ? symbol.ContainingType.Name : symbol.Name;
             signature.Label = symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
 
+            var returnTypeInfo = CheckForStaticExtension.GetReturnType(symbol);
+
+            if(returnTypeInfo.HasValue)
+            {
+                if(returnTypeInfo.Value.inbuilt)
+                {
+                    signature.BuiltInReturnType = returnTypeInfo.Value.name;
+                }
+                else
+                {
+                    signature.ReturnType = returnTypeInfo.Value.name;
+                }
+            }
+
             signature.Parameters = symbol.Parameters.Select(parameter =>
             {
                 var info = CheckForStaticExtension.GetReturnType(parameter);
