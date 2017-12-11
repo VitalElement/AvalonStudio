@@ -328,18 +328,5 @@ namespace RoslynPad.Roslyn
         {
             base.UnregisterText(textContainer);
         }
-
-        private class DirectiveInfo
-        {
-            public MetadataReference MetadataReference { get; }
-
-            public bool IsActive { get; set; }
-
-            public DirectiveInfo(MetadataReference metadataReference)
-            {
-                MetadataReference = metadataReference;
-                IsActive = true;
-            }
-        }
     }
 }
