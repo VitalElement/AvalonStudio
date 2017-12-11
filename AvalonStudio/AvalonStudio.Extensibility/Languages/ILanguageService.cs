@@ -53,7 +53,7 @@ namespace AvalonStudio.Languages
 
         Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
-        Task<SignatureHelp> SignatureHelp(IEditor editor, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName);
+        Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName);
 
         Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset);
 

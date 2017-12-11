@@ -381,13 +381,115 @@
             }
         }
 
+        private async Task PushToSignatureHelp(string currentWord, int offset)
+        {
+            SignatureHelp signatureHelp = null;
+
+            await intellisenseJobRunner.InvokeAsync(() =>
+            {
+                var task = languageService.SignatureHelp(editor, CodeEditor.UnsavedFiles.ToList(), offset, currentWord);
+                task.Wait();
+
+                signatureHelp = task.Result;
+            });
+
+            if (signatureHelp != null)
+            {
+                _onSetSignatureHelpPosition(signatureHelp.Offset);
+                completionAssistant.PushMethod(signatureHelp);
+            }
+        }
+
+        private async Task UpdateActiveParameterAndVisibility(bool canTrigger = false)
+        {
+            if (completionAssistant.IsVisible)
+            {
+                if (completionAssistant.CurrentSignatureHelp != null)
+                {
+                    var indexStack = new Stack<int>();
+
+                    int index = 0;                    
+                    int offset = completionAssistant.CurrentSignatureHelp.Offset;
+
+                    while (offset < editor.CaretOffset)
+                    {
+                        var curChar = '\0';
+
+                        curChar = editor.Document.GetCharAt(offset++);
+
+                        switch (curChar)
+                        {
+                            case ',':
+                                if (indexStack.Count == 0)
+                                {
+                                    index++;
+                                }
+                                break;
+
+                            case '(':
+                                await PushToSignatureHelp("", offset);                                
+
+                                indexStack.Push(index);
+                                index = 0;
+                                break;
+
+                            case ')':
+                                if (indexStack.Count > 0)
+                                {
+                                    index = indexStack.Pop();
+                                }
+                                completionAssistant.PopMethod();                                
+                                break;
+                        }
+                    }
+
+                    if (index >= 0)
+                    {
+                        completionAssistant.SetParameterIndex(index);
+                    }
+                    else
+                    {
+                        completionAssistant.Close();
+                    }
+                }
+            }
+            else if(canTrigger)
+            {
+                var currentChar = editor.Document.GetCharAt(editor.CaretOffset - 1);
+
+                if ((currentChar == '(' || (currentChar == ',') && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != editor.CaretOffset)))
+                {
+                    string currentWord = string.Empty;
+
+                    char behindBehindCaretChar = '\0';
+
+                    behindBehindCaretChar = editor.Document.GetCharAt(editor.CaretOffset - 2);
+
+                    if (behindBehindCaretChar.IsWhiteSpace() && behindBehindCaretChar != '\0')
+                    {
+                        currentWord = editor.Document.GetPreviousWordAtIndex(editor.CaretOffset - 1);
+                    }
+                    else
+                    {
+                        currentWord = editor.Document.GetWordAtIndex(editor.CaretOffset - 1);
+                    }
+
+                    await PushToSignatureHelp(currentWord, editor.CaretOffset);
+                }
+                else if (currentChar == ')')
+                {
+                    completionAssistant.PopMethod();
+                }
+            }
+        }
+
         public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles)
         {
             if (_lastIndex != index)
             {
                 _lastIndex = index;
-
-                completionAssistant.UpdateActiveParameterAndVisibility(index, editor);
+                
+                UpdateActiveParameterAndVisibility();
 
                 if (!intellisenseControl.IsVisible)
                 {
@@ -507,43 +609,7 @@
 
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    if ((currentChar == '(' || (currentChar == ',' && !completionAssistant.IsVisible)) && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != caretIndex))
-                    {
-                        string currentWord = string.Empty;
-
-                        char behindBehindCaretChar = '\0';
-
-                        behindBehindCaretChar = editor.Document.GetCharAt(caretIndex - 2);
-
-                        if (behindBehindCaretChar.IsWhiteSpace() && behindBehindCaretChar != '\0')
-                        {
-                            currentWord = editor.Document.GetPreviousWordAtIndex(caretIndex - 1);
-                        }
-                        else
-                        {
-                            currentWord = editor.Document.GetWordAtIndex(caretIndex - 1);
-                        }
-
-                        SignatureHelp signatureHelp = null;
-
-                        await intellisenseJobRunner.InvokeAsync(() =>
-                        {
-                            var task = languageService.SignatureHelp(editor, Standard.CodeEditor.CodeEditor.UnsavedFiles.FirstOrDefault(), Standard.CodeEditor.CodeEditor.UnsavedFiles.ToList(), line, column, caretIndex, currentWord);
-                            task.Wait();
-
-                            signatureHelp = task.Result;
-                        });
-
-                        if (signatureHelp != null)
-                        {
-                            _onSetSignatureHelpPosition(signatureHelp.Offset);
-                            completionAssistant.PushMethod(signatureHelp);
-                        }
-                    }
-                    else if (currentChar == ')')
-                    {
-                        completionAssistant.PopMethod();
-                    }
+                    await UpdateActiveParameterAndVisibility(true);
                 });
             }
         }

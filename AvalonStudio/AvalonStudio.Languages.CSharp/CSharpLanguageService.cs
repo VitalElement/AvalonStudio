@@ -734,7 +734,7 @@
             return null;
         }
 
-        public async Task<SignatureHelp> SignatureHelp(IEditor editor, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
+        public async Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             var dataAssociation = GetAssociatedData(editor);
 
@@ -758,6 +758,6 @@
 
         public void Activation()
         {
-        }
+        }        
     }
 }

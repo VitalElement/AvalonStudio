@@ -431,8 +431,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return document.Take(offset).Count(x => x == '\n') + 1;
         }
 
-        public Task<SignatureHelp> SignatureHelp(IEditor editor, UnsavedFile buffer,
-            List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
+        public Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)            
         {
             //STUB!
             //return new SignatureHelp();

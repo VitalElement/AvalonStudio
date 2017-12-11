@@ -1264,16 +1264,14 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public async Task<SignatureHelp> SignatureHelp(IEditor editor, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
+        public async Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             SignatureHelp result = null;
-            var clangUnsavedFiles = new List<ClangUnsavedFile>();
-
-            unsavedFiles.Add(buffer);
+            var clangUnsavedFiles = new List<ClangUnsavedFile>();            
 
             foreach (var unsavedFile in unsavedFiles)
             {
-                if (Platform.CompareFilePath(unsavedFile.FileName, buffer.FileName) != 0)
+                if (Platform.CompareFilePath(unsavedFile.FileName, editor.SourceFile.Location) != 0)
                 {
                     clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
                 }
