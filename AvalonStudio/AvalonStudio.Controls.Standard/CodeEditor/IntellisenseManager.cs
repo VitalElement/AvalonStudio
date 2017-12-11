@@ -35,6 +35,7 @@
         private bool _hidden; // i.e. can be technically open, but hidden awaiting completion data..
         private bool _justOpened;
         private string currentFilter = string.Empty;
+        private int _lastIndex = -1;
 
         private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
         private CompletionDataViewModel recommendedCompletion;
@@ -149,7 +150,7 @@
                         currentCompletion.Overloads++;
                     }
 
-                     if(result.SelectionBehavior != CompletionItemSelectionBehavior.Default)
+                    if (result.SelectionBehavior != CompletionItemSelectionBehavior.Default)
                     {
                         if (recommendedCompletion == null || (recommendedCompletion != null && result.Priority > recommendedCompletion.Priority))
                         {
@@ -262,7 +263,7 @@
                 {
                     suggestion = recommendedCompletion;
 
-                    if(suggestion != null)
+                    if (suggestion != null)
                     {
                         _hidden = false;
                     }
@@ -379,69 +380,74 @@
 
         public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles)
         {
-            if (!intellisenseControl.IsVisible)
+            if (_lastIndex != index)
             {
-                unfilteredCompletions.Clear();
+                _lastIndex = index;
 
-                if (_shell.DebugMode)
+                if (!intellisenseControl.IsVisible)
                 {
-                    _console.WriteLine("Set Cursor");
-                }
+                    unfilteredCompletions.Clear();
 
-                _requestingData = true;
-
-                char previousChar = '\0';
-
-                if (index >= 1)
-                {
-                    previousChar = editor.Document.GetCharAt(index - 1);
-                }
-
-                intellisenseQueryRunner.InvokeAsync(() =>
-                {
-                    CodeCompletionResults result = null;
-                    intellisenseJobRunner.InvokeAsync(() =>
+                    if (_shell.DebugMode)
                     {
-                        if (_shell.DebugMode)
-                        {
-                            _console.WriteLine($"Query Language Service {index}, {line}, {column}");
-                        }
+                        _console.WriteLine("Set Cursor");
+                    }
 
-                        var task = languageService.CodeCompleteAtAsync(editor, index, line, column, unsavedFiles, previousChar);
-                        task.Wait();
+                    _requestingData = true;
 
-                        result = task.Result;
-                    }).Wait();
+                    char previousChar = '\0';
 
-                    if (result != null)
+                    if (index >= 1)
                     {
-                        Dispatcher.UIThread.InvokeAsync(() =>
+                        previousChar = editor.Document.GetCharAt(index - 1);
+                    }
+
+                    intellisenseQueryRunner.InvokeAsync(() =>
+                    {
+                        CodeCompletionResults result = null;
+                        intellisenseJobRunner.InvokeAsync(() =>
                         {
                             if (_shell.DebugMode)
                             {
-                                _console.WriteLine($"Set Completion Data {_hidden}");
+                                _console.WriteLine($"Query Language Service {index}, {line}, {column}");
                             }
 
-                            SetCompletionData(result);
+                            var task = languageService.CodeCompleteAtAsync(editor, index, line, column, unsavedFiles, previousChar);
+                            task.Wait();
 
-                            _requestingData = false;
+                            result = task.Result;
+                        }).Wait();
 
-                            if (unfilteredCompletions.Count > 0)
+                        if (result != null)
+                        {
+                            Dispatcher.UIThread.InvokeAsync(() =>
                             {
-                                UpdateFilter(editor.CaretOffset, false);
-                                intellisenseControl.IsVisible = !_hidden;
-                            }
-                            else
-                            {
-                                _hidden = true;
-                            }
-                        });
-                    }
-                });
-            }
-            else
-            {
-                UpdateFilter(editor.CaretOffset, false);
+                                if (_shell.DebugMode)
+                                {
+                                    _console.WriteLine($"Set Completion Data {_hidden}");
+                                }
+
+                                SetCompletionData(result);
+
+                                _requestingData = false;
+
+                                if (unfilteredCompletions.Count > 0)
+                                {
+                                    UpdateFilter(editor.CaretOffset, false);
+                                    intellisenseControl.IsVisible = !_hidden;
+                                }
+                                else
+                                {
+                                    _hidden = true;
+                                }
+                            });
+                        }
+                    });
+                }
+                else
+                {
+                    UpdateFilter(editor.CaretOffset, false);
+                }
             }
         }
 
@@ -456,14 +462,7 @@
                 {
                     if (IsCompletionChar(currentChar))
                     {
-                        if (currentChar.IsWhiteSpace())
-                        {
-                            DoComplete(true);
-                        }
-                        else
-                        {
-                            DoComplete(true, -1);
-                        }
+                        DoComplete(true, -1);
                     }
                 }
 
