@@ -268,9 +268,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             var arguments = string.Empty;
 
-            foreach (var argument in Model.Arguments)
+            if (Model.Arguments != null)
             {
-                Arguments.Add(new ParameterSymbolViewModel(argument));
+                foreach (var argument in Model.Arguments)
+                {
+                    Arguments.Add(new ParameterSymbolViewModel(argument));
+                }
             }
 
             if (Model.ResultType != null && Model.Name != null)
@@ -292,9 +295,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         }
                         break;
                 }
-
-                Spelling = Model.Name;
             }
+
+            Spelling = Model.Name;
         }
     }
 
