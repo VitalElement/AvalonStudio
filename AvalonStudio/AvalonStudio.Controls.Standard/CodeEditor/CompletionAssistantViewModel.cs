@@ -67,7 +67,10 @@
 
         public void SetParameterIndex(int index)
         {
-            CurrentMethod.SelectedSignature.ParameterIndex = index;
+            if (CurrentMethod.SelectedSignature != null)
+            {
+                CurrentMethod.SelectedSignature.ParameterIndex = index;
+            }
         }
 
         public void IncrementSignatureIndex()
