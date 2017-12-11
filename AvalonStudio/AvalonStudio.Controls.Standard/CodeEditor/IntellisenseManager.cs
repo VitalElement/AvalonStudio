@@ -30,6 +30,7 @@
         private IEditor editor;
         private IList<CodeSnippet> _snippets;
         private CancellationTokenSource _cancelRunners;
+        private Action<int> _onSetSignatureHelpPosition;
 
         private bool _requestingData;
         private bool _hidden; // i.e. can be technically open, but hidden awaiting completion data..
@@ -70,12 +71,14 @@
             return languageService.IntellisenseCompleteCharacters.Contains(currentChar);
         }
 
-        public IntellisenseManager(IEditor editor, IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, ILanguageService languageService, ISourceFile file)
+        public IntellisenseManager(IEditor editor, IIntellisenseControl intellisenseControl, ICompletionAssistant completionAssistant, ILanguageService languageService, ISourceFile file, Action<int> onSetSignatureHelpPosition)
         {
             intellisenseJobRunner = new JobRunner();
             intellisenseQueryRunner = new JobRunner(1);
 
             _cancelRunners = new CancellationTokenSource();
+
+            _onSetSignatureHelpPosition = onSetSignatureHelpPosition;
 
             Task.Factory.StartNew(() => { intellisenseJobRunner.RunLoop(_cancelRunners.Token); });
             Task.Factory.StartNew(() => { intellisenseQueryRunner.RunLoop(_cancelRunners.Token); });
@@ -384,6 +387,8 @@
             {
                 _lastIndex = index;
 
+                completionAssistant.UpdateActiveParameterAndVisibility(index, editor);
+
                 if (!intellisenseControl.IsVisible)
                 {
                     unfilteredCompletions.Clear();
@@ -472,40 +477,6 @@
                     {
                         completionAssistant.PopMethod();
                     }
-
-                    if (completionAssistant.CurrentSignatureHelp != null)
-                    {
-                        int index = 0;
-                        int level = 0;
-                        int offset = completionAssistant.CurrentSignatureHelp.Offset;
-
-                        while (offset < caretIndex)
-                        {
-                            var curChar = '\0';
-
-                            curChar = editor.Document.GetCharAt(offset++);
-
-                            switch (curChar)
-                            {
-                                case ',':
-                                    if (level == 0)
-                                    {
-                                        index++;
-                                    }
-                                    break;
-
-                                case '(':
-                                    level++;
-                                    break;
-
-                                case ')':
-                                    level--;
-                                    break;
-                            }
-                        }
-
-                        completionAssistant.SetParameterIndex(index);
-                    }
                 }
 
                 if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
@@ -536,7 +507,7 @@
 
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    if ((currentChar == '(' || currentChar == ',') && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != caretIndex))
+                    if ((currentChar == '(' || (currentChar == ',' && !completionAssistant.IsVisible)) && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != caretIndex))
                     {
                         string currentWord = string.Empty;
 
@@ -565,6 +536,7 @@
 
                         if (signatureHelp != null)
                         {
+                            _onSetSignatureHelpPosition(signatureHelp.Offset);
                             completionAssistant.PushMethod(signatureHelp);
                         }
                     }
