@@ -345,8 +345,20 @@
         private static Signature BuildSignature(IMethodSymbol symbol)
         {
             var signature = new Signature();
-            
-            signature.Documentation = symbol.GetDocumentationCommentXml();
+
+            var docComment = DocumentationComment.From(symbol.GetDocumentationCommentXml(), Environment.NewLine);
+
+            var parameterDocumentation = new Dictionary<string, string>();
+
+            foreach (var param in docComment.ParamElements)
+            {
+                var parts = param.Split(':');
+
+                parameterDocumentation.Add(parts[0].Trim(), parts[1].Trim());
+            }
+
+            signature.Description = docComment.SummaryText;
+
             signature.Name = symbol.MethodKind == MethodKind.Constructor ? symbol.ContainingType.Name : symbol.Name;
             signature.Label = symbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
 
@@ -358,8 +370,12 @@
                 {
                     Name = parameter.Name,
                     Label = parameter.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat),
-                    Documentation = parameter.GetDocumentationCommentXml()
                 };
+
+                if(parameterDocumentation.ContainsKey(parameter.Name))
+                {
+                    result.Documentation = parameterDocumentation[parameter.Name];
+                }
 
                 if(info.HasValue)
                 {

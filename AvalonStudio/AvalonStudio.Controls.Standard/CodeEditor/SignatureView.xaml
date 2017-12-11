@@ -28,7 +28,7 @@
                         <TextBlock Margin="0" Text=")" />
                     </StackPanel>
 
-                    <TextBlock Text="{Binding Description}" IsVisible="{Binding DescriptionVisibility}" MaxWidth="500"
+                    <TextBlock Text="{Binding Description}" MaxWidth="500"
                      TextWrapping="Wrap" TextAlignment="Left" HorizontalAlignment="Left" />
                     <StackPanel Orientation="Horizontal" IsVisible="{Binding HasParameters}" TextBlock.FontStyle="Italic" >
                         <TextBlock Text="{Binding SelectedParameter.Name}" FontWeight="Bold" />
