@@ -12,6 +12,7 @@
     using AvalonStudio.Utils;
     using Microsoft.CodeAnalysis.Classification;
     using Microsoft.CodeAnalysis.Completion;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.FindSymbols;
     using Microsoft.CodeAnalysis.Formatting;
     using Projects.OmniSharp;
@@ -262,61 +263,7 @@
             return -1;
         }
 
-        public static (string name, bool inbuilt)? GetReturnType(Microsoft.CodeAnalysis.ISymbol symbol)
-        {
-            var type = GetReturnTypeSymbol(symbol);
-
-            if (type != null)
-            {
-                return (type.ToDisplayString(Microsoft.CodeAnalysis.SymbolDisplayFormat.MinimallyQualifiedFormat), type.IsSealed && type.IsValueType);
-            }
-
-            return null;
-        }
-
-        private static Microsoft.CodeAnalysis.ITypeSymbol GetReturnTypeSymbol(Microsoft.CodeAnalysis.ISymbol symbol)
-        {
-            var methodSymbol = symbol as Microsoft.CodeAnalysis.IMethodSymbol;
-            if (methodSymbol != null)
-            {
-                if (methodSymbol.MethodKind != Microsoft.CodeAnalysis.MethodKind.Constructor)
-                {
-                    return methodSymbol.ReturnType;
-                }
-            }
-
-            var propertySymbol = symbol as Microsoft.CodeAnalysis.IPropertySymbol;
-            if (propertySymbol != null)
-            {
-                return propertySymbol.Type;
-            }
-
-            var localSymbol = symbol as Microsoft.CodeAnalysis.ILocalSymbol;
-            if (localSymbol != null)
-            {
-                return localSymbol.Type;
-            }
-
-            var parameterSymbol = symbol as Microsoft.CodeAnalysis.IParameterSymbol;
-            if (parameterSymbol != null)
-            {
-                return parameterSymbol.Type;
-            }
-
-            var fieldSymbol = symbol as Microsoft.CodeAnalysis.IFieldSymbol;
-            if (fieldSymbol != null)
-            {
-                return fieldSymbol.Type;
-            }
-
-            var eventSymbol = symbol as Microsoft.CodeAnalysis.IEventSymbol;
-            if (eventSymbol != null)
-            {
-                return eventSymbol.Type;
-            }
-
-            return null;
-        }
+        
 
 
         private static Symbol SymbolFromRoslynSymbol(int offset, Microsoft.CodeAnalysis.SemanticModel semanticModel, Microsoft.CodeAnalysis.ISymbol symbol)
@@ -335,7 +282,7 @@
                     var argument = new ParameterSymbol();
                     argument.Name = parameter.Name;
 
-                    var info = GetReturnType(parameter);
+                    var info = CheckForStaticExtension.GetReturnType(parameter);
 
                     if (info.HasValue)
                     {
@@ -349,7 +296,7 @@
 
             result.Name = symbol.Name;
 
-            var returnTypeInfo = GetReturnType(symbol);
+            var returnTypeInfo = CheckForStaticExtension.GetReturnType(symbol);
 
             if (returnTypeInfo.HasValue)
             {
@@ -752,20 +699,54 @@
             dataAssociations.Remove(editor);
         }
 
+        private async Task<InvocationContext> GetInvocation(Microsoft.CodeAnalysis.Document document, int offset)
+        {
+            var sourceText = await document.GetTextAsync();
+            var position = offset;
+            var tree = await document.GetSyntaxTreeAsync();
+            var root = await tree.GetRootAsync();
+            var node = root.FindToken(position).Parent;
+
+            // Walk up until we find a node that we're interested in.
+            while (node != null)
+            {
+                if (node is InvocationExpressionSyntax invocation && invocation.ArgumentList.Span.Contains(position))
+                {
+                    var semanticModel = await document.GetSemanticModelAsync();
+                    return new InvocationContext(semanticModel, position, invocation.Expression, invocation.ArgumentList, invocation.IsInStaticContext());
+                }
+
+                if (node is ObjectCreationExpressionSyntax objectCreation && objectCreation.ArgumentList.Span.Contains(position))
+                {
+                    var semanticModel = await document.GetSemanticModelAsync();
+                    return new InvocationContext(semanticModel, position, objectCreation, objectCreation.ArgumentList, objectCreation.IsInStaticContext());
+                }
+
+                if (node is AttributeSyntax attributeSyntax && attributeSyntax.ArgumentList.Span.Contains(position))
+                {
+                    var semanticModel = await document.GetSemanticModelAsync();
+                    return new InvocationContext(semanticModel, position, attributeSyntax, attributeSyntax.ArgumentList, attributeSyntax.IsInStaticContext());
+                }
+
+                node = node.Parent;
+            }
+
+            return null;
+        }
+
         public async Task<SignatureHelp> SignatureHelp(IEditor editor, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
         {
-            SignatureHelp result = null;
+            var result = new SignatureHelp(offset);
 
-            /*var dataAssociation = GetAssociatedData(file);
+            var dataAssociation = GetAssociatedData(editor);
 
-            result = await dataAssociation.Solution.Server.SignatureHelp(file.FilePath, unsavedFiles.FirstOrDefault()?.Contents, line, column);
+            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
 
-            if (result != null)
-            {
-                result.NormalizeSignatureData();
+            var document = workspace.GetDocument(editor.SourceFile);
 
-                result.Offset = offset;
-            }*/
+            var invocation = await GetInvocation(document, offset);
+
+            invocation.BuildSignatureHelp(result);
 
             return result;
         }
