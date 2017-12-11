@@ -262,6 +262,110 @@
             return -1;
         }
 
+        public static (string name, bool inbuilt)? GetReturnType(Microsoft.CodeAnalysis.ISymbol symbol)
+        {
+            var type = GetReturnTypeSymbol(symbol);
+
+            if (type != null)
+            {
+                return (type.ToDisplayString(Microsoft.CodeAnalysis.SymbolDisplayFormat.MinimallyQualifiedFormat), type.IsSealed && type.IsValueType);
+            }
+
+            return null;
+        }
+
+        private static Microsoft.CodeAnalysis.ITypeSymbol GetReturnTypeSymbol(Microsoft.CodeAnalysis.ISymbol symbol)
+        {
+            var methodSymbol = symbol as Microsoft.CodeAnalysis.IMethodSymbol;
+            if (methodSymbol != null)
+            {
+                if (methodSymbol.MethodKind != Microsoft.CodeAnalysis.MethodKind.Constructor)
+                {
+                    return methodSymbol.ReturnType;
+                }
+            }
+
+            var propertySymbol = symbol as Microsoft.CodeAnalysis.IPropertySymbol;
+            if (propertySymbol != null)
+            {
+                return propertySymbol.Type;
+            }
+
+            var localSymbol = symbol as Microsoft.CodeAnalysis.ILocalSymbol;
+            if (localSymbol != null)
+            {
+                return localSymbol.Type;
+            }
+
+            var parameterSymbol = symbol as Microsoft.CodeAnalysis.IParameterSymbol;
+            if (parameterSymbol != null)
+            {
+                return parameterSymbol.Type;
+            }
+
+            var fieldSymbol = symbol as Microsoft.CodeAnalysis.IFieldSymbol;
+            if (fieldSymbol != null)
+            {
+                return fieldSymbol.Type;
+            }
+
+            var eventSymbol = symbol as Microsoft.CodeAnalysis.IEventSymbol;
+            if (eventSymbol != null)
+            {
+                return eventSymbol.Type;
+            }
+
+            return null;
+        }
+
+
+        private static Symbol SymbolFromRoslynSymbol(int offset, Microsoft.CodeAnalysis.SemanticModel semanticModel, Microsoft.CodeAnalysis.ISymbol symbol)
+        {
+            var result = new Symbol();
+
+            if (symbol is Microsoft.CodeAnalysis.IMethodSymbol methodSymbol)
+            {
+                result.IsVariadic = methodSymbol.Parameters.LastOrDefault()?.IsParams ?? false;
+                result.Kind = CursorKind.CXXMethod;
+
+                result.Arguments = new List<ParameterSymbol>();
+
+                foreach (var parameter in methodSymbol.Parameters)
+                {
+                    var argument = new ParameterSymbol();
+                    argument.Name = parameter.Name;
+
+                    var info = GetReturnType(parameter);
+
+                    if (info.HasValue)
+                    {
+                        argument.TypeDescription = info.Value.name;
+                        argument.IsBuiltInType = info.Value.inbuilt;
+                    }
+
+                    result.Arguments.Add(argument);
+                }
+            }
+
+            result.Name = symbol.Name;
+
+            var returnTypeInfo = GetReturnType(symbol);
+
+            if (returnTypeInfo.HasValue)
+            {
+                result.ResultType = returnTypeInfo.Value.name;
+                result.IsBuiltInType = returnTypeInfo.Value.inbuilt;
+            }
+
+            result.TypeDescription = symbol.Kind == Microsoft.CodeAnalysis.SymbolKind.NamedType ? symbol.ToDisplayString() : symbol.ToMinimalDisplayString(semanticModel, offset);
+            var xmlDocumentation = symbol.GetDocumentationCommentXml();
+
+            var docComment = DocumentationComment.From(xmlDocumentation, Environment.NewLine);
+            result.BriefComment = docComment.SummaryText;
+
+            return result;
+        }
+
         public async Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             var dataAssociation = GetAssociatedData(editor);
@@ -276,12 +380,7 @@
 
             if (symbol != null)
             {
-                result = new Symbol
-                {
-                    Name = symbol.ToDisplayString(),
-                    TypeDescription = symbol.Kind == Microsoft.CodeAnalysis.SymbolKind.NamedType ? symbol.ToDisplayString() : symbol.ToMinimalDisplayString(semanticModel, offset),
-                    BriefComment = symbol.GetDocumentationCommentXml()
-                };
+                result = SymbolFromRoslynSymbol(offset, semanticModel, symbol);
             }
 
             return result;
