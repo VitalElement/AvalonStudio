@@ -260,6 +260,18 @@
 
         public void BuildSignatureHelp(SignatureHelp result)
         {
+            int activeParameter = 0;
+
+            foreach (var comma in Separators)
+            {
+                if (comma.Span.Start > Position)
+                {
+                    break;
+                }
+
+                activeParameter += 1;
+            }
+
             var types = ArgumentTypes;
             ISymbol throughSymbol = null;
             ISymbol throughType = null;
@@ -294,6 +306,10 @@
                     bestScoredItem = signature;
                 }
             }
+
+            result.ActiveSignature = result.Signatures.IndexOf(bestScoredItem);
+
+            result.ActiveParameter = activeParameter;           
         }
 
         private int InvocationScore(IMethodSymbol symbol, IEnumerable<TypeInfo> types)

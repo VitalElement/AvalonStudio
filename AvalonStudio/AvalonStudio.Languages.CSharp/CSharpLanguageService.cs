@@ -263,7 +263,7 @@
             return -1;
         }
 
-        
+
 
 
         private static Symbol SymbolFromRoslynSymbol(int offset, Microsoft.CodeAnalysis.SemanticModel semanticModel, Microsoft.CodeAnalysis.ISymbol symbol)
@@ -736,8 +736,6 @@
 
         public async Task<SignatureHelp> SignatureHelp(IEditor editor, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
         {
-            var result = new SignatureHelp(offset);
-
             var dataAssociation = GetAssociatedData(editor);
 
             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
@@ -746,9 +744,16 @@
 
             var invocation = await GetInvocation(document, offset);
 
-            invocation.BuildSignatureHelp(result);
+            if (invocation != null)
+            {
+                var result = new SignatureHelp(offset);
 
-            return result;
+                invocation.BuildSignatureHelp(result);
+
+                return result;
+            }
+
+            return null;
         }
 
         public void BeforeActivation()

@@ -536,7 +536,7 @@
 
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    if (currentChar == '(' && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != caretIndex))
+                    if ((currentChar == '(' || currentChar == ',') && (completionAssistant.CurrentSignatureHelp == null || completionAssistant.CurrentSignatureHelp.Offset != caretIndex))
                     {
                         string currentWord = string.Empty;
 
