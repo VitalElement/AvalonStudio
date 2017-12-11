@@ -800,8 +800,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     var position = visualLocation - TextArea.TextView.ScrollOffset;
                     position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
 
-                    //_intellisenseControl.SetLocation(position);
-                    _completionAssistantControl.SetLocation(position);
+                    _completionAssistantControl.SetLocation(position); 
                 });
 
                 _disposables.Add(_intellisenseManager);
