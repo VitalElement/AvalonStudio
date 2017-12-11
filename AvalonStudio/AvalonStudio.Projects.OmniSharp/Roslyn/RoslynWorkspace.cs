@@ -130,11 +130,11 @@ namespace RoslynPad.Roslyn
                 await buildHost.Connect(dotnetPath, sdkPath);
             }
 
-            var loadData = await buildHost.LoadProject(solutionDir, projectFile);
+            var (info, projectReferences, targetPath) = await buildHost.LoadProject(solutionDir, projectFile);
 
-            OnProjectAdded(loadData.info);
+            OnProjectAdded(info);
 
-            return (CurrentSolution.GetProject(loadData.info.Id), loadData.projectReferences, loadData.targetPath);
+            return (CurrentSolution.GetProject(info.Id), projectReferences, targetPath);
         }
 
         public async Task ReevaluateProject(AvalonStudio.Projects.IProject project)

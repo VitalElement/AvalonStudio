@@ -144,7 +144,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                     outputFilePath: projectOptions.outputFile,
                     compilationOptions: projectOptions.compilationOptions,
                     parseOptions: projectOptions.parseOptions,
-                    metadataReferences: loadData.MetaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly)));
+                    metadataReferences: loadData.MetaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar.Assembly, documentation: IoC.Get<AvalonStudio.Projects.OmniSharp.Roslyn.DocumentationProvider>()?.GetDocumentationProvider(ar.Assembly))));
 
                 return (projectInfo, loadData.ProjectReferences, loadData.TargetPath);
             }
