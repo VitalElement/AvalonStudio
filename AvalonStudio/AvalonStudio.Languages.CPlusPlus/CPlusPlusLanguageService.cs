@@ -1283,7 +1283,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             if (symbols.Count > 0)
             {
-                result = new SignatureHelp(offset);
+                result = new SignatureHelp(offset - methodName.Length);
 
                 foreach (var symbol in symbols)
                 {

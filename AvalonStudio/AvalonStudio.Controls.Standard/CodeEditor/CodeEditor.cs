@@ -411,7 +411,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
 
                     _intellisenseControl.SetLocation(position);
-                    _completionAssistantControl.SetLocation(position);
 
                     _selectedWordBackgroundRenderer.SelectedWord = GetWordAtOffset(CaretOffset);
 
@@ -791,7 +790,19 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
                 TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
 
-                _intellisenseManager = new IntellisenseManager(DocumentAccessor, _intellisense, _completionAssistant, LanguageService, sourceFile);
+                _intellisenseManager = new IntellisenseManager(DocumentAccessor, _intellisense, _completionAssistant, LanguageService, sourceFile, offset =>
+                {
+                    var location = new TextViewPosition(Document.GetLocation(offset));
+
+                    var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
+                    var visualLocationTop = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineTop);
+
+                    var position = visualLocation - TextArea.TextView.ScrollOffset;
+                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
+
+                    //_intellisenseControl.SetLocation(position);
+                    _completionAssistantControl.SetLocation(position);
+                });
 
                 _disposables.Add(_intellisenseManager);
 

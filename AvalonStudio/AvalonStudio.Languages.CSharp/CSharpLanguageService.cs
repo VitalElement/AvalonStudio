@@ -746,11 +746,7 @@
 
             if (invocation != null)
             {
-                var result = new SignatureHelp(offset);
-
-                invocation.BuildSignatureHelp(result);
-
-                return result;
+                return invocation.BuildSignatureHelp();
             }
 
             return null;

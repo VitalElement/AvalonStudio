@@ -258,8 +258,10 @@
             IsInStaticContext = isStatic;
         }
 
-        public void BuildSignatureHelp(SignatureHelp result)
+        public SignatureHelp BuildSignatureHelp()
         {
+            var result = new SignatureHelp(Receiver.SpanStart);
+
             int activeParameter = 0;
 
             foreach (var comma in Separators)
@@ -309,7 +311,9 @@
 
             result.ActiveSignature = result.Signatures.IndexOf(bestScoredItem);
 
-            result.ActiveParameter = activeParameter;           
+            result.ActiveParameter = activeParameter;
+
+            return result;
         }
 
         private int InvocationScore(IMethodSymbol symbol, IEnumerable<TypeInfo> types)
