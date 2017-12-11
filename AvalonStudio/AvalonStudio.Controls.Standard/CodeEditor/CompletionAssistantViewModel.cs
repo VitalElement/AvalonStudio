@@ -1,7 +1,10 @@
 ﻿namespace AvalonStudio.Controls.Standard.CodeEditor
 {
+    using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.MVVM;
+    using AvalonStudio.Shell;
+    using AvalonStudio.Utils;
     using ReactiveUI;
     using System.Collections.Generic;
     using System.Threading;
@@ -29,6 +32,11 @@
             CurrentMethod = new SignatureHelpViewModel(methodInfo);
 
             IsVisible = true;
+
+            if (IoC.Get<IShell>().DebugMode)
+            {
+                IoC.Get<IConsole>().WriteLine($"[Signature Help] - PushMethod - {CurrentMethod.SelectedSignature.Name}");
+            }
         }
 
         public void PopMethod()
@@ -41,6 +49,11 @@
             {
                 CurrentMethod = null;
                 IsVisible = false;
+            }
+
+            if (IoC.Get<IShell>().DebugMode)
+            {
+                IoC.Get<IConsole>().WriteLine($"[Signature Help] - PopMethod - {CurrentMethod?.SelectedSignature.Name ?? "null"}");
             }
         }
 
