@@ -48,9 +48,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _popup.Closed += _popup_Closed;
         }
 
-        protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
+            base.OnDetachedFromVisualTree(e);
+
             _popup.Closed -= _popup_Closed;
+
+            _popup.Close();
+
+            _popup = null;
         }
 
         private void _popup_Closed(object sender, EventArgs e)

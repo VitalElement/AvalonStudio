@@ -76,7 +76,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
+            _popup.Close();
+
             disposables.Dispose();
+
+            _signatureHelper = null;
 
             base.OnDetachedFromVisualTree(e);
         }

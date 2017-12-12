@@ -116,5 +116,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _popup.HorizontalOffset = 0;
         }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromVisualTree(e);
+
+            _editor.PointerMoved -= _editor_PointerMoved;
+
+            _popup.Close();
+            _popup = null;
+            _editor = null;
+        }
     }
 }
