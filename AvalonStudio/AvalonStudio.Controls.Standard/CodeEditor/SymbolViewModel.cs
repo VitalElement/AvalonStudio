@@ -272,7 +272,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 foreach (var argument in Model.Arguments)
                 {
-                    Arguments.Add(new ParameterSymbolViewModel(argument));
+                    Arguments.Add(new ParameterSymbolViewModel(this, argument));
                 }
             }
 
