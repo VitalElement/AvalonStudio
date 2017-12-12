@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -15,16 +14,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public CompletionAssistantView()
         {
         }
-        
+
         public void SetLocation(Point p)
         {
-           if (_popup != null && PlacementTarget != null)
+            if (_popup != null && PlacementTarget != null)
             {
-                if(p != _lastPoint)
+                if (p != _lastPoint)
                 {
                     _popup.HorizontalOffset = (-PlacementTarget.Bounds.Width) + p.X;
                     _popup.VerticalOffset = p.Y;
-                    _popup.Open();
+                    _popup.Open(); // trigger move of popup.
 
                     _lastPoint = p;
                 }
