@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.LogicalTree;
+using System;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -11,9 +13,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public Control PlacementTarget { get; set; }
 
+        public event EventHandler Closed;
+
         public CompletionAssistantView()
         {
         }
+
+        public Popup Popup => _popup;
 
         public void SetLocation(Point p)
         {
@@ -38,6 +44,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _popup.PlacementTarget = PlacementTarget;
             _popup.PlacementMode = PlacementMode.Right;
+
+            _popup.Closed += _popup_Closed;
+        }
+
+        protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+        {
+            _popup.Closed -= _popup_Closed;
+        }
+
+        private void _popup_Closed(object sender, EventArgs e)
+        {
+            Closed?.Invoke(this, e);
         }
     }
 }

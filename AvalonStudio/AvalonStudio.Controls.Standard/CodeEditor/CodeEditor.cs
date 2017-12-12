@@ -954,6 +954,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _intellisenseControl = e.NameScope.Find<Intellisense>("PART_Intellisense");
             _completionAssistantControl = e.NameScope.Find<CompletionAssistantView>("PART_CompletionAssistant");
 
+            _intellisenseControl.SetSignatureHelper(_completionAssistantControl);
+
             _intellisenseControl.PlacementTarget = TextArea;
             _intellisenseControl.DataContext = _intellisense;
 
