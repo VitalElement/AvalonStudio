@@ -5,7 +5,7 @@
   <Style Selector="local|CodeEditorToolTip">
     <Setter Property="Template">
       <ControlTemplate>
-                <Popup IsOpen="{Binding IsVisible, Mode=TwoWay}" StaysOpen="True" Name="PART_Popup" DataContext="" 
+                <Popup IsOpen="{Binding IsVisible, Mode=TwoWay}" StaysOpen="False" Name="PART_Popup" DataContext="" 
                        TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}">
           <cont:ViewModelViewHost Name="PART_ViewHost" />
         </Popup>
