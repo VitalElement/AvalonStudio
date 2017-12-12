@@ -465,6 +465,7 @@
 
                     if(currentHelpStack != null)
                     {
+                        _onSetSignatureHelpPosition(currentHelpStack.Offset);
                         completionAssistant.SelectStack(currentHelpStack);
                         completionAssistant.SetParameterIndex(index);
                     }

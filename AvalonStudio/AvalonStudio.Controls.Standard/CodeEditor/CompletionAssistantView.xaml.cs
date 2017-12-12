@@ -8,19 +8,26 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
     public class CompletionAssistantView : TemplatedControl
     {
         private Popup _popup;
+        private Point _lastPoint;
 
         public Control PlacementTarget { get; set; }
 
         public CompletionAssistantView()
         {
         }
-
+        
         public void SetLocation(Point p)
         {
-           if (_popup != null && PlacementTarget != null && !_popup.IsOpen)
+           if (_popup != null && PlacementTarget != null)
             {
-                _popup.HorizontalOffset = (-PlacementTarget.Bounds.Width) + p.X;
-                _popup.VerticalOffset = p.Y;
+                if(p != _lastPoint)
+                {
+                    _popup.HorizontalOffset = (-PlacementTarget.Bounds.Width) + p.X;
+                    _popup.VerticalOffset = p.Y;
+                    _popup.Open();
+
+                    _lastPoint = p;
+                }
             }
         }
 
