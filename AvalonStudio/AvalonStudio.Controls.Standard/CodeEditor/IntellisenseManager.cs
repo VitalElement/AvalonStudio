@@ -363,7 +363,7 @@
             _hidden = !hiddenOverride;
 
             var location = editor.Document.GetLocation(editor.CaretOffset);
-            SetCursor(editor.CaretOffset, location.Line, location.Column, CodeEditor.UnsavedFiles.ToList());
+            SetCursor(editor.CaretOffset, location.Line, location.Column, CodeEditor.UnsavedFiles.ToList(), false);
 
             return result;
         }
@@ -429,14 +429,14 @@
                             case '(':
                                 level++;
 
-                                if(completionAssistant.Stack.Count <= level)
+                                if ((level + 1) > completionAssistant.Stack.Count)
                                 {
                                     await PushToSignatureHelp("", offset);
                                 }
 
-                                currentHelpStack = completionAssistant.Stack[(completionAssistant.Stack.Count - level) - 1];
+                                currentHelpStack = completionAssistant.Stack[completionAssistant.Stack.Count - level - 1];
 
-                                if (level > 0)
+                                if (level >= 0)
                                 {
                                     indexStack.Push(index);
                                     index = 0;
@@ -453,7 +453,7 @@
 
                                 if (level >= 0)
                                 {
-                                    currentHelpStack = completionAssistant.Stack[(completionAssistant.Stack.Count - level) - 1];
+                                    currentHelpStack = completionAssistant.Stack[completionAssistant.Stack.Count - level - 1];
                                 }
                                 else
                                 {
@@ -505,13 +505,16 @@
             }
         }
 
-        public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles)
+        public void SetCursor(int index, int line, int column, List<UnsavedFile> unsavedFiles, bool canUpdateSignature = true)
         {
             if (_lastIndex != index)
             {
                 _lastIndex = index;
 
-                UpdateActiveParameterAndVisibility();
+                if (canUpdateSignature)
+                {
+                    UpdateActiveParameterAndVisibility();
+                }
 
                 if (!intellisenseControl.IsVisible)
                 {
@@ -605,7 +608,7 @@
 
                 if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
                 {
-                    SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
+                    SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList(), false);
                 }
 
                 if (caretIndex >= 2)
@@ -624,7 +627,7 @@
                         if (!UpdateFilter(caretIndex))
                         {
                             // CloseIntellisense();
-                            SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList());
+                            SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles.ToList(), false);
                         }
                     }
                 }
