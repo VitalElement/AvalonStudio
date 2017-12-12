@@ -7,29 +7,32 @@
     using AvalonStudio.Utils;
     using ReactiveUI;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
 
     public class CompletionAssistantViewModel : ViewModel, ICompletionAssistant
     {
-        private Stack<SignatureHelpViewModel> methodStack;
+        private List<SignatureHelpViewModel> methodVmStack;
+        private List<SignatureHelp> methodStack;
         private IntellisenseViewModel intellisense;
         private Thread uiThread;
 
         public CompletionAssistantViewModel(IntellisenseViewModel intellisense)
         {
             uiThread = Thread.CurrentThread;
-            methodStack = new Stack<SignatureHelpViewModel>();
+            methodStack = new List<SignatureHelp>();
+            methodVmStack = new List<SignatureHelpViewModel>();
             this.intellisense = intellisense;
         }
 
+        public IReadOnlyList<SignatureHelp> Stack => methodStack.AsReadOnly();
+
         public void PushMethod(SignatureHelp methodInfo)
         {
-            if (CurrentMethod != null)
-            {
-                methodStack.Push(CurrentMethod);
-            }
-
             CurrentMethod = new SignatureHelpViewModel(methodInfo);
+
+            methodStack.Insert(0, CurrentMethod.Model);
+            methodVmStack.Insert(0, CurrentMethod);
 
             IsVisible = true;
 
@@ -39,11 +42,19 @@
             }
         }
 
+        public void SelectStack(SignatureHelp stack)
+        {
+            CurrentMethod = methodVmStack.First(s => s.Model == stack);
+        }
+
         public void PopMethod()
         {
             if (methodStack.Count > 0)
             {
-                CurrentMethod = methodStack.Pop();
+                CurrentMethod = methodVmStack[0];
+
+                methodVmStack.RemoveAt(0);
+                methodStack.RemoveAt(0);
             }
             else
             {
@@ -89,6 +100,7 @@
 
             CurrentMethod = null;
             methodStack.Clear();
+            methodVmStack.Clear();
         }
 
         private bool isVisible;

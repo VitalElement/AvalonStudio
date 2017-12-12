@@ -1,9 +1,4 @@
-﻿using AvalonStudio.Documents;
-using AvalonStudio.Extensibility.Threading;
-using AvalonStudio.Languages;
-using AvalonStudio.Utils;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace AvalonStudio.Extensibility.Languages.CompletionAssistance
 {
@@ -13,7 +8,11 @@ namespace AvalonStudio.Extensibility.Languages.CompletionAssistance
 
         void PopMethod();
 
+        IReadOnlyList<SignatureHelp> Stack { get; }
+
         SignatureHelp CurrentSignatureHelp { get; }
+
+        void SelectStack(SignatureHelp stack);
 
         void SetParameterIndex(int index);
 

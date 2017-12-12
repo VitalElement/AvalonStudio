@@ -408,8 +408,11 @@
                 {
                     var indexStack = new Stack<int>();
 
-                    int index = 0;                    
-                    int offset = completionAssistant.CurrentSignatureHelp.Offset;
+                    int index = 0;
+                    int level = -1;
+                    int offset = completionAssistant.Stack.Last().Offset;
+
+                    SignatureHelp currentHelpStack = null;
 
                     while (offset < editor.CaretOffset)
                     {
@@ -420,17 +423,24 @@
                         switch (curChar)
                         {
                             case ',':
-                                if (indexStack.Count == 0)
-                                {
-                                    index++;
-                                }
+                                index++;
                                 break;
 
                             case '(':
-                                await PushToSignatureHelp("", offset);                                
+                                level++;
 
-                                indexStack.Push(index);
-                                index = 0;
+                                if(completionAssistant.Stack.Count <= level)
+                                {
+                                    await PushToSignatureHelp("", offset);
+                                }
+
+                                currentHelpStack = completionAssistant.Stack[(completionAssistant.Stack.Count - level) - 1];
+
+                                if (level > 0)
+                                {
+                                    indexStack.Push(index);
+                                    index = 0;
+                                }
                                 break;
 
                             case ')':
@@ -438,13 +448,24 @@
                                 {
                                     index = indexStack.Pop();
                                 }
-                                completionAssistant.PopMethod();                                
+
+                                level--;
+
+                                if (level >= 0)
+                                {
+                                    currentHelpStack = completionAssistant.Stack[(completionAssistant.Stack.Count - level) - 1];
+                                }
+                                else
+                                {
+                                    currentHelpStack = null;
+                                }
                                 break;
                         }
                     }
 
-                    if (index >= 0)
+                    if(currentHelpStack != null)
                     {
+                        completionAssistant.SelectStack(currentHelpStack);
                         completionAssistant.SetParameterIndex(index);
                     }
                     else
@@ -453,7 +474,7 @@
                     }
                 }
             }
-            else if(canTrigger)
+            else if (canTrigger)
             {
                 var currentChar = editor.Document.GetCharAt(editor.CaretOffset - 1);
 
@@ -488,7 +509,7 @@
             if (_lastIndex != index)
             {
                 _lastIndex = index;
-                
+
                 UpdateActiveParameterAndVisibility();
 
                 if (!intellisenseControl.IsVisible)
