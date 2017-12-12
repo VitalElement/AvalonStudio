@@ -11,24 +11,15 @@
       <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
       <Setter Property="IsVisible" Value="{Binding IsVisible}" />
     </Style>
-    <Style Selector="cont|DocumentTabControl /template/ TabStripItem /template/ Button">
-      <Setter Property="IsVisible" Value="False" />
-    </Style>
-    <Style Selector="cont|DocumentTabControl /template/ TabStripItem:pointerover /template/ Button">
-      <Setter Property="IsVisible" Value="True" />
-    </Style>
-    <Style Selector="cont|DocumentTabControl /template/ TabStripItem:selected /template/ Button">
-      <Setter Property="IsVisible" Value="True" />
-    </Style>
 
-    <Style Selector="cont|DocumentTabControl /template/ TabStripItem /template/ Button">
+    <Style Selector="cont|DocumentTabControl /template/ Button">
       <Setter Property="Background" Value="Transparent" />
     </Style>
 
-    <Style Selector="cont|DocumentTabControl /template/ TabStripItem:selected /template/ Button:pointerover">
+    <Style Selector="cont|DocumentTabControl /template/ Button:pointerover">
       <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLight}" />
     </Style>
-    
+
     <Style Selector="cont|DocumentTabControl /template/ TabStripItem:dockright:selected">
       <Setter Property="Background" Value="#68217A" />
       <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
@@ -57,7 +48,7 @@
           <StackPanel Orientation="Horizontal" Margin="2" TextBlock.FontSize="12">
             <TextBlock Text="{Binding Title}" />
             <TextBlock Text="*" IsVisible="{Binding IsDirty, FallbackValue=False}" />
-          </StackPanel>          
+          </StackPanel>
           <Button Height="14" Width="14" Command="{Binding Close}">
             <Button.Styles>
               <Style Selector="Button">
