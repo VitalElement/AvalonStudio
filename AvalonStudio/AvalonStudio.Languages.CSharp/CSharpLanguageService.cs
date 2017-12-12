@@ -177,7 +177,9 @@
 
             var dataAssociation = GetAssociatedData(editor);
 
-            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(editor.SourceFile);
+            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
+            var document = workspace.GetDocument(editor.SourceFile);
+            var semanticModel = await document.GetSemanticModelAsync();
 
             var completionService = CompletionService.GetService(document);
             var completionTrigger = GetCompletionTrigger(previousChar);
@@ -185,6 +187,7 @@
 
             if (data != null)
             {
+                var recommendedSymbols = await Microsoft.CodeAnalysis.Recommendations.Recommender.GetRecommendedSymbolsAtPositionAsync(semanticModel, index, workspace);
                 foreach (var completion in data.Items)
                 {
                     var insertionText = completion.FilterText;
@@ -199,25 +202,51 @@
 
                     if (completion.Rules.SelectionBehavior != Microsoft.CodeAnalysis.Completion.CompletionItemSelectionBehavior.Default)
                     {
-                        /*if(completion.Properties.ContainsKey("SymbolKind") && completion.Properties["SymbolKind"] == "6")
-                        {
-
-                        }
-                        else
-                        {*/
                         selectionBehavior = (Languages.CompletionItemSelectionBehavior)completion.Rules.SelectionBehavior;
                         priority = completion.Rules.MatchPriority;
-                        //}
                     }
 
-                    var newCompletion = new CodeCompletionData(completion.DisplayText, insertionText, null, selectionBehavior, priority);
-
-                    if (completion.Properties.ContainsKey("SymbolKind"))
+                    if (completion.Properties.ContainsKey("Provider") && completion.Properties["Provider"] == "Microsoft.CodeAnalysis.CSharp.Completion.Providers.SymbolCompletionProvider")
                     {
-                        newCompletion.Kind = FromOmniSharpKind(completion.Properties["SymbolKind"]);
-                    }
+                        var symbols = recommendedSymbols.Where(x => x.Name == completion.Properties["SymbolName"] && (int)x.Kind == int.Parse(completion.Properties["SymbolKind"])).Distinct();
 
-                    result.Completions.Add(newCompletion);
+                        if (symbols != null && symbols.Any())
+                        {
+                            foreach (var symbol in symbols)
+                            {
+                                if (symbol != null)
+                                {
+                                    var newCompletion = new CodeCompletionData(symbol.Name, insertionText, null, selectionBehavior, priority);
+
+                                    if (completion.Properties.ContainsKey("SymbolKind"))
+                                    {
+                                        newCompletion.Kind = FromOmniSharpKind(completion.Properties["SymbolKind"]);
+                                    }
+
+                                    var xmlDocumentation = symbol.GetDocumentationCommentXml();
+
+                                    if (xmlDocumentation != string.Empty)
+                                    {
+                                        var docComment = DocumentationComment.From(xmlDocumentation, Environment.NewLine);
+                                        newCompletion.BriefComment = docComment.SummaryText;
+                                    }
+
+                                    result.Completions.Add(newCompletion);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var newCompletion = new CodeCompletionData(completion.DisplayText, insertionText, null, selectionBehavior, priority);
+
+                        if (completion.Properties.ContainsKey("SymbolKind"))
+                        {
+                            newCompletion.Kind = FromOmniSharpKind(completion.Properties["SymbolKind"]);
+                        }
+
+                        result.Completions.Add(newCompletion);
+                    }
                 }
 
                 result.Contexts = Languages.CompletionContext.AnyType;
@@ -758,6 +787,6 @@
 
         public void Activation()
         {
-        }        
+        }
     }
 }
