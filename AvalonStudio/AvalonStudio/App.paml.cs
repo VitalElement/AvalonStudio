@@ -7,7 +7,9 @@ using AvalonStudio.Controls;
 using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
+using Microsoft.TemplateEngine.Abstractions;
 using Microsoft.TemplateEngine.Cli;
+using Microsoft.TemplateEngine.Cli.CommandParsing;
 using Microsoft.TemplateEngine.Edge;
 using Microsoft.TemplateEngine.Edge.TemplateUpdates;
 using Microsoft.TemplateEngine.Orchestrator.RunnableProjects;
@@ -17,6 +19,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -68,10 +71,50 @@ namespace AvalonStudio
             return host;
         }
 
+        private static void FirstRun(IEngineEnvironmentSettings environmentSettings, IInstaller installer)
+        {
+            string baseDir = Environment.ExpandEnvironmentVariables("%DN3%");
+
+            if (baseDir.Contains('%'))
+            {
+                Assembly a = typeof(App).GetTypeInfo().Assembly;
+                string path = new Uri(a.CodeBase, UriKind.Absolute).LocalPath;
+                path = Path.GetDirectoryName(path);
+                Environment.SetEnvironmentVariable("DN3", path);
+            }
+
+            List<string> toInstallList = new List<string>();
+            Paths paths = new Paths(environmentSettings);
+
+            if (paths.FileExists(paths.Global.DefaultInstallPackageList))
+            {
+                toInstallList.AddRange(paths.ReadAllText(paths.Global.DefaultInstallPackageList).Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries));
+            }
+
+            if (paths.FileExists(paths.Global.DefaultInstallTemplateList))
+            {
+                toInstallList.AddRange(paths.ReadAllText(paths.Global.DefaultInstallTemplateList).Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries));
+            }
+
+            if (toInstallList.Count > 0)
+            {
+                for (int i = 0; i < toInstallList.Count; i++)
+                {
+                    toInstallList[i] = toInstallList[i].Replace("\r", "")
+                                                        .Replace('\\', Path.DirectorySeparatorChar);
+                }
+
+                installer.InstallPackages(toInstallList);
+            }
+        }
+
         [STAThread]
         private static void Main(string[] args)
         {
-            DefaultTemplateEngineHost host = CreateHost(false);            
+            DefaultTemplateEngineHost host = CreateHost(false);
+
+            INewCommandInput commandInput = new NewCommandInputCli("new3");
+            var manager = new TemplateManager("new3", host, null, FirstRun, commandInput, null);
 
             if (args == null)
             {
