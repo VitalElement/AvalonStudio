@@ -7,3 +7,6 @@
 [submodule "AvalonStudio/Avalonia.Ide"]
 	path = AvalonStudio/Avalonia.Ide
 	url = https://github.com/danwalmsley/Avalonia.Ide.git
+[submodule "templating"]
+	path = templating
+	url = https://github.com/dotnet/templating.git
