@@ -82,7 +82,6 @@ namespace RoslynPad.Roslyn
                 var partTypes = MefHostServices.DefaultAssemblies.Concat(assemblies)
                         .Distinct()
                         .SelectMany(x => x.GetTypes())
-                        //.Concat(new[] { typeof(DocumentationProviderServiceFactory) })
                         .ToArray();
 
                 var compositionContext = new ContainerConfiguration()
