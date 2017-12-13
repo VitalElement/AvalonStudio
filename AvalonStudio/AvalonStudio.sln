@@ -100,6 +100,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.Ide.CompletionEngi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.Designer.HostApp", "Avalonia.Designer.HostApp\Avalonia.Designer.HostApp.csproj", "{952217E5-1523-40FA-9808-BBB50344C0F1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.Ide.LanguageServer.MSBuild", "Avalonia.Ide\src\Avalonia.Ide.LanguageServer.MSBuild\Avalonia.Ide.LanguageServer.MSBuild.csproj", "{2DCD569B-82AA-4D52-AA73-321730A95AE5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -736,6 +738,22 @@ Global
 		{952217E5-1523-40FA-9808-BBB50344C0F1}.Release|x64.Build.0 = Release|Any CPU
 		{952217E5-1523-40FA-9808-BBB50344C0F1}.Release|x86.ActiveCfg = Release|Any CPU
 		{952217E5-1523-40FA-9808-BBB50344C0F1}.Release|x86.Build.0 = Release|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Debug|ARM.Build.0 = Debug|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Debug|x64.Build.0 = Debug|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Debug|x86.Build.0 = Debug|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Release|ARM.ActiveCfg = Release|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Release|ARM.Build.0 = Release|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Release|x64.ActiveCfg = Release|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Release|x64.Build.0 = Release|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Release|x86.ActiveCfg = Release|Any CPU
+		{2DCD569B-82AA-4D52-AA73-321730A95AE5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,17 +1,16 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
-using AvalonStudio.Extensibility;
-using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
+using AvalonStudio.Projects.OmniSharp;
 using AvalonStudio.Projects.OmniSharp.DotnetCli;
 using AvalonStudio.Projects.OmniSharp.MSBuild;
 using AvalonStudio.Projects.OmniSharp.Roslyn;
 using AvalonStudio.Utils;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CodeAnalysis.CSharp;
 using RoslynPad.Editor.Windows;
 using RoslynPad.Roslyn.Diagnostics;
 using System;
@@ -23,9 +22,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Diagnostics;
-using System.Threading;
-using AvalonStudio.Projects.OmniSharp;
 
 namespace RoslynPad.Roslyn
 {
@@ -126,11 +122,10 @@ namespace RoslynPad.Roslyn
         {
             if (buildHost == null)
             {
-                buildHost = new MSBuildHost();
-                await buildHost.Connect(dotnetPath, sdkPath);
+                buildHost = new MSBuildHost(sdkPath);
             }
 
-            var (info, projectReferences, targetPath) = await buildHost.LoadProject(solutionDir, projectFile);
+            var (info, projectReferences, targetPath) = await buildHost.LoadProject(solutionDir, projectFile); 
 
             OnProjectAdded(info);
 

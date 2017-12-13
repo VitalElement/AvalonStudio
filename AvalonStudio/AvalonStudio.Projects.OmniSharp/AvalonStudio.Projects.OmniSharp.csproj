@@ -37,6 +37,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\AvalonStudio.MSBuildHost\modules\AsyncRpc\AsyncRpc\AsyncRpc.csproj" />
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging.Win32\Mono.Debugging.Win32.csproj" />
+    <ProjectReference Include="..\Avalonia.Ide\src\Avalonia.Ide.LanguageServer.MSBuild\Avalonia.Ide.LanguageServer.MSBuild.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
