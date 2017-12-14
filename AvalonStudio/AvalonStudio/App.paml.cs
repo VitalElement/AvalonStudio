@@ -48,8 +48,6 @@ namespace AvalonStudio
         [STAThread]
         private static void Main(string[] args)
         {
-            //Test();
-
             if (args == null)
             {
                 throw new ArgumentNullException(nameof(args));
@@ -64,6 +62,14 @@ namespace AvalonStudio
                 var container = CompositionRoot.CreateContainer();
 
                 ShellViewModel.Instance = container.GetExport<ShellViewModel>();
+
+                //Test();
+
+                //var manager = IoC.Get<TemplateManager>();
+
+                //manager.Initialise();
+
+                //manager.InstallTemplates(@"c:\dev\repos\avalonia-dotnet-templates");
             });
 
             InitializeLogging();
