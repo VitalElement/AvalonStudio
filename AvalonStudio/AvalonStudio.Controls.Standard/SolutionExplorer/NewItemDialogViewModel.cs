@@ -6,6 +6,7 @@ using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using AvalonStudio.Extensibility.Templating;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -13,41 +14,36 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     {
         private IProjectFolder folder;
 
-        private ICodeTemplate selectedTemplate;
+        private ITemplate selectedTemplate;
 
-        private ObservableCollection<ICodeTemplate> templates;
+        private ObservableCollection<ITemplate> templates;
 
         public NewItemDialogViewModel(IProjectFolder folder) : base("New Item")
         {
             var shell = IoC.Get<IShell>();
-            templates = new ObservableCollection<ICodeTemplate>();
+            var templateManager = IoC.Get<TemplateManager>();            
 
-            var compatibleTemplates = shell.CodeTemplates.Where(t => t.IsCompatible(folder.Project));
-
-            foreach (var template in compatibleTemplates)
-            {
-                templates.Add(template);
-            }
+            templates = new ObservableCollection<ITemplate>(templateManager.ListItemTemplates("C#"));
 
             SelectedTemplate = templates.FirstOrDefault();
 
             this.folder = folder;
 
-            OKCommand = ReactiveCommand.Create(() =>
+            OKCommand = ReactiveCommand.Create(async () =>
             {
-                SelectedTemplate?.Generate(folder);
+                await templateManager.CreateTemplate(SelectedTemplate, folder.LocationDirectory);                
 
                 Close();
             });
         }
 
-        public ICodeTemplate SelectedTemplate
+        public ITemplate SelectedTemplate
         {
             get { return selectedTemplate; }
             set { this.RaiseAndSetIfChanged(ref selectedTemplate, value); }
         }
 
-        public ObservableCollection<ICodeTemplate> Templates
+        public ObservableCollection<ITemplate> Templates
         {
             get { return templates; }
             set { this.RaiseAndSetIfChanged(ref templates, value); }

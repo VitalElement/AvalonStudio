@@ -20,6 +20,17 @@ using AvalonStudio.Extensibility.Plugin;
 
 namespace AvalonStudio.Extensibility.Templating
 {
+    public enum CreationResult
+    {
+        Success = 0,
+        CreateFailed = unchecked((int)0x80020009),
+        MissingMandatoryParam = unchecked((int)0x8002000F),
+        InvalidParamValues = unchecked((int)0x80020005),
+        OperationNotSpecified = unchecked((int)0x8002000E),
+        NotFound = unchecked((int)0x800200006),
+        Cancelled = unchecked((int)0x80004004)
+    }
+
     public class TemplateManager : IExtension
     {
         private const string HostIdentifier = "AvalonStudio";
@@ -60,6 +71,8 @@ namespace AvalonStudio.Extensibility.Templating
             {
                 _defaultLanguage = null;
             }
+
+            _commandInput.ResetArgs();
         }
 
         public void Initialise(bool forceCacheRebuild = false)
@@ -93,7 +106,7 @@ namespace AvalonStudio.Extensibility.Templating
             return ListTemplates(language, TemplateKind.Project);
         }
 
-        public async Task<CreationResultStatus> CreateTemplate(ITemplate template, string path, string name = "")
+        public async Task<CreationResult> CreateTemplate(ITemplate template, string path, string name = "")
         {
             if (template is DotNetTemplateAdaptor templateImpl)
             {
@@ -110,11 +123,11 @@ namespace AvalonStudio.Extensibility.Templating
 
                 var result = await _templateCreator.InstantiateAsync(templateImpl.DotnetTemplate.Info, _commandInput.Name, fallbackName, _commandInput.OutputPath, templateImpl.DotnetTemplate.GetValidTemplateParameters(), _commandInput.SkipUpdateCheck, _commandInput.IsForceFlagSpecified, _commandInput.BaselineName).ConfigureAwait(false);
 
-                return result.Status;
+                return (CreationResult)result.Status;
 
             }
 
-            return CreationResultStatus.NotFound;
+            return CreationResult.NotFound;
         }
 
         public IReadOnlyList<ITemplate> ListItemTemplates(string language)
@@ -232,100 +245,6 @@ namespace AvalonStudio.Extensibility.Templating
             return argsError;
         }
 
-        private async Task<CreationResultStatus> CreateTemplateAsync(ITemplateMatchInfo templateMatchDetails)
-        {
-            ITemplateInfo template = templateMatchDetails.Info;
-
-            string fallbackName = new DirectoryInfo(_commandInput.OutputPath ?? Directory.GetCurrentDirectory()).Name;
-
-            if (string.IsNullOrEmpty(fallbackName) || string.Equals(fallbackName, "/", StringComparison.Ordinal))
-            {   // DirectoryInfo("/").Name on *nix returns "/", as opposed to null or "".
-                fallbackName = null;
-            }
-
-            TemplateCreationResult instantiateResult;
-
-            try
-            {
-                instantiateResult = await _templateCreator.InstantiateAsync(template, _commandInput.Name, fallbackName, _commandInput.OutputPath, templateMatchDetails.GetValidTemplateParameters(), _commandInput.SkipUpdateCheck, _commandInput.IsForceFlagSpecified, _commandInput.BaselineName).ConfigureAwait(false);
-            }
-            catch (ContentGenerationException cx)
-            {
-                //Reporter.Error.WriteLine(cx.Message.Bold().Red());
-                if (cx.InnerException != null)
-                {
-                    //  Reporter.Error.WriteLine(cx.InnerException.Message.Bold().Red());
-                }
-
-                return CreationResultStatus.CreateFailed;
-            }
-            catch (TemplateAuthoringException tae)
-            {
-                //Reporter.Error.WriteLine(tae.Message.Bold().Red());
-                return CreationResultStatus.CreateFailed;
-            }
-
-            string resultTemplateName = string.IsNullOrEmpty(instantiateResult.TemplateFullName) ? TemplateName : instantiateResult.TemplateFullName;
-
-            switch (instantiateResult.Status)
-            {
-                case CreationResultStatus.Success:
-                    //Reporter.Output.WriteLine(string.Format(LocalizableStrings.CreateSuccessful, resultTemplateName));
-
-                    if (!string.IsNullOrEmpty(template.ThirdPartyNotices))
-                    {
-                        //  Reporter.Output.WriteLine(string.Format(LocalizableStrings.ThirdPartyNotices, template.ThirdPartyNotices));
-                    }
-
-                    //HandlePostActions(instantiateResult);
-                    break;
-                case CreationResultStatus.CreateFailed:
-                    //Reporter.Error.WriteLine(string.Format(LocalizableStrings.CreateFailed, resultTemplateName, instantiateResult.Message).Bold().Red());
-                    break;
-                case CreationResultStatus.MissingMandatoryParam:
-                    if (string.Equals(instantiateResult.Message, "--name", StringComparison.Ordinal))
-                    {
-                        //Reporter.Error.WriteLine(string.Format(LocalizableStrings.MissingRequiredParameter, instantiateResult.Message, resultTemplateName).Bold().Red());
-                    }
-                    else
-                    {
-                        // TODO: rework to avoid having to reparse.
-                        // The canonical info could be in the ITemplateMatchInfo, but currently isn't.
-                        TemplateListResolver.ParseTemplateArgs(template, _hostDataLoader, _commandInput);
-
-                        IReadOnlyList<string> missingParamNamesCanonical = instantiateResult.Message.Split(new[] { ',' })
-                            .Select(x => _commandInput.VariantsForCanonical(x.Trim())
-                                                        .DefaultIfEmpty(x.Trim()).First())
-                            .ToList();
-                        string fixedMessage = string.Join(", ", missingParamNamesCanonical);
-                        //Reporter.Error.WriteLine(string.Format(LocalizableStrings.MissingRequiredParameter, fixedMessage, resultTemplateName).Bold().Red());
-                    }
-                    break;
-                case CreationResultStatus.OperationNotSpecified:
-                    break;
-                case CreationResultStatus.InvalidParamValues:
-                    //TemplateUsageInformation usageInformation = TemplateUsageHelp.GetTemplateUsageInformation(template, EnvironmentSettings, _commandInput, _hostDataLoader, _templateCreator);
-                    //string invalidParamsError = InvalidParameterInfo.InvalidParameterListToString(usageInformation.InvalidParameters);
-                    //Reporter.Error.WriteLine(invalidParamsError.Bold().Red());
-                    //Reporter.Error.WriteLine(string.Format(LocalizableStrings.RunHelpForInformationAboutAcceptedParameters, $"{CommandName} {TemplateName}").Bold().Red());
-                    break;
-                default:
-                    break;
-            }
-
-            return instantiateResult.Status;
-        }
-
-        private HashSet<string> AllTemplateShortNames
-        {
-            get
-            {
-                IReadOnlyCollection<ITemplateMatchInfo> allTemplates = TemplateListResolver.PerformAllTemplatesQuery(_settingsLoader.UserTemplateCache.TemplateInfo, _hostDataLoader);
-                HashSet<string> allShortNames = new HashSet<string>(allTemplates.Select(x => x.Info.ShortName));
-                return allShortNames;
-            }
-        }
-
         internal string OutputPath => _commandInput.OutputPath;
 
         internal string TemplateName => _commandInput.TemplateName;
@@ -425,7 +344,7 @@ namespace AvalonStudio.Extensibility.Templating
 
         public void Activation()
         {
-            
+
         }
     }
 }

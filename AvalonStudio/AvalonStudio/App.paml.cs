@@ -65,11 +65,11 @@ namespace AvalonStudio
 
                 //Test();
 
-                //var manager = IoC.Get<TemplateManager>();
+                var manager = IoC.Get<TemplateManager>();
 
-                //manager.Initialise();
+                manager.Initialise();
 
-                //manager.InstallTemplates(@"c:\dev\repos\avalonia-dotnet-templates");
+                manager.InstallTemplates(@"c:\avalonia-dotnet-templates.zip");
             });
 
             InitializeLogging();

@@ -48,10 +48,6 @@ namespace AvalonStudio.Shell
 
         IEnumerable<IProjectType> ProjectTypes { get; }
 
-        //IEnumerable<ITemplate> ProjectTemplates { get; }
-
-        IEnumerable<ICodeTemplate> CodeTemplates { get; }
-
         IEnumerable<ILanguageService> LanguageServices { get; }
 
         IEnumerable<IToolChain> ToolChains { get; }

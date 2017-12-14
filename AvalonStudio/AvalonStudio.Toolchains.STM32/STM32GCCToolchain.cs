@@ -68,7 +68,9 @@ namespace AvalonStudio.Toolchains.STM32
         private void GenerateLinkerScript(IStandardProject project)
         {
             var settings = project.GetToolchainSettings<GccToolchainSettings>().LinkSettings;
-            var template = new ArmGCCLinkTemplate(settings);
+
+            throw new NotImplementedException();
+            //var template = new ArmGCCLinkTemplate(settings);
 
             var linkerScript = GetLinkerScriptLocation(project);
 

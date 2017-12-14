@@ -46,14 +46,12 @@ namespace AvalonStudio
         private ToolBarDefinition _toolBarDefinition;
         private double _globalZoomLevel;
         private List<ILanguageService> _languageServices;
-        private List<ITemplate> _projectTemplates;
         private List<ISolutionType> _solutionTypes;
         private List<IEditorProvider> _editorProviders;
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
         private List<ITestFramework> _testFrameworks;
-        private List<ICodeTemplate> _codeTemplates;
         private List<MenuBarDefinition> _menuBarDefinitions;
         private List<MenuDefinition> _menuDefinitions;
         private List<MenuItemGroupDefinition> _menuItemGroupDefinitions;
@@ -77,12 +75,10 @@ namespace AvalonStudio
         private ObservableCollection<object> tools;
 
         [ImportingConstructor]
-        public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates)
+        public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions)
         {
             _languageServices = new List<ILanguageService>();
-            _projectTemplates = new List<ITemplate>();
             _debugger2s = new List<IDebugger>();
-            _codeTemplates = new List<ICodeTemplate>();
             _projectTypes = new List<IProjectType>();
             _editorProviders = new List<IEditorProvider>();
             _solutionTypes = new List<ISolutionType>();
@@ -105,8 +101,6 @@ namespace AvalonStudio
             {
                 extension.BeforeActivation();
             }
-
-            _codeTemplates.AddRange(codeTemplates);
 
             CurrentPerspective = Perspective.Editor;
 
@@ -367,10 +361,6 @@ namespace AvalonStudio
 
         public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
 
-        //public IEnumerable<ITemplate> ProjectTemplates => _projectTemplates;
-
-        public IEnumerable<ICodeTemplate> CodeTemplates => _codeTemplates;
-
         public IEnumerable<ILanguageService> LanguageServices => _languageServices;
 
         public IEnumerable<IToolChain> ToolChains => _toolChains;
@@ -399,7 +389,7 @@ namespace AvalonStudio
             DocumentTabs.CloseDocument(document);
         }
 
-        public IFileDocumentTabViewModel OpenDocument (ISourceFile file)
+        public IFileDocumentTabViewModel OpenDocument(ISourceFile file)
         {
             var currentTab = DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(t => t.SourceFile?.FilePath == file.FilePath);
 
@@ -458,13 +448,13 @@ namespace AvalonStudio
                     return editor.DocumentAccessor;
                 }
             }
-            
+
             return null;
         }
 
         public IEditor GetDocument(string path)
         {
-            return DocumentTabs.Documents.OfType<TextEditorViewModel>().Where(d => d.SourceFile?.FilePath == path).Select(d=>d.DocumentAccessor).FirstOrDefault();
+            return DocumentTabs.Documents.OfType<TextEditorViewModel>().Where(d => d.SourceFile?.FilePath == path).Select(d => d.DocumentAccessor).FirstOrDefault();
         }
 
         public void Save()

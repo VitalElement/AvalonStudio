@@ -77,22 +77,12 @@ namespace AvalonStudio.Languages.CPlusPlus
             });
 
             _snippetDynamicVars.Add("ClassName", (offset, line, column) => null);
-        }
-
-        public IProjectTemplate EmptyProjectTemplate
-        {
-            get { throw new NotImplementedException(); }
-        }
+        }        
 
         public string Title
         {
             get { return "C/C++"; }
-        }
-
-        public Type BaseTemplateType
-        {
-            get { return typeof(BlankCPlusPlusLanguageTemplate); }
-        }
+        }        
 
         public IIndentationStrategy IndentationStrategy { get; private set; }
 

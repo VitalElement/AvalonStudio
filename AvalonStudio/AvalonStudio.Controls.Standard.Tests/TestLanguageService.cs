@@ -17,9 +17,7 @@ namespace AvalonStudio.Controls.Standard.Tests
 
         public global::AvaloniaEdit.Indentation.IIndentationStrategy IndentationStrategy => throw new NotImplementedException();
 
-        public string Title => throw new NotImplementedException();
-
-        public Type BaseTemplateType => throw new NotImplementedException();
+        public string Title => throw new NotImplementedException();        
 
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators { get; set; } = new Dictionary<string, Func<string, string>>();
 

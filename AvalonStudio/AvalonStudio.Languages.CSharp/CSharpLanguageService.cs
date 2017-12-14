@@ -48,14 +48,6 @@
             });
         }
 
-        public Type BaseTemplateType
-        {
-            get
-            {
-                return typeof(BlankOmniSharpProjectTemplate);
-            }
-        }
-
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
 
         public bool CanTriggerIntellisense(char currentChar, char previousChar)

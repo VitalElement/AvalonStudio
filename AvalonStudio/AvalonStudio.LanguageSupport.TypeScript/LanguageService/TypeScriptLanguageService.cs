@@ -29,9 +29,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         private TypeScriptContext _typeScriptContext;
 
         private static readonly ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation> dataAssociations =
-            new ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation>();
-
-        public Type BaseTemplateType => typeof(BlankTypeScriptProjectTemplate);
+            new ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation>();        
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
 

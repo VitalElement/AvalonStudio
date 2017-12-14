@@ -25,7 +25,7 @@ namespace AvalonStudio.Extensibility.Templating
         {
             get
             {
-                if(!string.IsNullOrEmpty(_template.Info.DefaultName))
+                if (!string.IsNullOrEmpty(_template.Info.DefaultName))
                 {
                     return _template.Info.DefaultName;
                 }

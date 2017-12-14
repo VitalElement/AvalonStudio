@@ -25,8 +25,6 @@ namespace AvalonStudio.Languages.Xaml
 
         public virtual string LanguageId => "xml";
 
-        public Type BaseTemplateType => null;
-
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => s_InputHelpers;
 
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => new Dictionary<string, Func<string, string>>();

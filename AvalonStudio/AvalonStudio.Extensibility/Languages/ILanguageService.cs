@@ -29,12 +29,6 @@ namespace AvalonStudio.Languages
         string Identifier { get; }
 
         /// <summary>
-        ///     The base type that all Project templates for this language must inherit. This base class must implement
-        ///     IProjectTemplate.
-        /// </summary>
-        Type BaseTemplateType { get; }
-
-        /// <summary>
         /// Dictionary of functions for transforming snippet variables. Key is function name, the arugment is the string to transform.
         /// i.e. (propertyName) => "_" + propertyName
         /// </summary>
