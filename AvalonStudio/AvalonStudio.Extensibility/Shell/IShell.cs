@@ -1,8 +1,8 @@
-using AvalonStudio.Controls;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.TestFrameworks;
@@ -21,13 +21,13 @@ namespace AvalonStudio.Shell
     }
 
     public interface IShell
-    {        
+    {
         ISolution CurrentSolution { get; }
 
         IObservable<ISolution> OnSolutionChanged { get; }
 
         event EventHandler<SolutionChangedEventArgs> SolutionChanged;
-        
+
         event EventHandler<BuildEventArgs> BuildStarting;
 
         event EventHandler<BuildEventArgs> BuildCompleted;
@@ -48,7 +48,7 @@ namespace AvalonStudio.Shell
 
         IEnumerable<IProjectType> ProjectTypes { get; }
 
-        IEnumerable<IProjectTemplate> ProjectTemplates { get; }
+        //IEnumerable<ITemplate> ProjectTemplates { get; }
 
         IEnumerable<ICodeTemplate> CodeTemplates { get; }
 

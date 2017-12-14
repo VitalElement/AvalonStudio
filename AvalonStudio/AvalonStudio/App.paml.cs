@@ -3,6 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Diagnostics;
 using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
 using Serilog;
@@ -12,19 +14,21 @@ namespace AvalonStudio
 {
     internal class App : Application
     {
-        [STAThread]
-        private static void Main(string[] args)
+        public static void Test()
         {
-            var manager = new TemplateManager();
+            var manager = IoC.Get<TemplateManager>();
 
             manager.Initialise();
 
-            //manager.InstallTemplates(@"GtkSharp.Template.CSharp");
+            //manager.InstallTemplates(@"c:\dev\repos\avalonia-dotnet-templates");
 
             var projectTemplates = manager.ListProjectTemplates("C#");
 
-            foreach(var item in projectTemplates)
+            int template = 0;
+
+            foreach (var item in projectTemplates)
             {
+                manager.CreateTemplate(item, $"c:\\templatetest\\test{template++}").Wait();
                 Console.WriteLine(item.Name);
             }
 
@@ -34,8 +38,17 @@ namespace AvalonStudio
 
             foreach (var item in itemTemplates)
             {
+                manager.CreateTemplate(item, $"c:\\templatetest\\test{template++}").Wait();
+
+
                 Console.WriteLine(item.Name);
             }
+        }
+
+        [STAThread]
+        private static void Main(string[] args)
+        {
+            //Test();
 
             if (args == null)
             {

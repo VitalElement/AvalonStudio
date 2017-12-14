@@ -113,6 +113,8 @@
 
         public string LanguageId => "cs";
 
+        public string Identifier => "C#";
+
         //public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; } = new Subject<TextSegmentCollection<Diagnostic>>();
 
         public bool CanHandle(IEditor editor)

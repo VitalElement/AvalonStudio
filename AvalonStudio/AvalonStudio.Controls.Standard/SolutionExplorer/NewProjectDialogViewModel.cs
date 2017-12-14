@@ -1,7 +1,9 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Projects;
+using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Languages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -22,11 +24,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private string name;
 
-        private ObservableCollection<IProjectTemplate> projectTemplates;
+        private ObservableCollection<ITemplate> projectTemplates;
 
         private ILanguageService selectedLanguage;
 
-        private IProjectTemplate selectedTemplate;
+        private ITemplate selectedTemplate;
         private readonly IShell shell;
         private ISolutionFolder _solutionFolder;
 
@@ -40,7 +42,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public NewProjectDialogViewModel() : base("New Project", true, true)
         {
             shell = IoC.Get<IShell>();
-            projectTemplates = new ObservableCollection<IProjectTemplate>();
+            projectTemplates = new ObservableCollection<ITemplate>();
             Languages = new List<ILanguageService>(shell.LanguageServices);
 
             location = Platform.ProjectDirectory;
@@ -76,7 +78,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                     _solutionFolder = VisualStudioSolution.Create(destination, solutionName, false, AvalonStudioSolution.Extension);
                 }
 
-                if (await selectedTemplate.Generate(_solutionFolder, name) != null)
+                var templateManager = IoC.Get<TemplateManager>();
+
+                if (await templateManager.CreateTemplate(selectedTemplate, _solutionFolder.Solution.CurrentDirectory, name) == Microsoft.TemplateEngine.Edge.Template.CreationResultStatus.Success)
                 {
                     if (generateSolutionDirs)
                     {
@@ -135,7 +139,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             set { this.RaiseAndSetIfChanged(ref solutionName, value); }
         }
 
-        public IProjectTemplate SelectedTemplate
+        public ITemplate SelectedTemplate
         {
             get
             {
@@ -147,14 +151,14 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (value != null)
                 {
-                    Name = value.DefaultProjectName + "1";
+                    Name = value.DefaultName + "1";
                 }
 
                 SolutionName = name;
             }
         }
 
-        public ObservableCollection<IProjectTemplate> ProjectTemplates
+        public ObservableCollection<ITemplate> ProjectTemplates
         {
             get { return projectTemplates; }
             set { this.RaiseAndSetIfChanged(ref projectTemplates, value); }
@@ -183,9 +187,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private void GetTemplates(ILanguageService languageService)
         {
-            var templates = shell.ProjectTemplates.Where(t => languageService.BaseTemplateType.IsAssignableFrom(t.GetType()));
-
-            ProjectTemplates = new ObservableCollection<IProjectTemplate>(templates);
+            var templateManager = IoC.Get<TemplateManager>();
+            ProjectTemplates = new ObservableCollection<ITemplate>(templateManager.ListProjectTemplates(languageService.Identifier));
         }
     }
 }

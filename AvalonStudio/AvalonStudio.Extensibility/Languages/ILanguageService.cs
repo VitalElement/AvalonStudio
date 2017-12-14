@@ -24,6 +24,11 @@ namespace AvalonStudio.Languages
         string LanguageId { get; }
 
         /// <summary>
+        /// An identifier compatible with Dot CLI language identifiers i.e. C#, F#, VB, etc
+        /// </summary>
+        string Identifier { get; }
+
+        /// <summary>
         ///     The base type that all Project templates for this language must inherit. This base class must implement
         ///     IProjectTemplate.
         /// </summary>

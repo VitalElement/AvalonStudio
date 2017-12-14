@@ -3,6 +3,7 @@ using Avalonia.Threading;
 using AvalonStudio.Controls;
 using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Controls.Standard.ErrorList;
+using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
@@ -45,7 +46,7 @@ namespace AvalonStudio
         private ToolBarDefinition _toolBarDefinition;
         private double _globalZoomLevel;
         private List<ILanguageService> _languageServices;
-        private List<IProjectTemplate> _projectTemplates;
+        private List<ITemplate> _projectTemplates;
         private List<ISolutionType> _solutionTypes;
         private List<IEditorProvider> _editorProviders;
         private List<IProjectType> _projectTypes;
@@ -79,7 +80,7 @@ namespace AvalonStudio
         public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates)
         {
             _languageServices = new List<ILanguageService>();
-            _projectTemplates = new List<IProjectTemplate>();
+            _projectTemplates = new List<ITemplate>();
             _debugger2s = new List<IDebugger>();
             _codeTemplates = new List<ICodeTemplate>();
             _projectTypes = new List<IProjectType>();
@@ -140,7 +141,7 @@ namespace AvalonStudio
 
                 _languageServices.ConsumeExtension(extension);
                 _toolChains.ConsumeExtension(extension);
-                _projectTemplates.ConsumeExtension(extension);
+                //_projectTemplates.ConsumeExtension(extension);
                 _debugger2s.ConsumeExtension(extension);
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
@@ -366,7 +367,7 @@ namespace AvalonStudio
 
         public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
 
-        public IEnumerable<IProjectTemplate> ProjectTemplates => _projectTemplates;
+        //public IEnumerable<ITemplate> ProjectTemplates => _projectTemplates;
 
         public IEnumerable<ICodeTemplate> CodeTemplates => _codeTemplates;
 

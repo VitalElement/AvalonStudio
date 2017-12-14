@@ -27,6 +27,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AvaloniaEdit\src\AvaloniaEdit\AvaloniaEdit.csproj" />
+    <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Abstractions\Microsoft.TemplateEngine.Abstractions.csproj" />
+    <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Cli\Microsoft.TemplateEngine.Cli.csproj" />
+    <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Edge\Microsoft.TemplateEngine.Edge.csproj" />
+    <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Orchestrator.RunnableProjects\Microsoft.TemplateEngine.Orchestrator.RunnableProjects.csproj" />
+    <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Utils\Microsoft.TemplateEngine.Utils.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Projects\MSBuildSolution\LocalizableStrings.Designer.cs">

@@ -43,6 +43,8 @@ namespace AvalonStudio.Languages.Xaml
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
+        public virtual string Identifier => "XML";
+
         public void Activation()
         {
         }

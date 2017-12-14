@@ -16,6 +16,8 @@ namespace AvalonStudio.Languages.Xaml
 
         public override string LanguageId => "xaml";
 
+        public override string Identifier => "XAML";
+
         public override bool CanHandle(IEditor editor)
         {
             var result = false;

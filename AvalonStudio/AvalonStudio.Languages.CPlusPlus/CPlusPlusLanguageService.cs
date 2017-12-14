@@ -136,7 +136,9 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => _snippetDynamicVars;
 
-        public string LanguageId => "cpp";        
+        public string LanguageId => "cpp";
+
+        public string Identifier => "C++";
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
 
@@ -1267,7 +1269,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         public async Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             SignatureHelp result = null;
-            var clangUnsavedFiles = new List<ClangUnsavedFile>();            
+            var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
             foreach (var unsavedFile in unsavedFiles)
             {

@@ -99,7 +99,9 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => null;
 
-        public string LanguageId => "ts";        
+        public string LanguageId => "ts";
+
+        public string Identifier => "TS";
 
         public bool CanHandle(IEditor editor)
         {
