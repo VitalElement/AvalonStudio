@@ -14,7 +14,7 @@
   
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.5.2-build4358-alpha" />
-    <PackageReference Include="LibGit2Sharp-dotnet" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="reactiveui" Version="8.0.0-alpha0089" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
