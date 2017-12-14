@@ -34,6 +34,24 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private string solutionName;
 
+        private IEnumerable<string> GetProjectFiles (string path)
+        {
+            var files = Directory.EnumerateFiles(path);
+
+            var ptExtensions = shell.ProjectTypes.SelectMany(pt => pt.Extensions);
+
+            var result = files.Where(f => ptExtensions.Contains(Path.GetExtension(f).Replace(".","")));
+
+            var directories = Directory.EnumerateDirectories(path);
+
+            foreach(var directory in directories)
+            {
+                result = result.Concat(GetProjectFiles(directory));
+            }
+
+            return result;
+        }
+
         public NewProjectDialogViewModel(ISolutionFolder solutionFolder) : this()
         {
             _solutionFolder = solutionFolder;
@@ -66,27 +84,37 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             OKCommand = ReactiveCommand.Create(async () =>
             {
-                bool generateSolutionDirs = false;
-                bool loadNewSolution = false;
+            bool generateSolutionDirs = false;
+            bool loadNewSolution = false;
 
-                if (_solutionFolder == null)
+            if (_solutionFolder == null)
+            {
+                loadNewSolution = true;
+                generateSolutionDirs = true;
+
+                var destination = Path.Combine(location, solutionName);
+                _solutionFolder = VisualStudioSolution.Create(destination, solutionName, false, AvalonStudioSolution.Extension);
+            }
+
+            var templateManager = IoC.Get<TemplateManager>();
+
+                var templateDestination = Path.Combine(_solutionFolder.Solution.CurrentDirectory, name);
+
+                if (await templateManager.CreateTemplate(selectedTemplate, templateDestination, name) == Microsoft.TemplateEngine.Edge.Template.CreationResultStatus.Success)
                 {
-                    loadNewSolution = true;
-                    generateSolutionDirs = true;
+                    var projectFiles = GetProjectFiles(templateDestination);
 
-                    var destination = Path.Combine(location, solutionName);
-                    _solutionFolder = VisualStudioSolution.Create(destination, solutionName, false, AvalonStudioSolution.Extension);
-                }
+                    bool defaultSet = _solutionFolder.Solution.StartupProject != null;
 
-                var templateManager = IoC.Get<TemplateManager>();
-
-                if (await templateManager.CreateTemplate(selectedTemplate, _solutionFolder.Solution.CurrentDirectory, name) == Microsoft.TemplateEngine.Edge.Template.CreationResultStatus.Success)
-                {
-                    if (generateSolutionDirs)
+                    foreach(var projectFile in projectFiles)
                     {
-                        if (!Directory.Exists(_solutionFolder.Solution.CurrentDirectory))
+                        var project = await Project.LoadProjectFileAsync(_solutionFolder.Solution, projectFile);
+                        _solutionFolder.Solution.AddItem(project, _solutionFolder);
+
+                        if (!defaultSet)
                         {
-                            Directory.CreateDirectory(_solutionFolder.Solution.CurrentDirectory);
+                            defaultSet = true;
+                            _solutionFolder.Solution.StartupProject = project;
                         }
                     }
                 }

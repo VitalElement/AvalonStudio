@@ -1,6 +1,7 @@
 ﻿using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
+using AvalonStudio.Projects.OmniSharp.ProjectTypes;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
@@ -252,6 +253,6 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override List<string> ExcludedFiles { get; set; }
 
-        public override Guid ProjectTypeId => throw new NotImplementedException();
+        public override Guid ProjectTypeId => DotNetCoreCSharpProjectType.DotNetCoreCSharpTypeId;
     }
 }
