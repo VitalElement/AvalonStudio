@@ -16,6 +16,10 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Reflection;
 using Microsoft.TemplateEngine.Cli.HelpAndUsage;
+using System.Globalization;
+using Microsoft.TemplateEngine.Orchestrator.RunnableProjects;
+using Microsoft.TemplateEngine.Orchestrator.RunnableProjects.Config;
+using Microsoft.TemplateEngine.Edge.TemplateUpdates;
 
 namespace AvalonStudio
 {
@@ -208,7 +212,7 @@ namespace AvalonStudio
             //Reporter.Output.WriteLine(formatter.Layout());
         }
 
-        private static IReadOnlyDictionary<ITemplateInfo, string> GetLanguagesForTemplateGroups(IReadOnlyList<ITemplateMatchInfo> templateList, string language, string defaultLanguage)
+        public static IReadOnlyDictionary<ITemplateInfo, string> GetLanguagesForTemplateGroups(IReadOnlyList<ITemplateMatchInfo> templateList, string language, string defaultLanguage)
         {
             IEnumerable<IGrouping<string, ITemplateMatchInfo>> grouped = templateList.GroupBy(x => x.Info.GroupIdentity, x => !string.IsNullOrEmpty(x.Info.GroupIdentity));
             Dictionary<ITemplateInfo, string> templateGroupsLanguages = new Dictionary<ITemplateInfo, string>();
@@ -898,6 +902,87 @@ namespace AvalonStudio
 
     public class TemplateManager
     {
+        private const string HostIdentifier = "AvalonStudio";
+        private const string HostVersion = "1.0.0";
+        private const string CommandNameString = "new3";
+
+        private static DefaultTemplateEngineHost CreateHost(bool emitTimings)
+        {
+            var preferences = new Dictionary<string, string>
+            {
+                { "prefs:language", "C#" }
+            };
+
+            try
+            {
+                string versionString = Dotnet.Version().CaptureStdOut().Execute().StdOut;
+                if (!string.IsNullOrWhiteSpace(versionString))
+                {
+                    preferences["dotnet-cli-version"] = versionString.Trim();
+                }
+            }
+            catch
+            { }
+
+            var builtIns = new AssemblyComponentCatalog(new[]
+            {
+                typeof(RunnableProjectGenerator).GetTypeInfo().Assembly,
+                typeof(ConditionalConfig).GetTypeInfo().Assembly,
+                typeof(NupkgInstallUnitDescriptorFactory).GetTypeInfo().Assembly
+            });
+
+            DefaultTemplateEngineHost host = new DefaultTemplateEngineHost(HostIdentifier, HostVersion, CultureInfo.CurrentCulture.Name, preferences, builtIns, new[] { "dotnetcli" });
+
+            if (emitTimings)
+            {
+                host.OnLogTiming = (label, duration, depth) =>
+                {
+                    string indent = string.Join("", Enumerable.Repeat("  ", depth));
+                    Console.WriteLine($"{indent} {label} {duration.TotalMilliseconds}");
+                };
+            }
+
+
+            return host;
+        }
+
+        private static void FirstRun(IEngineEnvironmentSettings environmentSettings, IInstaller installer)
+        {
+            string baseDir = Environment.ExpandEnvironmentVariables("%DN3%");
+
+            if (baseDir.Contains('%'))
+            {
+                Assembly a = typeof(App).GetTypeInfo().Assembly;
+                string path = new Uri(a.CodeBase, UriKind.Absolute).LocalPath;
+                path = Path.GetDirectoryName(path);
+                Environment.SetEnvironmentVariable("DN3", path);
+            }
+
+            List<string> toInstallList = new List<string>();
+            Paths paths = new Paths(environmentSettings);
+
+            if (paths.FileExists(paths.Global.DefaultInstallPackageList))
+            {
+                toInstallList.AddRange(paths.ReadAllText(paths.Global.DefaultInstallPackageList).Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries));
+            }
+
+            if (paths.FileExists(paths.Global.DefaultInstallTemplateList))
+            {
+                toInstallList.AddRange(paths.ReadAllText(paths.Global.DefaultInstallTemplateList).Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries));
+            }
+
+            if (toInstallList.Count > 0)
+            {
+                for (int i = 0; i < toInstallList.Count; i++)
+                {
+                    toInstallList[i] = toInstallList[i].Replace("\r", "")
+                                                        .Replace('\\', Path.DirectorySeparatorChar);
+                }
+
+                installer.InstallPackages(toInstallList);
+            }
+        }
+
         private readonly ITelemetryLogger _telemetryLogger;
         private readonly TemplateCreator _templateCreator;
         private readonly SettingsLoader _settingsLoader;
@@ -915,74 +1000,109 @@ namespace AvalonStudio
         private readonly Action<IEngineEnvironmentSettings, IInstaller> _onFirstRun;
         private readonly Func<string> _inputGetter = () => Console.ReadLine();
 
-        public TemplateManager(string commandName, ITemplateEngineHost host, ITelemetryLogger telemetryLogger, Action<IEngineEnvironmentSettings, IInstaller> onFirstRun, INewCommandInput commandInput, string hivePath)
+        public TemplateManager()
         {
-            _telemetryLogger = telemetryLogger;
-            host = new ExtendedTemplateEngineHost(host, this);
-            EnvironmentSettings = new EngineEnvironmentSettings(host, x => new SettingsLoader(x), hivePath);
+            var host = new ExtendedTemplateEngineHost(CreateHost(false), this);
+            EnvironmentSettings = new EngineEnvironmentSettings(host, x => new SettingsLoader(x), null);
             _settingsLoader = (SettingsLoader)EnvironmentSettings.SettingsLoader;
             Installer = new Installer(EnvironmentSettings);
             _templateCreator = new TemplateCreator(EnvironmentSettings);
             _aliasRegistry = new AliasRegistry(EnvironmentSettings);
-            CommandName = commandName;
+            CommandName = CommandNameString;
             _paths = new Paths(EnvironmentSettings);
-            _onFirstRun = onFirstRun;
+            _onFirstRun = FirstRun;
             _hostDataLoader = new HostSpecificDataLoader(EnvironmentSettings.SettingsLoader);
-            _commandInput = commandInput;
+            _commandInput = new NewCommandInputCli(CommandNameString);
 
             if (!EnvironmentSettings.Host.TryGetHostParamDefault("prefs:language", out _defaultLanguage))
             {
                 _defaultLanguage = null;
             }
 
-            var matches = QueryForTemplateMatches();
+            _commandInput.OnExecute(ExecuteAsync);
+        }
+
+        public void Initialise(bool forceCacheRebuild = false)
+        {
+            if (!ConfigureLocale())
+            {
+                throw new Exception("TemplatingEngine: Unable to configure Locale");
+            }
+
+            if (!Initialize())
+            {
+                throw new Exception("TemplatingEngine: Unable to initialise");
+            }
+
+            try
+            {
+                _settingsLoader.RebuildCacheFromSettingsIfNotCurrent(forceCacheRebuild);
+            }
+            catch (EngineInitializationException eiex)
+            {
+                ////Reporter.Error.WriteLine(eiex.Message.Bold().Red());
+                ////Reporter.Error.WriteLine(LocalizableStrings.SettingsReadError);
+                throw new Exception("TemplateingEnging: Unable to rebuild cache.");
+            }
+        }
+
+        private IReadOnlyList<ITemplateInfo> ListTemplates(string language)
+        {
+            var templateList = TemplateListResolver.GetTemplateResolutionResult(_settingsLoader.UserTemplateCache.TemplateInfo, _hostDataLoader, _commandInput, _defaultLanguage);
+
+            if (templateList.TryGetUnambiguousTemplateGroupToUse(out IReadOnlyList<ITemplateMatchInfo> unambiguousTemplateGroupForDetailDisplay))
+            {
+                return unambiguousTemplateGroupForDetailDisplay.Where(t => t.IsMatch).Select(t=>t.Info).ToList().AsReadOnly();
+            }
+
+            var ambiguous = templateList.GetBestTemplateMatchList(true);
+
+            var groups = HelpForTemplateResolution.GetLanguagesForTemplateGroups(ambiguous, language, "C#");
+
+            return groups.Keys.ToList().AsReadOnly();
+        }
+
+        public IReadOnlyList<ITemplateInfo> ListProjectTemplates(string language)
+        {
+            _commandInput.ResetArgs("--list", "--language", language, "--type", "project");
+
+            return ListTemplates(language);
+        }
+
+        public IReadOnlyList<ITemplateInfo> ListItemTemplates (string language)
+        {
+            _commandInput.ResetArgs("--list", "--language", language, "--type", "item");
+
+            return ListTemplates(language);
+        }
+
+        public void InstallTemplates(params string[] paths)
+        {
+            /*var args = paths.Prepend("--install");
+            _commandInput.ResetArgs(args.ToArray());*/
+
+            Installer.InstallPackages(paths);
         }
 
         private bool ConfigureLocale()
         {
-            if (!string.IsNullOrEmpty(_commandInput.Locale))
-            {
-                string newLocale = _commandInput.Locale;
-                if (!ValidateLocaleFormat(newLocale))
-                {
-                    ////Reporter.Error.WriteLine(string.Format(LocalizableStrings.BadLocaleError, newLocale).Bold().Red());
-                    return false;
-                }
+            string newLocale = CultureInfo.CurrentCulture.IetfLanguageTag;
 
-                EnvironmentSettings.Host.UpdateLocale(newLocale);
-                // cache the templates for the new locale
-                _settingsLoader.Reload();
+            if (!ValidateLocaleFormat(newLocale))
+            {
+                ////Reporter.Error.WriteLine(string.Format(LocalizableStrings.BadLocaleError, newLocale).Bold().Red());
+                return false;
             }
+
+            EnvironmentSettings.Host.UpdateLocale(newLocale);
+            // cache the templates for the new locale
+            _settingsLoader.Reload();
 
             return true;
         }
 
         private bool Initialize()
         {
-            bool ephemeralHiveFlag = _commandInput.HasDebuggingFlag("--debug:ephemeral-hive");
-
-            if (ephemeralHiveFlag)
-            {
-                EnvironmentSettings.Host.VirtualizeDirectory(_paths.User.BaseDir);
-            }
-
-            bool reinitFlag = _commandInput.HasDebuggingFlag("--debug:reinit");
-            if (reinitFlag)
-            {
-                _paths.Delete(_paths.User.BaseDir);
-            }
-
-            // Note: this leaves things in a weird state. Might be related to the localized caches.
-            // not sure, need to look into it.
-            if (reinitFlag || _commandInput.HasDebuggingFlag("--debug:reset-config"))
-            {
-                _paths.Delete(_paths.User.AliasesFile);
-                _paths.Delete(_paths.User.SettingsFile);
-                _settingsLoader.UserTemplateCache.DeleteAllLocaleCacheFiles();
-                _settingsLoader.Reload();
-                return false;
-            }
-
             if (!_paths.Exists(_paths.User.BaseDir) || !_paths.Exists(_paths.User.FirstRunCookie))
             {
                 if (!_commandInput.IsQuietFlagSpecified)
@@ -994,18 +1114,12 @@ namespace AvalonStudio
                 _paths.WriteAllText(_paths.User.FirstRunCookie, "");
             }
 
-            if (_commandInput.HasDebuggingFlag("--debug:showconfig"))
-            {
-                ShowConfig();
-                return false;
-            }
-
             return true;
         }
 
         private void ShowConfig()
         {
-            
+
         }
 
 
@@ -1206,7 +1320,7 @@ namespace AvalonStudio
 
                 if (commandParseFailureMessage != null)
                 {
-                  //  Reporter.Error.WriteLine(commandParseFailureMessage.Bold().Red());
+                    //  Reporter.Error.WriteLine(commandParseFailureMessage.Bold().Red());
                 }
 
                 //Reporter.Error.WriteLine(string.Format(LocalizableStrings.RunHelpForInformationAboutAcceptedParameters, $"{CommandName} {TemplateName}").Bold().Red());
@@ -1226,7 +1340,7 @@ namespace AvalonStudio
                     //Reporter.Error.WriteLine(cx.Message.Bold().Red());
                     if (cx.InnerException != null)
                     {
-                      //  Reporter.Error.WriteLine(cx.InnerException.Message.Bold().Red());
+                        //  Reporter.Error.WriteLine(cx.InnerException.Message.Bold().Red());
                     }
 
                     return CreationResultStatus.CreateFailed;
@@ -1276,7 +1390,7 @@ namespace AvalonStudio
                 //Reporter.Error.WriteLine(cx.Message.Bold().Red());
                 if (cx.InnerException != null)
                 {
-                  //  Reporter.Error.WriteLine(cx.InnerException.Message.Bold().Red());
+                    //  Reporter.Error.WriteLine(cx.InnerException.Message.Bold().Red());
                 }
 
                 return CreationResultStatus.CreateFailed;
@@ -1296,7 +1410,7 @@ namespace AvalonStudio
 
                     if (!string.IsNullOrEmpty(template.ThirdPartyNotices))
                     {
-                      //  Reporter.Output.WriteLine(string.Format(LocalizableStrings.ThirdPartyNotices, template.ThirdPartyNotices));
+                        //  Reporter.Output.WriteLine(string.Format(LocalizableStrings.ThirdPartyNotices, template.ThirdPartyNotices));
                     }
 
                     //HandlePostActions(instantiateResult);
@@ -1413,7 +1527,7 @@ namespace AvalonStudio
 
         private CreationResultStatus EnterInstallFlow()
         {
-            _telemetryLogger.TrackEvent(CommandName + TelemetryConstants.InstallEventSuffix, new Dictionary<string, string> { { TelemetryConstants.ToInstallCount, _commandInput.ToInstallList.Count.ToString() } });
+            _telemetryLogger?.TrackEvent(CommandName + TelemetryConstants.InstallEventSuffix, new Dictionary<string, string> { { TelemetryConstants.ToInstallCount, _commandInput.ToInstallList.Count.ToString() } });
 
             Installer.InstallPackages(_commandInput.ToInstallList);
 
