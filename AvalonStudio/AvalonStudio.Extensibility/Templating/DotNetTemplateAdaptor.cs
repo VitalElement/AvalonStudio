@@ -1,9 +1,10 @@
 ﻿using Microsoft.TemplateEngine.Edge.Template;
+using System.Collections.Generic;
 
 namespace AvalonStudio.Extensibility.Templating
 {
     public class DotNetTemplateAdaptor : ITemplate
-    {
+    { 
         private ITemplateMatchInfo _template;
         private TemplateKind _kind;
 
@@ -36,6 +37,7 @@ namespace AvalonStudio.Extensibility.Templating
             }
         }
 
+        public IReadOnlyList<string> Classifications => _template.Info.Classifications;
 
         public TemplateKind Kind => _kind;
 

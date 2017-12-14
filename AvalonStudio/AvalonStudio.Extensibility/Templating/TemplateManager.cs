@@ -132,7 +132,14 @@ namespace AvalonStudio.Extensibility.Templating
 
         public IReadOnlyList<ITemplate> ListItemTemplates(string language)
         {
-            _commandInput.ResetArgs("--list", "--language", language, "--type", "item");
+            if (!string.IsNullOrEmpty(language))
+            {
+                _commandInput.ResetArgs("--list", "--language", language, "--type", "item");
+            }
+            else
+            {
+                _commandInput.ResetArgs("--list", "--type", "item");
+            }
 
             return ListTemplates(language, TemplateKind.Item);
         }
