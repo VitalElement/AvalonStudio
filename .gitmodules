@@ -9,4 +9,4 @@
 	url = https://github.com/danwalmsley/Avalonia.Ide.git
 [submodule "templating"]
 	path = templating
-	url = https://github.com/dotnet/templating.git
+	url = https://github.com/VitalElement/templating.git
