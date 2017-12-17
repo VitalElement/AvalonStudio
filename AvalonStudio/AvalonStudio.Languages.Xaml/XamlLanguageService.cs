@@ -45,6 +45,28 @@ namespace AvalonStudio.Languages.Xaml
             return result;
         }
 
+        private static CodeCompletionKind FromAvaloniaCompletionKind (CompletionKind kind)
+        {
+            CodeCompletionKind result = CodeCompletionKind.None;
+
+            switch(kind)
+            {
+                case CompletionKind.Class:
+                    return CodeCompletionKind.ClassPublic;
+
+                case CompletionKind.Enum:
+                    return CodeCompletionKind.EnumMemberPublic;
+
+                case CompletionKind.Property:
+                    return CodeCompletionKind.PropertyPublic;
+
+                case CompletionKind.Namespace:
+                    return CodeCompletionKind.NamespacePublic;
+            }
+
+            return result;
+        }
+
         public override async Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             var results = new CodeCompletionResults();
@@ -65,7 +87,7 @@ namespace AvalonStudio.Languages.Xaml
                     results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
                     {
                         BriefComment = completion.Description,
-                        Kind = CodeCompletionKind.PropertyPublic,
+                        Kind = FromAvaloniaCompletionKind(completion.Kind),
                         RecommendImmediateSuggestions = completion.InsertText.Contains("=") || completion.InsertText.EndsWith('.')
                     });
                 }
