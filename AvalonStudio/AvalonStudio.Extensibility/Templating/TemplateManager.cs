@@ -191,21 +191,15 @@ namespace AvalonStudio.Extensibility.Templating
         {
             if (!_paths.Exists(_paths.User.BaseDir) || !_paths.Exists(_paths.User.FirstRunCookie))
             {
-                if (!_commandInput.IsQuietFlagSpecified)
-                {
-                    ////Reporter.Output.WriteLine(LocalizableStrings.GettingReady);
-                }
-
                 ConfigureEnvironment();
-                _paths.WriteAllText(_paths.User.FirstRunCookie, "");
+
+                if (_settingsLoader.UserTemplateCache.TemplateInfo.Count > 0)
+                {
+                    _paths.WriteAllText(_paths.User.FirstRunCookie, "");
+                }
             }
 
             return true;
-        }
-
-        private void ShowConfig()
-        {
-
         }
 
         private void ConfigureEnvironment()
