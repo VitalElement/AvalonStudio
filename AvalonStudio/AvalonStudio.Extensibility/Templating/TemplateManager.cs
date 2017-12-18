@@ -73,9 +73,11 @@ namespace AvalonStudio.Extensibility.Templating
             }
 
             _commandInput.ResetArgs();
+
+            Initialise();
         }
 
-        public void Initialise(bool forceCacheRebuild = false)
+        private void Initialise(bool forceCacheRebuild = false)
         {
             if (!ConfigureLocale())
             {
@@ -309,39 +311,9 @@ namespace AvalonStudio.Extensibility.Templating
 
         private static void FirstRun(IEngineEnvironmentSettings environmentSettings, IInstaller installer)
         {
-            string baseDir = Environment.ExpandEnvironmentVariables("%DN3%");
+            var packages = new List<string> { "VitalElement.AvalonStudio.Templates" };
 
-            if (baseDir.Contains('%'))
-            {
-                Assembly a = typeof(TemplateManager).GetTypeInfo().Assembly;
-                string path = new Uri(a.CodeBase, UriKind.Absolute).LocalPath;
-                path = Path.GetDirectoryName(path);
-                Environment.SetEnvironmentVariable("DN3", path);
-            }
-
-            List<string> toInstallList = new List<string>();
-            Paths paths = new Paths(environmentSettings);
-
-            if (paths.FileExists(paths.Global.DefaultInstallPackageList))
-            {
-                toInstallList.AddRange(paths.ReadAllText(paths.Global.DefaultInstallPackageList).Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries));
-            }
-
-            if (paths.FileExists(paths.Global.DefaultInstallTemplateList))
-            {
-                toInstallList.AddRange(paths.ReadAllText(paths.Global.DefaultInstallTemplateList).Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries));
-            }
-
-            if (toInstallList.Count > 0)
-            {
-                for (int i = 0; i < toInstallList.Count; i++)
-                {
-                    toInstallList[i] = toInstallList[i].Replace("\r", "")
-                                                        .Replace('\\', Path.DirectorySeparatorChar);
-                }
-
-                installer.InstallPackages(toInstallList);
-            }
+            installer.InstallPackages(packages);
         }
 
         public void BeforeActivation()
