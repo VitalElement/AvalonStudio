@@ -42,7 +42,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             _timer.Stop();
 
-            if (_editor.Document != null)
+            if (_editor?.Document != null)
             {
                 var dataContext = await OnBeforePopupOpen();
 
