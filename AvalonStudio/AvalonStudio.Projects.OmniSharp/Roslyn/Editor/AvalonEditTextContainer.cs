@@ -14,7 +14,7 @@ namespace RoslynPad.Editor.Windows
         private SourceText _currentText;
         private bool _updating;
 
-        public ITextDocument Document { get; }
+        public ITextDocument Document { get; private set; }
 
         /// <summary>
         /// If set, <see cref="TextEditor.CaretOffset"/> will be updated.
@@ -34,6 +34,8 @@ namespace RoslynPad.Editor.Windows
         public void Dispose()
         {
             Document.Changed -= DocumentOnChanged;
+            Document = null;
+            Editor = null;
         }
 
         private void DocumentOnChanged(object sender, DocumentChangeEventArgs e)

@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
+using Roslyn.Utilities;
 using RoslynPad.Editor.Windows;
 using RoslynPad.Roslyn.Diagnostics;
 using System;
@@ -21,6 +22,7 @@ using System.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace RoslynPad.Roslyn
@@ -261,10 +263,16 @@ namespace RoslynPad.Roslyn
             var documentId = GetDocumentId(file);
             var textContainer = _openDocumentTextLoaders[documentId];
 
+            var doc = GetDocument(file);
+
+            var text = doc.GetTextAsync(CancellationToken.None).WaitAndGetResult_CanCallOnBackground(CancellationToken.None);
+            var version = doc.GetTextVersionAsync(CancellationToken.None).WaitAndGetResult_CanCallOnBackground(CancellationToken.None);
+
             _openDocumentTextLoaders.Remove(documentId);
             _diagnosticsUpdatedNotifiers.TryRemove(documentId, out Action<DiagnosticsUpdatedArgs> value);
+            textContainer.Dispose();
 
-            OnDocumentClosed(documentId, TextLoader.From(textContainer, VersionStamp.Default));
+            OnDocumentClosed(documentId, TextLoader.From(TextAndVersion.Create(text, version, doc.FilePath)));
         }
 
         public new void SetCurrentSolution(Solution solution)
