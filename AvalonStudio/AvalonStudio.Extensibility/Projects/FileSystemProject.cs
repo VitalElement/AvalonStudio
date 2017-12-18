@@ -457,13 +457,20 @@
 
         public void Dispose()
         {
-            folderSystemWatcher.Created -= FolderSystemWatcher_Created;
-            folderSystemWatcher.Renamed -= FolderSystemWatcher_Renamed;
-            folderSystemWatcher.Deleted -= FolderSystemWatcher_Deleted;
-            fileSystemWatcher.Changed -= FileSystemWatcher_Changed;
-            fileSystemWatcher.Created -= FileSystemWatcher_Created;
-            fileSystemWatcher.Renamed -= FileSystemWatcher_Renamed;
-            fileSystemWatcher.Deleted -= FileSystemWatcher_Deleted;
+            if (folderSystemWatcher != null)
+            {
+                folderSystemWatcher.Created -= FolderSystemWatcher_Created;
+                folderSystemWatcher.Renamed -= FolderSystemWatcher_Renamed;
+                folderSystemWatcher.Deleted -= FolderSystemWatcher_Deleted;
+            }
+
+            if (fileSystemWatcher != null)
+            {
+                fileSystemWatcher.Changed -= FileSystemWatcher_Changed;
+                fileSystemWatcher.Created -= FileSystemWatcher_Created;
+                fileSystemWatcher.Renamed -= FileSystemWatcher_Renamed;
+                fileSystemWatcher.Deleted -= FileSystemWatcher_Deleted;
+            }
         }
 
         #endregion IProject Implementation
