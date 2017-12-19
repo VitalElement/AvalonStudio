@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Toolchains.MSBuild
+namespace AvalonStudio.Toolchains.MSBuild
 {
     using AvalonStudio.CommandLineTools;
     using AvalonStudio.GlobalSettings;
@@ -34,7 +34,7 @@
         {
             return await Task.Factory.StartNew(() =>
             {
-                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, "build", (s, e) =>
+                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, "msbuild /m", (s, e) =>
                 {
                     console.WriteLine(e.Data);
 
