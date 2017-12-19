@@ -26,7 +26,7 @@ namespace AvalonStudio.Languages.CSharp
 
         public IFileDocumentTabViewModel CreateViewModel(ISourceFile file)
         {
-            return new TextEditorViewModel(file);
+            return new TextEditorViewModel(file) { IsReadOnly = true };
         }
     }
 }

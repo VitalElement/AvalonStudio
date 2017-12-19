@@ -1,28 +1,31 @@
 ﻿using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
+using Microsoft.CodeAnalysis;
 using System;
 using System.IO;
 
 namespace AvalonStudio.Languages.CSharp
 {
-    class MetaDataFile : ISourceFile
+    public class MetaDataFile : ISourceFile
     {
         private string _filePath;
         private string _extension;
         private string _currentDirectory;
-        private string _location;
-        private string _source;        
+        private string _location;        
+        private Document _document;
 
-        public MetaDataFile(IProject parentProject, string metaDataPath, string source)
+        public MetaDataFile(IProject parentProject, Document document, string metaDataPath, string name)
         {
             _filePath = metaDataPath;
             _extension = Path.GetExtension(metaDataPath);
             _currentDirectory = Path.GetDirectoryName(metaDataPath);
-            _location = _filePath;
-            _source = source;
+            _location = _filePath;            
             Project = parentProject;
-            Name = metaDataPath;
+            Name = $"{name} [metadata]";
+            _document = document;
         }
+
+        public Document Document => _document;
 
         public string FilePath => _filePath;
 
@@ -59,9 +62,11 @@ namespace AvalonStudio.Languages.CSharp
 
         public Stream OpenText()
         {
+            var source = _document.GetTextAsync().GetAwaiter().GetResult().ToString();            
+
             MemoryStream stream = new MemoryStream();
             StreamWriter writer = new StreamWriter(stream);
-            writer.Write(_source);
+            writer.Write(source);
             writer.Flush();
             stream.Position = 0;
             return stream;

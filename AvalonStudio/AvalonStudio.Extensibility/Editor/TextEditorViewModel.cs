@@ -22,6 +22,7 @@ namespace AvalonStudio.Extensibility.Editor
         private string _sourceText;
         private IEditor _documentAccessor;
         private CompositeDisposable _disposables;
+        private bool _isReadOnly;
 
         public TextEditorViewModel(ISourceFile file) : base(file)
         {
@@ -51,6 +52,12 @@ namespace AvalonStudio.Extensibility.Editor
                 }
             });
             //ZoomLevel = _shell.GlobalZoomLevel;
+        }        
+
+        public bool IsReadOnly
+        {
+            get { return _isReadOnly; }
+            set { this.RaiseAndSetIfChanged(ref _isReadOnly, value); }
         }
 
         public override void Close()

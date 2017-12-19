@@ -33,6 +33,7 @@
 
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
+        private MetadataHelper _metadataHelper;
 
         public CSharpLanguageService()
         {
@@ -46,6 +47,8 @@
                 string newName = Char.ToLower(propertyName[0]) + propertyName.Substring(1);
                 return "_" + newName;
             });
+
+            _metadataHelper = new MetadataHelper(new AssemblyLoader());
         }
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
@@ -167,6 +170,11 @@
 
         public async Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char previousChar, string filter)
         {
+            if (editor.SourceFile is MetaDataFile)
+            {
+                return null;
+            }
+
             var result = new CodeCompletionResults();
 
             var dataAssociation = GetAssociatedData(editor);
@@ -251,6 +259,11 @@
 
         public int Format(IEditor editor, uint offset, uint length, int cursor)
         {
+            if (editor.SourceFile is MetaDataFile)
+            {
+                return cursor;
+            }
+
             var dataAssociation = GetAssociatedData(editor);
 
             var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(editor.SourceFile);
@@ -312,7 +325,7 @@
         {
             var dataAssociation = GetAssociatedData(editor);
 
-            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(editor.SourceFile);
+            var document = GetDocument(dataAssociation, editor.SourceFile);
 
             var semanticModel = await document.GetSemanticModelAsync();
 
@@ -340,22 +353,17 @@
                 }
                 else if (location.IsInMetadata)
                 {
-                    var _metadataHelper = new MetadataHelper(new AssemblyLoader());
                     var timeout = 5000;
                     var cancellationSource = new CancellationTokenSource(TimeSpan.FromMilliseconds(timeout));
                     var (metadataDocument, _) = await _metadataHelper.GetAndAddDocumentFromMetadata(document.Project, symbol, cancellationSource.Token);
                     if (metadataDocument != null)
                     {
-                        var text = await metadataDocument.GetTextAsync(cancellationSource.Token);
                         cancellationSource = new CancellationTokenSource(TimeSpan.FromMilliseconds(timeout));
 
                         var metadataLocation = await _metadataHelper.GetSymbolLocationFromMetadata(symbol, metadataDocument, cancellationSource.Token);
                         var lineSpan = metadataLocation.GetMappedLineSpan();
 
-                        var workspace = RoslynWorkspace.GetWorkspace(editor.SourceFile.Project.Solution);
-
-                        var metaDataFile = new MetaDataFile(editor.SourceFile.Project, metadataDocument.Name, text.ToString());
-                        workspace.AddDocument(workspace.GetProject(editor.SourceFile.Project), metaDataFile);
+                        var metaDataFile = new MetaDataFile(editor.SourceFile.Project, metadataDocument, metadataDocument.Name, _metadataHelper.GetSymbolName(symbol));
 
                         return new GotoDefinitionInfo
                         {
@@ -364,35 +372,41 @@
                             Column = lineSpan.StartLinePosition.Character + 1,
                             MetaDataFile = metaDataFile
                         };
-                        //response = new GotoDefinitionResponse
-                        //{
-                        //    Line = lineSpan.StartLinePosition.Line,
-                        //    Column = lineSpan.StartLinePosition.Character,
-                        //    MetadataSource = new MetadataSource()
-                        //    {
-                        //        AssemblyName = symbol.ContainingAssembly.Name,
-                        //        ProjectName = document.Project.Name,
-                        //        TypeName = _metadataHelper.GetSymbolName(symbol)
-                        //    },
-                        //};
                     }
-
-                    throw new NotImplementedException();
                 }
             }
 
             return null;
         }
 
+        private Microsoft.CodeAnalysis.Document GetDocument(CSharpDataAssociation dataAssociation, ISourceFile file, RoslynWorkspace workspace = null)
+        {
+            if (file is MetaDataFile metaDataFile)
+            {
+                return metaDataFile.Document;
+            }
+            else
+            {
+                if (workspace == null)
+                {
+                    workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
+                }
+
+                return workspace.GetDocument(file);
+            }
+        }
+
         public async Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             var dataAssociation = GetAssociatedData(editor);
 
-            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(editor.SourceFile);
+            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
+
+            var document = GetDocument(dataAssociation, editor.SourceFile, workspace);
 
             var semanticModel = await document.GetSemanticModelAsync();
 
-            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, offset, RoslynWorkspace.GetWorkspace(dataAssociation.Solution));
+            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, offset, workspace);
 
             Symbol result = null;
 
@@ -477,9 +491,7 @@
 
         public void RegisterSourceFile(IEditor editor)
         {
-            CSharpDataAssociation association = null;
-
-            if (dataAssociations.TryGetValue(editor, out association))
+            if (dataAssociations.TryGetValue(editor, out CSharpDataAssociation association))
             {
                 throw new Exception("Source file already registered with language service.");
             }
@@ -491,75 +503,78 @@
                 Solution = editor.SourceFile.Project.Solution
             };
 
-            var avaloniaEditTextContainer = new AvalonEditTextContainer(editor.Document) { Editor = editor };
-
-            RoslynWorkspace.GetWorkspace(association.Solution).OpenDocument(editor.SourceFile, avaloniaEditTextContainer, (diagnostics) =>
-            {
-                var dataAssociation = GetAssociatedData(editor);
-
-                //var results = new TextSegmentCollection<Diagnostic>();
-
-                //foreach (var diagnostic in diagnostics.Diagnostics)
-                //{
-                //    results.Add(FromRoslynDiagnostic(diagnostic, editor.SourceFile.Location, editor.SourceFile.Project));
-                //}
-
-                //(Diagnostics as Subject<TextSegmentCollection<Diagnostic>>).OnNext(results);
-            });
-
             dataAssociations.Add(editor, association);
 
-            association.TextInputHandler = (sender, e) =>
+            if (!(editor.SourceFile is MetaDataFile))
             {
-                switch (e.Text)
+                var avaloniaEditTextContainer = new AvalonEditTextContainer(editor.Document) { Editor = editor };
+
+                RoslynWorkspace.GetWorkspace(association.Solution).OpenDocument(editor.SourceFile, avaloniaEditTextContainer, (diagnostics) =>
                 {
-                    case "}":
-                    case ";":
-                        editor.IndentLine(editor.Line);
-                        break;
+                    var dataAssociation = GetAssociatedData(editor);
 
-                    case "{":
-                        if (IndentationStrategy != null)
-                        {
-                            editor.IndentLine(editor.Line);
-                        }
-                        break;
-                }
+                    //var results = new TextSegmentCollection<Diagnostic>();
 
-                OpenBracket(editor, editor.Document, e.Text);
-                CloseBracket(editor, editor.Document, e.Text);
-            };
+                    //foreach (var diagnostic in diagnostics.Diagnostics)
+                    //{
+                    //    results.Add(FromRoslynDiagnostic(diagnostic, editor.SourceFile.Location, editor.SourceFile.Project));
+                    //}
 
-            association.BeforeTextInputHandler = (sender, e) =>
-            {
-                switch (e.Text)
+                    //(Diagnostics as Subject<TextSegmentCollection<Diagnostic>>).OnNext(results);
+                });
+
+                association.TextInputHandler = (sender, e) =>
                 {
-                    case "\n":
-                    case "\r\n":
-                        var nextChar = ' ';
-
-                        if (editor.CaretOffset != editor.Document.TextLength)
-                        {
-                            nextChar = editor.Document.GetCharAt(editor.CaretOffset);
-                        }
-
-                        if (nextChar == '}')
-                        {
-                            var newline = "\r\n"; // TextUtilities.GetNewLineFromDocument(editor.Document, editor.TextArea.Caret.Line);
-                            editor.Document.Insert(editor.CaretOffset, newline);
-
-                            editor.Document.TrimTrailingWhiteSpace(editor.Line - 1);
-
+                    switch (e.Text)
+                    {
+                        case "}":
+                        case ";":
                             editor.IndentLine(editor.Line);
+                            break;
 
-                            editor.CaretOffset -= newline.Length;
-                        }
-                        break;
-                }
-            };
+                        case "{":
+                            if (IndentationStrategy != null)
+                            {
+                                editor.IndentLine(editor.Line);
+                            }
+                            break;
+                    }
 
-            editor.TextEntered += association.TextInputHandler;
-            editor.TextEntering += association.BeforeTextInputHandler;
+                    OpenBracket(editor, editor.Document, e.Text);
+                    CloseBracket(editor, editor.Document, e.Text);
+                };
+
+                association.BeforeTextInputHandler = (sender, e) =>
+                {
+                    switch (e.Text)
+                    {
+                        case "\n":
+                        case "\r\n":
+                            var nextChar = ' ';
+
+                            if (editor.CaretOffset != editor.Document.TextLength)
+                            {
+                                nextChar = editor.Document.GetCharAt(editor.CaretOffset);
+                            }
+
+                            if (nextChar == '}')
+                            {
+                                var newline = "\r\n"; // TextUtilities.GetNewLineFromDocument(editor.Document, editor.TextArea.Caret.Line);
+                                editor.Document.Insert(editor.CaretOffset, newline);
+
+                                editor.Document.TrimTrailingWhiteSpace(editor.Line - 1);
+
+                                editor.IndentLine(editor.Line);
+
+                                editor.CaretOffset -= newline.Length;
+                            }
+                            break;
+                    }
+                };
+
+                editor.TextEntered += association.TextInputHandler;
+                editor.TextEntering += association.BeforeTextInputHandler;
+            }
         }
 
         private CSharpDataAssociation GetAssociatedData(IEditor editor)
@@ -673,9 +688,7 @@
 
             var dataAssociation = GetAssociatedData(editor);
 
-            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
-
-            var document = workspace.GetDocument(editor.SourceFile);
+            var document = GetDocument(dataAssociation, editor.SourceFile);
 
             if (document == null)
             {
@@ -764,7 +777,10 @@
             editor.TextEntered -= association.TextInputHandler;
             editor.TextEntering -= association.BeforeTextInputHandler;
 
-            RoslynWorkspace.GetWorkspace(association.Solution).CloseDocument(editor.SourceFile);
+            if (!(editor.SourceFile is MetaDataFile))
+            {
+                RoslynWorkspace.GetWorkspace(association.Solution).CloseDocument(editor.SourceFile);
+            }
 
             association.Solution = null;
             dataAssociations.Remove(editor);

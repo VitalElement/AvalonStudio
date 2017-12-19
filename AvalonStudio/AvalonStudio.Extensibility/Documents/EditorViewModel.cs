@@ -37,7 +37,7 @@ namespace AvalonStudio.Controls
                     if (document != null)
                     {
                         await shell.OpenDocumentAsync(document, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
-                    }
+                    }                    
                 }
                 else
                 {
@@ -50,7 +50,7 @@ namespace AvalonStudio.Controls
         {
             Console.WriteLine("Dispose VM");
         }
-
+        
         public IMenu ContextMenu => IoC.Get<IShell>().BuildEditorContextMenu();
 
         public ReactiveCommand GotoDefinitionCommand { get; }

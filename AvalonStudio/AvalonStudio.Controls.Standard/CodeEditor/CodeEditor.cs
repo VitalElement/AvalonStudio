@@ -499,7 +499,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             if (_isLoaded)
             {
-                if (!_suppressIsDirtyNotifications)
+                if (!_suppressIsDirtyNotifications && !IsReadOnly)
                 {
                     IsDirty = true;
 

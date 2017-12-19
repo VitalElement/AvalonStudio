@@ -48,8 +48,9 @@
                                    FontSize="{Binding VisualFontSize}"                                  
                                    SourceFile="{Binding SourceFile}" 
                                    IsDirty="{Binding IsDirty}"
-                                   SourceText="{Binding SourceText}"                                   
-                                   HighlightSelectedWord="False"     
+                                   IsReadOnly="{Binding IsReadOnly}"
+                                   SourceText="{Binding SourceText}"
+                                   HighlightSelectedWord="False"
                                    ColorScheme="{Binding ColorScheme}"
                                    DocumentAccessor="{Binding DocumentAccessor}">
                 </editor:CodeEditor>

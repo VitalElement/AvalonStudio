@@ -102,12 +102,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private void _codeEditor_TextEntering (object sender, TextInputEventArgs e)
         {
-            TextEntering?.Invoke(this, e);
+            if (!_codeEditor.IsReadOnly)
+            {
+                TextEntering?.Invoke(this, e);
+            }
         }
 
         private void _codeEditor_TextEntered (object sender, TextInputEventArgs e)
         {
-            TextEntered?.Invoke(this, e);
+            if (!_codeEditor.IsReadOnly)
+            {
+                TextEntered?.Invoke(this, e);
+            }
         }
 
         private void _codeEditor_LostFocus(object sender, Avalonia.Interactivity.RoutedEventArgs e)
