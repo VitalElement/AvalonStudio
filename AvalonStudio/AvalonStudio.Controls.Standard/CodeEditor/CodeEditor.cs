@@ -26,6 +26,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -344,7 +345,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
              this.GetObservableWithHistory(SourceFileProperty).Subscribe((file) =>
             {
                 if (file.Item1 != file.Item2)
-                {                    
+                {
                     using (var fs = file.Item2.OpenText())
                     {
                         using (var reader = new StreamReader(fs))
@@ -353,7 +354,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             {
                                 FileName = file.Item2.Location
                             };
-                        }                    
+                        }
                     }
 
                     DocumentAccessor = new EditorAdaptor(this);
@@ -801,7 +802,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     var position = visualLocation - TextArea.TextView.ScrollOffset;
                     position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
 
-                    _completionAssistantControl.SetLocation(position); 
+                    _completionAssistantControl.SetLocation(position);
                 });
 
                 _disposables.Add(_intellisenseManager);
@@ -839,7 +840,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             TextArea.TextEntered += TextArea_TextEntered;
 
             DoCodeAnalysisAsync().GetAwaiter();
-        }
+        }        
 
         private void TextArea_TextEntered(object sender, TextInputEventArgs e)
         {

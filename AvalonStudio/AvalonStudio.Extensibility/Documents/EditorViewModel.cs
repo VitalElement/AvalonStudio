@@ -44,6 +44,11 @@ namespace AvalonStudio.Controls
                     await shell.OpenDocumentAsync(definition.MetaDataFile, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
                 }
             });
+
+            RenameSymbolCommand = ReactiveCommand.Create(async () =>
+            {
+                await Editor.LanguageService?.RenameSymbol(Editor, "test");   
+            });
         }
 
         ~EditorViewModel()
@@ -54,6 +59,8 @@ namespace AvalonStudio.Controls
         public IMenu ContextMenu => IoC.Get<IShell>().BuildEditorContextMenu();
 
         public ReactiveCommand GotoDefinitionCommand { get; }
+
+        public ReactiveCommand RenameSymbolCommand { get; }
 
         public bool IsDirty
         {

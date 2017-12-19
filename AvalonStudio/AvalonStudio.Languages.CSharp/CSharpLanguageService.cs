@@ -15,6 +15,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.FindSymbols;
     using Microsoft.CodeAnalysis.Formatting;
+    using Microsoft.CodeAnalysis.Rename;
     using RoslynPad.Editor.Windows;
     using RoslynPad.Roslyn;
     using RoslynPad.Roslyn.Diagnostics;
@@ -845,6 +846,69 @@
 
         public void Activation()
         {
+        }
+
+        public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo)
+        {
+            if (editor.SourceFile is MetaDataFile)
+            {
+                return null;
+            }
+
+            var dataAssociation = GetAssociatedData(editor);
+
+            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
+
+            var document = GetDocument(dataAssociation, editor.SourceFile, workspace);
+
+            if (document != null)
+            {
+                var sourceText = await document.GetTextAsync();
+
+                var symbol = await SymbolFinder.FindSymbolAtPositionAsync(document, editor.CaretOffset);
+                var solution = workspace.CurrentSolution;
+
+                if (symbol != null)
+                {
+                    try
+                    {
+                        solution = await Renamer.RenameSymbolAsync(solution, symbol, renameTo, workspace.Options);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        return null;
+                    }
+                }
+
+                var changes = new Dictionary<string, SymbolRenameInfo>();
+                var solutionChanges = solution.GetChanges(workspace.CurrentSolution);                
+
+                foreach (var projectChange in solutionChanges.GetProjectChanges())
+                {
+                    foreach (var changedDocumentId in projectChange.GetChangedDocuments())
+                    {
+                        var changedDocument = solution.GetDocument(changedDocumentId);
+
+                        if (!changes.TryGetValue(changedDocument.FilePath, out var modifiedFileResponse))
+                        {
+                            modifiedFileResponse = new SymbolRenameInfo(changedDocument.FilePath);
+                            changes[changedDocument.FilePath] = modifiedFileResponse;
+                        }
+                        
+                        var originalDocument = workspace.CurrentSolution.GetDocument(changedDocumentId);
+                        var linePositionSpanTextChanges = await TextChanges.GetAsync(changedDocument, originalDocument);
+
+                        modifiedFileResponse.Changes = modifiedFileResponse.Changes != null
+                            ? modifiedFileResponse.Changes.Union(linePositionSpanTextChanges)
+                            : linePositionSpanTextChanges;
+
+                    }
+                }
+
+                return changes.Values;
+            }
+
+            return null;
         }
     }
 }
