@@ -1,6 +1,9 @@
 ﻿using AvalonStudio.Documents;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Projects;
+using AvalonStudio.Shell;
 using ReactiveUI;
 using System;
 using System.Threading.Tasks;
@@ -20,12 +23,30 @@ namespace AvalonStudio.Controls
             var settings = GlobalSettings.Settings.GetSettings<EditorSettings>();
 
             _colorScheme = ColorScheme.LoadColorScheme(settings.ColorScheme);
+
+            GotoDefinitionCommand = ReactiveCommand.Create(async () =>
+            {
+                var definition = await Editor.LanguageService?.GotoDefinition(Editor, 1);
+
+                var shell = IoC.Get<IShell>();
+
+                var document = shell.CurrentSolution.FindFile(definition.FileName);
+
+                if(document != null)
+                {
+                    await shell.OpenDocumentAsync(document, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
+                }
+            });
         }
 
         ~EditorViewModel()
         {
             Console.WriteLine("Dispose VM");
         }
+
+        public IMenu ContextMenu => IoC.Get<IShell>().BuildEditorContextMenu();
+
+        public ReactiveCommand GotoDefinitionCommand { get; }
 
         public bool IsDirty
         {

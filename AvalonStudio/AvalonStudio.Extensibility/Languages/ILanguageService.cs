@@ -58,6 +58,8 @@ namespace AvalonStudio.Languages
 
         Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name);
 
+        Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset);
+
         void RegisterSourceFile(IEditor editor);
 
         void UnregisterSourceFile(IEditor editor);

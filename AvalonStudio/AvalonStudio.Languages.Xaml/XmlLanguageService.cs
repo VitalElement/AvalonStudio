@@ -131,5 +131,10 @@ namespace AvalonStudio.Languages.Xaml
         {
             return caret;
         }
+
+        public Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

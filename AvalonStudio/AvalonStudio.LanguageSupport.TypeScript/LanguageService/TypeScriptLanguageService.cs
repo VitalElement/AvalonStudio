@@ -520,5 +520,10 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         public virtual void Activation()
         {
         }
+
+        public Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

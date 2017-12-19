@@ -2,6 +2,7 @@ using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
@@ -33,6 +34,8 @@ namespace AvalonStudio.Shell
         event EventHandler<BuildEventArgs> BuildCompleted;
 
         IWorkspaceTaskRunner TaskRunner { get; }
+
+        IMenu BuildEditorContextMenu();
 
         Perspective CurrentPerspective { get; set; }
         IDocumentTabViewModel SelectedDocument { get; set; }

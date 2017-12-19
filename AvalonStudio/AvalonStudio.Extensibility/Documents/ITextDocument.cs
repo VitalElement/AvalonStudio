@@ -338,6 +338,8 @@ namespace AvalonStudio.Documents
 
         int Column { get; set; }
 
+        ILanguageService LanguageService { get; }
+
         ISourceFile SourceFile { get; }
 
         ITextDocument Document { get; }

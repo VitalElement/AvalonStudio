@@ -1291,5 +1291,10 @@ namespace AvalonStudio.Languages.CPlusPlus
         public void Activation()
         {
         }
+
+        public Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

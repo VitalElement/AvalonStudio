@@ -174,8 +174,6 @@ namespace AvalonStudio
                 extension.Activation();
             }
 
-            var menuBar = IoC.Get<MenuBarDefinition>("MainMenu");
-
             foreach (var commandDefinition in _commandDefinitions)
             {
                 if (commandDefinition.Command != null && commandDefinition.Gesture != null)
@@ -190,7 +188,7 @@ namespace AvalonStudio
 
             var mainMenu = new Extensibility.MainMenu.ViewModels.MainMenuViewModel(menuBuilder);
 
-            menuBuilder.BuildMenuBar(menuBar, mainMenu.Model);
+            menuBuilder.BuildMenuBar(Extensibility.MenuDefinitions.MainMenuBar, mainMenu.Model);
 
             MainMenu = mainMenu;
 
@@ -278,6 +276,17 @@ namespace AvalonStudio
             {
                 DebugMode = !DebugMode;
             });
+        }
+
+        public IMenu BuildEditorContextMenu ()
+        {
+            var menuBuilder = new MenuBuilder(_menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
+
+            var mainMenu = new Extensibility.MainMenu.ViewModels.MainMenuViewModel(menuBuilder);
+
+            menuBuilder.BuildMenuBar(TextEditorContextMenu.EditorContextMenu, mainMenu.Model);
+
+            return mainMenu;
         }
 
         public ReactiveCommand EnableDebugModeCommand { get; }
@@ -435,7 +444,7 @@ namespace AvalonStudio
 
                 if (selectLine || debugHighlight)
                 {
-                    fileTab.Editor.GotoPosition(line, startColumn != -1 ? 1 : startColumn);
+                    fileTab.Editor.GotoPosition(line, startColumn != -1 ? startColumn : 1);
                 }
 
                 if (focus)

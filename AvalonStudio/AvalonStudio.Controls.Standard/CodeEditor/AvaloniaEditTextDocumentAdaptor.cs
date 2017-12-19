@@ -1,5 +1,6 @@
 ﻿using Avalonia.Input;
 using AvalonStudio.Documents;
+using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using System;
 using System.Collections;
@@ -133,6 +134,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public int Column { get => _codeEditor.TextArea.Caret.Column; set => _codeEditor.TextArea.Caret.Column = value; }
 
         public ISourceFile SourceFile => _sourceFile;
+
+        public ILanguageService LanguageService => _codeEditor.LanguageService;
 
         /// <summary>
         /// Occurs when the TextArea receives text input.

@@ -24,6 +24,7 @@
     using System.IO;
     using System.Linq;
     using System.Runtime.CompilerServices;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public class CSharpLanguageService : ILanguageService
@@ -334,6 +335,67 @@
             result.BriefComment = docComment.SummaryText;
 
             return result;
+        }
+
+        public async Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
+        {
+            var dataAssociation = GetAssociatedData(editor);
+
+            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(editor.SourceFile);
+
+            var semanticModel = await document.GetSemanticModelAsync();
+
+            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, editor.CaretOffset, RoslynWorkspace.GetWorkspace(dataAssociation.Solution));
+
+            if(symbol != null && !(symbol is Microsoft.CodeAnalysis.INamespaceSymbol))
+            {
+                // for partial methods, pick the one with body
+                if (symbol is Microsoft.CodeAnalysis.IMethodSymbol method)
+                {
+                    symbol = method.PartialImplementationPart ?? symbol;
+                }
+
+                var location = symbol.Locations.First();
+
+                if (location.IsInSource)
+                {
+                    var lineSpan = symbol.Locations.First().GetMappedLineSpan();
+                    return new GotoDefinitionInfo
+                    {
+                        FileName = lineSpan.Path,
+                        Line = lineSpan.StartLinePosition.Line + 1,
+                        Column = lineSpan.StartLinePosition.Character + 1
+                    };
+                }
+                else if (location.IsInMetadata)
+                {
+                    /*var cancellationSource = new CancellationTokenSource(TimeSpan.FromMilliseconds(request.Timeout));
+                    var (metadataDocument, _) = await _metadataHelper.GetAndAddDocumentFromMetadata(document.Project, symbol, cancellationSource.Token);
+                    if (metadataDocument != null)
+                    {
+                        cancellationSource = new CancellationTokenSource(TimeSpan.FromMilliseconds(request.Timeout));
+
+                        var metadataLocation = await _metadataHelper.GetSymbolLocationFromMetadata(symbol, metadataDocument, cancellationSource.Token);
+                        var lineSpan = metadataLocation.GetMappedLineSpan();
+
+                        response = new GotoDefinitionResponse
+                        {
+                            Line = lineSpan.StartLinePosition.Line,
+                            Column = lineSpan.StartLinePosition.Character,
+                            MetadataSource = new MetadataSource()
+                            {
+                                AssemblyName = symbol.ContainingAssembly.Name,
+                                ProjectName = document.Project.Name,
+                                TypeName = _metadataHelper.GetSymbolName(symbol)
+                            },
+                        };
+                    }*/
+
+                    throw new NotImplementedException();
+                }
+            }
+
+            return null;
         }
 
         public async Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)

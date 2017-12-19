@@ -5,14 +5,42 @@
              xmlns:behaviours="clr-namespace:AvalonStudio.Behaviors;assembly=AvalonStudio"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
-             xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard" Name="Editor">
+             xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
+             xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.Models;assembly=AvalonStudio.Extensibility"
+             Name="Editor">
     <Grid>
         <DockPanel>
             <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
                 <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
             </Grid>
+            <Grid>
+                <Grid.ContextMenu>
+                    <!--<ContextMenu Items="{Binding ContextMenu}">
+                        <ContextMenu.Styles>
+                            <Style Selector="MenuItem">
+                                <Setter Property="Command" Value="{Binding Command}" />
+                                <Setter Property="Items" Value="{Binding Children}" />
+                                <Setter Property="Background" Value="Red" />
+                            </Style>
+                        </ContextMenu.Styles>
 
-            <editor:CodeEditor Name="editor"
+                        <ContextMenu.DataTemplates>
+                            <DataTemplate DataType="menu:MenuItemSeparator">
+                                <Separator />
+                            </DataTemplate>
+                            <DataTemplate DataType="menu:StandardMenuItem">
+                                <TextBlock Text="{Binding Text}" />
+                            </DataTemplate>
+                            <DataTemplate DataType="menu:MenuItemBase">
+                                <TextBlock Text="{Binding Text}" />
+                            </DataTemplate>
+                        </ContextMenu.DataTemplates>
+                    </ContextMenu>-->
+                    <ContextMenu>
+                        <MenuItem Header="Goto Definition" Command="{Binding GotoDefinitionCommand}" />
+                    </ContextMenu>
+                </Grid.ContextMenu>
+                <editor:CodeEditor Name="editor"
                                    BorderThickness="0" Margin="0"
                                    VerticalAlignment="Stretch"
                                    Background="{DynamicResource ThemeEditorBackground}"                                   
@@ -24,7 +52,8 @@
                                    HighlightSelectedWord="False"     
                                    ColorScheme="{Binding ColorScheme}"
                                    DocumentAccessor="{Binding DocumentAccessor}">
-            </editor:CodeEditor>
+                </editor:CodeEditor>
+            </Grid>
         </DockPanel>
     </Grid>
 </UserControl>
