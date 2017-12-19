@@ -210,7 +210,7 @@ namespace RoslynPad.Roslyn
         public DocumentId AddDocument(Project project, AvalonStudio.Projects.ISourceFile file)
         {
             var id = DocumentId.CreateNewId(project.Id);
-            OnDocumentAdded(DocumentInfo.Create(id, file.Name, filePath: file.FilePath, loader: new FileTextLoader(file.FilePath, System.Text.Encoding.UTF8)));
+            OnDocumentAdded(DocumentInfo.Create(id, file.Name, filePath: file.FilePath, loader: new FileTextLoader(file, System.Text.Encoding.UTF8)));
 
             return id;
         }

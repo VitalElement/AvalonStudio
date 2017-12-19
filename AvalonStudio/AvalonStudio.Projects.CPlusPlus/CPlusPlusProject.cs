@@ -28,11 +28,6 @@ namespace AvalonStudio.Projects.CPlusPlus
         private static Dictionary<string, Tuple<string, string>> passwordCache =
             new Dictionary<string, Tuple<string, string>>();
 
-        [JsonConstructor]
-        public CPlusPlusProject(List<SourceFile> sourceFiles) : this()
-        {
-        }
-
         public CPlusPlusProject() : this(true)
         {
         }

@@ -30,11 +30,18 @@ namespace AvalonStudio.Controls
 
                 var shell = IoC.Get<IShell>();
 
-                var document = shell.CurrentSolution.FindFile(definition.FileName);
-
-                if(document != null)
+                if (definition.MetaDataFile == null)
                 {
-                    await shell.OpenDocumentAsync(document, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
+                    var document = shell.CurrentSolution.FindFile(definition.FileName);
+
+                    if (document != null)
+                    {
+                        await shell.OpenDocumentAsync(document, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
+                    }
+                }
+                else
+                {
+                    await shell.OpenDocumentAsync(definition.MetaDataFile, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
                 }
             });
         }

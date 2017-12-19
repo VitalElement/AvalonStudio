@@ -30,6 +30,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -343,19 +344,19 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
              this.GetObservableWithHistory(SourceFileProperty).Subscribe((file) =>
             {
                 if (file.Item1 != file.Item2)
-                {
-                    if (System.IO.File.Exists(file.Item2.Location))
+                {                    
+                    using (var fs = file.Item2.OpenText())
                     {
-                        using (var fs = System.IO.File.OpenText(file.Item2.Location))
+                        using (var reader = new StreamReader(fs))
                         {
-                            Document = new TextDocument(fs.ReadToEnd())
+                            Document = new TextDocument(reader.ReadToEnd())
                             {
                                 FileName = file.Item2.Location
                             };
-
-                            DocumentAccessor = new EditorAdaptor(this);
-                        }
+                        }                    
                     }
+
+                    DocumentAccessor = new EditorAdaptor(this);
 
                     _isLoaded = true;
 

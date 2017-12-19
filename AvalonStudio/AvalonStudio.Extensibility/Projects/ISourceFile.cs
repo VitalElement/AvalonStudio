@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace AvalonStudio.Projects
 {
@@ -16,6 +17,8 @@ namespace AvalonStudio.Projects
         string Location { get; }
 
         void RaiseFileModifiedEvent();
+
+        Stream OpenText();
 
         event EventHandler FileModifiedExternally;
     }

@@ -15,7 +15,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.FindSymbols;
     using Microsoft.CodeAnalysis.Formatting;
-    using Projects.OmniSharp;
     using RoslynPad.Editor.Windows;
     using RoslynPad.Roslyn;
     using RoslynPad.Roslyn.Diagnostics;
@@ -247,31 +246,6 @@
                 result.Contexts = Languages.CompletionContext.AnyType;
             }
 
-
-            /*var response = await dataAssociation.Solution.Server.AutoComplete(sourceFile.FilePath, unsavedFiles.FirstOrDefault()?.Contents, line, column);
-
-            if (response != null)
-            {
-                foreach (var completion in response)
-                {
-                    var newCompletion = new CodeCompletionData()
-                    {
-                        Suggestion = completion.CompletionText,
-                        Priority = 1,
-                        Hint = completion.DisplayText,
-                        BriefComment = completion.Description?.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(),
-                        Kind = FromOmniSharpKind(completion.Kind)
-                    };
-
-                    if (filter == string.Empty || completion.CompletionText.StartsWith(filter))
-                    {
-                        result.Completions.Add(newCompletion);
-                    }
-                }
-
-                result.Contexts = CompletionContext.AnyType;
-            }*/
-
             return result;
         }
 
@@ -286,9 +260,6 @@
 
             return -1;
         }
-
-
-
 
         private static Symbol SymbolFromRoslynSymbol(int offset, Microsoft.CodeAnalysis.SemanticModel semanticModel, Microsoft.CodeAnalysis.ISymbol symbol)
         {
@@ -347,7 +318,7 @@
 
             var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, editor.CaretOffset, RoslynWorkspace.GetWorkspace(dataAssociation.Solution));
 
-            if(symbol != null && !(symbol is Microsoft.CodeAnalysis.INamespaceSymbol))
+            if (symbol != null && !(symbol is Microsoft.CodeAnalysis.INamespaceSymbol))
             {
                 // for partial methods, pick the one with body
                 if (symbol is Microsoft.CodeAnalysis.IMethodSymbol method)
@@ -369,27 +340,42 @@
                 }
                 else if (location.IsInMetadata)
                 {
-                    /*var cancellationSource = new CancellationTokenSource(TimeSpan.FromMilliseconds(request.Timeout));
+                    var _metadataHelper = new MetadataHelper(new AssemblyLoader());
+                    var timeout = 5000;
+                    var cancellationSource = new CancellationTokenSource(TimeSpan.FromMilliseconds(timeout));
                     var (metadataDocument, _) = await _metadataHelper.GetAndAddDocumentFromMetadata(document.Project, symbol, cancellationSource.Token);
                     if (metadataDocument != null)
                     {
-                        cancellationSource = new CancellationTokenSource(TimeSpan.FromMilliseconds(request.Timeout));
+                        var text = await metadataDocument.GetTextAsync(cancellationSource.Token);
+                        cancellationSource = new CancellationTokenSource(TimeSpan.FromMilliseconds(timeout));
 
                         var metadataLocation = await _metadataHelper.GetSymbolLocationFromMetadata(symbol, metadataDocument, cancellationSource.Token);
                         var lineSpan = metadataLocation.GetMappedLineSpan();
 
-                        response = new GotoDefinitionResponse
+                        var workspace = RoslynWorkspace.GetWorkspace(editor.SourceFile.Project.Solution);
+
+                        var metaDataFile = new MetaDataFile(editor.SourceFile.Project, metadataDocument.Name, text.ToString());
+                        workspace.AddDocument(workspace.GetProject(editor.SourceFile.Project), metaDataFile);
+
+                        return new GotoDefinitionInfo
                         {
-                            Line = lineSpan.StartLinePosition.Line,
-                            Column = lineSpan.StartLinePosition.Character,
-                            MetadataSource = new MetadataSource()
-                            {
-                                AssemblyName = symbol.ContainingAssembly.Name,
-                                ProjectName = document.Project.Name,
-                                TypeName = _metadataHelper.GetSymbolName(symbol)
-                            },
+                            FileName = lineSpan.Path,
+                            Line = lineSpan.StartLinePosition.Line + 1,
+                            Column = lineSpan.StartLinePosition.Character + 1,
+                            MetaDataFile = metaDataFile
                         };
-                    }*/
+                        //response = new GotoDefinitionResponse
+                        //{
+                        //    Line = lineSpan.StartLinePosition.Line,
+                        //    Column = lineSpan.StartLinePosition.Character,
+                        //    MetadataSource = new MetadataSource()
+                        //    {
+                        //        AssemblyName = symbol.ContainingAssembly.Name,
+                        //        ProjectName = document.Project.Name,
+                        //        TypeName = _metadataHelper.GetSymbolName(symbol)
+                        //    },
+                        //};
+                    }
 
                     throw new NotImplementedException();
                 }
