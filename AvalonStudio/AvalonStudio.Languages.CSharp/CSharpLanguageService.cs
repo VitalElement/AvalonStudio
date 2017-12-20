@@ -848,7 +848,7 @@
         {
         }
 
-        public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo)
+        public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo = "")
         {
             if (editor.SourceFile is MetaDataFile)
             {
@@ -870,6 +870,11 @@
 
                 if (symbol != null)
                 {
+                    if(renameTo == string.Empty)
+                    {
+                        renameTo = "Test" + symbol.Name + "1";
+                    }
+
                     try
                     {
                         solution = await Renamer.RenameSymbolAsync(solution, symbol, renameTo, workspace.Options);

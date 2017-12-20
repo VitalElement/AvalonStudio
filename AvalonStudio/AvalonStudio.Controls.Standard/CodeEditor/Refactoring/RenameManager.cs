@@ -23,7 +23,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
             }
             else if (e.Key == Key.Return)
             {
-                _manager.Deactivate();
+                _manager.Deactivate(false);
                 e.Handled = true;
             }
         }
@@ -33,6 +33,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
     {
         private List<RenamingTextElement> _registeredElements;
         private RenameInputHandler _inputHandler;
+        private RenamingTextElement _target;
+        private string _originalText;
 
         internal CodeEditor CodeEditor { get; }
 
@@ -51,8 +53,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
             return result;
         }
 
-        public void Activate (RenamingTextElement target)
+        public void Activate(RenamingTextElement target)
         {
+            _target = target;
+            _originalText = target.Text;
+
             if (_registeredElements.Count > 0)
             {
                 foreach (var element in _registeredElements)
@@ -61,7 +66,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                 }
 
                 _inputHandler = new RenameInputHandler(this);
-                
+
                 // disable existing snippet input handlers - there can be only 1 active snippet
                 foreach (TextAreaStackedInputHandler h in CodeEditor.TextArea.StackedInputHandlers)
                 {
@@ -76,9 +81,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
             }
         }
 
-        public void Deactivate()
+        public void Deactivate(bool reset = true)
         {
-            foreach(var element in _registeredElements)
+            if (reset)
+            {
+                _target.Text = _originalText;
+                _target = null;
+            }
+
+            foreach (var element in _registeredElements)
             {
                 element.Deactivate();
             }

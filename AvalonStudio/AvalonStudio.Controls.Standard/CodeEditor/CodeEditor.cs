@@ -504,7 +504,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
-                    var renameLocations = await LanguageService.RenameSymbol(DocumentAccessor, "test");
+                    var renameLocations = await LanguageService.RenameSymbol(DocumentAccessor, "");
 
                     if (renameLocations != null)
                     {
@@ -516,9 +516,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             {
                                 foreach (var change in location.Changes)
                                 {
-                                    var currentElement = _renameManager.RegisterElement(change.Start, change.End - change.Start);
+                                    var start = Document.GetOffset(change.StartLine, change.StartColumn);
+                                    var end = Document.GetOffset(change.EndLine, change.EndColumn);
 
-                                    if(masterElement == null && offset >= change.Start && offset <= change.End)
+                                    var currentElement = _renameManager.RegisterElement(start, end - start);
+
+                                    if(masterElement == null && offset >= start && offset <= end)
                                     {
                                         masterElement = currentElement;
                                     }
@@ -526,7 +529,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             }
                         }
 
-                        _renameManager.Activate(masterElement);
+                        if (masterElement != null)
+                        {
+                            _renameManager.Activate(masterElement);
+                        }
+                        else
+                        {
+
+                        }
                     }
                 });
             }
