@@ -848,11 +848,11 @@
         {
         }
 
-        public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo = "")
+        public async Task<(object renameContext, IEnumerable<SymbolRenameInfo> renameInfo)> RenameSymbol(IEditor editor, int offset, string renameTo, object renameContext)
         {
             if (editor.SourceFile is MetaDataFile)
             {
-                return null;
+                return (null, null);
             }
 
             var dataAssociation = GetAssociatedData(editor);
@@ -865,8 +865,20 @@
             {
                 var sourceText = await document.GetTextAsync();
 
-                var symbol = await SymbolFinder.FindSymbolAtPositionAsync(document, editor.CaretOffset);
-                var solution = workspace.CurrentSolution;
+                var symbol = await SymbolFinder.FindSymbolAtPositionAsync(document, offset);
+
+                Microsoft.CodeAnalysis.Solution solution = null;
+
+                if(renameContext is Microsoft.CodeAnalysis.Solution sol)
+                {
+                    solution = sol;
+                }
+                else
+                {
+                    solution = workspace.CurrentSolution;
+                }
+
+                renameContext = solution;
 
                 if (symbol != null)
                 {
@@ -881,7 +893,7 @@
                     }
                     catch (ArgumentException e)
                     {
-                        return null;
+                        return (null, null);
                     }
                 }
 
@@ -910,10 +922,10 @@
                     }
                 }
 
-                return changes.Values;
+                return (renameContext, changes.Values);
             }
 
-            return null;
+            return (null, null);
         }
     }
 }

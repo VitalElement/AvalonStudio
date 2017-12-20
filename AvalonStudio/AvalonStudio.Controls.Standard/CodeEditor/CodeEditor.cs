@@ -498,20 +498,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             System.Console.WriteLine("Code Editor disposed");
         }
 
-        public void BeginSymbolRename (int offset)
+        public void BeginSymbolRename(int offset)
         {
-            if(LanguageService != null)
-            {
-                Dispatcher.UIThread.InvokeAsync(async () =>
-                {
-                    var renameLocations = await LanguageService.RenameSymbol(DocumentAccessor, "");
-
-                    if (renameLocations != null)
-                    {
-                        _renameManager.Start(renameLocations, offset);
-                    }
-                });
-            }
+            _renameManager.Start(offset);
         }
 
         protected override void OnTextChanged(EventArgs e)
@@ -860,7 +849,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             TextArea.TextEntered += TextArea_TextEntered;
 
             DoCodeAnalysisAsync().GetAwaiter();
-        }        
+        }
 
         private void TextArea_TextEntered(object sender, TextInputEventArgs e)
         {

@@ -40,6 +40,8 @@ namespace RoslynPad.Editor.Windows
 
         private void DocumentOnChanged(object sender, DocumentChangeEventArgs e)
         {
+            if (Document.IsLocked) return;
+
             if (_updating) return;
 
             var oldText = _currentText;

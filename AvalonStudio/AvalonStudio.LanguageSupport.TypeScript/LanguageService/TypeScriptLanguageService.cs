@@ -526,7 +526,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo)
+        public async Task<(object renameContext, IEnumerable<SymbolRenameInfo> renameInfo)> RenameSymbol(IEditor editor, int offset, string renameTo, object renameContext)
         {
             throw new NotImplementedException();
         }

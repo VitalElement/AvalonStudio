@@ -328,6 +328,11 @@ namespace AvalonStudio.Documents
         IDisposable RunUpdate();
 
         event EventHandler<DocumentChangeEventArgs> Changed;
+
+        /// <summary>
+        /// Locked means that internal edits are happening and you should ignore changed events.
+        /// </summary>
+        bool IsLocked { get; set; }
     }
 
     public interface IEditor : IDisposable

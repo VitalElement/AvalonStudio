@@ -60,7 +60,7 @@ namespace AvalonStudio.Languages
 
         Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset);
 
-        Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo);
+        Task<(object renameContext, IEnumerable<SymbolRenameInfo> renameInfo)> RenameSymbol(IEditor editor, int offset, string renameTo, object renameContext);
 
         void RegisterSourceFile(IEditor editor);
 

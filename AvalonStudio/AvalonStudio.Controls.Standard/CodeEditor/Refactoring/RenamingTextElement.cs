@@ -38,7 +38,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                 throw new ArgumentException("Anchors for AnchorSegment must use SurviveDeletion", nameof(end));
             _start = start;
             _end = end;
-        }        
+        }
 
         /// <summary>
         /// Creates a new AnchorSegment that creates new anchors.
@@ -55,7 +55,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
     }
 
     internal class RenamingTextElement
-    {        
+    {
         private RenameSegment _segment;
         private TextArea _textArea;
         private Renderer _background;
@@ -74,7 +74,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                 if (length == 0)
                 {
                     // replacing an empty anchor segment with text won't enlarge it, so we have to recreate it
-                    _segment = new RenameSegment(_textArea.Document, offset, value.Length);                    
+                    _segment = new RenameSegment(_textArea.Document, offset, value.Length);
                 }
             }
         }
@@ -84,11 +84,23 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
             return _textArea.Document.GetText(_segment.Offset, _segment.Length);
         }
 
+        public event EventHandler<DocumentChangeEventArgs> TextChanging;
         public event EventHandler TextChanged;
+        private string lastText;
 
         void OnDocumentTextChanged(object sender, EventArgs e)
         {
-            TextChanged?.Invoke(this, e);            
+            if (Text != lastText)
+            {
+                TextChanged?.Invoke(this, e);
+            }
+        }
+
+        void OnDocumentTextChanging(object sender, DocumentChangeEventArgs e)
+        {
+            lastText = Text;
+            
+            TextChanging?.Invoke(this, e);
         }
 
         public RenamingTextElement(TextArea textArea, int start, int length)
@@ -110,7 +122,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
             if (target != null && target != this)
             {
                 _target = target;
-                target.TextChanged += targetElement_TextChanged;
             }
             else
             {
@@ -118,10 +129,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                 // to prevent memory leaks when the text area control gets dropped from the UI while the snippet is active.
                 // The InsertionContext will keep us alive as long as the snippet is in interactive mode.
                 TextDocumentWeakEventManager.TextChanged.AddHandler(_textArea.Document, OnDocumentTextChanged);
+                TextDocumentWeakEventManager.Changing.AddHandler(_textArea.Document, OnDocumentTextChanging);
             }
         }
 
-        private void targetElement_TextChanged(object sender, EventArgs e)
+        public void UpdateTextToTarget()
         {
             // Don't copy text if the segments overlap (we would get an endless loop).
             // This can happen if the user deletes the text between the replaceable element and the bound element.
@@ -150,7 +162,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
 
             if (_target != null)
             {
-                _target.TextChanged -= targetElement_TextChanged;
                 _target = null;
             }
 

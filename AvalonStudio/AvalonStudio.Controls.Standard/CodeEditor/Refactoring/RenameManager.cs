@@ -1,4 +1,5 @@
 ﻿using Avalonia.Input;
+using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvalonStudio.Extensibility;
@@ -6,6 +7,8 @@ using AvalonStudio.Languages;
 using AvalonStudio.Shell;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
 {
@@ -27,8 +30,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                 e.Handled = true;
             }
             else if (e.Key == Key.Return)
-            {                
-                _manager.AcceptRename(_manager.Deactivate(false));
+            {
+                Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await _manager.AcceptRename();
+                });
+                
                 e.Handled = true;
             }
         }
@@ -47,7 +54,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
         public RenameManager(CodeEditor editor)
         {
             CodeEditor = editor;
-            _registeredElements = new List<RenamingTextElement>();
+            _registeredElements = new List<RenamingTextElement>();            
         }
 
         private RenamingTextElement RegisterElement(CodeEditor editor, int start, int length)
@@ -59,12 +66,32 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
             return result;
         }
 
-        public void Start (IEnumerable<SymbolRenameInfo> renameLocations, int offset)
+        private void Clear()
         {
-            _renameLocations = renameLocations;
+            foreach(var element in _registeredElements)
+            {
+                element.Deactivate();
+            }
+
+            _registeredElements.Clear();
+        }
+
+        private object _currentContext;
+        private async Task<RenamingTextElement> ApplyRenameResults (int offset, bool initialise)
+        {
+            var (renameContext, renameInfo) = await CodeEditor.LanguageService.RenameSymbol
+                (CodeEditor.DocumentAccessor, CodeEditor.CaretOffset, initialise ? "" : _target.Text, initialise ? null : _currentContext);
+
+            _currentContext = renameContext;
+
+            if (initialise)
+            {
+                Clear();
+            }
+
             RenamingTextElement masterElement = null;
 
-            foreach (var location in renameLocations)
+            foreach (var location in renameInfo)
             {
                 CodeEditor editor = null;
 
@@ -76,25 +103,47 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                 {
                     var currentTab = IoC.Get<IShell>().GetDocument(location.FileName);
 
-                    if(currentTab is EditorAdaptor adaptor)
+                    if (currentTab is EditorAdaptor adaptor)
                     {
                         editor = adaptor.EditorImpl;
                     }
                 }
-                
-                if(editor != null)
-                { 
-                    foreach (var change in location.Changes)
+
+                if (editor != null)
+                {                    
+                    if (initialise)
                     {
-                        var start = editor.Document.GetOffset(change.StartLine, change.StartColumn);
-                        var end = editor.Document.GetOffset(change.EndLine, change.EndColumn);
-
-                        var currentElement = RegisterElement(editor, start, end - start);
-
-                        if (editor == CodeEditor && masterElement == null && offset >= start && offset <= end)
+                        foreach (var change in location.Changes)
                         {
-                            masterElement = currentElement;
+                            var start = editor.Document.GetOffset(change.StartLine, change.StartColumn);
+                            var end = editor.Document.GetOffset(change.EndLine, change.EndColumn);
+
+                            var currentElement = RegisterElement(editor, start, end - start);
+
+                            if (initialise && editor == CodeEditor && masterElement == null && offset >= start && offset <= end)
+                            {
+                                masterElement = currentElement;
+                            }
                         }
+                    }
+                    else
+                    {
+                        inUpdate = true;
+                        editor.Document.BeginUpdate();
+
+                        foreach (var change in location.Changes)
+                        {                            
+                            var start = editor.Document.GetOffset(change.StartLine, change.StartColumn);
+                            var end = editor.Document.GetOffset(change.EndLine, change.EndColumn);
+
+                            if (!_target.Segment.Contains(start, end - start))
+                            {
+                                editor.Document.Replace(start, end - start, change.NewText);
+                            }
+                        }
+                        
+                        editor.Document.EndUpdate();
+                        inUpdate = false;
                     }
                 }
             }
@@ -103,14 +152,23 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
             {
                 Activate(masterElement);
             }
-            else
-            {
 
+            return masterElement;
+        }
+
+        public void Start(int offset)
+        {
+            if (CodeEditor.LanguageService != null)
+            {
+                Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    await ApplyRenameResults(offset, true);
+                });
             }
         }
 
         public void Activate(RenamingTextElement target)
-        {            
+        {
             _target = target;
             _originalText = target.Text;            
 
@@ -130,6 +188,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                         CodeEditor.TextArea.PopStackedInputHandler(h);
                 }
                 CodeEditor.TextArea.PushStackedInputHandler(_inputHandler);
+                
+                _target.TextChanged += _target_TextChanged;
             }
             else
             {
@@ -137,15 +197,38 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
             }
         }
 
-        public void AcceptRename(string text)
+        bool inUpdate = false;
+        private void _target_TextChanged(object sender, System.EventArgs e)
         {
-            foreach(var location in _renameLocations)
+            if (!inUpdate)
+            {
+                inUpdate = true;
+                CodeEditor.Undo();                
+
+                Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                  await ApplyRenameResults(CodeEditor.CaretOffset, false);
+
+
+
+
+                //foreach (var element in _registeredElements.Where(element => element != _target))
+                //{
+                //    element.UpdateTextToTarget();
+                //}
+            });
+            }
+        }
+
+        public async Task AcceptRename()
+        {   
+            foreach (var location in _renameLocations)
             {
                 if (CodeEditor.SourceFile.CompareTo(location.FileName) != 0)
                 {
                     var currentTab = IoC.Get<IShell>().GetDocument(location.FileName);
 
-                    if(currentTab == null) //then the file wasnt already opened and changes havent been applied yet.
+                    if (currentTab == null) //then the file wasnt already opened and changes havent been applied yet.
                     {
                         TextDocument document = null;
 
@@ -160,50 +243,48 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                             }
                         }
 
-                        if(document != null)
+                        if (document != null)
                         {
                             var segments = new List<AnchorSegment>();
 
-                            foreach(var change in location.Changes)
+                            foreach (var change in location.Changes)
                             {
                                 var start = document.GetOffset(change.StartLine, change.StartColumn);
                                 var end = document.GetOffset(change.EndLine, change.EndColumn);
 
-                                segments.Add(new AnchorSegment(document, start, end - start));    
+                                segments.Add(new AnchorSegment(document, start, end - start));
                             }
-                            
-                            foreach(var segment in segments)
+
+                            foreach (var segment in segments)
                             {
-                                document.Replace(segment, text);
+                                document.Replace(segment, _target.Text);
                             }
 
                             File.WriteAllText(location.FileName, document.Text);
+                            //Todo notify language service that this file has changed.
                         }
                         else
                         {
                             throw new System.Exception("Error renaming symbol");
-                        }                        
+                        }
                     }
                 }
             }
 
+            Deactivate(false);
+
             _renameLocations = null;
         }
 
-        public string Deactivate(bool reset = true)
+        public void Deactivate(bool reset = true)
         {
-            string result = "";
-
             if (reset)
             {
-                _target.Text = _originalText;                
+                _target.Text = _originalText;
                 _renameLocations = null;
             }
-            else
-            {
-                result = _target.Text;
-            }
-
+            
+            _target.TextChanged -= _target_TextChanged;            
             _target = null;
 
             foreach (var element in _registeredElements)
@@ -211,11 +292,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                 element.Deactivate();
             }
 
-            _registeredElements.Clear();            
+            _registeredElements.Clear();
 
-            CodeEditor.TextArea.PopStackedInputHandler(_inputHandler);
-
-            return result;
+            CodeEditor.TextArea.PopStackedInputHandler(_inputHandler);            
         }
     }
 }

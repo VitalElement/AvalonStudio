@@ -266,6 +266,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public int TextLength => _document.TextLength;
 
+        public bool IsLocked { get; set; }
+
         public void Insert(int offset, string text)
         {
             Replace(offset, 0, text);
