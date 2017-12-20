@@ -370,6 +370,8 @@ namespace AvalonStudio.Documents
 
         void GotoPosition(int line, int column);
 
+        void RenameSymbol(int offset);
+
         event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
 
         /// <summary>

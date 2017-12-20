@@ -32,7 +32,7 @@ namespace AvalonStudio.Languages.CSharp
                     var span = change.Span;
                     var newText = change.NewText;
                     var prefix = string.Empty;
-                    var postfix = string.Empty;
+                    var postfix = string.Empty;                    
 
                     if (newText.Length > 0)
                     {
@@ -61,6 +61,8 @@ namespace AvalonStudio.Languages.CSharp
 
                     return new LinePositionSpanTextChange()
                     {
+                        Start = span.Start,
+                        End = span.End,
                         NewText = prefix + newText + postfix,
                         StartLine = linePositionSpan.Start.Line,
                         StartColumn = linePositionSpan.Start.Character,

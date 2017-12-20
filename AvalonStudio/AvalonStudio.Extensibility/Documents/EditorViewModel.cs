@@ -47,7 +47,7 @@ namespace AvalonStudio.Controls
 
             RenameSymbolCommand = ReactiveCommand.Create(async () =>
             {
-                await Editor.LanguageService?.RenameSymbol(Editor, "test");   
+                Editor.RenameSymbol(Editor.CaretOffset);
             });
         }
 

@@ -14,6 +14,7 @@ using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
 using AvalonStudio.CodeEditor;
 using AvalonStudio.Controls.Standard.CodeEditor.Highlighting;
+using AvalonStudio.Controls.Standard.CodeEditor.Refactoring;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
@@ -98,6 +99,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private LineNumberMargin _lineNumberMargin;
         private BreakPointMargin _breakpointMargin;
         private SelectedLineBackgroundRenderer _selectedLineBackgroundRenderer;
+        private RenameManager _renameManager;
         private CompositeDisposable _disposables;
 
         /// <summary>
@@ -117,6 +119,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _shell = IoC.Get<IShell>();
 
             _snippetManager = IoC.Get<SnippetManager>();
+
+            _renameManager = new RenameManager(this);
 
             _lineNumberMargin = new LineNumberMargin(this);
 
@@ -492,6 +496,40 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         ~CodeEditor()
         {
             System.Console.WriteLine("Code Editor disposed");
+        }
+
+        public void BeginSymbolRename (int offset)
+        {
+            if(LanguageService != null)
+            {
+                Dispatcher.UIThread.InvokeAsync(async () =>
+                {
+                    var renameLocations = await LanguageService.RenameSymbol(DocumentAccessor, "test");
+
+                    if (renameLocations != null)
+                    {
+                        RenamingTextElement masterElement = null;
+
+                        foreach (var location in renameLocations)
+                        {
+                            if (SourceFile.CompareTo(location.FileName) == 0)
+                            {
+                                foreach (var change in location.Changes)
+                                {
+                                    var currentElement = _renameManager.RegisterElement(change.Start, change.End - change.Start);
+
+                                    if(masterElement == null && offset >= change.Start && offset <= change.End)
+                                    {
+                                        masterElement = currentElement;
+                                    }
+                                }
+                            }
+                        }
+
+                        _renameManager.Activate(masterElement);
+                    }
+                });
+            }
         }
 
         protected override void OnTextChanged(EventArgs e)

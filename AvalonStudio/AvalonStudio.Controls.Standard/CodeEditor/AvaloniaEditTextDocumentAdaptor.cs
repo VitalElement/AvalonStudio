@@ -223,6 +223,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             _codeEditor.CaretOffset = _codeEditor.Document.GetOffset(line, column);
         }
+
+        public void RenameSymbol(int offset)
+        {
+            _codeEditor.BeginSymbolRename(offset);
+        }
     }
 
     public class DocumentAdaptor : ITextDocument, IDisposable

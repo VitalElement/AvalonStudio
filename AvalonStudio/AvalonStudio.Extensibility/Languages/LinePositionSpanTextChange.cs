@@ -6,6 +6,9 @@ namespace AvalonStudio.Languages
 {
     public class LinePositionSpanTextChange
     {
+        public int Start { get; set; }
+        public int End { get; set; }
+
         public string NewText { get; set; }
         
         public int StartLine { get; set; }        
