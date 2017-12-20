@@ -508,35 +508,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     if (renameLocations != null)
                     {
-                        RenamingTextElement masterElement = null;
-
-                        foreach (var location in renameLocations)
-                        {
-                            if (SourceFile.CompareTo(location.FileName) == 0)
-                            {
-                                foreach (var change in location.Changes)
-                                {
-                                    var start = Document.GetOffset(change.StartLine, change.StartColumn);
-                                    var end = Document.GetOffset(change.EndLine, change.EndColumn);
-
-                                    var currentElement = _renameManager.RegisterElement(start, end - start);
-
-                                    if(masterElement == null && offset >= start && offset <= end)
-                                    {
-                                        masterElement = currentElement;
-                                    }
-                                }
-                            }
-                        }
-
-                        if (masterElement != null)
-                        {
-                            _renameManager.Activate(masterElement);
-                        }
-                        else
-                        {
-
-                        }
+                        _renameManager.Start(renameLocations, offset);
                     }
                 });
             }
@@ -751,7 +723,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Document.TrimTrailingWhiteSpace();
                 }
 
-                System.IO.File.WriteAllText(SourceFile.Location, Document.Text);
+                File.WriteAllText(SourceFile.Location, Document.Text);
                 IsDirty = false;
 
                 lock (UnsavedFiles)

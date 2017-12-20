@@ -1,6 +1,11 @@
 ﻿using Avalonia.Input;
+using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Languages;
+using AvalonStudio.Shell;
 using System.Collections.Generic;
+using System.IO;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
 {
@@ -22,8 +27,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                 e.Handled = true;
             }
             else if (e.Key == Key.Return)
-            {
-                _manager.Deactivate(false);
+            {                
+                _manager.AcceptRename(_manager.Deactivate(false));
                 e.Handled = true;
             }
         }
@@ -35,6 +40,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
         private RenameInputHandler _inputHandler;
         private RenamingTextElement _target;
         private string _originalText;
+        private IEnumerable<SymbolRenameInfo> _renameLocations;
 
         internal CodeEditor CodeEditor { get; }
 
@@ -44,19 +50,69 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
             _registeredElements = new List<RenamingTextElement>();
         }
 
-        public RenamingTextElement RegisterElement(int start, int length)
+        private RenamingTextElement RegisterElement(CodeEditor editor, int start, int length)
         {
-            var result = new RenamingTextElement(CodeEditor.TextArea, start, length);
+            var result = new RenamingTextElement(editor.TextArea, start, length);
 
             _registeredElements.Add(result);
 
             return result;
         }
 
-        public void Activate(RenamingTextElement target)
+        public void Start (IEnumerable<SymbolRenameInfo> renameLocations, int offset)
         {
+            _renameLocations = renameLocations;
+            RenamingTextElement masterElement = null;
+
+            foreach (var location in renameLocations)
+            {
+                CodeEditor editor = null;
+
+                if (CodeEditor.SourceFile.CompareTo(location.FileName) == 0)
+                {
+                    editor = CodeEditor;
+                }
+                else
+                {
+                    var currentTab = IoC.Get<IShell>().GetDocument(location.FileName);
+
+                    if(currentTab is EditorAdaptor adaptor)
+                    {
+                        editor = adaptor.EditorImpl;
+                    }
+                }
+                
+                if(editor != null)
+                { 
+                    foreach (var change in location.Changes)
+                    {
+                        var start = editor.Document.GetOffset(change.StartLine, change.StartColumn);
+                        var end = editor.Document.GetOffset(change.EndLine, change.EndColumn);
+
+                        var currentElement = RegisterElement(editor, start, end - start);
+
+                        if (editor == CodeEditor && masterElement == null && offset >= start && offset <= end)
+                        {
+                            masterElement = currentElement;
+                        }
+                    }
+                }
+            }
+
+            if (masterElement != null)
+            {
+                Activate(masterElement);
+            }
+            else
+            {
+
+            }
+        }
+
+        public void Activate(RenamingTextElement target)
+        {            
             _target = target;
-            _originalText = target.Text;
+            _originalText = target.Text;            
 
             if (_registeredElements.Count > 0)
             {
@@ -81,22 +137,85 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
             }
         }
 
-        public void Deactivate(bool reset = true)
+        public void AcceptRename(string text)
         {
+            foreach(var location in _renameLocations)
+            {
+                if (CodeEditor.SourceFile.CompareTo(location.FileName) != 0)
+                {
+                    var currentTab = IoC.Get<IShell>().GetDocument(location.FileName);
+
+                    if(currentTab == null) //then the file wasnt already opened and changes havent been applied yet.
+                    {
+                        TextDocument document = null;
+
+                        using (var fs = new FileStream(location.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete, bufferSize: 4096, useAsync: false))
+                        {
+                            using (var reader = new StreamReader(fs))
+                            {
+                                document = new TextDocument(reader.ReadToEnd())
+                                {
+                                    FileName = location.FileName
+                                };
+                            }
+                        }
+
+                        if(document != null)
+                        {
+                            var segments = new List<AnchorSegment>();
+
+                            foreach(var change in location.Changes)
+                            {
+                                var start = document.GetOffset(change.StartLine, change.StartColumn);
+                                var end = document.GetOffset(change.EndLine, change.EndColumn);
+
+                                segments.Add(new AnchorSegment(document, start, end - start));    
+                            }
+                            
+                            foreach(var segment in segments)
+                            {
+                                document.Replace(segment, text);
+                            }
+
+                            File.WriteAllText(location.FileName, document.Text);
+                        }
+                        else
+                        {
+                            throw new System.Exception("Error renaming symbol");
+                        }                        
+                    }
+                }
+            }
+
+            _renameLocations = null;
+        }
+
+        public string Deactivate(bool reset = true)
+        {
+            string result = "";
+
             if (reset)
             {
-                _target.Text = _originalText;
-                _target = null;
+                _target.Text = _originalText;                
+                _renameLocations = null;
             }
+            else
+            {
+                result = _target.Text;
+            }
+
+            _target = null;
 
             foreach (var element in _registeredElements)
             {
                 element.Deactivate();
             }
 
-            _registeredElements.Clear();
+            _registeredElements.Clear();            
 
             CodeEditor.TextArea.PopStackedInputHandler(_inputHandler);
+
+            return result;
         }
     }
 }

@@ -228,6 +228,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             _codeEditor.BeginSymbolRename(offset);
         }
+
+        internal CodeEditor EditorImpl => _codeEditor;
     }
 
     public class DocumentAdaptor : ITextDocument, IDisposable
