@@ -34,7 +34,7 @@ namespace AvalonStudio.Toolchains.MSBuild
         {
             return await Task.Factory.StartNew(() =>
             {
-                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, "msbuild /m", (s, e) =>
+                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, "build /m", (s, e) =>
                 {
                     console.WriteLine(e.Data);
 
