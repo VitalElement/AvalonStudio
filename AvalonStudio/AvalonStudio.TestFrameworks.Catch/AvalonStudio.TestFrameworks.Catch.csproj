@@ -12,9 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Templates\CatchUnitTest.template.cshtml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <Folder Include="Templates\" />
   </ItemGroup>
 
 </Project>

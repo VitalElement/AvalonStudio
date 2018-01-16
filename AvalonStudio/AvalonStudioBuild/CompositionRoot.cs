@@ -18,7 +18,6 @@ namespace AvalonStudio
             var conventions = new ConventionBuilder();
 
             conventions.ForTypesDerivedFrom<IExtension>().Export<IExtension>();
-            conventions.ForTypesDerivedFrom<ICodeTemplate>().Export<ICodeTemplate>();
 
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 

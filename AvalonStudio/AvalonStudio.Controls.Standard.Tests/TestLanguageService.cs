@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AvaloniaEdit.Document;
 using AvalonStudio.Editor;
+using AvalonStudio.Documents;
+using AvaloniaEdit.Indentation;
 
 namespace AvalonStudio.Controls.Standard.Tests
 {
@@ -15,23 +17,23 @@ namespace AvalonStudio.Controls.Standard.Tests
         {
         }
 
-        public global::AvaloniaEdit.Indentation.IIndentationStrategy IndentationStrategy => throw new NotImplementedException();
-
-        public string Title => throw new NotImplementedException();        
-
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators { get; set; } = new Dictionary<string, Func<string, string>>();
 
-        public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables { get; set; } = new Dictionary<string, Func<int, int, int, string>>();
-
-        public IEnumerable<char> IntellisenseSearchCharacters => throw new NotImplementedException();
-
-        public IEnumerable<char> IntellisenseCompleteCharacters => throw new NotImplementedException();        
+        public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables { get; set; } = new Dictionary<string, Func<int, int, int, string>>(); 
 
         public string LanguageId => "cpp";
 
-        public IEnumerable<ICodeEditorInputHelper> InputHelpers => throw new NotImplementedException();
+        public IIndentationStrategy IndentationStrategy => throw new NotImplementedException();
 
-        public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics => throw new NotImplementedException();
+        public string Title => throw new NotImplementedException();
+
+        public string Identifier => throw new NotImplementedException();
+
+        public IEnumerable<char> IntellisenseSearchCharacters => throw new NotImplementedException();
+
+        public IEnumerable<char> IntellisenseCompleteCharacters => throw new NotImplementedException();
+
+        public IEnumerable<ICodeEditorInputHelper> InputHelpers => throw new NotImplementedException();
 
         public void Activation()
         {
@@ -43,7 +45,7 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
-        public bool CanHandle(ISourceFile file)
+        public bool CanHandle(IEditor editor)
         {
             throw new NotImplementedException();
         }
@@ -53,37 +55,32 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
-        public Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
+        public Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             throw new NotImplementedException();
         }
 
-        public int Comment(ISourceFile file, global::AvaloniaEdit.Document.TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             throw new NotImplementedException();
         }
 
-        public int Format(ISourceFile file, global::AvaloniaEdit.Document.TextDocument textDocument, uint offset, uint length, int cursor)
+        public int Format(IEditor editor, uint offset, uint length, int cursor)
         {
             throw new NotImplementedException();
         }
 
-        public IList<global::AvaloniaEdit.Rendering.IBackgroundRenderer> GetBackgroundRenderers(ISourceFile file)
+        public Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             throw new NotImplementedException();
         }
 
-        public IList<global::AvaloniaEdit.Rendering.IVisualLineTransformer> GetDocumentLineTransformers(ISourceFile file)
+        public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name)
+        public Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
         {
             throw new NotImplementedException();
         }
@@ -93,32 +90,32 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
-        public void RegisterSourceFile(global::AvaloniaEdit.TextEditor editor, ISourceFile file, global::AvaloniaEdit.Document.TextDocument textDocument)
+        public void RegisterSourceFile(IEditor editor)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, TextDocument textDocument, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             throw new NotImplementedException();
         }
 
-        public Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName)
+        public Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             throw new NotImplementedException();
         }
 
-        public int UnComment(ISourceFile file, global::AvaloniaEdit.Document.TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             throw new NotImplementedException();
         }
 
-        public void UnregisterSourceFile(global::AvaloniaEdit.TextEditor editor, ISourceFile file)
+        public void UnregisterSourceFile(IEditor editor)
         {
             throw new NotImplementedException();
         }
