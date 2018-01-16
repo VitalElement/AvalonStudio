@@ -255,7 +255,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         ~DocumentAdaptor()
         {
-            System.Console.WriteLine("Adaptor Disposed");
         }
 
         public string Text => _document.Text;

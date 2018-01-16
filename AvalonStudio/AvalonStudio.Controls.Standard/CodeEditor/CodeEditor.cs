@@ -495,7 +495,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         ~CodeEditor()
         {
-            System.Console.WriteLine("Code Editor disposed");
         }
 
         public void BeginSymbolRename (int offset)

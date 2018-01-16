@@ -12,7 +12,6 @@ namespace AvalonStudio.Extensibility.Editor
 
         ~TextEditorView ()
         {
-            System.Console.WriteLine("TextEditorView disposed");
         }
 
         private void InitializeComponent()

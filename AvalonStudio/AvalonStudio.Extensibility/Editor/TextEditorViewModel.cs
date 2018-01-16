@@ -69,7 +69,6 @@ namespace AvalonStudio.Extensibility.Editor
 
         ~TextEditorViewModel()
         {
-            System.Console.WriteLine("TextEditorVM Disposed");
         }
 
         public string SourceText

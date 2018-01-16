@@ -53,7 +53,6 @@ namespace AvalonStudio.Controls
 
         ~EditorViewModel()
         {
-            Console.WriteLine("Dispose VM");
         }
         
         public IMenu ContextMenu => IoC.Get<IShell>().BuildEditorContextMenu();

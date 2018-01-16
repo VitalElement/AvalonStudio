@@ -13,7 +13,6 @@ namespace AvalonStudio.Extensibility.Editor
 
         ~EditorView ()
         {
-            System.Console.WriteLine("EditorView Disposed");
         }
 
         private void InitializeComponent()
