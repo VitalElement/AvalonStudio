@@ -31,6 +31,13 @@ namespace AvalonStudio.Debugging
 
             _expressions = new List<string>();
 
+
+            AddExpressionCommand = ReactiveCommand.Create(() =>
+            {
+                AddWatch(Expression);
+                Expression = "";
+            });
+
             Activation(); // for when we create the part outside of composition.
         }
 
@@ -69,9 +76,15 @@ namespace AvalonStudio.Debugging
 
         private void DebugManager_FrameChanged(object sender, System.EventArgs e)
         {
-            var expressions = DebugManager.SelectedFrame.GetExpressionValues(_expressions.ToArray(), false);
+            Task.Run(() =>
+            {
+                var expressions = DebugManager.SelectedFrame.GetExpressionValues(_expressions.ToArray(), false);
 
-            InvalidateObjects(expressions);
+                //Dispatcher.UIThread.InvokeAsync(() =>
+                //{
+                InvalidateObjects(expressions);
+                //});
+            });
         }
 
         public void InvalidateObjects(params ObjectValue[] variables)
@@ -123,12 +136,18 @@ namespace AvalonStudio.Debugging
         {
             var newWatch = new ObjectValueViewModel(this, model);
 
-            Children.Add(newWatch);
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Children.Add(newWatch);
+            });
         }
 
         public void Remove(ObjectValue value)
         {
-            Children.Remove(Children.FirstOrDefault(c => c.Model.Name == value.Name));
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Children.Remove(Children.FirstOrDefault(c => c.Model.Name == value.Name));
+            });
         }
 
         private void ApplyChange(ObjectValue change)
@@ -159,7 +178,7 @@ namespace AvalonStudio.Debugging
                 {
                     _expressions.Add(expression);
 
-                    var watch = DebugManager.SelectedFrame.GetExpressionValue(expression, false);
+                    var watch = DebugManager.SelectedFrame.GetExpressionValues(_expressions.ToArray(), false);
 
                     InvalidateObjects(watch);
 
@@ -169,5 +188,15 @@ namespace AvalonStudio.Debugging
 
             return result;
         }
+
+        private string _expression = "";
+        public string Expression
+        {
+            get { return _expression; }
+            set { this.RaiseAndSetIfChanged(ref _expression, value); }
+        }
+
+        public ReactiveCommand AddExpressionCommand { get; }
+
     }
 }

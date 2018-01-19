@@ -77,9 +77,13 @@ namespace AvalonStudio.Debugging
              {
                  Enabled = true;
 
-                 var changes = _debugManager.ExtendedSession.GetRegisterChanges();
+                 if (_debugManager.ExtendedSession != null)
+                 {
 
-                 UpdateRegisters(changes);
+                     var changes = _debugManager.ExtendedSession.GetRegisterChanges();
+
+                     UpdateRegisters(changes);
+                 }
              };
 
             var started = Observable.FromEventPattern(_debugManager, nameof(_debugManager.TargetStarted));

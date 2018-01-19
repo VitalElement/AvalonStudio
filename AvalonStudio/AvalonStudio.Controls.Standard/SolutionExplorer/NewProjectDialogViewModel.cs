@@ -1,7 +1,9 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Projects;
+using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Languages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -22,15 +24,33 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private string name;
 
-        private ObservableCollection<IProjectTemplate> projectTemplates;
+        private ObservableCollection<ITemplate> projectTemplates;
 
         private ILanguageService selectedLanguage;
 
-        private IProjectTemplate selectedTemplate;
+        private ITemplate selectedTemplate;
         private readonly IShell shell;
         private ISolutionFolder _solutionFolder;
 
         private string solutionName;
+
+        private IEnumerable<string> GetProjectFiles (string path)
+        {
+            var files = Directory.EnumerateFiles(path);
+
+            var ptExtensions = shell.ProjectTypes.SelectMany(pt => pt.Extensions);
+
+            var result = files.Where(f => ptExtensions.Contains(Path.GetExtension(f).Replace(".","")));
+
+            var directories = Directory.EnumerateDirectories(path);
+
+            foreach(var directory in directories)
+            {
+                result = result.Concat(GetProjectFiles(directory));
+            }
+
+            return result;
+        }
 
         public NewProjectDialogViewModel(ISolutionFolder solutionFolder) : this()
         {
@@ -40,7 +60,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public NewProjectDialogViewModel() : base("New Project", true, true)
         {
             shell = IoC.Get<IShell>();
-            projectTemplates = new ObservableCollection<IProjectTemplate>();
+            projectTemplates = new ObservableCollection<ITemplate>();
             Languages = new List<ILanguageService>(shell.LanguageServices);
 
             location = Platform.ProjectDirectory;
@@ -64,25 +84,37 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             OKCommand = ReactiveCommand.Create(async () =>
             {
-                bool generateSolutionDirs = false;
-                bool loadNewSolution = false;
+            bool generateSolutionDirs = false;
+            bool loadNewSolution = false;
 
-                if (_solutionFolder == null)
+            if (_solutionFolder == null)
+            {
+                loadNewSolution = true;
+                generateSolutionDirs = true;
+
+                var destination = Path.Combine(location, solutionName);
+                _solutionFolder = VisualStudioSolution.Create(destination, solutionName, false, AvalonStudioSolution.Extension);
+            }
+
+            var templateManager = IoC.Get<TemplateManager>();
+
+                var templateDestination = Path.Combine(_solutionFolder.Solution.CurrentDirectory, name);
+
+                if (await templateManager.CreateTemplate(selectedTemplate, templateDestination, name) == CreationResult.Success)
                 {
-                    loadNewSolution = true;
-                    generateSolutionDirs = true;
+                    var projectFiles = GetProjectFiles(templateDestination);
 
-                    var destination = Path.Combine(location, solutionName);
-                    _solutionFolder = VisualStudioSolution.Create(destination, solutionName, false, AvalonStudioSolution.Extension);
-                }
+                    bool defaultSet = _solutionFolder.Solution.StartupProject != null;
 
-                if (await selectedTemplate.Generate(_solutionFolder, name) != null)
-                {
-                    if (generateSolutionDirs)
+                    foreach(var projectFile in projectFiles)
                     {
-                        if (!Directory.Exists(_solutionFolder.Solution.CurrentDirectory))
+                        var project = await Project.LoadProjectFileAsync(_solutionFolder.Solution, projectFile);
+                        _solutionFolder.Solution.AddItem(project, _solutionFolder);
+
+                        if (!defaultSet)
                         {
-                            Directory.CreateDirectory(_solutionFolder.Solution.CurrentDirectory);
+                            defaultSet = true;
+                            _solutionFolder.Solution.StartupProject = project;
                         }
                     }
                 }
@@ -135,7 +167,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             set { this.RaiseAndSetIfChanged(ref solutionName, value); }
         }
 
-        public IProjectTemplate SelectedTemplate
+        public ITemplate SelectedTemplate
         {
             get
             {
@@ -147,14 +179,14 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (value != null)
                 {
-                    Name = value.DefaultProjectName + "1";
+                    Name = value.DefaultName + "1";
                 }
 
                 SolutionName = name;
             }
         }
 
-        public ObservableCollection<IProjectTemplate> ProjectTemplates
+        public ObservableCollection<ITemplate> ProjectTemplates
         {
             get { return projectTemplates; }
             set { this.RaiseAndSetIfChanged(ref projectTemplates, value); }
@@ -183,9 +215,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private void GetTemplates(ILanguageService languageService)
         {
-            var templates = shell.ProjectTemplates.Where(t => languageService.BaseTemplateType.IsAssignableFrom(t.GetType()));
-
-            ProjectTemplates = new ObservableCollection<IProjectTemplate>(templates);
+            var templateManager = IoC.Get<TemplateManager>();
+            ProjectTemplates = new ObservableCollection<ITemplate>(templateManager.ListProjectTemplates(languageService.Identifier));
         }
     }
 }

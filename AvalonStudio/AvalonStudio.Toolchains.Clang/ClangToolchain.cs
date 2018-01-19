@@ -105,12 +105,13 @@ namespace AvalonStudio.Toolchains.Clang
                 System.IO.File.Delete(linkerScript);
             }
 
-            var rendered = Template.Engine.CompileRenderAsync("ArmLinkerScriptTemplate.template", new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start = settings.InRam1Start, InRam1Size = settings.InRam1Size }).GetAwaiter().GetResult();
+            throw new NotImplementedException();
+            //var rendered = Template.Engine.CompileRenderAsync("ArmLinkerScriptTemplate.template", new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start = settings.InRam1Start, InRam1Size = settings.InRam1Size }).GetAwaiter().GetResult();
 
-            using (var sw = System.IO.File.CreateText(linkerScript))
-            {
-                sw.Write(rendered);
-            }
+            //using (var sw = System.IO.File.CreateText(linkerScript))
+            //{
+            //    sw.Write(rendered);
+            //}
         }
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)

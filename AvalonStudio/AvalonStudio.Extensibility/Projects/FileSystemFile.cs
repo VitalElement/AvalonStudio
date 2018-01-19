@@ -76,7 +76,12 @@
 
         public void RaiseFileModifiedEvent()
         {
-            FileModifiedExternally?.Invoke(this, new EventArgs());
+            FileModifiedExternally?.Invoke(this, EventArgs.Empty);
+        }
+
+        public Stream OpenText()
+        {
+            return new FileStream(Location, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete, bufferSize: 4096, useAsync: false);
         }
     }
 }

@@ -4,6 +4,7 @@ namespace AvalonStudio.Extensibility.Menus
     {
         public MenuDefinition(MenuBarDefinition menuBar, int sortOrder, string text)
         {
+            MenuBar = menuBar;
             SortOrder = sortOrder;
             Text = text;
             IoC.RegisterConstant(this);

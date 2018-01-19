@@ -45,5 +45,15 @@
         {
             return (point.StartLine < line) || (point.StartLine == line && point.StartColumn < column);
         }
+
+        public static bool IsUserLine (this SequencePoint point)
+        {
+            return point.StartLine != 0xfeefee;
+        }
+
+        public static UInt32 LineRange (this SequencePoint point)
+        {
+            return (UInt32) (point.EndLine - point.StartLine);
+        }
     }
 }

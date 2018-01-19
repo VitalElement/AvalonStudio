@@ -19,7 +19,7 @@
 
         public async Task<ISolution> LoadAsync(string path)
         {
-            return await Task.Run(() => AvalonStudioSolution.Load(path));
+            return await AvalonStudioSolution.LoadAsync(path);
         }
     }
 }

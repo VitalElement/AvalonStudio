@@ -272,9 +272,10 @@ namespace SharpDX
             const int FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
 
             IntPtr buffer = IntPtr.Zero;
-            FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, IntPtr.Zero, resultCode, 0, ref buffer, 0, IntPtr.Zero);
-            var description = Marshal.PtrToStringUni(buffer);
-            Marshal.FreeHGlobal(buffer);
+
+            //FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, IntPtr.Zero, resultCode, 0, ref buffer, 0, IntPtr.Zero);
+            var description = resultCode.ToString();//Marshal.PtrToStringUni(buffer);
+            //Marshal.FreeHGlobal(buffer);
             return description;
         }
 

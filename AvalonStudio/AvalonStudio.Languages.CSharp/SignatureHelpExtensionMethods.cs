@@ -9,9 +9,9 @@ namespace AvalonStudio.Languages.CSharp
     {
         public static void ConvertXmlDocumentation(this Signature signature)
         {
-            if (!string.IsNullOrEmpty(signature.Documentation))
+            if (!string.IsNullOrEmpty(signature.Description))
             {
-                var fragments = signature.Documentation.Trim();
+                var fragments = signature.Description.Trim();
                 var myRootedXml = "<root>" + fragments + "</root>";
                 var documentationXml = XDocument.Parse(myRootedXml);
 

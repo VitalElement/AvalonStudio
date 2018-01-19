@@ -42,7 +42,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             _timer.Stop();
 
-            if (_editor.Document != null)
+            if (_editor?.Document != null)
             {
                 var dataContext = await OnBeforePopupOpen();
 
@@ -115,6 +115,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _popup.PlacementMode = PlacementMode.Pointer;
 
             _popup.HorizontalOffset = 0;
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromVisualTree(e);
+
+            _editor.PointerMoved -= _editor_PointerMoved;
+
+            _popup.Close();
+            _popup = null;
+            _editor = null;
         }
     }
 }

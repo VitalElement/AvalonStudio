@@ -4,7 +4,7 @@
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
   <DockPanel>
     <StackPanel DockPanel.Dock="Bottom" ZIndex="100">
-      <TabStrip Name="toolStrip" Items="{Binding Tools}" SelectedItem="{Binding SelectedTool, Mode=TwoWay}" Focusable="false">
+      <TabStrip Name="toolStrip" Items="{Binding Tools}" SelectedItem="{Binding SelectedTool, Mode=TwoWay}" Focusable="false" IsVisible="{Binding TabStripVisible}">
         <TabStrip.ItemsPanel>
           <ItemsPanelTemplate>
             <DockPanel LastChildFill="false" />
@@ -20,7 +20,6 @@
             <Setter Property="Margin" Value="0 -1 0 0" />
             <Setter Property="Padding" Value="4 0 4 0" />
             <Setter Property="FontSize" Value="12"/>
-            <Setter Property="DockPanel.Dock" Value="{Binding Dock}" />
             <Setter Property="IsVisible" Value="{Binding IsVisible}" />
             <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
           </Style>
@@ -46,11 +45,11 @@
     </StackPanel>
 
     <Carousel Items="{Binding Tools}" SelectedItem="{Binding SelectedTool}" IsVirtualized="false" ZIndex="50">
-      <Carousel.DataTemplates>
+      <Carousel.ItemTemplate>
         <DataTemplate>
           <cont:ViewModelViewHost IsVisible ="{Binding IsVisible}" />
         </DataTemplate>
-      </Carousel.DataTemplates>
+      </Carousel.ItemTemplate>
     </Carousel>
   </DockPanel>
 </UserControl>

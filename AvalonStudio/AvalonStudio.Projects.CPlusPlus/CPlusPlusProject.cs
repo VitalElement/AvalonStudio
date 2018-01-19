@@ -28,11 +28,6 @@ namespace AvalonStudio.Projects.CPlusPlus
         private static Dictionary<string, Tuple<string, string>> passwordCache =
             new Dictionary<string, Tuple<string, string>>();
 
-        [JsonConstructor]
-        public CPlusPlusProject(List<SourceFile> sourceFiles) : this()
-        {
-        }
-
         public CPlusPlusProject() : this(true)
         {
         }
@@ -502,7 +497,6 @@ namespace AvalonStudio.Projects.CPlusPlus
             project.Location = filename;
 
             project.Items.InsertSorted(new ReferenceFolder(project));
-            project.LoadFiles();
 
             return project;
         }
@@ -519,7 +513,6 @@ namespace AvalonStudio.Projects.CPlusPlus
                 project.Location = projectFile;
 
                 project.Save();
-                project.LoadFiles();
 
                 result = project;
             }

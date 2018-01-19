@@ -11,6 +11,8 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
+    using System.Reactive.Disposables;
+    using System.Reactive.Linq;
     using System.Threading.Tasks;
 
     public class WelcomeScreenViewModel : DocumentTabViewModel, IExtension
@@ -19,6 +21,7 @@
         private ObservableCollection<NewsFeedViewModel> _newsFeed;
         private ObservableCollection<VideoFeedViewModel> _videoFeed;
         ISolutionExplorer _solutionExplorer;
+        private CompositeDisposable _disposables;
 
         public WelcomeScreenViewModel()
         {
@@ -34,15 +37,32 @@
             LoadRecentProjects();
         }
 
+        ~WelcomeScreenViewModel()
+        {
+
+        }
+
         public void Activation()
         {
             var shell = IoC.Get<IShell>();
-            shell.AddDocument(this);
-            shell.SolutionChanged += ShellOnSolutionChanged;
+            shell.AddDocument(this, false);
+
+            _disposables = new CompositeDisposable
+            {
+                Observable.FromEventPattern<SolutionChangedEventArgs>(shell, nameof(shell.SolutionChanged)).Subscribe(o => ShellOnSolutionChanged(o.Sender, o.EventArgs))
+            };
+            //shell.SolutionChanged += ShellOnSolutionChanged;
 
             //LoadNewsFeed().GetAwaiter().GetResult();
             //LoadVideoFeed().GetAwaiter().GetResult();
             _solutionExplorer = IoC.Get<ISolutionExplorer>();
+        }
+
+        public override void Close()
+        {
+            base.Close();
+
+            _disposables.Dispose();
         }
 
         public void BeforeActivation()

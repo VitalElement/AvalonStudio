@@ -1,8 +1,8 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" 
              xmlns:lang="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility"
-             xmlns:proj="clr-namespace:AvalonStudio.Projects;assembly=AvalonStudio.Extensibility"
+             xmlns:proj="clr-namespace:AvalonStudio.Extensibility.Templating;assembly=AvalonStudio.Extensibility"
              Background="{DynamicResource ThemeBackgroundBrush}">
-    <Grid RowDefinitions="*,180" ColumnDefinitions="200,*,200">
+    <Grid RowDefinitions="*,180" ColumnDefinitions="150,*,400">
       <TreeView Background="{DynamicResource ThemeControlDarkBrush}" BorderThickness="0" Margin="1" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}">
         <TreeView.DataTemplates>
           <DataTemplate DataType="lang:ILanguageService">
@@ -19,11 +19,11 @@
           
       <ListBox Grid.Column="1" Background="{DynamicResource ThemeControlDarkBrush}" BorderThickness="0" Margin="1" Items="{Binding ProjectTemplates}" SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}">
         <ListBox.DataTemplates>
-          <DataTemplate DataType="proj:IProjectTemplate">
+          <DataTemplate DataType="proj:ITemplate">
             <Grid Height="45">
               <StackPanel Orientation="Horizontal">
                 <Rectangle Fill="#aa0055cc" Height="40" Width="40" Margin="5 0" />
-                <TextBlock Text="{Binding Title}" VerticalAlignment="Center" Margin="5 0" />
+                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="5 0" />
               </StackPanel>
               <TextBlock Text="C/C++" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 0" />
             </Grid>
@@ -35,7 +35,7 @@
         <StackPanel Margin="10">
           <StackPanel Orientation="Horizontal">
             <TextBlock Text="Type:" FontWeight="Bold" />
-            <TextBlock Margin="5 0" Text="{Binding SelectedLanguage.Title}" />
+            <TextBlock Margin="5 0" Text="{Binding SelectedLanguage.Name}" />
           </StackPanel>
           <TextBlock Margin="0 5" Text="{Binding SelectedTemplate.Description}" />
         </StackPanel>

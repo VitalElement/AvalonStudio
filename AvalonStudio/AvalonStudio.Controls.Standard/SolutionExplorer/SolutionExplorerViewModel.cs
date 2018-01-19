@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Linq;
 using System;
+using Avalonia.Threading;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -99,7 +100,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (value is SourceFileViewModel)
                 {
-                    shell.OpenDocument((ISourceFile)(value as SourceFileViewModel).Model, 1);
+                    shell.OpenDocument((ISourceFile)(value as SourceFileViewModel).Model);
                 }
             }
         }

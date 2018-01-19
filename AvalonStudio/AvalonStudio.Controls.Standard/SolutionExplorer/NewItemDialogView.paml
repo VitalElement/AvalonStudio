@@ -8,7 +8,7 @@
     <ListBox Items="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}">
       <ListBox.DataTemplates>
         <DataTemplate >
-          <TextBlock Text="{Binding Title}"/>
+          <TextBlock Text="{Binding Name}"/>
         </DataTemplate>
       </ListBox.DataTemplates>
     </ListBox>

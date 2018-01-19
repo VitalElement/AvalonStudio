@@ -3,6 +3,7 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using Mono.Debugging.Client;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging
 {
@@ -47,7 +48,10 @@ namespace AvalonStudio.Debugging
 
         private void DebugManager_FrameChanged(object sender, System.EventArgs e)
         {
-            Update(DebugManager.SelectedFrame);
+            Task.Run(() =>
+            {
+                Update(DebugManager.SelectedFrame);
+            });
         }
     }
 }

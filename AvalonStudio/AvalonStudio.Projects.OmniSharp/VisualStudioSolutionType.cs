@@ -31,7 +31,8 @@
 
         public async Task<ISolution> LoadAsync(string path)
         {
-            return await OmniSharpSolution.Create(path);
+            return null;
+            //return await OmniSharpSolution.Create(path);
         }
     }
 }

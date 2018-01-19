@@ -13,12 +13,15 @@
     using System.Dynamic;
     using System.IO;
     using System.Linq;
+    using System.Threading.Tasks;
 
     public abstract class FileSystemProject : IProject, IDisposable
     {
         private FileSystemWatcher fileSystemWatcher;
         private FileSystemWatcher folderSystemWatcher;
         private Dispatcher uiDispatcher;
+
+        public event EventHandler<ISourceFile> FileAdded;
 
         public FileSystemProject(bool useDispatcher)
         {
@@ -45,18 +48,23 @@
         [JsonIgnore]
         public Guid Id { get; set; }
 
-        public void PopulateFiles(IProjectFolder folder)
+        private async Task PopulateFilesAsync(IProjectFolder folder)
         {
-            var files = Directory.EnumerateFiles(folder.Location);
-
-            files = files.Where(f => !IsExcluded(f));
-
-            foreach (var file in files)
+            await Task.Run(() =>
             {
-                var sourceFile = FileSystemFile.FromPath(this, folder, file.ToPlatformPath().NormalizePath());
-                SourceFiles.InsertSorted(sourceFile);
-                folder.Items.InsertSorted(sourceFile);
-            }
+                var files = Directory.EnumerateFiles(folder.Location);
+
+                files = files.Where(f => !IsExcluded(f));
+
+                foreach (var file in files)
+                {
+                    var sourceFile = FileSystemFile.FromPath(this, folder, file.ToPlatformPath().NormalizePath());
+                    SourceFiles.InsertSorted(sourceFile);
+                    folder.Items.InsertSorted(sourceFile);
+
+                    FileAdded?.Invoke(this, sourceFile);
+                }
+            });
         }
 
         private bool IsExcluded(string fullPath)
@@ -79,7 +87,7 @@
             return result;
         }
 
-        public IProjectFolder GetSubFolders(IProjectFolder parent, string path)
+        private async Task<IProjectFolder> GetSubFoldersAsync(IProjectFolder parent, string path)
         {
             var result = new FileSystemFolder(path);
 
@@ -91,11 +99,11 @@
                 {
                     foreach (var folder in folders.Where(f => !IsExcluded(f)))
                     {
-                        result.Items.InsertSorted(GetSubFolders(result, folder));
+                        result.Items.InsertSorted(await GetSubFoldersAsync(result, folder));
                     }
                 }
 
-                PopulateFiles(result);
+                await PopulateFilesAsync(result);
 
                 Folders.InsertSorted(result);
                 result.Parent = parent;
@@ -108,14 +116,14 @@
             return result;
         }
 
-        protected void LoadFiles()
+        public async Task LoadFilesAsync()
         {
-            var folders = GetSubFolders(this, CurrentDirectory);
+            var folders = await GetSubFoldersAsync(this, CurrentDirectory);
 
             foreach (var item in folders.Items)
             {
                 item.Parent = this;
-                Items.InsertSorted(item);
+                Items.InsertSorted(item);                
             }
 
             foreach (var file in SourceFiles)
@@ -195,7 +203,7 @@
 
         private void FolderSystemWatcher_Renamed(object sender, RenamedEventArgs e)
         {
-            Invoke(() =>
+            Invoke(async () =>
             {
                 // Workaround for https://github.com/dotnet/corefx/issues/21934 if we are on unix we need to check if the
                 // file exists becuase the notification filters dont work.
@@ -203,20 +211,20 @@
                 {
                     RemoveFolder(e.OldFullPath);
 
-                    AddFolder(e.FullPath);
+                    await AddFolderAsync(e.FullPath);
                 }
             });
         }
 
         private void FolderSystemWatcher_Created(object sender, FileSystemEventArgs e)
         {
-            Invoke(() =>
+            Invoke(async () =>
             {
                 // Workaround for https://github.com/dotnet/corefx/issues/21934 if we are on unix we need to check if the
                 // file exists becuase the notification filters dont work.
                 if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT || System.IO.Directory.Exists(e.FullPath))
                 {
-                    AddFolder(e.FullPath);
+                    await AddFolderAsync(e.FullPath);
                 }
             });
         }
@@ -254,7 +262,7 @@
                         sourceFile.Parent = folder;
                     }
 
-                    FileAdded?.Invoke(this, new EventArgs());
+                    FileAdded?.Invoke(this, sourceFile);
                 }
             }
         }
@@ -279,7 +287,7 @@
             }
         }
 
-        public void AddFolder(string fullPath)
+        private async Task AddFolderAsync(string fullPath)
         {
             if (!IsExcluded(fullPath))
             {
@@ -291,7 +299,7 @@
 
                     if (existing == null)
                     {
-                        var newFolder = GetSubFolders(folder, fullPath);
+                        var newFolder = await GetSubFoldersAsync(folder, fullPath);
 
                         if (folder.Location == Project.CurrentDirectory)
                         {
@@ -425,8 +433,6 @@
 
         IReadOnlyList<ISourceFile> IProject.SourceFiles => SourceFiles.AsReadOnly();
 
-        public event EventHandler FileAdded;
-
         public abstract void AddReference(IProject project);
 
         public abstract int CompareTo(IProjectFolder other);
@@ -451,13 +457,20 @@
 
         public void Dispose()
         {
-            folderSystemWatcher.Created -= FolderSystemWatcher_Created;
-            folderSystemWatcher.Renamed -= FolderSystemWatcher_Renamed;
-            folderSystemWatcher.Deleted -= FolderSystemWatcher_Deleted;
-            fileSystemWatcher.Changed -= FileSystemWatcher_Changed;
-            fileSystemWatcher.Created -= FileSystemWatcher_Created;
-            fileSystemWatcher.Renamed -= FileSystemWatcher_Renamed;
-            fileSystemWatcher.Deleted -= FileSystemWatcher_Deleted;
+            if (folderSystemWatcher != null)
+            {
+                folderSystemWatcher.Created -= FolderSystemWatcher_Created;
+                folderSystemWatcher.Renamed -= FolderSystemWatcher_Renamed;
+                folderSystemWatcher.Deleted -= FolderSystemWatcher_Deleted;
+            }
+
+            if (fileSystemWatcher != null)
+            {
+                fileSystemWatcher.Changed -= FileSystemWatcher_Changed;
+                fileSystemWatcher.Created -= FileSystemWatcher_Created;
+                fileSystemWatcher.Renamed -= FileSystemWatcher_Renamed;
+                fileSystemWatcher.Deleted -= FileSystemWatcher_Deleted;
+            }
         }
 
         #endregion IProject Implementation

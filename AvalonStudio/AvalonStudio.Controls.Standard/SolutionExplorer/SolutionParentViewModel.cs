@@ -61,7 +61,7 @@
 
                 if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {
-                    var proj = Project.LoadProjectFile(result[0]);
+                    var proj = await Project.LoadProjectFileAsync(Model.Solution, result[0]);
 
                     if (proj != null)
                     {

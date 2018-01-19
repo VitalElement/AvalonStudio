@@ -1,7 +1,5 @@
 ﻿namespace AvalonStudio.Projects.OmniSharp
 {
-    using AvalonStudio.GlobalSettings;
-
     public class DotNetToolchainSettings
     {
         public DotNetToolchainSettings()
