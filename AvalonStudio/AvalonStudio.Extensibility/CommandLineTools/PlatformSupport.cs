@@ -79,6 +79,67 @@ namespace AvalonStudio.CommandLineTools
             return Process.Start(startInfo);
         }
 
+        public static Process LaunchShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs>
+           outputReceivedCallback, Action<object, DataReceivedEventArgs> errorReceivedCallback = null, bool resolveExecutable = true,
+           string workingDirectory = "", bool executeInShell = true, params string[] extraPaths)
+        {
+            var shellProc = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    WorkingDirectory = workingDirectory
+                }
+            };
+
+
+            foreach (var extraPath in extraPaths)
+            {
+                if (extraPath != null)
+                {
+                    shellProc.StartInfo.Environment["PATH"] += $"{Platform.PathSeperator}{extraPath}";
+                }
+            }
+
+            if (executeInShell)
+            {
+                if (executorType == ShellExecutorType.Windows)
+                {
+                    shellProc.StartInfo.FileName = ResolveFullExecutablePath("cmd.exe");
+                    shellProc.StartInfo.Arguments = $"/C {(resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName)} {args}";
+                    shellProc.StartInfo.CreateNoWindow = true;
+                }
+                else //Unix
+                {
+                    shellProc.StartInfo.FileName = "sh";
+                    shellProc.StartInfo.Arguments = $"-c \"{(resolveExecutable ? ResolveFullExecutablePath(commandName) : commandName)} {args}\"";
+                    shellProc.StartInfo.CreateNoWindow = true;
+                }
+            }
+            else
+            {
+                shellProc.StartInfo.FileName = (resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName);
+                shellProc.StartInfo.Arguments = args;
+                shellProc.StartInfo.CreateNoWindow = true;
+            }
+
+            shellProc.OutputDataReceived += (s, a) => outputReceivedCallback(s, a);
+
+            if (errorReceivedCallback != null)
+            {
+                shellProc.ErrorDataReceived += (s, a) => errorReceivedCallback(s, a);
+            }
+
+            shellProc.Start();
+
+            shellProc.BeginOutputReadLine();
+            shellProc.BeginErrorReadLine();
+
+            return shellProc;
+        }
+
         public static int ExecuteShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs>
             outputReceivedCallback, Action<object, DataReceivedEventArgs> errorReceivedCallback = null, bool resolveExecutable = true,
             string workingDirectory = "", bool executeInShell = true, bool CreateNoWindow = true, params string[] extraPaths)

@@ -1,8 +1,8 @@
-using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
+using AvalonStudio.Documents;
+using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Plugin;
-using AvalonStudio.Projects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,10 +24,9 @@ namespace AvalonStudio.Languages
         string LanguageId { get; }
 
         /// <summary>
-        ///     The base type that all Project templates for this language must inherit. This base class must implement
-        ///     IProjectTemplate.
+        /// An identifier compatible with Dot CLI language identifiers i.e. C#, F#, VB, etc
         /// </summary>
-        Type BaseTemplateType { get; }
+        string Identifier { get; }
 
         /// <summary>
         /// Dictionary of functions for transforming snippet variables. Key is function name, the arugment is the string to transform.
@@ -40,32 +39,39 @@ namespace AvalonStudio.Languages
         /// </summary>
         IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables { get; }
 
-        Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "");
-
         bool CanTriggerIntellisense(char currentChar, char previousChar);
         IEnumerable<char> IntellisenseSearchCharacters { get; }
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
+        IEnumerable<ICodeEditorInputHelper> InputHelpers { get; }
+
+        //IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; }
 
         bool IsValidIdentifierCharacter(char data);
 
-        Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
+        Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "");
 
-        void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument);
+        Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
-        void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file);
+        Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName);
 
-        bool CanHandle(ISourceFile file);
+        Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset);
 
-        int Format(ISourceFile file, TextDocument textDocument, uint offset, uint length, int cursor);
+        Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name);
 
-        int Comment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
+        Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset);
 
-        int UnComment(ISourceFile file, TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
+        Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo);
 
-        Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName);
+        void RegisterSourceFile(IEditor editor);
 
-        Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
+        void UnregisterSourceFile(IEditor editor);
 
-        Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name);
+        bool CanHandle(IEditor editor);
+
+        int Format(IEditor editor, uint offset, uint length, int cursor);
+
+        int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
+
+        int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
     }
 }

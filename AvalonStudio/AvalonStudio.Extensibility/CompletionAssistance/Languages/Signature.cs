@@ -14,7 +14,6 @@ namespace AvalonStudio.Extensibility.Languages.CompletionAssistance
         public string BuiltInReturnType { get; set; }
         public string ReturnType { get; set; }
         public string Label { get; set; }
-        public string Documentation { get; set; }
         public string Description { get; set; }
         public List<Parameter> Parameters { get; set; }
         public List<SignatureException> Exceptions { get; set; }

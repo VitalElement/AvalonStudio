@@ -3,18 +3,28 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.OmniSharp\AvalonStudio.Projects.OmniSharp.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Snippets\cs\propav.snippet">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Snippets\cs\proprxui.snippet">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Snippets\cs\propfull.snippet">

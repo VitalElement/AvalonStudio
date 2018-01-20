@@ -63,7 +63,7 @@ namespace AvalonStudio.Controls
             EnterCommand = ReactiveCommand.Create(() =>
             {
                 var selectedResult = SelectedResult.Model;
-                Dispatcher.UIThread.InvokeAsync(() => { _shell.OpenDocument(selectedResult, 1); });
+                _shell.OpenDocument(selectedResult);
                 IsVisible = false;
             });
 

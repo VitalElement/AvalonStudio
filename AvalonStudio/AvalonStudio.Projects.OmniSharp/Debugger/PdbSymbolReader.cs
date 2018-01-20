@@ -182,7 +182,7 @@
                     var methodToken = MetadataTokens.GetToken(methodHandle.ToDefinitionHandle());
 
                     var token = new SymbolToken(methodToken);
-
+                    
                     var newMethod = new SymbolMethod(method.GetSequencePoints(), token);
                     methodTokenLookup.Add(token.GetToken(), newMethod);
                     list.Add(newMethod);
@@ -264,40 +264,22 @@
         public ISymbolMethod GetMethodFromDocumentPosition(ISymbolDocument document, int line, int column)
         {
             // See c++ implementation here... https://github.com/dotnet/coreclr/blob/master/src/debug/ildbsymlib/symread.cpp
-            bool found = false;
-            ISymbolMethod result = null;
 
-            foreach (var pdbDocument in sourceFilesDebugInfo)
+            var matchingDocument = sourceFilesDebugInfo.SelectMany(doc => doc.Value).SelectMany(sf => sf.Value).Where(sf => sf.URL == document.URL).FirstOrDefault();
+
+            if (matchingDocument != null)
             {
-                foreach (var sourceFiles in pdbDocument.Value)
-                {
-                    foreach (var sourceFile in sourceFiles.Value)
-                    {
-                        if (document.URL == sourceFile.URL)
-                        {
-                            foreach (var method in sourceFile.PdbMethods)
-                            {
-                                foreach (var point in method.SequencePoints)
-                                {
-                                    if (point.IsWithin((uint)line, (uint)column))
-                                    {
-                                        found = true;
-                                        result = method;
-                                        break;
-                                    }
-                                }
+                var sequencePoints = matchingDocument.PdbMethods.SelectMany(m => m.SequencePoints, (method, sp) => (method, sp));
 
-                                if (found)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                var matching = sequencePoints.Where(item => item.sp.IsWithin((uint)line, (uint)column)).OrderBy(item => item.sp.LineRange());
+
+                if (matching.Count() > 0)
+                {
+                    return matching.First().method;
                 }
             }
 
-            return result;
+            return null;
         }
 
         public ISymbolNamespace[] GetNamespaces()

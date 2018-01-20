@@ -3,6 +3,7 @@
     using AvalonStudio.Extensibility.Plugin;
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     public interface IProjectType : IExtension
     {
@@ -10,6 +11,6 @@
         List<string> Extensions { get; }
         string Description { get; }
 
-        IProject Load(string filePath);
+        Task<IProject> LoadAsync(ISolution solution, string filePath);
     }
 }

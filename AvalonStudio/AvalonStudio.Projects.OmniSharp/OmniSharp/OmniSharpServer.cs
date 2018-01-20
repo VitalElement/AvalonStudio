@@ -15,7 +15,7 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    public class OmniSharpServer
+    /*public class OmniSharpServer
     {
         private static string BaseDir => PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp");
         private static string Binary => Path.Combine(BaseDir, "content", $"OmniSharp{Platform.ExecutableExtension}");
@@ -101,5 +101,5 @@
 
             return await processStartedCompletionSource.Task;
         }
-    }
+    }*/
 }

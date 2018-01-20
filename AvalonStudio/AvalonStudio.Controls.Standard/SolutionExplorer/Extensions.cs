@@ -23,7 +23,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 return "CPPIcon".GetIcon();
             }
-            else if (name.EndsWith("OmnisharpProject"))
+            else if (name.EndsWith("OmniSharpProject"))
             {
                 return "CSharpIcon".GetIcon();
             }
@@ -34,6 +34,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             else if(name.EndsWith("UnsupportedProjectType"))
             {
                 return "UnknownProjectIcon".GetIcon();
+            }
+            else if (name.EndsWith("LoadingProject"))
+            {
+                return "LoadingProjectIcon".GetIcon();
             }
 
             return null;

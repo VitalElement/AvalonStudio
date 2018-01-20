@@ -1,7 +1,14 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:ucont="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging">
   <cont:ToolControl Title="Watch List">
-    <ucont:VariableControlView />
+    <DockPanel>
+      <TextBox Text="{Binding Expression}" Watermark="Expression" UseFloatingWatermark="true" DockPanel.Dock="Top">
+        <TextBox.KeyBindings>
+          <KeyBinding Command="{Binding AddExpressionCommand}" Gesture="Enter"/>
+        </TextBox.KeyBindings>
+      </TextBox>
+      <ucont:VariableControlView />
+    </DockPanel>
   </cont:ToolControl>
 </UserControl>

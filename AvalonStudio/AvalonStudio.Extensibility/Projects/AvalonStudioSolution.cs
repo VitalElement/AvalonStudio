@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects
 {
@@ -125,7 +126,7 @@ namespace AvalonStudio.Projects
 
         public Guid Id { get; set; }        
 
-        private static IProject LoadProject(ISolution solution, string reference)
+        private static async Task<IProject> LoadProjectAsync(ISolution solution, string reference)
         {
             var shell = IoC.Get<IShell>();
             IProject result = null;
@@ -137,7 +138,7 @@ namespace AvalonStudio.Projects
 
             if (projectType != null && System.IO.File.Exists(projectFilePath))
             {
-                result = projectType.Load(projectFilePath);
+                result = await projectType.LoadAsync(solution, projectFilePath);
             }
             else
             {
@@ -166,7 +167,7 @@ namespace AvalonStudio.Projects
             return result;
         }
 
-        public static ISolution Load(string fileName)
+        public static async Task<ISolution> LoadAsync(string fileName)
         {
             try
             {
@@ -181,7 +182,7 @@ namespace AvalonStudio.Projects
 
                 foreach (var projectReference in solution.ProjectReferences)
                 {
-                    var proj = LoadProject(solution, projectReference);
+                    var proj = await LoadProjectAsync(solution, projectReference);
 
                     // todo null returned here we need a placeholder.
                     if (proj != null)
@@ -218,6 +219,16 @@ namespace AvalonStudio.Projects
         }
 
         public void UpdateItem(ISolutionItem item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task LoadProjectsAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task LoadSolutionAsync()
         {
             throw new NotImplementedException();
         }

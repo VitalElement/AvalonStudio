@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects
 {
@@ -22,6 +23,10 @@ namespace AvalonStudio.Projects
         ISourceFile FindFile(string path);
 
         IProject FindProject(string name);
+
+        Task LoadSolutionAsync();
+
+        Task LoadProjectsAsync();
 
         void Save();
     }

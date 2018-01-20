@@ -54,56 +54,56 @@ namespace CorDebug
 
             private static void OnFunctionRemapOpportunity(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr oldFunctionRef, IntPtr newFunctionRef, int oldILOffset)
             {
-                var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
+                var shadow = ToShadow<ManagedCallback2Shadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnFunctionRemapOpportunity(new AppDomain(appDomainRef), new Thread(threadRef), new Function(oldFunctionRef), new Function(newFunctionRef), oldILOffset);
             }
 
             private static void OnCreateConnection(IntPtr thisPtr, IntPtr processRef, int dwConnectionId, string connNameRef)
             {
-                var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
+                var shadow = ToShadow<ManagedCallback2Shadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnCreateConnection(new Process(processRef), dwConnectionId, connNameRef);
             }
 
             private static void OnChangeConnection(IntPtr thisPtr, IntPtr processRef, int dwConnectionId)
             {
-                var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
+                var shadow = ToShadow<ManagedCallback2Shadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnChangeConnection(new Process(processRef), dwConnectionId);
             }
 
             private static void OnDestroyConnection(IntPtr thisPtr, IntPtr processRef, int dwConnectionId)
             {
-                var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
+                var shadow = ToShadow<ManagedCallback2Shadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnDestroyConnection(new Process(processRef), dwConnectionId);
             }
 
             private static void OnException(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr frameRef, int nOffset, CorDebugExceptionCallbackType dwEventType, int dwFlags)
             {
-                var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
+                var shadow = ToShadow<ManagedCallback2Shadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnException(new AppDomain(appDomainRef), new Thread(threadRef), new Frame(frameRef), nOffset, dwEventType, dwFlags);
             }
 
             private static void OnExceptionUnwind(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, CorDebugExceptionUnwindCallbackType dwEventType, int dwFlags)
             {
-                var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
+                var shadow = ToShadow<ManagedCallback2Shadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnExceptionUnwind(new AppDomain(appDomainRef), new Thread(threadRef), dwEventType, dwFlags);
             }
 
             private static void OnFunctionRemapComplete(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr functionRef)
             {
-                var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
+                var shadow = ToShadow<ManagedCallback2Shadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnFunctionRemapComplete(new AppDomain(appDomainRef), new Thread(threadRef), new Function(functionRef));
             }
 
             private static void OnMDANotification(IntPtr thisPtr, IntPtr controllerRef, IntPtr threadRef, IntPtr mDARef)
             {
-                var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
+                var shadow = ToShadow<ManagedCallback2Shadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
                 callback.OnMDANotification(new Controller(controllerRef), new Thread(threadRef), new MDA(mDARef));
             }
