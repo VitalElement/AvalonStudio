@@ -36,7 +36,7 @@ namespace AvalonStudio.Packages
             }
         }
 
-        private const string DefaultPackageSource = "http://nuget.mabiavalon.com/api/v2/";
+        private const string DefaultPackageSource = "https://nexus.vitalelement.co.uk/repository/AvalonStudio/";
 
         public static NuGetFramework GetFramework()
         {
