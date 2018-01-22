@@ -65,6 +65,8 @@ namespace AvalonStudio.Toolchains.Clang
             get { return Path.Combine(BinDirectory, "arm-none-eabi-gdb" + Platform.ExecutableExtension); }
         }
 
+        public override string LibraryQueryCommand => "arm-none-eabi-gcc";
+
         public override string ExecutableExtension
         {
             get { return ".elf"; }
@@ -80,7 +82,7 @@ namespace AvalonStudio.Toolchains.Clang
             return Path.Combine(project.CurrentDirectory, "link.ld");
         }
 
-        public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
+        /*public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
         {
             return new List<string>
             {
@@ -92,7 +94,7 @@ namespace AvalonStudio.Toolchains.Clang
                 Path.Combine(ContentDirectory, "lib", "gcc", "arm-none-eabi", "6.3.1", "include-fixed"),
                 Path.Combine(ContentDirectory, "arm-none-eabi", "include")
             };
-        }
+        }*/
 
         private void GenerateLinkerScript(IStandardProject project)
         {
@@ -438,6 +440,8 @@ namespace AvalonStudio.Toolchains.Clang
                 // this ensures content directory is re-evaluated if we just installed the toolchain.
                 _contentDirectory = null;
             }
+
+            await base.InstallAsync(console, project);
         }
     }
 }
