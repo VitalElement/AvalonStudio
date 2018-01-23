@@ -5,14 +5,19 @@ using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using AvalonStudio.Platforms;
 
 namespace AvalonStudio.Toolchains.GCC
 {
     public abstract class GCCToolchain : StandardToolChain
     {
         public virtual string GDBExecutable => "gdb";
+
+        public virtual string LibraryQueryCommand => "gcc";
 
         public abstract string GetBaseLibraryArguments(IStandardProject superProject);
 
@@ -84,6 +89,27 @@ namespace AvalonStudio.Toolchains.GCC
             }
 
             return result;
+        }
+
+        private List<string> _cToolchainIncludes;
+        private List<string> _cppToolchainIncludes;
+
+        public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
+        {
+            if(file == null)
+            {
+                return _cToolchainIncludes;
+            }
+
+            switch(file.Extension.ToLower())
+            {
+                case ".cpp":
+                case ".hpp":
+                    return _cppToolchainIncludes;
+
+                default:
+                    return _cToolchainIncludes;
+            }           
         }
 
         private bool CheckFile(IConsole console, string file)
@@ -263,6 +289,75 @@ namespace AvalonStudio.Toolchains.GCC
             }
 
             return result;
+        }
+
+        private async Task<List<string>> CalculateToolchainIncludes (bool cpp)
+        {
+            bool foundListStart = false;
+
+            var result = new List<string>();
+
+            string args = cpp ? "-xc++" : "-E";
+
+            var process = PlatformSupport.LaunchShellCommand("echo", $" | {LibraryQueryCommand} {args} -Wp,-v -", (s, e) => { }, (s, e) =>
+            {
+                if (e.Data != null)
+                {
+                    if (!foundListStart)
+                    {
+                        if (e.Data == "#include <...> search starts here:")
+                        {
+                            foundListStart = true;
+                        }
+                    }
+                    else
+                    {
+                        if (e.Data == "End of search list.")
+                        {
+                            foundListStart = false;
+                        }
+                        else
+                        {
+                            result.Add(e.Data.NormalizePath());
+                        }
+                    }
+                }
+            },
+             false, BinDirectory, true);
+
+            await process.WaitForExitAsync();
+
+            return result;
+        }
+
+        private async Task InitialiseInbuiltLibraries()
+        {
+            if (_cppToolchainIncludes == null || _cToolchainIncludes == null)
+            {
+                _cppToolchainIncludes = await CalculateToolchainIncludes(true);
+                _cToolchainIncludes = await CalculateToolchainIncludes(false);
+            }
+        }
+
+        public override async Task InstallAsync(IConsole console, IProject project)
+        {
+            await InitialiseInbuiltLibraries();            
+        }
+
+        public override async Task BeforeBuild(IConsole console, IProject project)
+        {
+            var process = PlatformSupport.LaunchShellCommand($"{CCExecutable}", "--version", (s, e) =>
+            {
+                if (e.Data != null)
+                {
+                    console.WriteLine(e.Data);
+                }
+            }, (s, e) => { },
+             false, BinDirectory, true);
+
+            await process.WaitForExitAsync();
+
+            console.WriteLine();
         }
 
         public override ProcessResult Size(IConsole console, IStandardProject project, LinkResult linkResult)

@@ -93,6 +93,11 @@ namespace AvalonStudio.Toolchains.Standard
 
             console.Clear();
 
+            console.WriteLine("Starting Build...");
+            console.WriteLine();
+
+            await BeforeBuild(console, project);
+
             var preBuildCommands = (project as IStandardProject).PreBuildCommands;
             var postBuildCommands = (project as IStandardProject).PostBuildCommands;
 
@@ -104,8 +109,6 @@ namespace AvalonStudio.Toolchains.Standard
 
                 result = ExecuteCommands(console, project, preBuildCommands);
             }
-            
-            console.WriteLine("Starting Build...");
 
             terminateBuild = !result;
 
@@ -645,6 +648,8 @@ namespace AvalonStudio.Toolchains.Standard
             }
         }
 
+        public abstract Task BeforeBuild(IConsole console, IProject project);
+          
         public abstract Task InstallAsync(IConsole console, IProject project);
 
         public Task InstallAsync(IConsole console)
