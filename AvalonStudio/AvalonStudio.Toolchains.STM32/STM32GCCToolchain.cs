@@ -40,6 +40,8 @@ namespace AvalonStudio.Toolchains.STM32
 
         public override string GDBExecutable => Path.Combine(BinDirectory, "arm-none-eabi-gdb" + Platform.ExecutableExtension);
 
+        public override string LibraryQueryCommand => "arm-none-eabi-gcc";
+
         public override string ExecutableExtension => ".elf";
 
         public override string StaticLibraryExtension => ".a";
@@ -438,6 +440,8 @@ namespace AvalonStudio.Toolchains.STM32
                 // this ensures content directory is re-evaluated if we just installed the toolchain.
                 _contentDirectory = null;
             }
+
+            await base.InstallAsync(console, project);
         }
     }
 }

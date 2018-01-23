@@ -80,7 +80,7 @@ namespace AvalonStudio.CommandLineTools
 
         public static Process LaunchShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs>
            outputReceivedCallback, Action<object, DataReceivedEventArgs> errorReceivedCallback = null, bool resolveExecutable = true,
-           string workingDirectory = "", bool executeInShell = true, params string[] extraPaths)
+           string workingDirectory = "", bool executeInShell = true, bool includeSystemPaths = true, params string[] extraPaths)
         {
             var shellProc = new Process
             {
@@ -92,6 +92,11 @@ namespace AvalonStudio.CommandLineTools
                     WorkingDirectory = workingDirectory
                 }
             };
+
+            if(!includeSystemPaths)
+            {
+                shellProc.StartInfo.Environment["PATH"] = "";
+            }
 
 
             foreach (var extraPath in extraPaths)
@@ -141,7 +146,7 @@ namespace AvalonStudio.CommandLineTools
 
         public static int ExecuteShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs>
             outputReceivedCallback, Action<object, DataReceivedEventArgs> errorReceivedCallback = null, bool resolveExecutable = true,
-            string workingDirectory = "", bool executeInShell = true, params string[] extraPaths)
+            string workingDirectory = "", bool executeInShell = true, bool includeSystemPaths = true, params string[] extraPaths)
         {
             using (var shellProc = new Process
             {
@@ -153,7 +158,12 @@ namespace AvalonStudio.CommandLineTools
                     WorkingDirectory = workingDirectory
                 }
             })
+
             {
+                if(!includeSystemPaths)
+                {
+                    shellProc.StartInfo.Environment["PATH"] = "";
+                }
                 foreach (var extraPath in extraPaths)
                 {
                     if (extraPath != null)

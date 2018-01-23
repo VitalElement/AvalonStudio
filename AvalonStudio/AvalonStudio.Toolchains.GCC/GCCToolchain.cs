@@ -173,7 +173,7 @@ namespace AvalonStudio.Toolchains.GCC
                     console.WriteLine(e.Data);
                 }
             },
-            false, "", false);
+            false, "", false, false);
 
             if (Shell.DebugMode)
             {
@@ -288,7 +288,7 @@ namespace AvalonStudio.Toolchains.GCC
                 {
                     console.WriteLine(e.Data);
                 }
-            }, false, project.Solution.CurrentDirectory, false);
+            }, false, project.Solution.CurrentDirectory, false, false);
 
             if (Shell.DebugMode)
             {
@@ -335,7 +335,7 @@ namespace AvalonStudio.Toolchains.GCC
                     }
                 }
             },
-             false, BinDirectory, true);
+             false, BinDirectory, true, false);
 
             await process.WaitForExitAsync();
 
@@ -367,7 +367,7 @@ namespace AvalonStudio.Toolchains.GCC
                     console.WriteLine(e.Data);
                 }
             }, (s, e) => { },
-             false, BinDirectory, true);
+             false, BinDirectory, false, false);
 
             await process.WaitForExitAsync();
 
@@ -381,7 +381,7 @@ namespace AvalonStudio.Toolchains.GCC
             result.ExitCode = PlatformSupport.ExecuteShellCommand(SizeExecutable, linkResult.Executable,
                 (s, e) => console.WriteLine(e.Data),
                 (s, e) => console.WriteLine(e.Data),
-                false, string.Empty, false);
+                false, string.Empty, false, false);
 
             return result;
         }

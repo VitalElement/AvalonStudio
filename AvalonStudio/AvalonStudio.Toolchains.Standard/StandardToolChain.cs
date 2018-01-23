@@ -81,7 +81,7 @@ namespace AvalonStudio.Toolchains.Standard
                 {
                     console.WriteLine(ee.Data);
                 }
-            }, false, project.CurrentDirectory, true, project.ToolChain?.BinDirectory);
+            }, false, project.CurrentDirectory, true, true, project.ToolChain?.BinDirectory);
 
             return exitCode;
         }
