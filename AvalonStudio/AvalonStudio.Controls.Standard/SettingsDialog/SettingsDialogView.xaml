@@ -1,5 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" 
-             xmlns:vm="clr-namespace:AvalonStudio.Controls.Standard.SettingsDialog;assembly=AvalonStudio.Controls.Standard"
+             xmlns:vm="clr-namespace:AvalonStudio.Extensibility.Settings;assembly=AvalonStudio.Extensibility"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
     <Grid>
         <DockPanel>

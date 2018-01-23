@@ -44,15 +44,15 @@ namespace AvalonStudio.Toolchains.GCC
 
         public virtual string SizeName => "size";
 
-        public string CCExecutable => Path.Combine(BinDirectory, $"{CCPPrefix}{CCName}" + Platform.ExecutableExtension);
+        public virtual string CCExecutable => Path.Combine(BinDirectory, $"{CCPPrefix}{CCName}" + Platform.ExecutableExtension);
 
-        public string CPPExecutable => Path.Combine(BinDirectory, $"{CCPPrefix}{CCPPName}" + Platform.ExecutableExtension);
+        public virtual string CPPExecutable => Path.Combine(BinDirectory, $"{CCPPrefix}{CCPPName}" + Platform.ExecutableExtension);
 
-        public string ARExecutable => Path.Combine(BinDirectory, $"{ARPrefix}{ARName}" + Platform.ExecutableExtension);
+        public virtual string ARExecutable => Path.Combine(BinDirectory, $"{ARPrefix}{ARName}" + Platform.ExecutableExtension);
 
-        public string LDExecutable => Path.Combine(BinDirectory, $"{LDPrefix}{LDName}" + Platform.ExecutableExtension);
+        public virtual string LDExecutable => Path.Combine(BinDirectory, $"{LDPrefix}{LDName}" + Platform.ExecutableExtension);
 
-        public string SizeExecutable => Path.Combine(BinDirectory, $"{SizePrefix}{SizeName}" + Platform.ExecutableExtension);
+        public virtual string SizeExecutable => Path.Combine(BinDirectory, $"{SizePrefix}{SizeName}" + Platform.ExecutableExtension);
 
         public override bool SupportsFile(ISourceFile file)
         {
@@ -97,6 +97,11 @@ namespace AvalonStudio.Toolchains.GCC
 
         public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
         {
+            if(_cToolchainIncludes == null)
+            {
+                return new List<string>();
+            }
+
             if (file == null)
             {
                 return _cToolchainIncludes;

@@ -1,11 +1,10 @@
-﻿using AvalonStudio.Controls.Standard.SettingsDialog;
-using AvalonStudio.Extensibility;
+﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Settings;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Shell;
 using ReactiveUI;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 

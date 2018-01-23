@@ -1,0 +1,22 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui">
+    <UserControl.Styles>
+        <Style Selector="TextBox">
+            <Setter Property="UseFloatingWatermark" Value="True" />
+        </Style>
+    </UserControl.Styles>
+    <StackPanel Gap="4">
+        <TextBox Text="{Binding ProfileName}" Watermark="ProfileInstance" />
+        <TextBox Text="{Binding Prefix}" Watermark="Toolchain Prefix (i.e. arm-none-eabi-)" />
+        <TextBox Text="{Binding CCPrefix}" Watermark="CC Prefix (* to skip)" />
+        <TextBox Text="{Binding CCName}" Watermark="CC Command" />
+        <TextBox Text="{Binding CppPrefix}" Watermark="CPP Prefix (* to skip)" />
+        <TextBox Text="{Binding CppName}" Watermark="CPP Command" />
+        <TextBox Text="{Binding LDPrefix}" Watermark="LD Prefix (* to skip)" />
+        <TextBox Text="{Binding LDName}" Watermark="LD Command" />
+        <TextBox Text="{Binding ARPrefix}" Watermark="AR Prefix (* to skip)" />
+        <TextBox Text="{Binding ARName}" Watermark="AR Command" />
+        <TextBox Text="{Binding SizePrefix}" Watermark="Size Prefix (* to skip)" />
+        <TextBox Text="{Binding SizeName}" Watermark="Size Command" />
+        <TextBox Text="{Binding LibraryQueryCommand}" Watermark="Library Query Command" />
+    </StackPanel>
+</UserControl>

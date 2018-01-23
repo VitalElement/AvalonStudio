@@ -90,17 +90,18 @@ namespace AvalonStudio.Toolchains.Standard
         {
             await InstallAsync(console, project);
 
-            if (!ValidateToolchainExecutables(console))
-            {
-                return false;
-            }
-
             console.Clear();
 
             console.WriteLine("Starting Build...");
             console.WriteLine();
 
             await BeforeBuild(console, project);
+
+            if (!ValidateToolchainExecutables(console))
+            {
+                console.WriteLine("Failed: Unable to find toolchain executables.");
+                return false;
+            }
 
             var preBuildCommands = (project as IStandardProject).PreBuildCommands;
             var postBuildCommands = (project as IStandardProject).PostBuildCommands;
