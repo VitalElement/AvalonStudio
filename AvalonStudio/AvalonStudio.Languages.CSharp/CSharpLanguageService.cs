@@ -685,7 +685,7 @@
 
             var textLength = 0;
 
-            await Dispatcher.UIThread.InvokeTaskAsync(() => { textLength = editor.Document.TextLength; });
+            await Dispatcher.UIThread.InvokeAsync(() => { textLength = editor.Document.TextLength; });
 
             var dataAssociation = GetAssociatedData(editor);
 

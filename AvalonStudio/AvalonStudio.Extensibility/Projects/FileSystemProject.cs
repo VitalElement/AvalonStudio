@@ -361,7 +361,7 @@
         {
             if (uiDispatcher != null)
             {
-                uiDispatcher.InvokeTaskAsync(() =>
+                uiDispatcher.InvokeAsync(() =>
                 {
                     action();
                 });

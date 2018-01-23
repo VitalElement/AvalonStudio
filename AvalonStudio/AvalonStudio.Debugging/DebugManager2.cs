@@ -325,7 +325,7 @@
 
                     if (file != null)
                     {
-                        Dispatcher.UIThread.InvokeTaskAsync(async () => 
+                        Dispatcher.UIThread.InvokeAsync(async () => 
                         {
                             _lastDocument = await _shell.OpenDocumentAsync(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true);
                         }).Wait();
@@ -343,7 +343,7 @@
                     _console.WriteLine($"Hit Watch Point {wp.Expression}");
                 }
 
-                Dispatcher.UIThread.InvokeTaskAsync(() =>
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     TargetStopped?.Invoke(this, e);
                     SetFrame(currentFrame);
