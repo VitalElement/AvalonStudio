@@ -3,6 +3,7 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
+using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using System;
 using System.Collections;
@@ -21,6 +22,9 @@ namespace AvalonStudio.Toolchains.Standard
 
         private int fileCount;
         private int numTasks;
+        private IShell _shell;
+
+        protected IShell Shell => _shell;
 
         private readonly object resultLock = new object();
 
@@ -93,6 +97,11 @@ namespace AvalonStudio.Toolchains.Standard
 
             console.Clear();
 
+            console.WriteLine("Starting Build...");
+            console.WriteLine();
+
+            await BeforeBuild(console, project);
+
             var preBuildCommands = (project as IStandardProject).PreBuildCommands;
             var postBuildCommands = (project as IStandardProject).PostBuildCommands;
 
@@ -104,8 +113,6 @@ namespace AvalonStudio.Toolchains.Standard
 
                 result = ExecuteCommands(console, project, preBuildCommands);
             }
-            
-            console.WriteLine("Starting Build...");
 
             terminateBuild = !result;
 
@@ -645,6 +652,11 @@ namespace AvalonStudio.Toolchains.Standard
             }
         }
 
+        public virtual async Task BeforeBuild(IConsole console, IProject project)
+        {
+            _shell = IoC.Get<IShell>();
+        }
+          
         public abstract Task InstallAsync(IConsole console, IProject project);
 
         public Task InstallAsync(IConsole console)
