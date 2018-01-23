@@ -51,7 +51,7 @@ namespace AvalonStudio.Toolchains.GCC
         public override bool SupportsFile(ISourceFile file)
         {
             var result = false;
-            
+
             switch (file.Extension.ToLower())
             {
                 case ".cpp":
@@ -61,7 +61,7 @@ namespace AvalonStudio.Toolchains.GCC
                     break;
             }
 
-            if(!result)
+            if (!result)
             {
                 var settings = file.Project.GetToolchainSettingsIfExists<GccToolchainSettings>();
 
@@ -119,12 +119,12 @@ namespace AvalonStudio.Toolchains.GCC
             string commandName = file.Extension == ".cpp" ? CPPExecutable : CCExecutable;
 
             var fileArguments = string.Empty;
-            
+
             if (file.Extension.ToLower() == ".cpp" || (settings != null && settings.CompileExtensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower())))
             {
                 fileArguments = "-x c++ -fno-use-cxa-atexit";
             }
-            
+
             if (file.Extension.ToLower() == ".s" || (settings != null && settings.AssembleExtensions.Select(ext => "." + ext.ToLower()).Contains(file.Extension.ToLower())))
             {
                 fileArguments = "-x assembler-with-cpp";
@@ -215,7 +215,7 @@ namespace AvalonStudio.Toolchains.GCC
                     linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
                 }
 
-                foreach(var lib in settings.LinkSettings.SystemLibraries)
+                foreach (var lib in settings.LinkSettings.SystemLibraries)
                 {
                     linkedLibraries += $"-l{lib} ";
                 }
@@ -240,7 +240,13 @@ namespace AvalonStudio.Toolchains.GCC
                 arguments = string.Format("{0} {1} -o{2} {3} {4} -Wl,--start-group {5} {6} -Wl,--end-group", GetLinkerArguments(superProject, project).ExpandVariables(environment), linkerScripts, executable, objectArguments, libraryPaths, linkedLibraries, libs);
             }
 
-            result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => { },
+            result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) =>
+            {
+                if (e.Data != null)
+                {
+                    console.WriteLine(e.Data);
+                }
+            },
                 (s, e) =>
             {
                 if (e.Data != null && !e.Data.Contains("creating"))
