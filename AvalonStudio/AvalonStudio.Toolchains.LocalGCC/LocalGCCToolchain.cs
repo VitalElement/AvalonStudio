@@ -27,7 +27,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
                 }
                 else
                 {
-                    if(_contentDirectory == null)
+                    if (_contentDirectory == null)
                     {
                         _contentDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.GCC"), "content");
                     }
@@ -37,7 +37,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
             }
         }
 
-        public override string BinDirectory 
+        public override string BinDirectory
         {
             get
             {
@@ -53,19 +53,6 @@ namespace AvalonStudio.Toolchains.LocalGCC
         }
 
         public override string Prefix => string.Empty;
-
-        public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
-        {
-            return new List<string>
-            {
-                Path.Combine(ContentDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include"),
-                Path.Combine(ContentDirectory, "lib", "gcc", "x86_64-w64-mingw32", "5.2.0", "include-fixed"),
-                Path.Combine(ContentDirectory, "x86_64-w64-mingw32", "include"),
-                Path.Combine(ContentDirectory, "x86_64-w64-mingw32", "include", "c++"),
-                Path.Combine(ContentDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32"),
-                Path.Combine(ContentDirectory, "x86_64-w64-mingw32", "include", "c++", "x86_64-w64-mingw32", "backward")
-            };
-        }
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)
         {
@@ -147,7 +134,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
             {
                 result += "-g ";
             }
-            
+
             // TODO make this an option.
             result += "-ffunction-sections -fdata-sections ";
 
@@ -259,7 +246,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
                         result += "-Ofast ";
                     }
                     break;
-            }            
+            }
 
             result += settings.CompileSettings.CustomFlags + " ";
 
@@ -385,9 +372,9 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
         public async override Task InstallAsync(IConsole console, IProject project)
         {
-            if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+            if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {
-                if(!await PackageManager.EnsurePackage("AvalonStudio.Toolchains.GCC", (project as CPlusPlusProject).ToolchainVersion,  console))
+                if (!await PackageManager.EnsurePackage("AvalonStudio.Toolchains.GCC", (project as CPlusPlusProject).ToolchainVersion, console))
                 {
                     // this ensures content directory is re-evaluated if we just installed the toolchain.
                     _contentDirectory = null;
