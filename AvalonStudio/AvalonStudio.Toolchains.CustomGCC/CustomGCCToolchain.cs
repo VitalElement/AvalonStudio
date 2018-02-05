@@ -89,7 +89,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
             var settings = superProject.GetToolchainSettings<GccToolchainSettings>();
 
-            result += "-Wall -c";
+            result += "-Wall -c ";
 
             if (settings.CompileSettings.DebugInformation)
             {
