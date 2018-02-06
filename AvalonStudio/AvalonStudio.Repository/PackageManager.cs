@@ -88,9 +88,9 @@ namespace AvalonStudio.Packages
         /// <param name="console">Console instance to log output to.</param>
         /// <param name="chmodFileMode">file mode to chmod files without extensions (unix platform only)</param>
         /// <returns>true if the package was already installed.</returns>
-        public static Task<bool> EnsurePackage(string packageId, string packageVersion, IConsole console, int chmodFileMode = DefaultFilePermissions)
+        public static Task<bool> EnsurePackage(string packageId, string packageVersion, IConsole console, int chmodFileMode = DefaultFilePermissions, bool ignoreRid = false)
         {
-            return EnsurePackage(packageId, packageVersion, new AvalonConsoleNuGetLogger(console), chmodFileMode);
+            return EnsurePackage(packageId, packageVersion, new AvalonConsoleNuGetLogger(console), chmodFileMode, ignoreRid);
         }
 
         /// <summary>
@@ -100,9 +100,9 @@ namespace AvalonStudio.Packages
         /// <param name="console">Console instance to log output to.</param>
         /// <param name="chmodFileMode">file mode to chmod files without extensions (unix platform only)</param>
         /// <returns>true if the package was already installed.</returns>
-        public static Task<bool> EnsurePackage(string packageId, IConsole console, int chmodFileMode = DefaultFilePermissions)
+        public static Task<bool> EnsurePackage(string packageId, IConsole console, int chmodFileMode = DefaultFilePermissions, bool ignoreRid = false)
         {
-            return EnsurePackage(packageId, null, new AvalonConsoleNuGetLogger(console), chmodFileMode);
+            return EnsurePackage(packageId, null, new AvalonConsoleNuGetLogger(console), chmodFileMode, ignoreRid);
         }
 
         /// <summary>
@@ -113,13 +113,15 @@ namespace AvalonStudio.Packages
         /// <param name="console">Console instance to log output to.</param>
         /// <param name="chmodFileMode">file mode to chmod files without extensions (unix platform only)</param>
         /// <returns>true if the package was already installed.</returns>
-        private static async Task<bool> EnsurePackage(string packageId, string packageVersion, ILogger console, int chmodFileMode = DefaultFilePermissions)
+        private static async Task<bool> EnsurePackage(string packageId, string packageVersion, ILogger console, int chmodFileMode = DefaultFilePermissions, bool ignoreRid = false)
         {
-            if (GetPackageDirectory(packageId, packageVersion) == string.Empty)
+            var identity = new PackageIdentity(ignoreRid ? packageId : packageId + "." + Platform.AvalonRID, new NuGetVersion(packageVersion));
+
+            if (GetPackageDirectory(identity) == string.Empty)
             {
                 console.LogInformation($"Package: {packageId} will be installed.");
 
-                var packages = await FindPackages(packageId + "." + Platform.AvalonRID);
+                var packages = await FindPackages(ignoreRid ? packageId : packageId + "." + Platform.AvalonRID);
 
                 var package = packages.FirstOrDefault();
 
@@ -256,7 +258,7 @@ namespace AvalonStudio.Packages
             }
         }
 
-        public async Task<IEnumerable<IPackageSearchMetadata>> ListPackages(int max = 20)
+        public static async Task<IEnumerable<PackageMetaData>> ListPackagesAsync(int max = 20)
         {
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();
             providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
@@ -270,7 +272,7 @@ namespace AvalonStudio.Packages
             var feed = await prov.TryCreate(sourceRepository, CancellationToken.None);
             var lister = (V2FeedListResource)feed.Item2;
 
-            var results = await lister.ListAsync(string.Empty, true, true, false, _logger, CancellationToken.None);
+            var results = await lister.ListAsync(string.Empty, true, true, false, new ConsoleNuGetLogger(), CancellationToken.None);
 
             var enumerator = results.GetEnumeratorAsync();
 
@@ -290,7 +292,7 @@ namespace AvalonStudio.Packages
                 max--;
             }
 
-            return result;
+            return result.Select(pmd => new PackageMetaData(pmd));
         }
 
         public static async Task<IEnumerable<IPackageSearchMetadata>> FindPackages(string packageName, ILogger logger = null)
