@@ -20,6 +20,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
         private string _executableExtension;
         private string _staticLibraryExtension;
         private string _binDirectory;
+
         private PublishedGCCToolchainSettings _settings;
         private GccConfiguration _gccConfig;
 
@@ -369,8 +370,10 @@ namespace AvalonStudio.Toolchains.PublishedGCC
             return result;
         }
 
-        public override async Task InstallAsync(IConsole console, IProject project)
+        public override async Task<bool> InstallAsync(IConsole console, IProject project)
         {
+            bool result = true;
+
             _settings = project.GetToolchainSettings<PublishedGCCToolchainSettings>();
 
             if(_settings.Toolchain != null)
@@ -379,10 +382,15 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
                 _gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
 
-                await _gccConfig.ResolveAsync();
+                result = await _gccConfig.ResolveAsync();
             }
 
-            await base.InstallAsync(console, project);
+            if (result)
+            {
+                result = await base.InstallAsync(console, project);
+            }
+
+            return result;
         }
     }
 }

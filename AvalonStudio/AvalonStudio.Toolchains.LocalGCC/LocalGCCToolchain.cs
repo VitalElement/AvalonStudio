@@ -370,16 +370,18 @@ namespace AvalonStudio.Toolchains.LocalGCC
             return result;
         }
 
-        public async override Task InstallAsync(IConsole console, IProject project)
+        public async override Task<bool> InstallAsync(IConsole console, IProject project)
         {
             if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {
-                if (!await PackageManager.EnsurePackage("AvalonStudio.Toolchains.GCC", (project as CPlusPlusProject).ToolchainVersion, console))
+                if (await PackageManager.EnsurePackage("AvalonStudio.Toolchains.GCC", (project as CPlusPlusProject).ToolchainVersion, console) == PackageEnsureStatus.Installed)
                 {
                     // this ensures content directory is re-evaluated if we just installed the toolchain.
                     _contentDirectory = null;
                 }
             }
+
+            return true;
         }
     }
 }

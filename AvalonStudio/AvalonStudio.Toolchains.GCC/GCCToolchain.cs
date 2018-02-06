@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AvalonStudio.Platforms;
 
 namespace AvalonStudio.Toolchains.GCC
 {
@@ -356,9 +355,11 @@ namespace AvalonStudio.Toolchains.GCC
             }
         }
 
-        public override async Task InstallAsync(IConsole console, IProject project)
+        public override async Task<bool> InstallAsync(IConsole console, IProject project)
         {
             await InitialiseInbuiltLibraries();
+
+            return true;
         }
 
         public override async Task BeforeBuild(IConsole console, IProject project)

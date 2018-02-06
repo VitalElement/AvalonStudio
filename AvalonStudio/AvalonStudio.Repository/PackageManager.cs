@@ -21,6 +21,14 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Packages
 {
+    public enum PackageEnsureStatus
+    {
+        Unknown,
+        NotFound,
+        Found,
+        Installed
+    }
+
     public class PackageManager
     {
         private ILogger _logger;
@@ -87,7 +95,7 @@ namespace AvalonStudio.Packages
         /// <param name="console">Console instance to log output to.</param>
         /// <param name="chmodFileMode">file mode to chmod files without extensions (unix platform only)</param>
         /// <returns>true if the package was already installed.</returns>
-        public static Task<bool> EnsurePackage(string packageId, string packageVersion, IConsole console, int chmodFileMode = DefaultFilePermissions, bool ignoreRid = false)
+        public static Task<PackageEnsureStatus> EnsurePackage(string packageId, string packageVersion, IConsole console, int chmodFileMode = DefaultFilePermissions, bool ignoreRid = false)
         {
             return EnsurePackage(packageId, packageVersion, new AvalonConsoleNuGetLogger(console), chmodFileMode, ignoreRid);
         }
@@ -99,7 +107,7 @@ namespace AvalonStudio.Packages
         /// <param name="console">Console instance to log output to.</param>
         /// <param name="chmodFileMode">file mode to chmod files without extensions (unix platform only)</param>
         /// <returns>true if the package was already installed.</returns>
-        public static Task<bool> EnsurePackage(string packageId, IConsole console, int chmodFileMode = DefaultFilePermissions, bool ignoreRid = false)
+        public static Task<PackageEnsureStatus> EnsurePackage(string packageId, IConsole console, int chmodFileMode = DefaultFilePermissions, bool ignoreRid = false)
         {
             return EnsurePackage(packageId, null, new AvalonConsoleNuGetLogger(console), chmodFileMode, ignoreRid);
         }
@@ -112,7 +120,7 @@ namespace AvalonStudio.Packages
         /// <param name="console">Console instance to log output to.</param>
         /// <param name="chmodFileMode">file mode to chmod files without extensions (unix platform only)</param>
         /// <returns>true if the package was already installed.</returns>
-        private static async Task<bool> EnsurePackage(string packageId, string packageVersion, ILogger console, int chmodFileMode = DefaultFilePermissions, bool ignoreRid = false)
+        private static async Task<PackageEnsureStatus> EnsurePackage(string packageId, string packageVersion, ILogger console, int chmodFileMode = DefaultFilePermissions, bool ignoreRid = false)
         {
             var identity = new PackageIdentity(ignoreRid ? packageId : packageId + "." + Platform.AvalonRID, new NuGetVersion(packageVersion));
 
@@ -127,6 +135,8 @@ namespace AvalonStudio.Packages
                 if (package == null)
                 {
                     console.LogInformation($"Unable to find package: {packageId}");
+
+                    return PackageEnsureStatus.NotFound;
                 }
                 else
                 {
@@ -142,20 +152,22 @@ namespace AvalonStudio.Packages
                         if (matchingVersion == null)
                         {
                             console.LogInformation($"Unable to find package: {packageId} with version: {packageVersion}");
-                            return false;
+                            console.LogInformation($"It maybe this package is not available on {Platform.AvalonRID}");
+                            return PackageEnsureStatus.NotFound;
                         }
 
                         installVersion = matchingVersion.Version.ToNormalizedString();
                     }
 
                     await InstallPackage(package.Identity.Id, installVersion, console, chmodFileMode);
-                }
 
-                return false;
+                    return PackageEnsureStatus.Installed;
+                }
+                
             }
             else
             {
-                return true;
+                return PackageEnsureStatus.Found;
             }
         }
 

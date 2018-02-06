@@ -88,7 +88,11 @@ namespace AvalonStudio.Toolchains.Standard
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
         {
-            await InstallAsync(console, project);
+            if(!await InstallAsync(console, project))
+            {
+                console.WriteLine("Failed: Unable to install or initialise toolchain.");
+                return false;
+            }
 
             console.Clear();
 
@@ -658,7 +662,7 @@ namespace AvalonStudio.Toolchains.Standard
             _shell = IoC.Get<IShell>();
         }
           
-        public abstract Task InstallAsync(IConsole console, IProject project);
+        public abstract Task<bool> InstallAsync(IConsole console, IProject project);
 
         public Task InstallAsync(IConsole console)
         {

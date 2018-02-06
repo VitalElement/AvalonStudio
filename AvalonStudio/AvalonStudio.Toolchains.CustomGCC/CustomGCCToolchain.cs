@@ -365,7 +365,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
             return result;
         }
 
-        public override Task InstallAsync(IConsole console, IProject project)
+        public override async Task<bool> InstallAsync(IConsole console, IProject project)
         {
             _settings = project.GetToolchainSettings<CustomGCCToolchainProjectSettings>();
 
@@ -373,7 +373,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
             _executableExtension = _settings.ExecutableExtension;
             _binDirectory = _settings.BasePath;
 
-            return base.InstallAsync(console, project);
+            return await base.InstallAsync(console, project);
         }
     }
 }

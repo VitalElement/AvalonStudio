@@ -124,19 +124,28 @@ namespace AvalonStudio.Toolchains.CustomGCC
             _version = description.Version;
         }
 
-        public async Task ResolveAsync()
+        public async Task<bool> ResolveAsync()
         {
             if (!_isResolved)
             {
                 _isResolved = true;
 
-                CC = await ResolvePackage(_description.CC);
-                Cpp = await ResolvePackage(_description.Cpp);
-                AR = await ResolvePackage(_description.AR);
-                LD = await ResolvePackage(_description.LD);
-                Size = await ResolvePackage(_description.Size);
-                Gdb = await ResolvePackage(_description.Gdb);
+                try
+                {
+                    CC = await ResolvePackage(_description.CC);
+                    Cpp = await ResolvePackage(_description.Cpp);
+                    AR = await ResolvePackage(_description.AR);
+                    LD = await ResolvePackage(_description.LD);
+                    Size = await ResolvePackage(_description.Size);
+                    Gdb = await ResolvePackage(_description.Gdb);
+                }
+                catch (Exception)
+                {
+                    _isResolved = false;
+                }
             }
+
+            return _isResolved;
         }
 
         private async Task<string> ResolvePackage(string url)
@@ -157,7 +166,10 @@ namespace AvalonStudio.Toolchains.CustomGCC
             }
             else
             {
-                await PackageManager.EnsurePackage(packageInfo.package, packageInfo.version, console);
+                if (await PackageManager.EnsurePackage(packageInfo.package, packageInfo.version, console) == PackageEnsureStatus.NotFound)
+                {
+                    throw new Exception("Package not found.");
+                }
                 
                 packageLocation = PackageManager.GetPackageDirectory(packageInfo.package, packageInfo.version);
 
