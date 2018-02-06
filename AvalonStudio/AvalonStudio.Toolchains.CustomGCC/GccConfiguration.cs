@@ -91,9 +91,16 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public static GccConfiguration GetConfiguration(string id, string version)
         {
+            var parsedVersion = Version.Parse(version);
+
+            if(parsedVersion.Revision == -1)
+            {
+                parsedVersion = new Version(parsedVersion.Major, parsedVersion.Minor, parsedVersion.Build, 0);
+            }
+
             if (s_registeredConfigurations.ContainsKey(id))
             {
-                return s_registeredConfigurations[id].FirstOrDefault(c=>c.Version == version);
+                return s_registeredConfigurations[id].FirstOrDefault(c=>c.Version == parsedVersion.ToString(4));
             }
             else
             {
