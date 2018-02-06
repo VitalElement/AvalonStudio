@@ -26,6 +26,8 @@ namespace AvalonStudio.Packages
     {
         private ILogger _logger;
         private const int DefaultFilePermissions = 0x755;
+        private static List<IPackageAssetLoader> _assetLoaders = new List<IPackageAssetLoader>();
+
         public PackageManager(ILogger logger = null)
         {
             _logger = logger;
@@ -46,6 +48,36 @@ namespace AvalonStudio.Packages
         public static InstalledPackagesCache GetCache()
         {
             return new InstalledPackagesCache(Path.Combine(Platform.ReposDirectory, "cachedPackages.xml"), Path.Combine(Platform.ReposDirectory, "installedPackages.xml"), false);
+        }
+
+        public static void RegisterAssetLoader(IPackageAssetLoader loader)
+        {
+            if (!_assetLoaders.Contains(loader))
+            {
+                _assetLoaders.Add(loader);
+            }
+        }
+
+        public static async Task LoadAssetsAsync()
+        {
+            var installedPackages = ListInstalledPackages();
+
+            foreach (var package in installedPackages)
+            {
+                var location = GetPackageDirectory(package);
+
+                var files = Directory.EnumerateFiles(location, "*.*", SearchOption.AllDirectories);
+
+                await LoadAssetsFromFilesAsync(package.Id, package.Version.ToNormalizedString(), files);
+            }
+        }
+
+        private static async Task LoadAssetsFromFilesAsync(string package, string version, IEnumerable<string> files)
+        {
+            foreach (var assetLoader in _assetLoaders)
+            {
+                await assetLoader.LoadAssetsAsync(package, version, files);
+            }
         }
 
         /// <summary>
@@ -104,7 +136,7 @@ namespace AvalonStudio.Packages
                         var versions = await package.GetVersionsAsync();
                         var matchingVersion = versions.FirstOrDefault(v => v.Version.ToNormalizedString() == packageVersion);
 
-                        if(matchingVersion == null)
+                        if (matchingVersion == null)
                         {
                             console.LogInformation($"Unable to find package: {packageId} with version: {packageVersion}");
                             return false;
@@ -168,17 +200,19 @@ namespace AvalonStudio.Packages
                         Array.Empty<SourceRepository>(),  // This is a list of secondary source respositories, probably empty
                         CancellationToken.None);
 
+                    var packageDir = GetPackageDirectory(identity);
+
+                    var files = Directory.EnumerateFiles(packageDir, "*.*", SearchOption.AllDirectories);
+
                     if (Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
                     {
-                        var packageDir = GetPackageDirectory(identity);
-
-                        var files = Directory.EnumerateFiles(packageDir, "*.*", SearchOption.AllDirectories);
-
                         foreach (var file in files)
                         {
                             Platform.Chmod(file, chmodFileMode);
                         }
                     }
+
+                    await LoadAssetsFromFilesAsync(packageId, version, files);
                 }
                 else
                 {
