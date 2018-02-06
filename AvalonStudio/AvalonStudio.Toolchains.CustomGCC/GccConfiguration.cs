@@ -30,11 +30,11 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public async Task<GccConfiguration> ToConfigAsync(bool autoInstall = true)
         {
-            var result = new GccConfiguration(Id, Version);
+            var result = new GccConfiguration(this);
 
             if (autoInstall)
             {
-                await result.Resolve(this);
+                await result.ResolveAsync();
             }
 
             return result;
@@ -55,26 +55,45 @@ namespace AvalonStudio.Toolchains.CustomGCC
     {
         private static Dictionary<string, List<GccConfiguration>> s_registeredConfigurations = new Dictionary<string, List<GccConfiguration>>();
 
-        public static void Register (GccConfiguration configuration)
+        public static void Register(GccConfiguration configuration)
         {
-            if(!s_registeredConfigurations.ContainsKey(configuration.Id))
+            if (!s_registeredConfigurations.ContainsKey(configuration.Id))
             {
                 s_registeredConfigurations.Add(configuration.Id, new List<GccConfiguration>());
             }
 
-            if(!s_registeredConfigurations[configuration.Id].Contains(configuration))
+            if (!s_registeredConfigurations[configuration.Id].Contains(configuration))
             {
                 s_registeredConfigurations[configuration.Id].InsertSorted(configuration);
             }
         }
 
+        public static async Task<IEnumerable<PackageMetaData>> GetRemotePackagesAsync()
+        {
+            var packages = (await PackageManager.ListPackagesAsync(100)).Where(p=>p.Tags.Contains("gccdescription"));
+            
+            return packages;
+        }
+
         public static IEnumerable<string> Packages => s_registeredConfigurations.Keys;
 
-        public static IEnumerable<GccConfiguration> GetConfigurations (string id)
+        public static IEnumerable<GccConfiguration> GetConfigurations(string id)
         {
-            if(s_registeredConfigurations.ContainsKey(id))
+            if (s_registeredConfigurations.ContainsKey(id))
             {
                 return s_registeredConfigurations[id];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public static GccConfiguration GetConfiguration(string id, string version)
+        {
+            if (s_registeredConfigurations.ContainsKey(id))
+            {
+                return s_registeredConfigurations[id].FirstOrDefault(c=>c.Version == version);
             }
             else
             {
@@ -93,28 +112,30 @@ namespace AvalonStudio.Toolchains.CustomGCC
         private string _size;
         private Version _version;
         private string _id;
+        private GccToolchainDescription _description;
 
         private bool _isResolved;
         private Dictionary<string, string> _resolvedPackages = new Dictionary<string, string>();
 
-        internal GccConfiguration(string id, Version version)
+        internal GccConfiguration(GccToolchainDescription description)
         {
-            _id = id;
-            _version = version;
+            _description = description;
+            _id = description.Id;
+            _version = description.Version;
         }
 
-        public async Task Resolve(GccToolchainDescription tc)
+        public async Task ResolveAsync()
         {
             if (!_isResolved)
             {
                 _isResolved = true;
 
-                CC = await ResolvePackage(tc.CC);
-                Cpp = await ResolvePackage(tc.Cpp);
-                AR = await ResolvePackage(tc.AR);
-                LD = await ResolvePackage(tc.LD);
-                Size = await ResolvePackage(tc.Size);
-                Gdb = await ResolvePackage(tc.Gdb);
+                CC = await ResolvePackage(_description.CC);
+                Cpp = await ResolvePackage(_description.Cpp);
+                AR = await ResolvePackage(_description.AR);
+                LD = await ResolvePackage(_description.LD);
+                Size = await ResolvePackage(_description.Size);
+                Gdb = await ResolvePackage(_description.Gdb);
             }
         }
 
@@ -205,6 +226,8 @@ namespace AvalonStudio.Toolchains.CustomGCC
         }
 
         public string Id => _id;
+
+        public string Version => _version.ToString(4);
 
         public string CC
         {
