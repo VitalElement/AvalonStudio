@@ -127,6 +127,7 @@ namespace AvalonStudio.Packages
             if (GetPackageDirectory(identity) == string.Empty)
             {
                 console.LogInformation($"Package: {packageId} will be installed.");
+                console.LogInformation($"This may take some time...");
 
                 var packages = await FindPackages(ignoreRid ? packageId : packageId + "." + Platform.AvalonRID);
 
