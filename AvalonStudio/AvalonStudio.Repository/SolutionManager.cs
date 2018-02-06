@@ -47,11 +47,21 @@ namespace AvalonStudio.Packages
 
         public event EventHandler<ActionsExecutedEventArgs> ActionsExecuted;
 
+        public Task<bool> DoesNuGetSupportsAnyProjectAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public void EnsureSolutionIsLoaded()
         {
         }
 
         public NuGetProject GetNuGetProject(string nuGetProjectSafeName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<NuGetProject> GetNuGetProjectAsync(string nuGetProjectSafeName)
         {
             throw new NotImplementedException();
         }
@@ -65,6 +75,21 @@ namespace AvalonStudio.Packages
         }
 
         public string GetNuGetProjectSafeName(NuGetProject nuGetProject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetNuGetProjectSafeNameAsync(NuGetProject nuGetProject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<NuGetProject>> GetNuGetProjectsAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> IsSolutionAvailableAsync()
         {
             throw new NotImplementedException();
         }

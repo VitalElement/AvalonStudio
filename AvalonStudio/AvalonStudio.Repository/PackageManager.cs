@@ -9,7 +9,6 @@ using NuGet.Packaging.Core;
 using NuGet.ProjectManagement;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
-using NuGet.Protocol.Core.v2;
 using NuGet.Resolver;
 using NuGet.Versioning;
 using System;
@@ -172,7 +171,7 @@ namespace AvalonStudio.Packages
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();
 
             providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
-            providers.AddRange(Repository.Provider.GetCoreV2());  // Add v2 API support
+            //providers.AddRange(Repository.Factory.GetCoreV2());  // Add v2 API support
 
             var settings = NuGet.Configuration.Settings.LoadDefaultSettings(Platform.ReposDirectory, null, new MachineWideSettings(), false, true);
 
@@ -237,7 +236,7 @@ namespace AvalonStudio.Packages
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();
 
             providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
-            providers.AddRange(Repository.Provider.GetCoreV2());  // Add v2 API support
+            //providers.AddRange(Repository.Provider.GetCoreV2());  // Add v2 API support
 
             var settings = NuGet.Configuration.Settings.LoadDefaultSettings(Platform.ReposDirectory, null, new MachineWideSettings(), false, true);
 
@@ -264,7 +263,7 @@ namespace AvalonStudio.Packages
         {
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();
             providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
-            providers.AddRange(Repository.Provider.GetCoreV2());  // Add v2 API support
+            //providers.AddRange(Repository.Provider.GetCoreV2());  // Add v2 API support
             PackageSource packageSource = new PackageSource(DefaultPackageSource);
             SourceRepository sourceRepository = new SourceRepository(packageSource, providers);
 
@@ -306,7 +305,7 @@ namespace AvalonStudio.Packages
 
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();
             providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
-            providers.AddRange(Repository.Provider.GetCoreV2());  // Add v2 API support
+            //providers.AddRange(Repository.Provider.GetCoreV2());  // Add v2 API support
             PackageSource packageSource = new PackageSource(DefaultPackageSource);
             SourceRepository sourceRepository = new SourceRepository(packageSource, providers);
 
@@ -372,10 +371,10 @@ namespace AvalonStudio.Packages
             try
             {
                 DependencyInfoResource dependencyInfoResource = await sourceRepository.GetResourceAsync<DependencyInfoResource>();
-                IEnumerable<SourcePackageDependencyInfo> dependencyInfo = await dependencyInfoResource.ResolvePackages(
-                    packageId, currentFramework, logger, CancellationToken.None);
+                var dependencyInfo = await dependencyInfoResource.ResolvePackages(
+                    packageId, NullSourceCacheContext.Instance, logger, CancellationToken.None);
                 return dependencyInfo
-                    .Select(x => x.Version)
+                    .Select(x => x.Identity.Version)
                     .Where(x => x != null && (versionRange == null || versionRange.Satisfies(x)))
                     .DefaultIfEmpty()
                     .Max();
