@@ -82,7 +82,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
         private void Save()
         {
-            _settings.Toolchain = SelectedPackage.Title;
+            _settings.Toolchain = SelectedPackage?.Title;
             _settings.Version = SelectedVersion;
 
             Model.SetToolchainSettings(_settings);
