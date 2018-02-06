@@ -95,13 +95,13 @@ namespace AvalonStudio.Toolchains.Standard
             console.WriteLine("Starting Build...");
             console.WriteLine();
 
-            await BeforeBuild(console, project);
-
             if (!ValidateToolchainExecutables(console))
             {
                 console.WriteLine("Failed: Unable to find toolchain executables.");
                 return false;
             }
+
+            await BeforeBuild(console, project);
 
             var preBuildCommands = (project as IStandardProject).PreBuildCommands;
             var postBuildCommands = (project as IStandardProject).PostBuildCommands;
