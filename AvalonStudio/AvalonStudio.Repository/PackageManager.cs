@@ -45,7 +45,7 @@ namespace AvalonStudio.Packages
             }
         }
 
-        private const string DefaultPackageSource = "https://nuget1.vitalelement.co.uk/repository/AvalonStudio/";
+        private const string DefaultPackageSource = "https://nuget2.vitalelement.co.uk/repository/AvalonStudio/";
 
         public static NuGetFramework GetFramework()
         {
@@ -183,7 +183,6 @@ namespace AvalonStudio.Packages
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();
 
             providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
-            //providers.AddRange(Repository.Factory.GetCoreV2());  // Add v2 API support
 
             var settings = NuGet.Configuration.Settings.LoadDefaultSettings(Platform.ReposDirectory, null, new MachineWideSettings(), false, true);
 
@@ -248,7 +247,6 @@ namespace AvalonStudio.Packages
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();
 
             providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
-            //providers.AddRange(Repository.Provider.GetCoreV2());  // Add v2 API support
 
             var settings = NuGet.Configuration.Settings.LoadDefaultSettings(Platform.ReposDirectory, null, new MachineWideSettings(), false, true);
 
@@ -275,7 +273,7 @@ namespace AvalonStudio.Packages
         {
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();
             providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
-            //providers.AddRange(Repository.Provider.GetCoreV2());  // Add v2 API support
+
             PackageSource packageSource = new PackageSource(DefaultPackageSource);
             SourceRepository sourceRepository = new SourceRepository(packageSource, providers);
 
@@ -317,7 +315,7 @@ namespace AvalonStudio.Packages
 
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();
             providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
-            //providers.AddRange(Repository.Provider.GetCoreV2());  // Add v2 API support
+
             PackageSource packageSource = new PackageSource(DefaultPackageSource);
             SourceRepository sourceRepository = new SourceRepository(packageSource, providers);
 
