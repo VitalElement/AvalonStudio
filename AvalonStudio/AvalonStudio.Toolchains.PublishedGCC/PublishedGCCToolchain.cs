@@ -297,7 +297,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
         {
             return new List<object>
             {
-                new GccProfileFormViewModel(project),
+                new PublishedToolchainSettingsViewModel(project),
                 new CompileSettingsFormViewModel(project),
                 new LinkerSettingsFormViewModel(project)
         };
@@ -375,7 +375,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
             if(_settings.Toolchain != null)
             {
-                await PackageManager.EnsurePackage(_settings.Toolchain, _settings.Version, IoC.Get<IConsole>());
+                await PackageManager.EnsurePackage(_settings.Toolchain, _settings.Version, IoC.Get<IConsole>(), ignoreRid: true);
 
                 _gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
 
