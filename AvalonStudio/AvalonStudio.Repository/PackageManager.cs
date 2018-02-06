@@ -131,12 +131,14 @@ namespace AvalonStudio.Packages
                 }
                 else
                 {
-                    string installVesion = package.Identity.Version.ToNormalizedString();
+                    string installVersion = package.Identity.Version.ToNormalizedString();
 
                     if (!string.IsNullOrEmpty(packageVersion))
                     {
+                        var requestedVersion = NuGetVersion.Parse(packageVersion);
+
                         var versions = await package.GetVersionsAsync();
-                        var matchingVersion = versions.FirstOrDefault(v => v.Version.ToNormalizedString() == packageVersion);
+                        var matchingVersion = versions.FirstOrDefault(v => v.Version == requestedVersion);
 
                         if (matchingVersion == null)
                         {
@@ -144,10 +146,10 @@ namespace AvalonStudio.Packages
                             return false;
                         }
 
-                        installVesion = matchingVersion.Version.ToNormalizedString();
+                        installVersion = matchingVersion.Version.ToNormalizedString();
                     }
 
-                    await InstallPackage(package.Identity.Id, installVesion, console, chmodFileMode);
+                    await InstallPackage(package.Identity.Id, installVersion, console, chmodFileMode);
                 }
 
                 return false;
