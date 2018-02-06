@@ -5,35 +5,85 @@ using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.CustomGCC
 {
     public class GccToolchainDescription
     {
-        public string CCUrl { get; set; }
+        public string Id { get; set; }
 
-        public string CppUrl { get; set; }
+        public Version Version { get; set; }
 
-        public string ARUrl { get; set; }
+        public string CC { get; set; }
 
-        public string LDUrl { get; set; }
+        public string Cpp { get; set; }
 
-        public string SizeUrl { get; set; }
+        public string AR { get; set; }
 
-        public string GdbUrl { get; set; }
+        public string LD { get; set; }
 
-        public async Task<GccConfiguration> ToConfigAsync()
+        public string Size { get; set; }
+
+        public string Gdb { get; set; }
+
+        public async Task<GccConfiguration> ToConfigAsync(bool autoInstall = true)
         {
-            var result = new GccConfiguration();
+            var result = new GccConfiguration(Id, Version);
 
-            await result.Resolve(this);
+            if (autoInstall)
+            {
+                await result.Resolve(this);
+            }
 
             return result;
         }
+
+        public static GccToolchainDescription Load(string file)
+        {
+            return SerializedObject.Deserialize<GccToolchainDescription>(file);
+        }
+
+        public void Save (string path)
+        {
+            SerializedObject.Serialize(path, this);
+        }
     }
 
-    public class GccConfiguration
+    public class GccConfigurationsManager
+    {
+        private static Dictionary<string, List<GccConfiguration>> s_registeredConfigurations = new Dictionary<string, List<GccConfiguration>>();
+
+        public static void Register (GccConfiguration configuration)
+        {
+            if(!s_registeredConfigurations.ContainsKey(configuration.Id))
+            {
+                s_registeredConfigurations.Add(configuration.Id, new List<GccConfiguration>());
+            }
+
+            if(!s_registeredConfigurations[configuration.Id].Contains(configuration))
+            {
+                s_registeredConfigurations[configuration.Id].InsertSorted(configuration);
+            }
+        }
+
+        public static IEnumerable<string> Packages => s_registeredConfigurations.Keys;
+
+        public static IEnumerable<GccConfiguration> GetConfigurations (string id)
+        {
+            if(s_registeredConfigurations.ContainsKey(id))
+            {
+                return s_registeredConfigurations[id];
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+    public class GccConfiguration : IComparable<GccConfiguration>
     {
         private string _cc;
         private string _cpp;
@@ -41,22 +91,30 @@ namespace AvalonStudio.Toolchains.CustomGCC
         private string _ld;
         private string _gdb;
         private string _size;
+        private Version _version;
+        private string _id;
 
         private bool _isResolved;
         private Dictionary<string, string> _resolvedPackages = new Dictionary<string, string>();
 
-        internal async Task Resolve(GccToolchainDescription tc)
+        internal GccConfiguration(string id, Version version)
+        {
+            _id = id;
+            _version = version;
+        }
+
+        public async Task Resolve(GccToolchainDescription tc)
         {
             if (!_isResolved)
             {
                 _isResolved = true;
 
-                CC = await ResolvePackage(tc.CCUrl);
-                Cpp = await ResolvePackage(tc.CppUrl);
-                AR = await ResolvePackage(tc.ARUrl);
-                LD = await ResolvePackage(tc.LDUrl);
-                Size = await ResolvePackage(tc.SizeUrl);
-                Gdb = await ResolvePackage(tc.GdbUrl);
+                CC = await ResolvePackage(tc.CC);
+                Cpp = await ResolvePackage(tc.Cpp);
+                AR = await ResolvePackage(tc.AR);
+                LD = await ResolvePackage(tc.LD);
+                Size = await ResolvePackage(tc.Size);
+                Gdb = await ResolvePackage(tc.Gdb);
             }
         }
 
@@ -78,16 +136,11 @@ namespace AvalonStudio.Toolchains.CustomGCC
             }
             else
             {
-                if (await PackageManager.EnsurePackage(packageInfo.package, packageInfo.version, console))
-                {
-                    packageLocation = PackageManager.GetPackageDirectory(packageInfo.package, packageInfo.version);
+                await PackageManager.EnsurePackage(packageInfo.package, packageInfo.version, console);
+                
+                packageLocation = PackageManager.GetPackageDirectory(packageInfo.package, packageInfo.version);
 
-                    _resolvedPackages.Add(fullPackageId, packageLocation);
-                }
-                else
-                {
-                    throw new Exception($"Unable to install or location package: {packageInfo.package}, {packageInfo.version}");
-                }
+                _resolvedPackages.Add(fullPackageId, packageLocation);
             }
 
             result = (Path.Combine(packageLocation, packageInfo.location) + Platform.ExecutableExtension).ToPlatformPath();
@@ -136,6 +189,22 @@ namespace AvalonStudio.Toolchains.CustomGCC
                 return ("", "", url);
             }
         }
+
+        public int CompareTo(GccConfiguration other)
+        {
+            var idCompare = _id.CompareTo(other._id);
+            
+            if(idCompare == 0)
+            {
+                return _version.CompareTo(other._version);
+            }
+            else
+            {
+                return idCompare;
+            }
+        }
+
+        public string Id => _id;
 
         public string CC
         {
