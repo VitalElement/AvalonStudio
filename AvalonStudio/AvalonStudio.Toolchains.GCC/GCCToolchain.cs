@@ -135,6 +135,11 @@ namespace AvalonStudio.Toolchains.GCC
         {
             bool result = true;
 
+            if(string.IsNullOrEmpty(CCExecutable) || string.IsNullOrEmpty(CPPExecutable) || string.IsNullOrEmpty(ARExecutable) || string.IsNullOrEmpty(LDExecutable) || string.IsNullOrEmpty(SizeExecutable))
+            {
+                return false;
+            }
+
             result = CheckFile(console, CCExecutable) && CheckFile(console, CPPExecutable) &&
             CheckFile(console, ARExecutable) && CheckFile(console, LDExecutable) &&
             CheckFile(console, SizeExecutable);
