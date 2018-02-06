@@ -284,7 +284,7 @@ namespace AvalonStudio.Packages
             var feed = await prov.TryCreate(sourceRepository, CancellationToken.None);
             var lister = (V2FeedListResource)feed.Item2;
 
-            var results = await lister.ListAsync(string.Empty, true, true, false, new ConsoleNuGetLogger(), CancellationToken.None);
+            var results = await lister.ListAsync(string.Empty, true, false, false, new ConsoleNuGetLogger(), CancellationToken.None);
 
             var enumerator = results.GetEnumeratorAsync();
 
