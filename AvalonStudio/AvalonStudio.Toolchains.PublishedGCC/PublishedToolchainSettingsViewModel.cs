@@ -91,9 +91,11 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
         private async Task LoadVersions()
         {
-            var versions = await SelectedPackage.GetVersionsAsync();
+            var versions = await PackageManager.FindPackages(SelectedPackage.Title);
 
-            Versions = new ObservableCollection<string>(versions);
+            var versionData = await versions.FirstOrDefault().GetVersionsAsync();
+
+            Versions = new ObservableCollection<string>(versionData.Select(v=>v.Version.ToNormalizedString()));
         }
 
         public PackageMetaData SelectedPackage

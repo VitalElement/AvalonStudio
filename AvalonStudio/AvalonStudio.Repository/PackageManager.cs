@@ -324,7 +324,7 @@ namespace AvalonStudio.Packages
 
             var searchResource = await sourceRepository.GetResourceAsync<PackageSearchResource>();
 
-            return await searchResource.SearchAsync(packageName, new SearchFilter(true), 0, 10, logger, CancellationToken.None);
+            return await searchResource.SearchAsync(packageName, new SearchFilter(true), 0, 100, logger, CancellationToken.None);
         }
 
         public static IEnumerable<PackageIdentity> ListInstalledPackages()
