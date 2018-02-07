@@ -81,17 +81,16 @@ namespace AvalonStudio.Toolchains.Standard
                 {
                     console.WriteLine(ee.Data);
                 }
-            }, false, project.CurrentDirectory, true, project.ToolChain?.BinDirectory);
+            }, false, project.CurrentDirectory, true, true, project.ToolChain?.BinDirectory);
 
             return exitCode;
         }
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
         {
-            await InstallAsync(console, project);
-
-            if (!ValidateToolchainExecutables(console))
+            if(!await InstallAsync(console, project))
             {
+                console.WriteLine("Failed: Unable to install or initialise toolchain.");
                 return false;
             }
 
@@ -99,6 +98,12 @@ namespace AvalonStudio.Toolchains.Standard
 
             console.WriteLine("Starting Build...");
             console.WriteLine();
+
+            if (!ValidateToolchainExecutables(console))
+            {
+                console.WriteLine("Failed: Unable to find toolchain executables.");
+                return false;
+            }
 
             await BeforeBuild(console, project);
 
@@ -657,7 +662,7 @@ namespace AvalonStudio.Toolchains.Standard
             _shell = IoC.Get<IShell>();
         }
           
-        public abstract Task InstallAsync(IConsole console, IProject project);
+        public abstract Task<bool> InstallAsync(IConsole console, IProject project);
 
         public Task InstallAsync(IConsole console)
         {

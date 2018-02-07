@@ -1,11 +1,11 @@
-﻿using AvalonStudio.Controls.Standard.SettingsDialog;
-using AvalonStudio.Extensibility;
+﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Settings;
 using AvalonStudio.Extensibility.Theme;
+using AvalonStudio.GlobalSettings;
+using ReactiveUI;
 using System.Collections.Generic;
 using System.Linq;
-using ReactiveUI;
-using AvalonStudio.GlobalSettings;
 
 namespace AvalonStudio
 {
@@ -45,7 +45,7 @@ namespace AvalonStudio
             Settings.SetSettings(settings);
         }
 
-        public List<string> Themes => ColorTheme.Themes.Select(t=>t.Name).ToList();
+        public List<string> Themes => ColorTheme.Themes.Select(t => t.Name).ToList();
 
         public int SelectedThemeIndex
         {
@@ -58,7 +58,7 @@ namespace AvalonStudio
                 {
                     var loadedTheme = ColorTheme.LoadTheme(Themes[_selectedThemeIndex]);
 
-                    if(loadedTheme.Name != Themes[_selectedThemeIndex])
+                    if (loadedTheme.Name != Themes[_selectedThemeIndex])
                     {
                         _selectedThemeIndex = Themes.IndexOf(loadedTheme.Name);
                     }

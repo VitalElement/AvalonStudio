@@ -1,0 +1,10 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui">
+    <StackPanel>
+        <TextBox Text="{Binding InstanceName}" Watermark="InstanceName" />
+        <TextBlock Text="{Binding BasePath}" />
+        <Button Content="Browse" Command="{Binding BrowseCommand}" />
+        <Button Content="Save Profile" Command="{Binding SaveCommand}" />
+        <ListBox Items="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}" />
+    </StackPanel>    
+</UserControl>
+     

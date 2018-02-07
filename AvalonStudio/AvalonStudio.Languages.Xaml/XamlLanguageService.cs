@@ -73,7 +73,7 @@ namespace AvalonStudio.Languages.Xaml
 
             string text = string.Empty;
 
-            await Dispatcher.UIThread.InvokeTaskAsync(()=> 
+            await Dispatcher.UIThread.InvokeAsync(()=> 
             {
                 text = editor.Document.Text;
             });

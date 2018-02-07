@@ -74,7 +74,7 @@ namespace AvalonStudio.Packages
         /// Gets all installed packages from this session and their dependencies.
         /// </summary>
         public IEnumerable<PackageIdentity> GetInstalledPackagesAndDependencies() =>
-            _installedPackages.Where(x=>x.PackageReference.PackageIdentity.Id.EndsWith(Platform.AvalonRID)).Select(x => x.PackageReference.PackageIdentity)
+            _installedPackages.Select(x=>x.PackageReference.PackageIdentity)
                 .Concat(_installedPackages.SelectMany(x => x.Dependencies.Select(dep => dep.PackageIdentity)));
 
         /// <summary>

@@ -67,7 +67,7 @@ namespace AvalonStudio.Extensibility.Projects
 
                 await LoadProjectLoadingPlaceholdersAsync();
 
-                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     BuildTree();
                 });
@@ -119,7 +119,7 @@ namespace AvalonStudio.Extensibility.Projects
                 newItems.Add(newItem);
             }
 
-            await Dispatcher.UIThread.InvokeTaskAsync(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 foreach (var newItem in newItems)
                 {
@@ -178,7 +178,7 @@ namespace AvalonStudio.Extensibility.Projects
                 newItems.Add(newProject);
             }
             
-            await Dispatcher.UIThread.InvokeTaskAsync(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 foreach (var newItem in newItems)
                 {

@@ -1,119 +1,58 @@
-namespace AvalonStudio.Toolchains.Clang
+﻿using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
+using AvalonStudio.Projects.CPlusPlus;
+using AvalonStudio.Projects.Standard;
+using AvalonStudio.Toolchains.GCC;
+using AvalonStudio.Utils;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace AvalonStudio.Toolchains.CustomGCC
 {
-    using AvalonStudio.Extensibility.Templating;
-    using AvalonStudio.Packages;
-    using AvalonStudio.Platforms;
-    using AvalonStudio.Projects;
-    using AvalonStudio.Projects.Standard;
-    using AvalonStudio.Toolchains.GCC;
-    using AvalonStudio.Utils;
-    using CommandLineTools;
-    using Standard;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Threading.Tasks;
-    using AvalonStudio.Projects.CPlusPlus;
-
-    public enum AssemblyFormat
+    public class CustomGCCToolchain : GCCToolchain
     {
-        Binary,
-        IntelHex,
-        Elf32
-    }
+        private string _executableExtension;
+        private string _staticLibraryExtension;
+        private string _binDirectory;
+        private CustomGCCToolchainProjectSettings _settings;
 
-    public class ClangToolchain : GCCToolchain
-    {
-        private static string _contentDirectory;
+        public override string ExecutableExtension => _executableExtension;
 
-        public static string ContentDirectory
+        public override string StaticLibraryExtension => _staticLibraryExtension;
+
+        public override Version Version => new Version();
+
+        public override string Description => "Allows developer to specify any GCC compatible toolchain to use.";
+
+        public override string BinDirectory => _binDirectory;
+
+        public override string CCExecutable => _settings.CCExecutable;
+
+        public override string CPPExecutable => _settings.CPPExecutable;
+
+        public override string ARExecutable => _settings.ARExecutable;
+
+        public override string LDExecutable => _settings.LDExecutable;
+
+        public override string SizeExecutable => _settings.SizeExecutable;
+
+        public override string GDBExecutable => _settings.GDBExecutable;
+
+        public override string LibraryQueryCommand => Path.Combine(BinDirectory, _settings.LibraryQueryCommand + Platform.ExecutableExtension);
+
+        public override bool CanHandle(IProject project)
         {
-            get
+            var result = false;
+
+            if (project is CPlusPlusProject)
             {
-                if (_contentDirectory == null)
-                {
-                    _contentDirectory =Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang"), "content");
-                }
-
-                return _contentDirectory;
-            }
-        }
-            
-        public override string BinDirectory => Path.Combine(ContentDirectory, "bin");
-        public override string Prefix => string.Empty;
-        public override string CCName => "clang";
-        public override string CCPPName => "clang++";
-        public override string LDName => "gcc";
-        public override string ARName => "ar";
-        public override string LDPrefix => "arm-none-eabi-";
-        public override string SizePrefix => LDPrefix;
-        public override string ARPrefix => LDPrefix;
-
-        public override Version Version
-        {
-            get { return new Version(1, 0, 0); }
-        }
-
-        public override string Description
-        {
-            get { return "GCC based toolchain for Clang."; }
-        }
-
-        public override string GDBExecutable
-        {
-            get { return Path.Combine(BinDirectory, "arm-none-eabi-gdb" + Platform.ExecutableExtension); }
-        }
-
-        public override string LibraryQueryCommand => "arm-none-eabi-gcc";
-
-        public override string ExecutableExtension
-        {
-            get { return ".elf"; }
-        }
-
-        public override string StaticLibraryExtension
-        {
-            get { return ".a"; }
-        }
-
-        private string GetLinkerScriptLocation(IStandardProject project)
-        {
-            return Path.Combine(project.CurrentDirectory, "link.ld");
-        }
-
-        /*public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
-        {
-            return new List<string>
-            {
-                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "6.3.1"),
-                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "6.3.1", "arm-none-eabi"),
-                Path.Combine(ContentDirectory, "arm-none-eabi", "include", "c++", "6.3.1", "backward"),
-                Path.Combine(ContentDirectory, "arm-none-eabi", "include"),
-                Path.Combine(ContentDirectory, "lib", "gcc", "arm-none-eabi", "6.3.1", "include"),
-                Path.Combine(ContentDirectory, "lib", "gcc", "arm-none-eabi", "6.3.1", "include-fixed"),
-                Path.Combine(ContentDirectory, "arm-none-eabi", "include")
-            };
-        }*/
-
-        private void GenerateLinkerScript(IStandardProject project)
-        {
-            var settings = project.GetToolchainSettings<GccToolchainSettings>().LinkSettings;
-
-            var linkerScript = GetLinkerScriptLocation(project);
-
-            if (System.IO.File.Exists(linkerScript))
-            {
-                System.IO.File.Delete(linkerScript);
+                result = true;
             }
 
-            throw new NotImplementedException();
-            //var rendered = Template.Engine.CompileRenderAsync("ArmLinkerScriptTemplate.template", new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start = settings.InRam1Start, InRam1Size = settings.InRam1Size }).GetAwaiter().GetResult();
-
-            //using (var sw = System.IO.File.CreateText(linkerScript))
-            //{
-            //    sw.Write(rendered);
-            //}
+            return result;
         }
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)
@@ -144,74 +83,13 @@ namespace AvalonStudio.Toolchains.Clang
             return result;
         }
 
-        public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
-        {
-            var settings = project.GetToolchainSettings<GccToolchainSettings>();
-
-            if (superProject != null && settings.LinkSettings.UseMemoryLayout && project.Type != ProjectType.StaticLibrary)
-            {
-                GenerateLinkerScript(superProject);
-            }
-
-            var result = string.Empty;
-
-            result += string.Format("{0} ", settings.LinkSettings.MiscLinkerArguments);
-
-            switch (settings.CompileSettings.Fpu)
-            {
-                case FPUSupport.Soft:
-                    result += " -mfpu=fpv4-sp-d16 -mfloat-abi=softfp ";
-                    break;
-
-                case FPUSupport.Hard:
-                    result += " -mfpu=fpv4-sp-d16 -mfloat-abi=hard ";
-                    break;
-            }
-
-            if (settings.LinkSettings.NotUseStandardStartupFiles)
-            {
-                result += "-nostartfiles ";
-            }
-
-            if (settings.LinkSettings.DiscardUnusedSections)
-            {
-                result += "-Wl,--gc-sections ";
-            }
-
-            switch (settings.CompileSettings.Optimization)
-            {
-                case OptimizationLevel.None:
-                    result += " -O0";
-                    break;
-
-                case OptimizationLevel.Level1:
-                    result += " -O1";
-                    break;
-
-                case OptimizationLevel.Level2:
-                    result += " -O2";
-                    break;
-
-                case OptimizationLevel.Level3:
-                    result += " -O3";
-                    break;
-            }
-
-            if (settings.LinkSettings.UseMemoryLayout)
-            {
-                result += string.Format(" -L{0} -Wl,-T\"{1}\"", project.CurrentDirectory, GetLinkerScriptLocation(project));
-            }
-
-            return result;
-        }
-
         public override string GetCompilerArguments(IStandardProject superProject, IStandardProject project, ISourceFile file)
         {
             var result = string.Empty;
 
             var settings = superProject.GetToolchainSettings<GccToolchainSettings>();
 
-            result += "-Wall -c -fshort-enums ";
+            result += "-Wall -c ";
 
             if (settings.CompileSettings.DebugInformation)
             {
@@ -292,7 +170,7 @@ namespace AvalonStudio.Toolchains.Clang
                 case FPUSupport.Hard:
                     result += "-mfpu=fpv4-sp-d16 -mfloat-abi=hard ";
                     break;
-            }            
+            }
 
             switch (settings.CompileSettings.Fpu)
             {
@@ -356,7 +234,7 @@ namespace AvalonStudio.Toolchains.Clang
                     }
                     break;
             }
-            
+
             result += settings.CompileSettings.CustomFlags + " ";
 
             // Referenced includes
@@ -413,37 +291,89 @@ namespace AvalonStudio.Toolchains.Clang
 
         public override IList<object> GetConfigurationPages(IProject project)
         {
-            var result = new List<object>();
-
-            result.Add(new CompileSettingsFormViewModel(project));
-            result.Add(new LinkerSettingsFormViewModel(project));
-
-            return result;
+            return new List<object>
+            {
+                new GccProfileFormViewModel(project),
+                new CompileSettingsFormViewModel(project),
+                new LinkerSettingsFormViewModel(project)
+        };
         }
 
-        public override bool CanHandle(IProject project)
+        private string GetLinkerScriptLocation(IStandardProject project)
         {
-            var result = false;
+            return Path.Combine(project.CurrentDirectory, "link.ld");
+        }
 
-            if (project is CPlusPlusProject)
+        public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
+        {
+            var settings = project.GetToolchainSettings<GccToolchainSettings>();
+
+            if (superProject != null && settings.LinkSettings.UseMemoryLayout && project.Type != ProjectType.StaticLibrary)
             {
-                result = true;
+                // GenerateLinkerScript(superProject);
+            }
+
+            var result = string.Empty;
+
+            result += string.Format("{0} ", settings.LinkSettings.MiscLinkerArguments);
+
+            switch (settings.CompileSettings.Fpu)
+            {
+                case FPUSupport.Soft:
+                    result += " -mfpu=fpv4-sp-d16 -mfloat-abi=softfp ";
+                    break;
+
+                case FPUSupport.Hard:
+                    result += " -mfpu=fpv4-sp-d16 -mfloat-abi=hard ";
+                    break;
+            }
+
+            if (settings.LinkSettings.NotUseStandardStartupFiles)
+            {
+                result += "-nostartfiles ";
+            }
+
+            if (settings.LinkSettings.DiscardUnusedSections)
+            {
+                result += "-Wl,--gc-sections ";
+            }
+
+            switch (settings.CompileSettings.Optimization)
+            {
+                case OptimizationLevel.None:
+                    result += " -O0";
+                    break;
+
+                case OptimizationLevel.Level1:
+                    result += " -O1";
+                    break;
+
+                case OptimizationLevel.Level2:
+                    result += " -O2";
+                    break;
+
+                case OptimizationLevel.Level3:
+                    result += " -O3";
+                    break;
+            }
+
+            if (settings.LinkSettings.UseMemoryLayout)
+            {
+                result += string.Format(" -L{0} -Wl,-T\"{1}\"", project.CurrentDirectory, GetLinkerScriptLocation(project));
             }
 
             return result;
         }
 
-        public async override Task<bool> InstallAsync(IConsole console, IProject project)
+        public override async Task<bool> InstallAsync(IConsole console, IProject project)
         {
-            if(await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console) == PackageEnsureStatus.Installed)
-            {
-                // this ensures content directory is re-evaluated if we just installed the toolchain.
-                _contentDirectory = null;
-            }
+            _settings = project.GetToolchainSettings<CustomGCCToolchainProjectSettings>();
 
-            await base.InstallAsync(console, project);
+            _staticLibraryExtension = _settings.StaticLibraryExtension;
+            _executableExtension = _settings.ExecutableExtension;
+            _binDirectory = _settings.BasePath;
 
-            return true;
+            return await base.InstallAsync(console, project);
         }
     }
 }

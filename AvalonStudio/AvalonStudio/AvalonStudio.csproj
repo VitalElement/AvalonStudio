@@ -18,9 +18,9 @@
     <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.2-build4436-alpha" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.5.2-build4436-alpha" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.5.2-build4436-alpha" />
+    <PackageReference Include="Avalonia" Version="0.5.2-build4485-alpha" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.5.2-build4485-alpha" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.5.2-build4485-alpha" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.57.1.4" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.5.2-build474-alpha" />
     <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="0.5.2-build474-alpha" />
@@ -50,6 +50,7 @@
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Toolchains.PublishedGCC\AvalonStudio.Toolchains.PublishedGCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj" />
     <ProjectReference Include="..\PortableCom\PortableCom.csproj" />
   </ItemGroup>

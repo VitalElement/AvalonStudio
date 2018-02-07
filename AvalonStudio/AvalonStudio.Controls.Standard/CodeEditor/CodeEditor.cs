@@ -752,7 +752,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     TextSegmentCollection<Diagnostic> diagnostics = null;
 
-                    await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                    await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
                         diagnostics = new TextSegmentCollection<Diagnostic>(Document);

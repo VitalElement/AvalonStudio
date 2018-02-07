@@ -58,7 +58,7 @@ namespace AvalonStudio.Projects.CPlusPlus
                 {
                     ConfigPages = value.GetConfigurationPages(Model);
                     SelectedConfigPage = null;
-                    SelectedConfigPage = ConfigPages.FirstOrDefault();
+                    SelectedConfigPage = ConfigPages?.FirstOrDefault();
                 }
             }
         }

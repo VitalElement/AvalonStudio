@@ -1,0 +1,122 @@
+﻿using Avalonia.Controls;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Settings;
+using ReactiveUI;
+using System.Collections.ObjectModel;
+
+namespace AvalonStudio.Toolchains.CustomGCC
+{
+    class GccProfilesSettingsViewModel : SettingsViewModel, IExtension
+    {
+        private CustomGCCToolchainProfiles _settings;
+        private ObservableCollection<string> _profiles;
+        private string _instanceName;
+        private string _selectedProfile;
+        private string _basePath;
+
+        public GccProfilesSettingsViewModel() : base("GCC Profiles")
+        {
+            SaveCommand = ReactiveCommand.Create(() =>
+            {
+                if (!string.IsNullOrEmpty(InstanceName))
+                {
+                    if (!_settings.Profiles.ContainsKey(InstanceName))
+                    {
+                        _settings.Profiles[InstanceName] = new CustomGCCToolchainProfile();
+
+                        Profiles.Add(InstanceName);
+                    }
+
+                    var profile = _settings.Profiles[InstanceName];
+
+                    _settings.Save();
+                }
+            });
+
+            BrowseCommand = ReactiveCommand.Create(async () =>
+            {
+                var fbd = new OpenFolderDialog();
+
+                var result = await fbd.ShowAsync();
+
+                if (!string.IsNullOrEmpty(result))
+                {
+                    BasePath = result;
+
+                    Save();
+                }
+            });
+        }
+
+        public void Activation()
+        {
+            IoC.Get<ISettingsManager>().RegisterSettingsDialog("Toolchains", this);
+        }
+
+        public void BeforeActivation()
+        {
+
+        }
+
+        public override void OnDialogLoaded()
+        {
+            base.OnDialogLoaded();
+
+            _settings = CustomGCCToolchainProfiles.Instance;
+
+            Profiles = new ObservableCollection<string>(_settings.Profiles.Keys);
+        }
+
+        private void Load()
+        {
+            if (_settings.Profiles.ContainsKey(SelectedProfile))
+            {
+                var profile = _settings.Profiles[SelectedProfile];
+
+                InstanceName = SelectedProfile;
+
+                BasePath = profile.BasePath;
+            }
+        }
+
+        private void Save()
+        {
+            _settings.Profiles[InstanceName].BasePath = BasePath;
+
+            _settings.Save();
+        }
+
+        public ReactiveCommand SaveCommand { get; }
+
+        public ObservableCollection<string> Profiles
+        {
+            get { return _profiles; }
+            set { this.RaiseAndSetIfChanged(ref _profiles, value); }
+        }
+
+        public string InstanceName
+        {
+            get { return _instanceName; }
+            set { this.RaiseAndSetIfChanged(ref _instanceName, value); }
+        }
+
+        public string SelectedProfile
+        {
+            get { return _selectedProfile; }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedProfile, value);
+                if (!string.IsNullOrEmpty(value)) { Load(); }
+            }
+        }
+
+        public string BasePath
+        {
+            get { return _basePath; }
+            set { this.RaiseAndSetIfChanged(ref _basePath, value); }
+        }
+
+        public ReactiveCommand BrowseCommand { get; }
+    }
+}
