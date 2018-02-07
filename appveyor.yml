@@ -1,8 +1,8 @@
-version: 0.2.0.{build}
+version: 0.4.0.{build}
 os: Visual Studio 2017
 install:
-  - if not exist dotnet-sdk-2.0.0-win-x64.zip appveyor DownloadFile https://download.microsoft.com/download/1/B/4/1B4DE605-8378-47A5-B01B-2C79D6C55519/dotnet-sdk-2.0.0-win-x64.zip -FileName "dotnet-sdk-2.0.0-win-x64.zip"  
-  - cmd: 7z x dotnet-sdk-2.0.0-win-x64.zip -oc:\dotnet
+  - if not exist dotnet-sdk-2.0.0-win-x64.zip appveyor DownloadFile https://download.microsoft.com/download/1/1/5/115B762D-2B41-4AF3-9A63-92D9680B9409/dotnet-sdk-2.1.4-win-x64.zip -FileName "dotnet-sdk-2.1.4-win-x64.zip"  
+  - cmd: 7z x dotnet-sdk-2.1.4-win-x64.zip -oc:\dotnet
   - docker version
 
 before_build:
@@ -12,7 +12,7 @@ before_build:
 
 build_script:
 - cmd: dotnet --info
-- ps: $url1='https://img.shields.io/badge/version-v0.2.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
+- ps: $url1='https://img.shields.io/badge/version-v0.4.' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
 - ps: .\download.ps1 $url1 "latest-version-badge.svg"
 - ps: .\build.ps1
 
@@ -39,4 +39,4 @@ notifications:
   on_build_status_changed: true
 
 cache:
-  dotnet-sdk-2.0.0-win-x64.zip
+  dotnet-sdk-2.1.4-win-x64.zip
