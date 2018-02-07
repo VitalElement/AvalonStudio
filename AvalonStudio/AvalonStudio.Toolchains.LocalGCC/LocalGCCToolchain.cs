@@ -37,6 +37,8 @@ namespace AvalonStudio.Toolchains.LocalGCC
             }
         }
 
+        protected override bool RunWithSystemPaths => true;
+
         public override string BinDirectory
         {
             get
@@ -90,7 +92,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
             var result = string.Empty;
 
-            result += string.Format("-flto -static-libgcc -static-libstdc++ -Wl,-Map={0}.map ",
+            result += string.Format("-static-libgcc -static-libstdc++ -Wl,-Map={0}.map ",
                 Path.GetFileNameWithoutExtension(project.Name));
 
             result += string.Format("{0} ", settings.LinkSettings.MiscLinkerArguments);

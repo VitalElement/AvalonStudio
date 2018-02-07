@@ -15,6 +15,8 @@ namespace AvalonStudio.Toolchains.GCC
 {
     public abstract class GCCToolchain : StandardToolChain
     {
+        protected virtual bool RunWithSystemPaths => false;
+
         public virtual string GDBExecutable => "gdb";
 
         public virtual string LibraryQueryCommand => "gcc";
@@ -177,7 +179,7 @@ namespace AvalonStudio.Toolchains.GCC
                     console.WriteLine(e.Data);
                 }
             },
-            false, "", false, false);
+            false, "", false, RunWithSystemPaths);
 
             if (Shell.DebugMode)
             {
@@ -292,7 +294,7 @@ namespace AvalonStudio.Toolchains.GCC
                 {
                     console.WriteLine(e.Data);
                 }
-            }, false, project.Solution.CurrentDirectory, false, false);
+            }, false, project.Solution.CurrentDirectory, false, RunWithSystemPaths);
 
             if (Shell.DebugMode)
             {
@@ -339,7 +341,7 @@ namespace AvalonStudio.Toolchains.GCC
                     }
                 }
             },
-             false, BinDirectory, true, false);
+             false, BinDirectory, true, RunWithSystemPaths);
 
             await process.WaitForExitAsync();
 
@@ -373,7 +375,7 @@ namespace AvalonStudio.Toolchains.GCC
                     console.WriteLine(e.Data);
                 }
             }, (s, e) => { },
-             false, BinDirectory, false, false);
+             false, BinDirectory, false, RunWithSystemPaths);
 
             await process.WaitForExitAsync();
 
@@ -387,7 +389,7 @@ namespace AvalonStudio.Toolchains.GCC
             result.ExitCode = PlatformSupport.ExecuteShellCommand(SizeExecutable, linkResult.Executable,
                 (s, e) => console.WriteLine(e.Data),
                 (s, e) => console.WriteLine(e.Data),
-                false, string.Empty, false, false);
+                false, string.Empty, false, RunWithSystemPaths);
 
             return result;
         }
