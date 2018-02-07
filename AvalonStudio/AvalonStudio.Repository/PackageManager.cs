@@ -73,9 +73,12 @@ namespace AvalonStudio.Packages
             {
                 var location = GetPackageDirectory(package);
 
-                var files = Directory.EnumerateFiles(location, "*.*", SearchOption.AllDirectories);
+                if(!string.IsNullOrEmpty(location))
+                {
+                    var files = Directory.EnumerateFiles(location, "*.*", SearchOption.AllDirectories);
 
-                await LoadAssetsFromFilesAsync(package.Id, package.Version.ToNormalizedString(), files);
+                    await LoadAssetsFromFilesAsync(package.Id, package.Version.ToNormalizedString(), files);
+                }
             }
         }
 
