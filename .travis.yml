@@ -2,7 +2,7 @@ sudo: required
 language: csharp
 os:
   - linux
-dist: artful
+dist: trusty
 
 script:
   - ./install-latest-dotnet.sh
