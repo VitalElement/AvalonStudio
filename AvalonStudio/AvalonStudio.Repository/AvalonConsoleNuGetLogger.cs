@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Utils;
+﻿using System.Threading.Tasks;
+using AvalonStudio.Utils;
 using NuGet.Common;
 
 namespace AvalonStudio.Repositories
@@ -29,5 +30,22 @@ namespace AvalonStudio.Repositories
         public void LogInformationSummary(string data) => _console.WriteLine(data);
 
         public void LogErrorSummary(string data) => _console.WriteLine(data);
+
+        public void Log(LogLevel level, string data) => _console.WriteLine(data);
+
+        public Task LogAsync(LogLevel level, string data)
+        {
+            _console.WriteLine(data);
+            return Task.CompletedTask;
+        }
+
+        public void Log(ILogMessage message) => _console.WriteLine(message.Message);
+
+        public Task LogAsync(ILogMessage message)
+        {
+            _console.WriteLine(message.Message);
+
+            return Task.CompletedTask;
+        }
     }
 }

@@ -1,0 +1,31 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui">
+    <UserControl.Styles>
+        <Style Selector="TextBox">
+            <Setter Property="UseFloatingWatermark" Value="True" />
+        </Style>
+    </UserControl.Styles>
+    <StackPanel Gap="4" Orientation="Horizontal">
+        <StackPanel Gap="4">
+            <ListBox Items="{Binding AvailableToolchains}" SelectedItem="{Binding SelectedPackage}" />
+        </StackPanel>
+
+        <StackPanel Gap="4">
+            <TextBlock Text="Selected Toolchain" />
+            
+            <StackPanel Orientation="Horizontal" Gap="2">
+                <TextBlock Text="Name:" />
+                <TextBlock Text="{Binding SelectedId}" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Gap="2">
+                <TextBlock Text="Description:" />
+                <TextBlock Text="N/A" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Gap="2">
+                <TextBlock Text="Version:" />
+                <DropDown Items="{Binding Versions}" SelectedItem="{Binding SelectedVersion}" />
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

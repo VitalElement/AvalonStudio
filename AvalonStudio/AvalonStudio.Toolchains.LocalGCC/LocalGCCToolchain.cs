@@ -37,6 +37,8 @@ namespace AvalonStudio.Toolchains.LocalGCC
             }
         }
 
+        protected override bool RunWithSystemPaths => true;
+
         public override string BinDirectory
         {
             get
@@ -90,7 +92,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
 
             var result = string.Empty;
 
-            result += string.Format("-flto -static-libgcc -static-libstdc++ -Wl,-Map={0}.map ",
+            result += string.Format("-static-libgcc -static-libstdc++ -Wl,-Map={0}.map ",
                 Path.GetFileNameWithoutExtension(project.Name));
 
             result += string.Format("{0} ", settings.LinkSettings.MiscLinkerArguments);
@@ -370,16 +372,18 @@ namespace AvalonStudio.Toolchains.LocalGCC
             return result;
         }
 
-        public async override Task InstallAsync(IConsole console, IProject project)
+        public async override Task<bool> InstallAsync(IConsole console, IProject project)
         {
             if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {
-                if (!await PackageManager.EnsurePackage("AvalonStudio.Toolchains.GCC", (project as CPlusPlusProject).ToolchainVersion, console))
+                if (await PackageManager.EnsurePackage("AvalonStudio.Toolchains.GCC", (project as CPlusPlusProject).ToolchainVersion, console) == PackageEnsureStatus.Installed)
                 {
                     // this ensures content directory is re-evaluated if we just installed the toolchain.
                     _contentDirectory = null;
                 }
             }
+
+            return true;
         }
     }
 }

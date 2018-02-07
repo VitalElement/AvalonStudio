@@ -88,20 +88,24 @@ namespace AvalonStudio.Toolchains.Standard
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
         {
-            await InstallAsync(console, project);
+            if(!await InstallAsync(console, project))
+            {
+                console.WriteLine("Failed: Unable to install or initialise toolchain.");
+                return false;
+            }
 
             console.Clear();
 
             console.WriteLine("Starting Build...");
             console.WriteLine();
 
-            await BeforeBuild(console, project);
-
             if (!ValidateToolchainExecutables(console))
             {
                 console.WriteLine("Failed: Unable to find toolchain executables.");
                 return false;
             }
+
+            await BeforeBuild(console, project);
 
             var preBuildCommands = (project as IStandardProject).PreBuildCommands;
             var postBuildCommands = (project as IStandardProject).PostBuildCommands;
@@ -658,7 +662,7 @@ namespace AvalonStudio.Toolchains.Standard
             _shell = IoC.Get<IShell>();
         }
           
-        public abstract Task InstallAsync(IConsole console, IProject project);
+        public abstract Task<bool> InstallAsync(IConsole console, IProject project);
 
         public Task InstallAsync(IConsole console)
         {

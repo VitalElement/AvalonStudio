@@ -1,7 +1,10 @@
-﻿using AvalonStudio.Platforms;
+﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Packages;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Projects.Standard;
+using AvalonStudio.Toolchains.CustomGCC;
 using AvalonStudio.Toolchains.GCC;
 using AvalonStudio.Utils;
 using System;
@@ -10,14 +13,16 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AvalonStudio.Toolchains.CustomGCC
+namespace AvalonStudio.Toolchains.PublishedGCC
 {
-    public class CustomGCCToolchain : GCCToolchain
+    public class PublishedGCCToolchain : GCCToolchain
     {
         private string _executableExtension;
         private string _staticLibraryExtension;
         private string _binDirectory;
-        private CustomGCCToolchainProjectSettings _settings;
+
+        private PublishedGCCToolchainSettings _settings;
+        private GccConfiguration _gccConfig;
 
         public override string ExecutableExtension => _executableExtension;
 
@@ -29,19 +34,19 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public override string BinDirectory => _binDirectory;
 
-        public override string CCExecutable => _settings.CCExecutable;
+        public override string CCExecutable => _gccConfig?.CC;
 
-        public override string CPPExecutable => _settings.CPPExecutable;
+        public override string CPPExecutable => _gccConfig?.Cpp;
 
-        public override string ARExecutable => _settings.ARExecutable;
+        public override string ARExecutable => _gccConfig?.AR;
 
-        public override string LDExecutable => _settings.LDExecutable;
+        public override string LDExecutable => _gccConfig?.LD;
 
-        public override string SizeExecutable => _settings.SizeExecutable;
+        public override string SizeExecutable => _gccConfig?.Size;
 
-        public override string GDBExecutable => _settings.GDBExecutable;
+        public override string GDBExecutable => _gccConfig?.Gdb;
 
-        public override string LibraryQueryCommand => Path.Combine(BinDirectory, _settings.LibraryQueryCommand + Platform.ExecutableExtension);
+        //public override string LibraryQueryCommand => Path.Combine(BinDirectory, _settings.LibraryQueryCommand + Platform.ExecutableExtension);
 
         public override bool CanHandle(IProject project)
         {
@@ -293,7 +298,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
         {
             return new List<object>
             {
-                new GccProfileFormViewModel(project),
+                new PublishedToolchainSettingsViewModel(project),
                 new CompileSettingsFormViewModel(project),
                 new LinkerSettingsFormViewModel(project)
         };
@@ -367,13 +372,25 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public override async Task<bool> InstallAsync(IConsole console, IProject project)
         {
-            _settings = project.GetToolchainSettings<CustomGCCToolchainProjectSettings>();
+            bool result = true;
 
-            _staticLibraryExtension = _settings.StaticLibraryExtension;
-            _executableExtension = _settings.ExecutableExtension;
-            _binDirectory = _settings.BasePath;
+            _settings = project.GetToolchainSettings<PublishedGCCToolchainSettings>();
 
-            return await base.InstallAsync(console, project);
+            if(_settings.Toolchain != null)
+            {
+                await PackageManager.EnsurePackage(_settings.Toolchain, _settings.Version, IoC.Get<IConsole>(), ignoreRid: true);
+
+                _gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
+
+                result = await _gccConfig.ResolveAsync();
+            }
+
+            if (result)
+            {
+                result = await base.InstallAsync(console, project);
+            }
+
+            return result;
         }
     }
 }

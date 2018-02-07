@@ -10,12 +10,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using AvalonStudio.Platforms;
 
 namespace AvalonStudio.Toolchains.GCC
 {
     public abstract class GCCToolchain : StandardToolChain
     {
+        protected virtual bool RunWithSystemPaths => false;
+
         public virtual string GDBExecutable => "gdb";
 
         public virtual string LibraryQueryCommand => "gcc";
@@ -135,6 +136,11 @@ namespace AvalonStudio.Toolchains.GCC
         {
             bool result = true;
 
+            if(string.IsNullOrEmpty(CCExecutable) || string.IsNullOrEmpty(CPPExecutable) || string.IsNullOrEmpty(ARExecutable) || string.IsNullOrEmpty(LDExecutable) || string.IsNullOrEmpty(SizeExecutable))
+            {
+                return false;
+            }
+
             result = CheckFile(console, CCExecutable) && CheckFile(console, CPPExecutable) &&
             CheckFile(console, ARExecutable) && CheckFile(console, LDExecutable) &&
             CheckFile(console, SizeExecutable);
@@ -173,7 +179,7 @@ namespace AvalonStudio.Toolchains.GCC
                     console.WriteLine(e.Data);
                 }
             },
-            false, "", false, false);
+            false, "", false, RunWithSystemPaths);
 
             if (Shell.DebugMode)
             {
@@ -288,7 +294,7 @@ namespace AvalonStudio.Toolchains.GCC
                 {
                     console.WriteLine(e.Data);
                 }
-            }, false, project.Solution.CurrentDirectory, false, false);
+            }, false, project.Solution.CurrentDirectory, false, RunWithSystemPaths);
 
             if (Shell.DebugMode)
             {
@@ -335,7 +341,7 @@ namespace AvalonStudio.Toolchains.GCC
                     }
                 }
             },
-             false, BinDirectory, true, false);
+             false, BinDirectory, true, RunWithSystemPaths);
 
             await process.WaitForExitAsync();
 
@@ -351,9 +357,11 @@ namespace AvalonStudio.Toolchains.GCC
             }
         }
 
-        public override async Task InstallAsync(IConsole console, IProject project)
+        public override async Task<bool> InstallAsync(IConsole console, IProject project)
         {
             await InitialiseInbuiltLibraries();
+
+            return true;
         }
 
         public override async Task BeforeBuild(IConsole console, IProject project)
@@ -367,7 +375,7 @@ namespace AvalonStudio.Toolchains.GCC
                     console.WriteLine(e.Data);
                 }
             }, (s, e) => { },
-             false, BinDirectory, false, false);
+             false, BinDirectory, false, RunWithSystemPaths);
 
             await process.WaitForExitAsync();
 
@@ -381,7 +389,7 @@ namespace AvalonStudio.Toolchains.GCC
             result.ExitCode = PlatformSupport.ExecuteShellCommand(SizeExecutable, linkResult.Executable,
                 (s, e) => console.WriteLine(e.Data),
                 (s, e) => console.WriteLine(e.Data),
-                false, string.Empty, false, false);
+                false, string.Empty, false, RunWithSystemPaths);
 
             return result;
         }

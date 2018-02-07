@@ -433,15 +433,17 @@ namespace AvalonStudio.Toolchains.Clang
             return result;
         }
 
-        public async override Task InstallAsync(IConsole console, IProject project)
+        public async override Task<bool> InstallAsync(IConsole console, IProject project)
         {
-            if(!await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console))
+            if(await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console) == PackageEnsureStatus.Installed)
             {
                 // this ensures content directory is re-evaluated if we just installed the toolchain.
                 _contentDirectory = null;
             }
 
             await base.InstallAsync(console, project);
+
+            return true;
         }
     }
 }

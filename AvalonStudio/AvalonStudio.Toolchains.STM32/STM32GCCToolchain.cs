@@ -433,15 +433,22 @@ namespace AvalonStudio.Toolchains.STM32
             Elf32
         }
 
-        public async override Task InstallAsync(IConsole console, IProject project)
+        public async override Task<bool> InstallAsync(IConsole console, IProject project)
         {
-            if(!await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console))
+            bool result = true;
+
+            if(await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console) == PackageEnsureStatus.Installed)
             {
                 // this ensures content directory is re-evaluated if we just installed the toolchain.
                 _contentDirectory = null;
             }
 
-            await base.InstallAsync(console, project);
+            if (result)
+            {
+                result = await base.InstallAsync(console, project);
+            }
+
+            return result;
         }
     }
 }
