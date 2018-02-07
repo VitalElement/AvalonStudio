@@ -107,7 +107,7 @@ public NuGetPackSettings GetPackSettings(string rid, string version, string nuge
     var nuspecNuGetBehaviors = new NuGetPackSettings()
     {
         Id = "VitalElement.AvalonBuild." + rid,
-        Version = version,
+        Version = version.Replace("v",""),
         Authors = new [] { "VitalElement" },
         Owners = new [] { "Dan Walmsley (dan at walms.co.uk)" },
         LicenseUrl = new Uri("http://opensource.org/licenses/MIT"),
@@ -116,7 +116,7 @@ public NuGetPackSettings GetPackSettings(string rid, string version, string nuge
         Symbols = false,
         NoPackageAnalysis = true,
         Description = "Command Line build tools for AvalonStudio.",
-        Copyright = "Copyright 2017",
+        Copyright = "Copyright 2018",
         Tags = new [] { "AvalonStudio", "AvalonBuild" },
         Files = new []
         {
