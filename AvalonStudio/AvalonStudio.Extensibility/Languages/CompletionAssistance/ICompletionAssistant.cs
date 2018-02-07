@@ -1,4 +1,6 @@
-﻿namespace AvalonStudio.Extensibility.Languages.CompletionAssistance
+﻿using System.Collections.Generic;
+
+namespace AvalonStudio.Extensibility.Languages.CompletionAssistance
 {
     public interface ICompletionAssistant
     {
@@ -6,7 +8,11 @@
 
         void PopMethod();
 
+        IReadOnlyList<SignatureHelp> Stack { get; }
+
         SignatureHelp CurrentSignatureHelp { get; }
+
+        void SelectStack(SignatureHelp stack);
 
         void SetParameterIndex(int index);
 

@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Linq;
 using System;
+using Avalonia.Threading;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -25,12 +26,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         private IProject selectedProject;
         private IShell shell;
 
-        private ObservableCollection<SolutionViewModel> solution;
+        private SolutionViewModel solution;
 
         public SolutionExplorerViewModel()
         {
             Title = "Solution Explorer";
-            solution = new ObservableCollection<SolutionViewModel>();
         }
 
         public new ISolution Model
@@ -43,12 +43,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 if (model != null)
                 {
-                    foreach(var model in model.Projects)
-                    {
-                        model.Dispose();
-                    }
-
-                    model.Projects.Clear();
+                    model.Items.Clear();
                     GC.Collect();
                 }
 
@@ -58,15 +53,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (Model != null)
                 {
-                    if (Model.Projects.Count > 0)
+                    if (Model.Items.Count > 0)
                     {
                         SelectedProject = Model.StartupProject;
                     }
 
-                    var sol = new ObservableCollection<SolutionViewModel>();
-                    sol.Add(new SolutionViewModel(model));
-
-                    Solution = sol;
+                    Solution = new SolutionViewModel(model);
                 }
                 else
                 {
@@ -78,7 +70,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        public ObservableCollection<SolutionViewModel> Solution
+        public SolutionViewModel Solution
         {
             get { return solution; }
             set { this.RaiseAndSetIfChanged(ref solution, value); }
@@ -108,7 +100,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (value is SourceFileViewModel)
                 {
-                    shell.OpenDocument((ISourceFile)(value as SourceFileViewModel).Model, 1);
+                    shell.OpenDocument((ISourceFile)(value as SourceFileViewModel).Model);
                 }
             }
         }

@@ -44,7 +44,10 @@ namespace AvalonStudio.Debugging
 
                     if (file != null)
                     {
-                        shell?.OpenDocument(file, selectedFrame.Line, -1, -1, false, true);
+                        Dispatcher.UIThread.InvokeAsync(async () =>
+                        {
+                            await shell?.OpenDocumentAsync(file, selectedFrame.Line, -1, -1, false, true);
+                        });
                     }
                 }
 

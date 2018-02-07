@@ -76,8 +76,10 @@ namespace AvalonStudio.Controls
             set { SetValue(ViewModelProperty, value); }
         }
 
-        protected override void OnDataContextChanged()
+        protected override void OnDataContextEndUpdate()
         {
+            base.OnDataContextEndUpdate();
+
             if (Content as ILogical != null)
             {
                 LogicalChildren.Remove(Content as ILogical);

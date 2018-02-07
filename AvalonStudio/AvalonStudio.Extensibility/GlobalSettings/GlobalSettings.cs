@@ -40,7 +40,12 @@ namespace AvalonStudio.GlobalSettings
         {
             if (File.Exists(GlobalSettingsFile))
             {
-                return SerializedObject.Deserialize<Settings>(GlobalSettingsFile);
+                var deserialized = SerializedObject.Deserialize<Settings>(GlobalSettingsFile);
+
+                if(deserialized != null)
+                {
+                    return deserialized;
+                }
             }
 
             var result = new Settings();

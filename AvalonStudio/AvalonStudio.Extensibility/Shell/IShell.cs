@@ -1,7 +1,9 @@
-using AvalonStudio.Controls;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Dialogs;
+using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.MainMenu;
+using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.TestFrameworks;
@@ -20,14 +22,20 @@ namespace AvalonStudio.Shell
     }
 
     public interface IShell
-    {        
-        ISolution CurrentSolution { get; set; }
+    {
+        ISolution CurrentSolution { get; }
 
         IObservable<ISolution> OnSolutionChanged { get; }
 
         event EventHandler<SolutionChangedEventArgs> SolutionChanged;
 
+        event EventHandler<BuildEventArgs> BuildStarting;
+
+        event EventHandler<BuildEventArgs> BuildCompleted;
+
         IWorkspaceTaskRunner TaskRunner { get; }
+
+        IMenu BuildEditorContextMenu();
 
         Perspective CurrentPerspective { get; set; }
         IDocumentTabViewModel SelectedDocument { get; set; }
@@ -35,13 +43,13 @@ namespace AvalonStudio.Shell
         ModalDialogViewModelBase ModalDialog { get; set; }
         object BottomSelectedTool { get; set; }
 
+        ColorScheme CurrentColorScheme { get; set; }
+
+        IEnumerable<IEditorProvider> EditorProviders { get; }
+
         IEnumerable<ISolutionType> SolutionTypes { get; }
 
         IEnumerable<IProjectType> ProjectTypes { get; }
-
-        IEnumerable<IProjectTemplate> ProjectTemplates { get; }
-
-        IEnumerable<ICodeTemplate> CodeTemplates { get; }
 
         IEnumerable<ILanguageService> LanguageServices { get; }
 
@@ -53,15 +61,17 @@ namespace AvalonStudio.Shell
 
         IEditor GetDocument(string path);
 
-        IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false);
+        IFileDocumentTabViewModel OpenDocument(ISourceFile file);
 
-        Task CloseDocumentsForProjectAsync(IProject project);
+        Task<IEditor> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true);
+
+        void CloseDocumentsForProject(IProject project);
 
         Task OpenSolutionAsync(string path);
 
-        Task CloseSolutionAsync();
+        void CloseSolution();
 
-        void AddDocument(IDocumentTabViewModel document);
+        void AddDocument(IDocumentTabViewModel document, bool temporary = true);
 
         void RemoveDocument(IDocumentTabViewModel document);
 

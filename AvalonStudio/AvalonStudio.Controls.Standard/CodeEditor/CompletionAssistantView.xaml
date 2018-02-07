@@ -4,7 +4,7 @@
   <Style Selector="local|CompletionAssistantView">
     <Setter Property="Template">
       <ControlTemplate>
-        <Popup IsOpen="{Binding IsVisible, Mode=TwoWay}" StaysOpen="false" Name="PART_Popup">
+        <Popup IsOpen="{Binding IsVisible, Mode=TwoWay}" StaysOpen="True" Name="PART_Popup">
           <local:SignatureHelpView DataContext="{Binding CurrentMethod}" />
         </Popup>
       </ControlTemplate>

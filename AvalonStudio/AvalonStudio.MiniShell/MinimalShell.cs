@@ -15,6 +15,8 @@ namespace AvalonStudio.Shell
     using System.Collections.ObjectModel;
     using System.Composition;
     using System.Threading.Tasks;
+    using AvalonStudio.Extensibility.Editor;
+    using AvalonStudio.Extensibility.MainMenu;
 
     [Export]
     public class MinimalShell : IShell
@@ -22,21 +24,22 @@ namespace AvalonStudio.Shell
         public static IShell Instance { get; set; }
 
         private List<ILanguageService> _languageServices;
-        private List<IProjectTemplate> _projectTemplates;
         private List<ISolutionType> _solutionTypes;
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
         private List<ITestFramework> _testFrameworks;
+        private List<IEditorProvider> _editorProviders;
 
         public event EventHandler<FileOpenedEventArgs> FileOpened;
         public event EventHandler<FileOpenedEventArgs> FileClosed;
+        public event EventHandler<BuildEventArgs> BuildStarting;
+        public event EventHandler<BuildEventArgs> BuildCompleted;
 
         [ImportingConstructor]
         public MinimalShell([ImportMany] IEnumerable<IExtension> extensions)
         {
             _languageServices = new List<ILanguageService>();
-            _projectTemplates = new List<IProjectTemplate>();
             _projectTypes = new List<IProjectType>();
             _solutionTypes = new List<ISolutionType>();
             _testFrameworks = new List<ITestFramework>();
@@ -55,11 +58,11 @@ namespace AvalonStudio.Shell
 
                 _languageServices.ConsumeExtension(extension);
                 _toolChains.ConsumeExtension(extension);
-                _projectTemplates.ConsumeExtension(extension);
                 _debugger2s.ConsumeExtension(extension);
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
+                _editorProviders.ConsumeExtension(extension);
             }
 
             IoC.RegisterConstant(this);
@@ -89,8 +92,6 @@ namespace AvalonStudio.Shell
         public IEnumerable<ISolutionType> SolutionTypes => _solutionTypes;
 
         public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
-
-        public IEnumerable<IProjectTemplate> ProjectTemplates => _projectTemplates;
 
         public IEnumerable<ILanguageService> LanguageServices => _languageServices;
 
@@ -139,14 +140,16 @@ namespace AvalonStudio.Shell
             set { throw new NotImplementedException(); }
         }
 
-        public IEnumerable<ICodeTemplate> CodeTemplates { get; }
-
         public IObservable<ISolution> OnSolutionChanged => throw new NotImplementedException();
 
         public IWorkspaceTaskRunner TaskRunner => throw new NotImplementedException();
 
+        public ColorScheme CurrentColorScheme { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        public IEnumerable<IEditorProvider> EditorProviders => _editorProviders;
+
         public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false,
-            bool selectLine = false)
+            bool selectLine = false, bool focus = true)
         {
             throw new NotImplementedException();
         }
@@ -237,6 +240,36 @@ namespace AvalonStudio.Shell
         }
 
         public void CloseDocument(ISourceFile file)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CloseDocumentsForProject(IProject project)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CloseSolution()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddDocument(IDocumentTabViewModel document, bool temporary = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IFileDocumentTabViewModel OpenDocument(ISourceFile file)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEditor> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IMenu BuildEditorContextMenu()
         {
             throw new NotImplementedException();
         }

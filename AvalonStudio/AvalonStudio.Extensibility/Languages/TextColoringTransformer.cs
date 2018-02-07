@@ -18,44 +18,14 @@ namespace AvalonStudio.Languages
 
             TextTransformations = new TextSegmentCollection<TextTransformation>(document);
 
-            CommentBrush = Brush.Parse("#559A3F");
-            CallExpressionBrush = Brush.Parse("#DCDCAA");
-            IdentifierBrush = Brush.Parse("#C8C8C8");
-            KeywordBrush = Brush.Parse("#569CD6");
-            LiteralBrush = Brush.Parse("#D69D85");
-            NumericLiteralBrush = Brush.Parse("#B5CEA8");
-            EnumConstantBrush = Brush.Parse("#B5CEA8");
-            EnumTypeNameBrush = Brush.Parse("#B5CEA8");
-            InterfaceBrush = Brush.Parse("#B5CEA8");
-
-            PunctuationBrush = Brush.Parse("#C8C8C8");
-            UserTypeBrush = Brush.Parse("#4EC9B0");
+            ColorScheme = ColorScheme.Default;
         }
 
         public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
 
-        public IBrush PunctuationBrush { get; set; }
+        public ColorScheme ColorScheme { get; set; }
 
-        public IBrush KeywordBrush { get; set; }
-
-        public IBrush IdentifierBrush { get; set; }
-
-        public IBrush NumericLiteralBrush { get; set; }
-
-        public IBrush LiteralBrush { get; set; }
-
-        public IBrush UserTypeBrush { get; set; }
-
-        public IBrush CallExpressionBrush { get; set; }
-
-        public IBrush CommentBrush { get; set; }
-
-        public IBrush EnumConstantBrush { get; set; }
-
-        public IBrush InterfaceBrush { get; set; }
-
-        public IBrush EnumTypeNameBrush { get; set; }
-
+        
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
             var transformsInLine = TextTransformations.FindOverlappingSegments(line);
@@ -110,58 +80,62 @@ namespace AvalonStudio.Languages
             });
         }
 
-        public void UpdateOffsets(DocumentChangeEventArgs e)
-        {
-            if (TextTransformations != null)
-            {
-                TextTransformations.UpdateOffsets(e);
-            }
-        }
-
         public IBrush GetBrush(HighlightType type)
         {
             IBrush result;
 
             switch (type)
             {
+                case HighlightType.DelegateName:
+                    result = ColorScheme.DelegateName;
+                    break;
+
                 case HighlightType.Comment:
-                    result = CommentBrush;
+                    result = ColorScheme.Comment;
                     break;
 
                 case HighlightType.Identifier:
-                    result = IdentifierBrush;
+                    result = ColorScheme.Identifier;
                     break;
 
                 case HighlightType.Keyword:
-                    result = KeywordBrush;
+                    result = ColorScheme.Keyword;
                     break;
 
                 case HighlightType.Literal:
-                    result = LiteralBrush;
+                    result = ColorScheme.Literal;
                     break;
 
                 case HighlightType.NumericLiteral:
-                    result = NumericLiteralBrush;
+                    result = ColorScheme.NumericLiteral;
                     break;
 
                 case HighlightType.Punctuation:
-                    result = PunctuationBrush;
+                    result = ColorScheme.Punctuation;
                     break;
 
                 case HighlightType.InterfaceName:
-                    result = InterfaceBrush;
+                    result = ColorScheme.InterfaceType;
                     break;
 
                 case HighlightType.ClassName:
-                    result = UserTypeBrush;
+                    result = ColorScheme.Type;
                     break;
 
                 case HighlightType.CallExpression:
-                    result = CallExpressionBrush;
+                    result = ColorScheme.CallExpression;
                     break;
 
                 case HighlightType.EnumTypeName:
-                    result = EnumTypeNameBrush;
+                    result = ColorScheme.EnumType;
+                    break;
+
+                case HighlightType.Operator:
+                    result = ColorScheme.Operator;
+                    break;
+
+                case HighlightType.StructName:
+                    result = ColorScheme.StructName;
                     break;
 
                 default:

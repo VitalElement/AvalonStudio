@@ -1,12 +1,15 @@
 using Avalonia.Input;
 using Avalonia.Threading;
 using AvalonStudio.Controls;
+using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Controls.Standard.ErrorList;
+using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.Dialogs;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.MainToolBar;
 using AvalonStudio.Extensibility.Menus;
@@ -31,7 +34,6 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using AvalonStudio.IdeSettings;
 
 namespace AvalonStudio
 {
@@ -44,13 +46,12 @@ namespace AvalonStudio
         private ToolBarDefinition _toolBarDefinition;
         private double _globalZoomLevel;
         private List<ILanguageService> _languageServices;
-        private List<IProjectTemplate> _projectTemplates;
         private List<ISolutionType> _solutionTypes;
+        private List<IEditorProvider> _editorProviders;
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
         private List<ITestFramework> _testFrameworks;
-        private List<ICodeTemplate> _codeTemplates;
         private List<MenuBarDefinition> _menuBarDefinitions;
         private List<MenuDefinition> _menuDefinitions;
         private List<MenuItemGroupDefinition> _menuItemGroupDefinitions;
@@ -69,16 +70,17 @@ namespace AvalonStudio
 
         private ModalDialogViewModelBase modalDialog;
 
+        private QuickCommanderViewModel _quickCommander;
+
         private ObservableCollection<object> tools;
 
         [ImportingConstructor]
-        public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions, [ImportMany] IEnumerable<ICodeTemplate> codeTemplates)
+        public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions)
         {
             _languageServices = new List<ILanguageService>();
-            _projectTemplates = new List<IProjectTemplate>();
             _debugger2s = new List<IDebugger>();
-            _codeTemplates = new List<ICodeTemplate>();
             _projectTypes = new List<IProjectType>();
+            _editorProviders = new List<IEditorProvider>();
             _solutionTypes = new List<ISolutionType>();
             _testFrameworks = new List<ITestFramework>();
             _toolChains = new List<IToolChain>();
@@ -92,14 +94,13 @@ namespace AvalonStudio
             _toolBarItemGroupDefinitions = new List<ToolBarItemGroupDefinition>();
             _toolBarItemDefinitions = new List<ToolBarItemDefinition>();
 
-            IoC.RegisterConstant(this, typeof(IShell));
+            IoC.RegisterConstant<IShell>(this);
+            IoC.RegisterConstant(this);
 
             foreach (var extension in extensions)
             {
                 extension.BeforeActivation();
             }
-
-            _codeTemplates.AddRange(codeTemplates);
 
             CurrentPerspective = Perspective.Editor;
 
@@ -126,17 +127,20 @@ namespace AvalonStudio
 
             _taskRunner = new WorkspaceTaskRunner();
 
+            QuickCommander = new QuickCommanderViewModel();
+
             foreach (var extension in extensions)
             {
                 extension.Activation();
 
                 _languageServices.ConsumeExtension(extension);
                 _toolChains.ConsumeExtension(extension);
-                _projectTemplates.ConsumeExtension(extension);
+                //_projectTemplates.ConsumeExtension(extension);
                 _debugger2s.ConsumeExtension(extension);
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
+                _editorProviders.ConsumeExtension(extension);
 
                 _commandDefinitions.ConsumeExtension(extension);
             }
@@ -160,17 +164,15 @@ namespace AvalonStudio
                 menuItemDefinition.Activation();
             }
 
-            foreach (var menuItemDefinition in _menuItemGroupDefinitions)
+            foreach (var menuItemAsReadOnlyDefinition in _menuItemGroupDefinitions)
             {
-                menuItemDefinition.Activation();
+                menuItemAsReadOnlyDefinition.Activation();
             }
 
             foreach (var extension in _menuItemDefinitions)
             {
                 extension.Activation();
             }
-
-            var menuBar = IoC.Get<MenuBarDefinition>("MainMenu");
 
             foreach (var commandDefinition in _commandDefinitions)
             {
@@ -186,7 +188,7 @@ namespace AvalonStudio
 
             var mainMenu = new Extensibility.MainMenu.ViewModels.MainMenuViewModel(menuBuilder);
 
-            menuBuilder.BuildMenuBar(menuBar, mainMenu.Model);
+            menuBuilder.BuildMenuBar(Extensibility.MenuDefinitions.MainMenuBar, mainMenu.Model);
 
             MainMenu = mainMenu;
 
@@ -257,7 +259,7 @@ namespace AvalonStudio
             {
                 foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
                 {
-                    document.ZoomLevel = zoomLevel;
+                    //document.ZoomLevel = zoomLevel;
                 }
             });
 
@@ -273,12 +275,25 @@ namespace AvalonStudio
             EnableDebugModeCommand = ReactiveCommand.Create(() =>
             {
                 DebugMode = !DebugMode;
-            });            
+            });
+        }
+
+        public IMenu BuildEditorContextMenu ()
+        {
+            var menuBuilder = new MenuBuilder(_menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
+
+            var mainMenu = new Extensibility.MainMenu.ViewModels.MainMenuViewModel(menuBuilder);
+
+            menuBuilder.BuildMenuBar(TextEditorContextMenu.EditorContextMenu, mainMenu.Model);
+
+            return mainMenu;
         }
 
         public ReactiveCommand EnableDebugModeCommand { get; }
 
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
+        public event EventHandler<BuildEventArgs> BuildStarting;
+        public event EventHandler<BuildEventArgs> BuildCompleted;
 
         public IObservable<ISolution> OnSolutionChanged { get; }
 
@@ -349,13 +364,11 @@ namespace AvalonStudio
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
+        public IEnumerable<IEditorProvider> EditorProviders => _editorProviders;
+
         public IEnumerable<ISolutionType> SolutionTypes => _solutionTypes;
 
         public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
-
-        public IEnumerable<IProjectTemplate> ProjectTemplates => _projectTemplates;
-
-        public IEnumerable<ICodeTemplate> CodeTemplates => _codeTemplates;
 
         public IEnumerable<ILanguageService> LanguageServices => _languageServices;
 
@@ -365,196 +378,107 @@ namespace AvalonStudio
 
         public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
 
-        public void AddDocument(IDocumentTabViewModel document)
+        public void AddDocument(IDocumentTabViewModel document, bool temporary = false)
         {
-            DocumentTabs.Documents.Add(document);
-            DocumentTabs.SelectedDocument = document;
-
-            DocumentTabs.InvalidateSeperatorVisibility();
+            DocumentTabs.OpenDocument(document, temporary);
         }
 
         public void RemoveDocument(IDocumentTabViewModel document)
         {
-            if(document == null)
+            if (document == null)
             {
                 return;
             }
 
-            IDocumentTabViewModel newSelectedTab = DocumentTabs.SelectedDocument;
-
-            if (DocumentTabs.SelectedDocument == document)
-            {
-                var index = DocumentTabs.Documents.IndexOf(document);
-                var current = index;
-
-                bool foundTab = false;
-
-                while (!foundTab)
-                {
-                    index++;
-
-                    if (index < DocumentTabs.Documents.Count)
-                    {
-                        if (DocumentTabs.Documents[index].IsVisible)
-                        {
-                            foundTab = true;
-                            newSelectedTab = DocumentTabs.Documents[index];
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                index = current;
-
-                while (!foundTab)
-                {
-                    index--;
-
-                    if (index >= 0)
-                    {
-                        if (DocumentTabs.Documents[index].IsVisible)
-                        {
-                            foundTab = true;
-                            newSelectedTab = DocumentTabs.Documents[index];
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-
-            DocumentTabs.SelectedDocument = newSelectedTab;
-
-            document.IsVisible = false;
-
             if (document is EditorViewModel doc)
             {
-                doc.Save();
+                doc.Editor.Save();
             }
 
-            if (DocumentTabs.TemporaryDocument == document)
-            {
-                DocumentTabs.TemporaryDocument = null;
-            }
-
-            if (DocumentTabs.Documents.OfType<EditorViewModel>().Where(d => !d.IsVisible).Count() == 5)
-            {
-                var toRemove = DocumentTabs.Documents.OfType<EditorViewModel>().Where(d => !d.IsVisible).First();
-
-                DocumentTabs.Documents.Remove(toRemove);
-                toRemove.OnClose();
-
-                Dispatcher.UIThread.InvokeAsync(async () =>
-                {
-                    await Task.Delay(25);
-                    GC.Collect();
-                });
-            }
-
-            DocumentTabs.InvalidateSeperatorVisibility();
+            DocumentTabs.CloseDocument(document);
         }
 
-        public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false)
+        public IFileDocumentTabViewModel OpenDocument(ISourceFile file)
         {
-            bool restoreFromCache = false;
+            var currentTab = DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(t => t.SourceFile?.FilePath == file.FilePath);
 
-            var currentTab = DocumentTabs.Documents.OfType<EditorViewModel>().FirstOrDefault(t => t.ProjectFile?.FilePath == file.FilePath);
-
-            if (currentTab != null && !currentTab.IsVisible)
+            if (currentTab == null)
             {
-                restoreFromCache = true;
-            }
+                var provider = EditorProviders.FirstOrDefault(p => p.CanEdit(file));
 
-            EditorViewModel documentToClose = null;
-
-            if (currentTab == null || restoreFromCache)
-            {
-                if (DocumentTabs.TemporaryDocument != null)
+                if (provider != null)
                 {
-                    documentToClose = DocumentTabs.TemporaryDocument;
-                }
+                    currentTab = provider.CreateViewModel(file);
 
-                EditorViewModel newEditor = null;
-
-                if (restoreFromCache)
-                {
-                    newEditor = currentTab;
+                    AddDocument(currentTab);
                 }
                 else
                 {
-                    newEditor = new EditorViewModel();
-                }
+                    var newTab = new TextEditorViewModel(file);
 
-                if (restoreFromCache)
-                {
-                    newEditor.IsVisible = true;
-                    newEditor.Dock = Avalonia.Controls.Dock.Right;
-                    DocumentTabs.SelectedDocument = newEditor;
-                }
-                else
-                {
-                    newEditor.OpenFile(file);
-                    AddDocument(newEditor);
-                }
+                    AddDocument(newTab);
 
-                newEditor.IsTemporary = true;
-                DocumentTabs.TemporaryDocument = newEditor;
+                    currentTab = newTab;
+                }
             }
             else
             {
-                DocumentTabs.SelectedDocument = currentTab;
+                AddDocument(currentTab);
             }
 
-            if (DocumentTabs.SelectedDocument is IEditor)
+            return currentTab;
+        }
+
+        public async Task<IEditor> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
+        {
+            var currentTab = OpenDocument(file);
+
+            if (DocumentTabs.SelectedDocument is IFileDocumentTabViewModel fileTab)
             {
-                // ensures that the document has been opened and created.
-                Dispatcher.UIThread.InvokeAsync(async () =>
+                await fileTab.WaitForEditorToLoadAsync();
+
+                if (debugHighlight)
                 {
-                    if (debugHighlight)
-                    {
-                        (DocumentTabs.SelectedDocument as IEditor).SetDebugHighlight(line, startColumn, endColumn);
-                    }
+                    fileTab.Editor.SetDebugHighlight(line, startColumn, endColumn);
+                }
 
-                    if (selectLine || debugHighlight)
-                    {
-                        (DocumentTabs.SelectedDocument as IEditor).GotoPosition(line, startColumn != -1 ? 1 : startColumn);
-                    }
+                if (selectLine || debugHighlight)
+                {
+                    fileTab.Editor.GotoPosition(line, startColumn != -1 ? startColumn : 1);
+                }
 
-                    if (documentToClose != null)
-                    {
-                        //await documentToClose.CloseCommand.ExecuteAsyncTask(null);
-                    }
-                });
+                if (focus)
+                {
+                    fileTab.Editor.Focus();
+                }
+
+                if (currentTab is TextEditorViewModel editor)
+                {
+                    return editor.DocumentAccessor;
+                }
             }
 
-            return DocumentTabs.SelectedDocument as IEditor;
+            return null;
         }
 
         public IEditor GetDocument(string path)
         {
-            return DocumentTabs.Documents.OfType<IEditor>().FirstOrDefault(d => d.ProjectFile?.FilePath == path);
+            return DocumentTabs.Documents.OfType<TextEditorViewModel>().Where(d => d.SourceFile?.FilePath == path).Select(d => d.DocumentAccessor).FirstOrDefault();
         }
 
         public void Save()
         {
-            if (SelectedDocument is IEditor)
+            if (SelectedDocument is IFileDocumentTabViewModel document)
             {
-                (SelectedDocument as IEditor).Save();
+                document.Editor.Save();
             }
         }
 
         public void SaveAll()
         {
-            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>().Where(d => d.IsDirty && d.IsVisible))
+            foreach (var document in DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>())
             {
-                document.Save();
+                document.Editor.Save();
             }
         }
 
@@ -584,7 +508,17 @@ namespace AvalonStudio
 
             if (project.ToolChain != null)
             {
-                TaskRunner.RunTask(() => project.ToolChain.Clean(Console, project).Wait());
+                BuildStarting?.Invoke(this, new BuildEventArgs(BuildType.Clean, project));
+
+                TaskRunner.RunTask(() =>
+                {
+                    project.ToolChain.Clean(Console, project).Wait();
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        BuildCompleted?.Invoke(this, new BuildEventArgs(BuildType.Clean, project));
+                    });
+                });
             }
             else
             {
@@ -600,15 +534,27 @@ namespace AvalonStudio
 
             if (project.ToolChain != null)
             {
+                BuildStarting?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
+
                 TaskRunner.RunTask(() =>
                 {
                     project.ToolChain.Build(Console, project).Wait();
+
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        BuildCompleted?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
+                    });
                 });
             }
             else
             {
                 Console.WriteLine($"No toolchain selected for {project.Name}");
             }
+        }
+
+        public void ShowQuickCommander()
+        {
+            this._quickCommander.IsVisible = true;
         }
 
         public ObservableCollection<object> Tools
@@ -648,11 +594,35 @@ namespace AvalonStudio
             set { this.RaiseAndSetIfChanged(ref modalDialog, value); }
         }
 
+        public QuickCommanderViewModel QuickCommander
+        {
+            get { return _quickCommander; }
+            set { this.RaiseAndSetIfChanged(ref _quickCommander, value); }
+        }
+
+
         public void InvalidateCodeAnalysis()
         {
             foreach (var document in DocumentTabs.Documents)
             {
                 //TODO implement code analysis trigger.
+            }
+        }
+
+        private ColorScheme _currentColorScheme;
+
+        public ColorScheme CurrentColorScheme
+        {
+            get { return _currentColorScheme; }
+
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _currentColorScheme, value);
+
+                foreach (var document in DocumentTabs.Documents.OfType<AvalonStudio.Controls.EditorViewModel>())
+                {
+                    document.ColorScheme = value;
+                }
             }
         }
 
@@ -662,7 +632,7 @@ namespace AvalonStudio
             {
                 return currentSolution;
             }
-            set
+            private set
             {
                 var oldValue = CurrentSolution;
 
@@ -682,11 +652,6 @@ namespace AvalonStudio
             {
                 if (DocumentTabs != null)
                 {
-                    if (value == null || (DocumentTabs.TemporaryDocument == value && !value.IsTemporary))
-                    {
-                        DocumentTabs.TemporaryDocument = null;
-                    }
-
                     DocumentTabs.SelectedDocument = value;
                 }
             }
@@ -744,9 +709,9 @@ namespace AvalonStudio
             var allErrors = new List<ErrorViewModel>();
             var toRemove = new List<ErrorViewModel>();
 
-            foreach (var document in DocumentTabs.Documents.Where(d => d.IsVisible).OfType<EditorViewModel>())
+            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
             {
-                if (document.Diagnostics != null)
+                /*if (document.Diagnostics != null)
                 {
                     foreach (var diagnostic in document.Diagnostics)
                     {
@@ -758,7 +723,7 @@ namespace AvalonStudio
                             allErrors.Add(error);
                         }
                     }
-                }
+                }*/
             }
 
             foreach (var error in ErrorList.Errors)
@@ -791,7 +756,7 @@ namespace AvalonStudio
         {
             if (CurrentSolution != null)
             {
-                await CloseSolutionAsync();
+                CloseSolution();
             }
 
             if (System.IO.File.Exists(path))
@@ -800,37 +765,41 @@ namespace AvalonStudio
 
                 if (solutionType != null)
                 {
-                    CurrentSolution = await solutionType.LoadAsync(path);
+                    var solution = await solutionType.LoadAsync(path);
+
+                    await solution.LoadSolutionAsync();
+
+                    CurrentSolution = solution;
+
+                    await CurrentSolution.LoadProjectsAsync();
                 }
             }
         }
 
-        public async Task CloseSolutionAsync()
+        public void CloseSolution()
         {
             var documentsToClose = DocumentTabs.Documents.ToList();
 
             foreach (var document in documentsToClose)
             {
-                if (document is EditorViewModel)
+                if (document is EditorViewModel evm)
                 {
-                    //await (document as EditorViewModel).CloseCommand.ExecuteAsyncTask();
+                    DocumentTabs.CloseDocument(evm);
                 }
             }
 
             CurrentSolution = null;
         }
 
-        public async Task CloseDocumentsForProjectAsync(IProject project)
+        public void CloseDocumentsForProject(IProject project)
         {
             var documentsToClose = DocumentTabs.Documents.ToList();
 
             foreach (var document in documentsToClose)
             {
-                if (document is EditorViewModel evm && evm.ProjectFile.Project == project)
+                if (document is EditorViewModel evm && evm.SourceFile.Project == project)
                 {
-                    //await evm.CloseCommand.ExecuteAsyncTask();
-
-                    evm.OnClose();
+                    DocumentTabs.CloseDocument(evm);
                 }
             }
         }

@@ -1,6 +1,8 @@
 using AvalonStudio.Extensibility.Dialogs;
 using ReactiveUI;
 using System;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace AvalonStudio.Controls.Standard.AboutScreen
 {
@@ -12,5 +14,7 @@ namespace AvalonStudio.Controls.Standard.AboutScreen
         }
 
         public override ReactiveCommand OKCommand { get; protected set; }
+
+        public string Version => FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).FileVersion;
     }
 }

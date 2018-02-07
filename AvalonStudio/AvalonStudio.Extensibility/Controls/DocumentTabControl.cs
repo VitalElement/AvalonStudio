@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using Avalonia.LogicalTree;
 using AvalonStudio.Utils;
+using Avalonia.Controls.Generators;
 
 namespace AvalonStudio.Controls
 {
@@ -82,6 +83,11 @@ namespace AvalonStudio.Controls
             {
                 carousel.MemberSelector = ContentSelector;
             }
+        }
+
+        protected override IItemContainerGenerator CreateItemContainerGenerator()
+        {
+            return null;
         }
     }
 }

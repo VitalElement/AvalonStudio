@@ -21,8 +21,8 @@
     <ProjectReference Include="..\PortableCom\PortableCom.csproj" />
   </ItemGroup>
 
-  <Target Name="PatchAssembly" AfterTargets="AfterBuild">
-    <Exec Command="&quot;$(MSBuildProjectDirectory)\..\patchtool\SharpCli.exe&quot; &quot;$(TargetPath)&quot;" Condition=" '$(OS)' == 'Windows_NT' " />
-  </Target>
+  <ItemGroup>
+    <PackageReference Include="SharpGenTools.Sdk" Version="1.0.0-ci213" />
+  </ItemGroup>
 
 </Project>

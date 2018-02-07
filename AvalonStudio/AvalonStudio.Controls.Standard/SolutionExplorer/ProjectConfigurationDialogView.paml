@@ -14,17 +14,19 @@
               <Setter Property="Margin" Value="0" />
             </Style>
             <Style Selector="TabStripItem:pointerover">
-              <Setter Property="Background" Value="#33FFFFFF" />
+              <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLight}" />
+              <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
             </Style>
             <Style Selector="TabStripItem:selected">
-              <Setter Property="Background" Value="#3399FF" />
+              <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+              <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
             </Style>
           </TabStrip.Styles>
 
           <TabStrip.ItemTemplate>
             <DataTemplate>
               <StackPanel Orientation="Horizontal" Gap="2">
-                <TextBlock Text="{Binding Title}" Margin="5" Foreground="WhiteSmoke" FontSize="12" />
+                <TextBlock Text="{Binding Title}" Margin="5" FontSize="12" />
               </StackPanel>
             </DataTemplate>
           </TabStrip.ItemTemplate>

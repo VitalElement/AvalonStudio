@@ -46,11 +46,15 @@ namespace AvalonStudio.Toolchains.GCC
         {
             Defines = new List<string>();
             Includes = new List<string>();
+            CompileExtensions = new List<string>();
+            AssembleExtensions = new List<string>();
             DebugInformation = true;
         }
 
         public List<string> Defines { get; set; }
         public List<string> Includes { get; set; }
+        public List<string> CompileExtensions { get; set; }
+        public List<string> AssembleExtensions { get; set; }
         public bool DebugInformation { get; set; }
         public bool Rtti { get; set; }
         public bool Exceptions { get; set; }
@@ -58,7 +62,7 @@ namespace AvalonStudio.Toolchains.GCC
 
         public CLanguageStandard CLanguageStandard { get; set; }
         public CppLanguageStandard CppLanguageStandard { get; set; }
-        public OptimizationLevel Optimization { get; set; }        
+        public OptimizationLevel Optimization { get; set; }
         public FPUSupport Fpu { get; set; }
     }
 }

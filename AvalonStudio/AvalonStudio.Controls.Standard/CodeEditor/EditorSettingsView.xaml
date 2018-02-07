@@ -1,0 +1,30 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui">
+    <StackPanel Gap="8">
+        <Grid>
+            <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1" Padding="8 16 8 8" Margin="8" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <StackPanel Orientation="Horizontal" Gap="40">
+                    <StackPanel Gap="12">
+                        <DropDown Items="{Binding ColorSchemes}" SelectedIndex="{Binding SelectedColorSchemeIndex, Mode=TwoWay}" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <TextBlock Text=" Colour Scheme " Background="{DynamicResource ThemeBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="16 0 0 0" />
+        </Grid>
+        
+        <Grid>
+            <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1" Padding="8 16 8 8" Margin="8" HorizontalAlignment="Left" VerticalAlignment="Top">
+                <StackPanel Orientation="Horizontal" Gap="40">
+                    <StackPanel Gap="12">
+                        <CheckBox IsChecked="{Binding RemoveTrailingWhiteSpaceOnSave}">Remove Trailing Whitespace on Save</CheckBox>
+                    </StackPanel>
+
+                    <StackPanel Gap="12">
+                        <CheckBox IsChecked="{Binding AutoFormat}">Automatically Format Code</CheckBox>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <TextBlock Text=" Formatting " Background="{DynamicResource ThemeBackgroundBrush}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="16 0 0 0" />
+        </Grid>
+    </StackPanel>
+</UserControl>
+    

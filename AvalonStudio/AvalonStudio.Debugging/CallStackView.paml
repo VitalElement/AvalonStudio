@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"  xmlns:controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:vm="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging" IsVisible="{Binding IsVisible}">
   <controls:ToolControl Title="Call Stack">
-    <ListBox BorderThickness="0" Items="{Binding Frames}" SelectedItem="{Binding SelectedFrame}" Background="{StyleResource ThemeControlDarkBrush}">
+    <ListBox BorderThickness="0" Items="{Binding Frames}" SelectedItem="{Binding SelectedFrame}" Background="{DynamicResource ThemeControlBackgroundBrush}">
       <ListBox.DataTemplates>
         <DataTemplate DataType="vm:FrameViewModel">
           <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Background}">

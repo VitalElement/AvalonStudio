@@ -2,6 +2,7 @@
 using Avalonia.Input;
 using Avalonia.Media;
 using AvaloniaEdit.Editing;
+using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.Platforms;
 using Mono.Debugging.Client;
 using System;
@@ -9,10 +10,10 @@ using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
-    public class BreakPointMargin : AbstractMargin
+    public class BreakPointMargin : AbstractMargin, IDisposable
     {
-        private readonly BreakpointStore _manager;
-        private readonly CodeEditor _editor;
+        private BreakpointStore _manager;
+        private CodeEditor _editor;
 
         private int previewLine;
         private bool previewPointVisible;
@@ -32,7 +33,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (TextView.VisualLinesValid)
             {
-                context.FillRectangle(Brush.Parse("#333333"), Bounds);
+                context.FillRectangle(ColorTheme.CurrentTheme.EditorBackground, Bounds);
+                context.DrawLine(new Pen(ColorTheme.CurrentTheme.ControlDark, 0.5), Bounds.TopRight, Bounds.BottomRight);
 
                 if (TextView.VisualLines.Count > 0)
                 {
@@ -48,7 +50,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         if (visualLine != null)
                         {
                             context.FillRectangle(Brush.Parse("#FF3737"),
-                            new Rect((Bounds.Size.Width / 4),
+                            new Rect((Bounds.Size.Width / 4) - 1,
                                  visualLine.GetTextLineVisualYPosition(visualLine.TextLines[0], AvaloniaEdit.Rendering.VisualYPosition.LineTop) + (Bounds.Size.Width / 4) - TextView.VerticalOffset,
                                 Bounds.Size.Width / 1.5, height / 1.5), (float)height);
                         }
@@ -61,7 +63,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         if (visualLine != null)
                         {
                             context.FillRectangle(Brush.Parse("#E67466"),
-                                new Rect((Bounds.Size.Width / 4),
+                                new Rect((Bounds.Size.Width / 4) - 1,
                                     visualLine.GetTextLineVisualYPosition(visualLine.TextLines[0], AvaloniaEdit.Rendering.VisualYPosition.LineTop) + (Bounds.Size.Width / 4) - TextView.VerticalOffset,
                                     Bounds.Size.Width / 1.5, height / 1.5), (float)height);
                         }
@@ -120,7 +122,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            if(TextView != null)
+            if (TextView != null)
             {
                 return new Size(TextView.DefaultLineHeight, 0);
             }
@@ -139,6 +141,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             InvalidateVisual();
             e.Handled = true;
+        }
+
+        public void Dispose()
+        {
+            _manager = null;
+            _editor = null;
         }
     }
 }

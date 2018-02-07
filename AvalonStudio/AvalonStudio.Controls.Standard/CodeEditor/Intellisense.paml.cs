@@ -11,20 +11,41 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private Popup _popup;
         private Popup _assistantPopup;
         private Control _intellisense;
+        private CompletionAssistantView _signatureHelper;
 
         public Control PlacementTarget { get; set; }
+
+        public void SetSignatureHelper (CompletionAssistantView signatureHelper)
+        {
+            _signatureHelper = signatureHelper;
+
+            _signatureHelper.Closed += _signatureHelper_Closed;
+        }
+
+        private void _signatureHelper_Closed(object sender, System.EventArgs e)
+        {
+            _popup.VerticalOffset -= _signatureHelper.Popup.PopupRoot.Bounds.Height;
+            _popup.Open();
+        }
 
         public Intellisense()
         {
             disposables = new CompositeDisposable();
         }
 
-        public void SetLocation(Point p)
+        public void SetLocation(Point p, bool force = false)
         {
-            if (_popup != null && PlacementTarget != null && !_popup.IsOpen)
+            if (_popup != null && PlacementTarget != null && (!_popup.IsOpen || force))
             {
+                double verticalOffset = 0;
+
+                if(_signatureHelper != null && _signatureHelper.Popup.IsOpen)
+                {
+                    verticalOffset += _signatureHelper.Popup.PopupRoot.Bounds.Height;
+                }
+
                 _popup.HorizontalOffset = (-PlacementTarget.Bounds.Width) + p.X;
-                _popup.VerticalOffset = p.Y + 3;
+                _popup.VerticalOffset = p.Y + 3 + verticalOffset;
             }
         }
 
@@ -49,11 +70,19 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             disposables.Add(RequestBringIntoViewEvent.AddClassHandler<Intellisense>(i => OnRequesteBringIntoView));
+
+            base.OnAttachedToVisualTree(e);
         }
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
+            _popup.Close();
+
             disposables.Dispose();
+
+            _signatureHelper = null;
+
+            base.OnDetachedFromVisualTree(e);
         }
 
         private void OnRequesteBringIntoView(RequestBringIntoViewEventArgs e)

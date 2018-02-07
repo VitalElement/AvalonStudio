@@ -1,27 +1,26 @@
 ﻿using Avalonia.Controls;
+using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
 using ReactiveUI;
-using System;
 
 namespace AvalonStudio.Controls
 {
-    public class DocumentTabViewModel<T> : ViewModel<T>, IDocumentTabViewModel where T : class
+    public abstract class DocumentTabViewModel<T> : ViewModel<T>, IDocumentTabViewModel where T : class
     {
+        private Dock dock;
+        private string title;
+        private bool _isTemporary;
+        private bool _isHidden;
+        private bool _isSelected;
+
         public DocumentTabViewModel(T model) : base(model)
         {
-            CloseCommand = ReactiveCommand.Create(() =>
-            {
-                IoC.Get<IShell>().RemoveDocument(this);
-
-                OnClose();
-            });
+            Dock = Dock.Left;
 
             IsVisible = true;
         }
-
-        private Dock dock;
 
         public Dock Dock
         {
@@ -29,45 +28,14 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref dock, value); }
         }
 
-        public ReactiveCommand CloseCommand { get; protected set; }
-
-        private string title;
-
         public string Title
         {
-            get
-            {
-                if (IsDirty)
-                {
-                    return title + "*";
-                }
-                else
-                {
-                    return title;
-                }
-            }
+            get => title;
             set
             {
                 this.RaiseAndSetIfChanged(ref title, value);
             }
         }
-
-        private bool isDirty;
-
-        public bool IsDirty
-        {
-            get
-            {
-                return isDirty;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref isDirty, value);
-                this.RaisePropertyChanged(nameof(Title));
-            }
-        }
-
-        private bool _isTemporary;
 
         public bool IsTemporary
         {
@@ -77,11 +45,18 @@ namespace AvalonStudio.Controls
             }
             set
             {
+                if (value)
+                {
+                    Dock = Dock.Right;
+                }
+                else
+                {
+                    Dock = Dock.Left;
+                }
+
                 this.RaiseAndSetIfChanged(ref _isTemporary, value);
             }
         }
-
-        private bool _isHidden;
 
         public bool IsVisible
         {
@@ -89,8 +64,15 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref _isHidden, value); }
         }
 
-        public virtual void OnClose()
+        public bool IsSelected
         {
+            get { return _isSelected; }
+            set { this.RaiseAndSetIfChanged(ref _isSelected, value); }
+        }
+
+        public virtual void Close()
+        {
+            IoC.Get<IShell>().RemoveDocument(this);
         }
     }
 }

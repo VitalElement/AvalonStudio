@@ -4,11 +4,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
     using AvalonStudio.Languages;
     using AvalonStudio.MVVM;
     using ReactiveUI;
+    using System.Linq;
 
     public class ParameterSymbolViewModel : ViewModel<ParameterSymbol>
     {
-        public ParameterSymbolViewModel(ParameterSymbol model) : base(model)
+        private SymbolViewModel _symbol;
+
+        public ParameterSymbolViewModel(SymbolViewModel symbol, ParameterSymbol model) : base(model)
         {
+            _symbol = symbol;
+
             if (model.IsBuiltInType)
             {
                 BuiltInTypeDescription = model.TypeDescription + " ";
@@ -25,6 +30,22 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             FontWeight = FontWeight.Light;
         }
+
+        public string DisplayName
+        {
+            get
+            {
+                if (_symbol.Arguments.LastOrDefault() == this)
+                {
+                    return Model.Name;
+                }
+                else
+                {
+                    return Model.Name + ",";
+                }
+            }
+        }
+
 
         public string Name
         {

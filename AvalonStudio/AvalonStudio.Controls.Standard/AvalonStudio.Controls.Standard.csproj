@@ -1,14 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <PostBuildEvent>
     </PostBuildEvent>
+    <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.5.2-build3869-alpha" />
+    <None Remove="AboutScreen\Assets\logo-256.png" />
+    <None Remove="AboutScreen\Assets\logo-65.png" />
+    <None Remove="AboutScreen\Assets\logo.png" />
+    <None Remove="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AboutScreen\Assets\logo-256.png" />
+    <EmbeddedResource Include="AboutScreen\Assets\logo-65.png" />
+    <EmbeddedResource Include="AboutScreen\Assets\logo.png" />
+    <EmbeddedResource Include="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.5.2-build4485-alpha" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>

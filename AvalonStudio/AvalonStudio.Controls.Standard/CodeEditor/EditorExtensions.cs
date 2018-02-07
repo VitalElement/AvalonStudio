@@ -1,6 +1,4 @@
-﻿using AvaloniaEdit;
-using AvaloniaEdit.Document;
-using AvaloniaEdit.Rendering;
+﻿using AvalonStudio.Documents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,17 +7,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public static class EditorExtensions
     {
-        public static string GetPreviousWordAtIndex(this AvaloniaEdit.TextEditor editor, int index)
+        public static string GetPreviousWordAtIndex(this ITextDocument document, int index)
         {
-            var lastWordIndex = TextUtilities.GetNextCaretPosition(editor.Document, index, LogicalDirection.Backward, CaretPositioningMode.WordBorder);
+            var lastWordIndex = TextUtilities.GetNextCaretPosition(document, index, LogicalDirection.Backward, CaretPositioningMode.WordBorder);
 
-            if (lastWordIndex >= 0 && editor.Document.GetLocation(lastWordIndex).Line == editor.Document.GetLocation(index).Line)
+            if (lastWordIndex >= 0 && document.GetLocation(lastWordIndex).Line == document.GetLocation(index).Line)
             {
-                return editor.GetWordAtIndex(lastWordIndex);
+                return document.GetWordAtIndex(lastWordIndex);
             }
             else
             {
-                return editor.GetWordAtIndex(index);
+                return document.GetWordAtIndex(index);
             }
         }
 
@@ -35,34 +33,51 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return result;
         }
 
-        public static string GetWordAtIndex(this AvaloniaEdit.TextEditor editor, int index)
+        public static int GetIntellisenseStartPosition(this ITextDocument textSource, int offset, Predicate<char> isValidChar)
+        {
+            while (true)
+            {
+                var currentChar = textSource.GetCharAt(offset - 1);
+
+                if (!isValidChar(currentChar) || offset < 0)
+                {
+                    break;
+                }
+
+                offset--;
+            }
+
+            return offset;
+        }
+
+        public static string GetWordAtIndex(this ITextDocument document, int index)
         {
             var result = string.Empty;
 
-            if (index >= 0 && editor.Document.TextLength > index)
+            if (index >= 0 && document.TextLength > index)
             {
                 var start = index;
 
-                var currentChar = editor.Document.GetCharAt(index);
+                var currentChar = document.GetCharAt(index);
                 var prevChar = '\0';
 
                 if (index > 0)
                 {
-                    prevChar = editor.Document.GetCharAt(index - 1);
+                    prevChar = document.GetCharAt(index - 1);
                 }
 
                 var charClass = TextUtilities.GetCharacterClass(currentChar);
 
                 if (charClass != CharacterClass.LineTerminator && prevChar != ' ' && TextUtilities.GetCharacterClass(prevChar) != CharacterClass.LineTerminator)
                 {
-                    start = TextUtilities.GetNextCaretPosition(editor.Document, index, LogicalDirection.Backward, CaretPositioningMode.WordStart);
+                    start = TextUtilities.GetNextCaretPosition(document, index, LogicalDirection.Backward, CaretPositioningMode.WordStart);
                 }
 
-                var end = TextUtilities.GetNextCaretPosition(editor.Document, start, LogicalDirection.Forward, CaretPositioningMode.WordBorder);
+                var end = TextUtilities.GetNextCaretPosition(document, start, LogicalDirection.Forward, CaretPositioningMode.WordBorder);
 
                 if (start != -1 && end != -1)
                 {
-                    var word = editor.Document.GetText(start, end - start).Trim();
+                    var word = document.GetText(start, end - start).Trim();
 
                     if (word.IsSymbol())
                     {

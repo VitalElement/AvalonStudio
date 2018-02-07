@@ -1,43 +1,38 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-              xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
-             FontFamily="Verdana" FontSize="12" Foreground="#D4D4D4">
-  <Grid Background="{StyleResource ThemeControlDarkBrush}">
-    <Grid Margin="5">
-      <Grid>
-        <StackPanel Margin="4">
-          <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-            <TextBlock Text="{Binding BuiltInReturnType}" Foreground="#FF569CD6" />            
-            <TextBlock Text="{Binding ReturnType}" Foreground="#FF4ec9b0" />
-            <TextBlock Text="{Binding Name}" Margin="5 0 0 0" />
-            <TextBlock Margin="5 0 0 0" Text="(" />
-            <ListBox Items="{Binding Parameters}" BorderThickness="0" Margin="-4 -4 0 0" VirtualizationMode="None">
-              <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <StackPanel Orientation="Horizontal" Margin="0" />
-                </ItemsPanelTemplate>
-              </ListBox.ItemsPanel>
-              <ListBox.DataTemplates>
-                <DataTemplate DataType="local:ParameterViewModel">
-                  <StackPanel Orientation="Horizontal" Margin="0 0 0 0" TextBlock.FontWeight="{Binding FontWeight}" Gap="5">
-                    <TextBlock Margin="0" Text="{Binding BuiltInType}" Foreground="#FF569CD6" />
-                    <TextBlock Margin="0" Text="{Binding Type}" Foreground="#FF4ec9b0" />
-                    <TextBlock Margin="0" Text="{Binding Name}"  />
-                  </StackPanel>
-                </DataTemplate>
-              </ListBox.DataTemplates>
-            </ListBox>
-            <TextBlock Margin="-4 0 0 0" Text=")" />
-          </StackPanel>
-          
-          <TextBlock Text="{Binding Description}" IsVisible="{Binding DescriptionVisibility}" MaxWidth="500"
+              xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard" FontFamily="Source Sans Pro" FontSize="14">
+    <Grid Background="{DynamicResource ThemeControlBackgroundBrush}" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}">
+        <StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <TextBlock Text="{Binding BuiltInReturnType}" Foreground="#FF569CD6" />
+                <TextBlock Text="{Binding ReturnType}" Foreground="#FF4ec9b0" />
+                <TextBlock Text="{Binding Name}" Margin="5 0 0 0" />
+                <TextBlock Text="(" />
+                <ListBox Items="{Binding Parameters}" BorderThickness="0" Margin="-2 -4 -2 0" VirtualizationMode="None" Background="{DynamicResource ThemeControlBackgroundBrush}" IsEnabled="false">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="0" Gap="4" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.DataTemplates>
+                        <DataTemplate DataType="local:ParameterViewModel">
+                            <StackPanel Orientation="Horizontal" TextBlock.FontWeight="{Binding FontWeight}" Gap="2">
+                                <TextBlock Margin="0" Text="{Binding BuiltInType}" Foreground="#FF569CD6" />
+                                <TextBlock Margin="0" Text="{Binding Type}" Foreground="#FF4ec9b0" />
+                                <TextBlock Margin="0" Text="{Binding DisplayName}"  />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.DataTemplates>
+                </ListBox>
+                <TextBlock Text=")" />
+            </StackPanel>
+
+            <TextBlock Text="{Binding Description}" MaxWidth="500"
                      TextWrapping="Wrap" TextAlignment="Left" HorizontalAlignment="Left" />
-          <StackPanel Orientation="Horizontal" IsVisible="{Binding HasParameters}" TextBlock.FontStyle="Italic" >
-            <TextBlock Text="{Binding SelectedParameter.Name}" FontWeight="Bold" />
-            <TextBlock Text=":" FontWeight="Bold" IsVisible="{Binding SelectedParameter.HasDocumentation}" />
-            <TextBlock Text="{Binding SelectedParameter.Documentation}" />
-          </StackPanel>
+            <StackPanel Orientation="Horizontal" IsVisible="{Binding HasParameters}" TextBlock.FontStyle="Italic" >
+                <TextBlock Text="{Binding SelectedParameter.Name}" FontWeight="Bold" />
+                <TextBlock Text=":" FontWeight="Bold" IsVisible="{Binding SelectedParameter.HasDocumentation}" Margin="0 0 5 0" />
+                <TextBlock Text="{Binding SelectedParameter.Documentation}" />
+            </StackPanel>
         </StackPanel>
-      </Grid>
     </Grid>
-  </Grid>
 </UserControl>

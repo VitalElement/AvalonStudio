@@ -23,13 +23,21 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 return "CPPIcon".GetIcon();
             }
-            else if (name.EndsWith("OmnisharpProject"))
+            else if (name.EndsWith("OmniSharpProject"))
             {
                 return "CSharpIcon".GetIcon();
             }
             else if (name.EndsWith("TypeScriptProject"))
             {
                 return "TypeScriptIcon".GetIcon();
+            }
+            else if(name.EndsWith("UnsupportedProjectType"))
+            {
+                return "UnknownProjectIcon".GetIcon();
+            }
+            else if (name.EndsWith("LoadingProject"))
+            {
+                return "LoadingProjectIcon".GetIcon();
             }
 
             return null;
@@ -43,16 +51,14 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 if (!_cache.TryGetValue(extension, out var image))
                 {
-                    Application.Current.Styles.TryGetResource(extension, out object resource);
-
-                    if (resource == AvaloniaProperty.UnsetValue)
-                    {
-                        //System.Console.WriteLine($"No intellisense icon provided for {extension}");
-                    }
-                    else
+                    if (Application.Current.Styles.TryGetResource(extension, out object resource))
                     {
                         image = resource as DrawingGroup;
                         _cache.Add(extension, image);
+                    }
+                    else
+                    {
+                        //System.Console.WriteLine($"No intellisense icon provided for {extension}");
                     }
                 }
 

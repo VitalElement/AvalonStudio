@@ -8,11 +8,6 @@
 
     public abstract class ProjectItemViewModel<T> : ProjectItemViewModel where T : IProjectItem
     {
-        private bool isEditingTitle;
-
-        private bool labelVisibility;
-
-        private bool textBoxVisibility;
 
         public ProjectItemViewModel(T model)
         {
@@ -33,9 +28,6 @@
                     Platform.OpenFolderInExplorer((model as IProjectItem).Parent.Location);
                 }
             });
-
-            textBoxVisibility = false;
-            labelVisibility = true;
         }
 
         private new T Model
@@ -44,10 +36,18 @@
             set { base.Model = value; }
         }
 
-        public string Title
+        public virtual string Title
         {
             get { return Model.Name; }
-            // set { this.Model.Name = value; this.RaisePropertyChanged(); IsEditingTitle = false; }
+            set
+            {
+                if (Model.CanRename && !string.IsNullOrEmpty(value))
+                {
+                    Model.Name = value;
+                }
+
+                this.RaisePropertyChanged();
+            }
         }
 
         public int NumberOfSelections { get; set; }
@@ -57,34 +57,7 @@
             get { return Path.GetFileNameWithoutExtension(Title); }
         }
 
-        public bool IsEditingTitle
-        {
-            get
-            {
-                return isEditingTitle;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref isEditingTitle, value);
-                LabelVisibility = !value;
-                TextBoxVisibility = value;
-            }
-        }
-
-        public ReactiveCommand RemoveItemCommand { get; }
-        public ReactiveCommand ToggleEditingModeCommand { get; }
-        public ReactiveCommand OpenInExplorerCommand { get; protected set; }
-
-        public bool TextBoxVisibility
-        {
-            get { return textBoxVisibility; }
-            set { this.RaiseAndSetIfChanged(ref textBoxVisibility, value); }
-        }
-
-        public bool LabelVisibility
-        {
-            get { return labelVisibility; }
-            set { this.RaiseAndSetIfChanged(ref labelVisibility, value); }
-        }
+        public ReactiveCommand RemoveItemCommand { get; }        
+        public ReactiveCommand OpenInExplorerCommand { get; protected set; }        
     }
 }

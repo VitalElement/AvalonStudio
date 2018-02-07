@@ -1,33 +1,43 @@
 ﻿using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
+using AvalonStudio.Projects.OmniSharp.ProjectTypes;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
+using RoslynPad.Roslyn;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects.OmniSharp
 {
     public class OmniSharpProject : FileSystemProject
     {
-        public static OmniSharpProject Create(ISolution solution, string path, AvalonStudio.Languages.CSharp.OmniSharp.Project project)
+        private string detectedTargetPath;
+        public static async Task<OmniSharpProject> Create(ISolution solution, string path)
         {
-            OmniSharpProject result = new OmniSharpProject();
-            result.Solution = solution;
-            result.Location = path;
-
-            result.LoadFiles();
+            var (project, projectReferences, targetPath) = await RoslynWorkspace.GetWorkspace(solution).AddProject(solution.CurrentDirectory, path);
+            var roslynProject = project;
+            var references = projectReferences;
+            OmniSharpProject result = new OmniSharpProject(path)
+            {
+                Solution = solution,
+                RoslynProject = roslynProject,
+                UnresolvedReferences = references,
+                detectedTargetPath = targetPath
+            };
 
             return result;
         }
 
-        public OmniSharpProject() : base(true)
+        public OmniSharpProject(string location) : base(true)
         {
+            Location = location;
             ExcludedFiles = new List<string>();
             Items = new ObservableCollection<IProjectItem>();
             References = new ObservableCollection<IProject>();
@@ -35,7 +45,37 @@ namespace AvalonStudio.Projects.OmniSharp
             DebugSettings = new ExpandoObject();
             Settings = new ExpandoObject();
             Project = this;
+
+            var fileWatcher = new FileSystemWatcher(CurrentDirectory, Path.GetFileName(Location))
+            {
+                EnableRaisingEvents = true,
+                IncludeSubdirectories = false,
+
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
+            };
+
+            fileWatcher.Changed += async (sender, e) =>
+            {
+                // todo restore packages and re-evaluate.
+                RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
+            };
+
+            FileAdded += (sender, e) =>
+            {
+                switch (e.Extension)
+                {
+                    case ".cs":
+                        RoslynWorkspace.GetWorkspace(Solution).AddDocument(RoslynProject, e);
+                        break;
+                }
+            };
         }
+
+        protected override bool FilterProjectFile => false;
+
+        public List<string> UnresolvedReferences { get; set; }
+
+        public Microsoft.CodeAnalysis.Project RoslynProject { get; set; }
 
         public override IList<object> ConfigurationPages
         {
@@ -47,7 +87,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override string CurrentDirectory
         {
-            get { return Path.GetDirectoryName(Location) + Platform.DirectorySeperator; }
+            get { return Path.GetDirectoryName(Location) + Platforms.Platform.DirectorySeperator; }
         }
 
         public override IDebugger Debugger2
@@ -69,7 +109,23 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override dynamic DebugSettings { get; set; }
 
-        public override string Executable { get; set; }
+        public override string Executable
+        {
+            get
+            {
+                if (detectedTargetPath != null)
+                    return detectedTargetPath;
+                if(RoslynProject.OutputFilePath == null)
+                {
+                    return null;
+                }
+
+                var objPath = Path.Combine(CurrentDirectory, RoslynProject.OutputFilePath);
+
+                return objPath.Replace("obj", "bin");
+            }
+            set { }
+        }
 
         public override string Extension
         {
@@ -93,9 +149,12 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override string LocationDirectory => CurrentDirectory;
 
+        public override bool CanRename => false;
+
         public override string Name
         {
             get { return Path.GetFileNameWithoutExtension(Location); }
+            set { }
         }
 
         public override IProjectFolder Parent { get; set; }
@@ -166,7 +225,7 @@ namespace AvalonStudio.Projects.OmniSharp
             throw new NotImplementedException();
         }
 
-        public override IProject Load(ISolution solution, string filePath)
+        public override IProject Load(string filePath)
         {
             return null;
         }
@@ -178,7 +237,13 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override void ResolveReferences()
         {
-            throw new NotImplementedException();
+            if (UnresolvedReferences != null)
+            {
+                foreach (var unresolvedReference in UnresolvedReferences)
+                {
+                    RoslynWorkspace.GetWorkspace(Solution).ResolveReference(this, unresolvedReference);
+                }
+            }
         }
 
         public override void Save()
@@ -187,5 +252,7 @@ namespace AvalonStudio.Projects.OmniSharp
         }
 
         public override List<string> ExcludedFiles { get; set; }
+
+        public override Guid ProjectTypeId => DotNetCoreCSharpProjectType.DotNetCoreCSharpTypeId;
     }
 }

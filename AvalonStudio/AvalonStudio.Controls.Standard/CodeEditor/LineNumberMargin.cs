@@ -15,7 +15,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
     /// <summary>
     /// Margin showing line numbers.
     /// </summary>
-    public class LineNumberMargin : AbstractMargin
+    public class LineNumberMargin : AbstractMargin, IDisposable
     {
         private TextArea _textArea;
         private CodeEditor _editor;
@@ -43,6 +43,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         /// </summary>
         protected double EmSize;
 
+        public IBrush Background { get; set; }
         public IBrush Foreground { get; set; }
         public IBrush SelectedLineForeground { get; set; }
 
@@ -76,6 +77,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         /// <inheritdoc/>
         public override void Render(DrawingContext drawingContext)
         {
+            drawingContext.FillRectangle(Background, Bounds);
+
             var textView = TextView;
             var renderSize = Bounds.Size;
             if (textView != null && textView.VisualLinesValid)
@@ -240,6 +243,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 e.Handled = true;
             }
             base.OnPointerReleased(e);
+        }
+
+        public void Dispose()
+        {
+            _editor = null;
+            _textArea = null;
         }
     }
 }

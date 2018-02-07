@@ -1,64 +1,62 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Diagnostics;
+using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
+using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
+using Serilog;
 using System;
 
 namespace AvalonStudio
 {
     internal class App : Application
     {
+        [STAThread]
         private static void Main(string[] args)
         {
             if (args == null)
             {
                 throw new ArgumentNullException(nameof(args));
-            }            
-
-            var builder = AppBuilder.Configure<App>();
-
-            if (args.Length >= 1 && args[0] == "--skia")
-            {
-                builder.UseSkia();
-
-                if (Platform.OSDescription == "Windows")
-                {
-                    builder.UseWin32();
-                }
-                else
-                {
-                    builder.UseGtk3();
-                }
-            }
-            else if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
-            {
-                builder.UsePlatformDetect().UseSkia();
-            }
-            else
-            {
-                builder.UseGtk3().UseSkia();
             }
 
-            builder.UseReactiveUI();
+            var builder = AppBuilder.Configure<App>().UseReactiveUI().AvalonStudioPlatformDetect().AfterSetup(async _ =>
+            {
+                Platform.Initialise();
 
-            builder.SetupWithoutStarting();
+                PackageSources.InitialisePackageSources();
 
-            Platform.Initialise();
+                var container = CompositionRoot.CreateContainer();
 
-            PackageSources.InitialisePackageSources();
+                ShellViewModel.Instance = container.GetExport<ShellViewModel>();
 
-            var container = CompositionRoot.CreateContainer();
+                await PackageManager.LoadAssetsAsync();
+            });
 
-            ShellViewModel.Instance = container.GetExport<ShellViewModel>();
+            InitializeLogging();
 
-            builder.Start<MainWindow>();            
+            builder.Start<MainWindow>();
         }
+
+        public static AppBuilder BuildAvaloniaApp()
+            => AppBuilder.Configure<App>().UsePlatformDetect().UseReactiveUI();
 
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
+
+            // DataTemplates.Add(new ViewLocatorDataTemplate());
+        }
+
+        private static void InitializeLogging()
+        {
+#if DEBUG
+            SerilogLogger.Initialize(new LoggerConfiguration()
+                .MinimumLevel.Warning()
+                .WriteTo.Trace(outputTemplate: "{Area}: {Message}")
+                .CreateLogger());
+#endif
         }
 
         public static void AttachDevTools(Window window)
@@ -67,9 +65,23 @@ namespace AvalonStudio
             DevTools.Attach(window);
 #endif
         }
+    }
 
-        private static void InitializeLogging()
+    public static class AppBuilderExtensions
+    {
+        public static AppBuilder AvalonStudioPlatformDetect(this AppBuilder builder)
         {
+            switch (Platform.PlatformIdentifier)
+            {
+                case Platforms.PlatformID.Win32NT:
+                    return builder.UseWin32().UseSkia();
+
+                case Platforms.PlatformID.Unix:
+                    return builder.UseGtk3().UseSkia();
+
+                default:
+                    return builder.UsePlatformDetect();
+            }
         }
     }
 }

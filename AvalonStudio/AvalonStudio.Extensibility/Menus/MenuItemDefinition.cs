@@ -4,11 +4,10 @@ namespace AvalonStudio.Extensibility.Menus
 
     public class MenuItemDefinition
     {
-        public MenuItemDefinition(MenuItemGroupDefinition group, string text, int sortOrder)
+        public MenuItemDefinition(MenuItemGroupDefinition group, int sortOrder)
         {
             Group = group;
             SortOrder = sortOrder;
-            Text = text;
 
             IoC.RegisterConstant(this);
         }
@@ -21,7 +20,7 @@ namespace AvalonStudio.Extensibility.Menus
 
         public CommandDefinition CommandDefinition { get; protected set; }
 
-        public string Text { get; }
+        public string Text { get; protected set; }
 
         public int SortOrder { get; }
     }

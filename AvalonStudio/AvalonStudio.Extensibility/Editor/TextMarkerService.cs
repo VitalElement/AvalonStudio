@@ -134,10 +134,7 @@ namespace AvalonStudio.Extensibility.Editor
 
         public void Update()
         {
-            if (DataChanged != null)
-            {
-                DataChanged(this, new EventArgs());
-            }
+            DataChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public IEnumerable<TextMarker> GetMarkersAtOffset(int offset)

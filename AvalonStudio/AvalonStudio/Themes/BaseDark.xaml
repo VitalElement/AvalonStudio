@@ -2,61 +2,68 @@
        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
        xmlns:mut="https://github.com/avaloniaui/mutable"
        xmlns:sys="clr-namespace:System;assembly=mscorlib">
-  <Style.Resources>
-    <SolidColorBrush x:Key="ThemeBackgroundBrush">#FF2D2D30</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeBorderLightBrush">#FFAAAAAA</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeBorderMidBrush">#FF888888</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeBorderDarkBrush">#FF333333</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeControlLightBrush">#FFFFFFFF</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeControlMidBrush">#FF3E3E42</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeControlDarkBrush">#FF252526</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeForegroundBrush">#FFC4C4C4</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeForegroundLightBrush">#FF808080</SolidColorBrush>
+    <Style.Resources>
+        <SolidColorBrush x:Key="AvalonBorderBrush">#FF004C8A</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeBackgroundBrush">#FF2D2D30</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeBorderLightBrush">#FFAAAAAA</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeBorderMidBrush">#FF888888</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeBorderDarkBrush">#3E3E42</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeControlLightBrush">#FF9E9E9E</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeControlMidBrush">#FF686868</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeControlDarkBrush">#FF3E3E42</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeControlBackgroundBrush">#FF252526</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeForegroundBrush">#FFE4E4E4</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeForegroundLightBrush">#FF808080</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeEditorBackground">Red</SolidColorBrush>
 
-    <SolidColorBrush x:Key="HighlightBrush">#FF086F9E</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeAccentBrush">#FF0063B1</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeAccentBrush2">#FF004C8A</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeAccentBrush3">#66119EDA</SolidColorBrush>
-    <SolidColorBrush x:Key="ThemeAccentBrush4">#33119EDA</SolidColorBrush>
+        <SolidColorBrush x:Key="ApplicationAccentBrush">#007ACC</SolidColorBrush>
+        <SolidColorBrush x:Key="ApplicationAccentBrushLight">#1C97EA</SolidColorBrush>
+        <SolidColorBrush x:Key="ApplicationAccentForegroundBrush">#F0F0F0</SolidColorBrush>
 
-    <sys:Double x:Key="ThemeBorderThickness">2</sys:Double>
-    <sys:Double x:Key="ThemeDisabledOpacity">0.5</sys:Double>
+        <SolidColorBrush x:Key="HighlightBrush">#FF086F9E</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeAccentBrush">#FF0063B1</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeAccentBrush2">#FF004C8A</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeAccentBrush3">#66119EDA</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeAccentBrush4">#33119EDA</SolidColorBrush>
 
-    <sys:Double x:Key="FontSizeSmall">10</sys:Double>
-    <sys:Double x:Key="FontSizeNormal">12</sys:Double>
-    <sys:Double x:Key="FontSizeLarge">16</sys:Double>
+        <sys:Double x:Key="ThemeBorderThickness">2</sys:Double>
+        <sys:Double x:Key="ThemeDisabledOpacity">0.5</sys:Double>
 
-    <DrawingGroup x:Key="Bulb">
-      <DrawingGroup.Transform>
-        <MatrixTransform Matrix="1,0,0,1,0,-1028.4" />
-      </DrawingGroup.Transform>
-      <DrawingGroup>
-        <DrawingGroup.Transform>
-          <MatrixTransform Matrix="1,0,0,1.25,-10,1031.4" />
-        </DrawingGroup.Transform>
-        <GeometryDrawing Brush="#FF7F8C8D"
+        <sys:Double x:Key="FontSizeSmall">10</sys:Double>
+        <sys:Double x:Key="FontSizeNormal">12</sys:Double>
+        <sys:Double x:Key="FontSizeLarge">16</sys:Double>
+
+        <DrawingGroup x:Key="Bulb">
+            <DrawingGroup.Transform>
+                <MatrixTransform Matrix="1,0,0,1,0,-1028.4" />
+            </DrawingGroup.Transform>
+            <DrawingGroup>
+                <DrawingGroup.Transform>
+                    <MatrixTransform Matrix="1,0,0,1.25,-10,1031.4" />
+                </DrawingGroup.Transform>
+                <GeometryDrawing Brush="#FF7F8C8D"
                          Geometry="F1 M24,14 A2,2,0,1,1,20,14 A2,2,0,1,1,24,14 z" />
-      </DrawingGroup>
-      <GeometryDrawing Brush="#FFF39C12"
+            </DrawingGroup>
+            <GeometryDrawing Brush="#FFF39C12"
                        Geometry="F1 M12,1030.4 C8.134,1030.4 5,1033.6 5,1037.6 5,1040.7 8.125,1043.5 9,1045.4 9.875,1047.2 9,1050.4 9,1050.4 L12,1049.9 15,1050.4 C15,1050.4 14.125,1047.2 15,1045.4 15.875,1043.5 19,1040.7 19,1037.6 19,1033.6 15.866,1030.4 12,1030.4 z" />
-      <GeometryDrawing Brush="#FFF1C40F"
+            <GeometryDrawing Brush="#FFF1C40F"
                        Geometry="F1 M12,1030.4 C15.866,1030.4 19,1033.6 19,1037.6 19,1040.7 15.875,1043.5 15,1045.4 14.125,1047.2 15,1050.4 15,1050.4 L12,1049.9 12,1030.4 z" />
-      <GeometryDrawing Brush="#FFE67E22"
+            <GeometryDrawing Brush="#FFE67E22"
                        Geometry="F1 M9,1036.4 L8,1037.4 12,1049.4 16,1037.4 15,1036.4 14,1037.4 13,1036.4 12,1037.4 11,1036.4 10,1037.4 9,1036.4 z M9,1037.4 L10,1038.4 10.5,1037.9 11,1037.4 11.5,1037.9 12,1038.4 12.5,1037.9 13,1037.4 13.5,1037.9 14,1038.4 15,1037.4 15.438,1037.8 12,1048.1 8.5625,1037.8 9,1037.4 z" />
-      <DrawingGroup>
-        <DrawingGroup.Transform>
-          <MatrixTransform Matrix="1,0,0,1,9,1045.4" />
-        </DrawingGroup.Transform>
-        <GeometryDrawing Brush="#FFBDC3C7">
-          <GeometryDrawing.Geometry>
-            <RectangleGeometry Rect="0,0,6,5" />
-          </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-      </DrawingGroup>
-      <GeometryDrawing Brush="#FF95A5A6"
+            <DrawingGroup>
+                <DrawingGroup.Transform>
+                    <MatrixTransform Matrix="1,0,0,1,9,1045.4" />
+                </DrawingGroup.Transform>
+                <GeometryDrawing Brush="#FFBDC3C7">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="0,0,6,5" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingGroup>
+            <GeometryDrawing Brush="#FF95A5A6"
                        Geometry="F1 M9,1045.4 L9,1050.4 12,1050.4 12,1049.4 15,1049.4 15,1048.4 12,1048.4 12,1047.4 15,1047.4 15,1046.4 12,1046.4 12,1045.4 9,1045.4 z" />
-      <GeometryDrawing Brush="#FF7F8C8D"
+            <GeometryDrawing Brush="#FF7F8C8D"
                        Geometry="F1 M9,1046.4 L9,1047.4 12,1047.4 12,1046.4 9,1046.4 z M9,1048.4 L9,1049.4 12,1049.4 12,1048.4 9,1048.4 z" />
-    </DrawingGroup>
-  </Style.Resources>
+        </DrawingGroup>
+    </Style.Resources>
 </Style>

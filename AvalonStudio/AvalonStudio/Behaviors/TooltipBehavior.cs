@@ -74,7 +74,7 @@ namespace AvalonStudio.Behaviors
                     popup.PlacementTarget = AssociatedObject as AvaloniaEdit.TextEditor;
                     popup.Child = new Grid
                     {
-                        Children = new Avalonia.Controls.Controls { o.NewValue as Control },
+                        Children = { o.NewValue as Control },
                         Background = Brushes.Transparent
                     };
                 }

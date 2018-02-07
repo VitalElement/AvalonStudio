@@ -2,10 +2,8 @@ using System;
 
 namespace AvalonStudio.Projects
 {
-    public interface IProjectItem : IComparable<IProjectItem>
+    public interface IProjectItem : IItem, IComparable<IProjectItem>
     {
-        string Name { get; }
-
         IProject Project { get; set; }
         IProjectFolder Parent { get; set; }
     }

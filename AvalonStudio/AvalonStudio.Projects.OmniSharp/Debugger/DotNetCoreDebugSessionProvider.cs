@@ -12,6 +12,7 @@
     using AvalonStudio.Utils;
     using System;
     using System.Threading.Tasks;
+    using AvalonStudio.Projects.OmniSharp.DotnetCli;
 
     public class DotNetCoreDebugger : IDebugger2
     {
@@ -26,49 +27,8 @@
             IoC.RegisterConstant<DotNetCoreDebugger>(this);
         }
 
-        private static string ResolveShimVersion()
-        {
-            var settings = Settings.GetSettings<DotNetToolchainSettings>();
-
-            bool inHostSection = false;
-
-            string result = string.Empty;
-
-            var exitCode = PlatformSupport.ExecuteShellCommand(settings.DotNetPath, "--info", (s, e) =>
-            {
-                if (!string.IsNullOrEmpty(e.Data))
-                {
-                    if (inHostSection)
-                    {
-                        if (e.Data.Trim().StartsWith("Version"))
-                        {
-                            var parts = e.Data.Split(':');
-
-                            if (parts.Length >= 2)
-                            {
-                                result = parts[1].Trim();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (e.Data.Trim().StartsWith("Microsoft .NET Core Shared Framework Host"))
-                        {
-                            inHostSection = true;
-                        }
-                    }
-                }
-            }, (s, e) => { }, false, "", false);
-
-            return result;
-        }
-
         public DebuggerSession CreateSession(IProject project)
-        {
-            var settings = Settings.GetSettings<DotNetToolchainSettings>();
-
-            var coreAppVersion = ResolveShimVersion();
-
+        {            
             string dbgShimName = "dbgshim";
 
             if (Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
@@ -76,11 +36,12 @@
                 dbgShimName = "lib" + dbgShimName;
             }
 
-            var dbgShimPath = Path.Combine(Path.GetDirectoryName(settings.DotNetPath), "shared", "Microsoft.NETCore.App", coreAppVersion, dbgShimName + Platform.DLLExtension);
+            var dbgShimPath = Path.Combine(DotNetCliService.Instance.Info.RootPath, "shared", "Microsoft.NETCore.App", DotNetCliService.Instance.Info.Version.ToString(), dbgShimName + Platform.DLLExtension);
 
-            var result = new CoreClrDebuggerSession(System.IO.Path.GetInvalidPathChars(), dbgShimPath);
-
-            result.CustomSymbolReaderFactory = new PdbSymbolReaderFactory();
+            var result = new CoreClrDebuggerSession(System.IO.Path.GetInvalidPathChars(), dbgShimPath)
+            {
+                CustomSymbolReaderFactory = new PdbSymbolReaderFactory()
+            };
 
             return result;
         }

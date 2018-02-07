@@ -1,24 +1,32 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects
 {
-    public interface ISolution
+    public interface ISolution : ISolutionFolder
     {
-        string Name { get; }
-
         string Location { get; }
 
         IProject StartupProject { get; set; }
 
-        ObservableCollection<IProject> Projects { get; }
+        IEnumerable<IProject> Projects { get; }
 
         string CurrentDirectory { get; }
 
-        IProject AddProject(IProject project);
+        void UpdateItem(ISolutionItem item);
+
+        T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem;
+
+        void RemoveItem(ISolutionItem item);
 
         ISourceFile FindFile(string path);
 
-        void RemoveProject(IProject project);
+        IProject FindProject(string name);
+
+        Task LoadSolutionAsync();
+
+        Task LoadProjectsAsync();
 
         void Save();
     }

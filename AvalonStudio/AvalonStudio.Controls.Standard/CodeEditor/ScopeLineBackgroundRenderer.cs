@@ -65,7 +65,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 var endLine = textView.Document.GetLineByOffset(entry.EndOffset <= textView.Document.TextLength ? entry.EndOffset : textView.Document.TextLength);
 
-                if (endLine.EndOffset > start)
+                if (endLine.EndOffset > start && startLine != endLine)
                 {
                     var newEntry = new TextSegment() { StartOffset = start, EndOffset = endLine.EndOffset };
 

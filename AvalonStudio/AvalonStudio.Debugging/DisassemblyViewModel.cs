@@ -310,7 +310,7 @@ namespace AvalonStudio.Debugging
         {
             if (asm.Code.Contains("\\t"))
             {
-                var opcodeParts = asm.Code.Split("\\t");
+                var opcodeParts = asm.Code.Split(new string[] { "\\t" }, StringSplitOptions.RemoveEmptyEntries);
                 sb.AppendFormat("{0:x8}   {1}", asm.Address, opcodeParts[0]);
 
                 if (opcodeParts.Length > 1)

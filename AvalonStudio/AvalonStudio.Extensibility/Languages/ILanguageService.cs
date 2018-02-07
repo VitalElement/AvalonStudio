@@ -1,8 +1,8 @@
-using AvaloniaEdit.Document;
 using AvaloniaEdit.Indentation;
+using AvalonStudio.Documents;
+using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Plugin;
-using AvalonStudio.Projects;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -24,10 +24,9 @@ namespace AvalonStudio.Languages
         string LanguageId { get; }
 
         /// <summary>
-        ///     The base type that all Project templates for this language must inherit. This base class must implement
-        ///     IProjectTemplate.
+        /// An identifier compatible with Dot CLI language identifiers i.e. C#, F#, VB, etc
         /// </summary>
-        Type BaseTemplateType { get; }
+        string Identifier { get; }
 
         /// <summary>
         /// Dictionary of functions for transforming snippet variables. Key is function name, the arugment is the string to transform.
@@ -40,30 +39,39 @@ namespace AvalonStudio.Languages
         /// </summary>
         IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables { get; }
 
-        Task<CodeCompletionResults> CodeCompleteAtAsync(ISourceFile sourceFile, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "");
-
         bool CanTriggerIntellisense(char currentChar, char previousChar);
         IEnumerable<char> IntellisenseSearchCharacters { get; }
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
+        IEnumerable<ICodeEditorInputHelper> InputHelpers { get; }
 
-        Task<CodeAnalysisResults> RunCodeAnalysisAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
+        //IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; }
 
-        void RegisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file, TextDocument textDocument);
+        bool IsValidIdentifierCharacter(char data);
 
-        void UnregisterSourceFile(AvaloniaEdit.TextEditor editor, ISourceFile file);
+        Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "");
 
-        bool CanHandle(ISourceFile file);
+        Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
-        int Format(TextDocument textDocument, uint offset, uint length, int cursor);
+        Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName);
 
-        int Comment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
+        Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset);
 
-        int UnComment(TextDocument textDocument, int firstLine, int endLine, int caret = -1, bool format = true);
+        Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name);
 
-        Task<SignatureHelp> SignatureHelp(ISourceFile file, UnsavedFile buffer, List<UnsavedFile> unsavedFiles, int line, int column, int offset, string methodName);
+        Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset);
 
-        Task<Symbol> GetSymbolAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, int offset);
+        Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo);
 
-        Task<List<Symbol>> GetSymbolsAsync(ISourceFile file, List<UnsavedFile> unsavedFiles, string name);
+        void RegisterSourceFile(IEditor editor);
+
+        void UnregisterSourceFile(IEditor editor);
+
+        bool CanHandle(IEditor editor);
+
+        int Format(IEditor editor, uint offset, uint length, int cursor);
+
+        int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
+
+        int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
     }
 }

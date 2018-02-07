@@ -1,6 +1,4 @@
-using Avalonia.Controls;
 using Avalonia.Media;
-using Avalonia.Media.Imaging;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 
@@ -38,10 +36,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Completion
 
         public string Title
         {
-            get { return Model.Suggestion; }
+            get { return Model.DisplayText; }
         }
 
-        public uint Priority
+        public int Priority
         {
             get { return Model.Priority; }
         }
@@ -55,7 +53,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Completion
 
         public string Hint
         {
-            get { return Model?.Hint; }
+            get { return Model?.DisplayText; }
         }
 
         public string Comment

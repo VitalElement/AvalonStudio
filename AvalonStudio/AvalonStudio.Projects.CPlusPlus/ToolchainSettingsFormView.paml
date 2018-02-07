@@ -12,21 +12,7 @@
     </Grid.ColumnDefinitions>
 
     <TextBlock Grid.Row="0" Text="Toolchain" Grid.ColumnSpan="2"/>
-    <DropDown Grid.Row="0" Grid.Column="2" Items="{Binding Toolchains}" SelectedItem="{Binding SelectedToolchain, Mode=TwoWay}">
-      <DropDown.Styles>
-        <Style Selector="DropDownItem">
-          <Setter Property="Background" Value="#1e1e1e" />
-        </Style>
-
-        <Style Selector="DropDownItem:selected">
-          <Setter Property="Background" Value="#3f3f46" />
-        </Style>
-
-        <Style Selector="DropDownItem:pointerover">
-          <Setter Property="Background" Value="Red" />
-        </Style>
-      </DropDown.Styles>
-    </DropDown>
+    <DropDown Grid.Row="0" Grid.Column="2" Items="{Binding Toolchains}" SelectedItem="{Binding SelectedToolchain, Mode=TwoWay}" />
 
     <Panel Grid.Row="1" Grid.ColumnSpan="3" DataContext="{Binding SelectedToolchain}"  >
       <Grid>
@@ -56,7 +42,7 @@
 
     <Grid Grid.Row="2" Grid.ColumnSpan="3">
       <Grid Margin="4">
-        <Border BorderThickness="1" BorderBrush="#3d3d3d">
+        <Border BorderThickness="1" BorderBrush="{DynamicResource ThemeBorderDarkBrush}">
           <DockPanel>
             <StackPanel DockPanel.Dock="Top" ZIndex="100">
               <TabStrip Name="toolStrip" Items="{Binding ConfigPages}" SelectedItem="{Binding SelectedConfigPage, Mode=TwoWay}" Focusable="false">
@@ -68,13 +54,14 @@
 
                 <TabStrip.Styles>
                   <Style Selector="TabStripItem">
-                    <Setter Property="Foreground" Value="#585656" />
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
                   </Style>
                   <Style Selector="TabStripItem:pointerover">
-                    <Setter Property="Foreground" Value="WhiteSmoke" />
+                    <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrush}" />
                   </Style>
                   <Style Selector="TabStripItem:selected">
-                    <Setter Property="Foreground" Value="WhiteSmoke" />
+                    <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrush}" />
                   </Style>
                 </TabStrip.Styles>
 
@@ -88,7 +75,11 @@
               </TabStrip>
             </StackPanel>
 
-            <Controls:ViewModelViewHost DataContext="{Binding #toolStrip.SelectedItem}" ZIndex="50" />
+            <ScrollViewer>
+              <Grid Margin="8">
+                <Controls:ViewModelViewHost DataContext="{Binding #toolStrip.SelectedItem}" ZIndex="50" />
+              </Grid>
+            </ScrollViewer>
           </DockPanel>
         </Border>
       </Grid>

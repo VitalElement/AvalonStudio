@@ -4,7 +4,6 @@ namespace AvalonStudio.Extensibility.Menus
     {
         public MenuBarDefinition()
         {
-            IoC.RegisterConstant(this);
         }
     }
 }

@@ -8,6 +8,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     {
         public abstract DrawingGroup Icon { get; }
 
+        public virtual bool IsExpanded { get; set; } = false;
+
         public static ProjectItemViewModel Create(IProjectItem item)
         {
             ProjectItemViewModel result = null;
@@ -16,13 +18,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 result = new ProjectFolderViewModel(item as IProjectFolder);
             }
-
-            if (item is ISourceFile)
+            else if (item is ISourceFile)
             {
                 result = new SourceFileViewModel(item as ISourceFile);
             }
-
-            if (item is IReferenceFolder)
+            else if (item is IReferenceFolder)
             {
                 result = new ReferenceFolderViewModel(item as IReferenceFolder);
             }

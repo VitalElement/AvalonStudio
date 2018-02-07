@@ -65,6 +65,8 @@ namespace AvalonStudio.Toolchains.Clang
             get { return Path.Combine(BinDirectory, "arm-none-eabi-gdb" + Platform.ExecutableExtension); }
         }
 
+        public override string LibraryQueryCommand => "arm-none-eabi-gcc";
+
         public override string ExecutableExtension
         {
             get { return ".elf"; }
@@ -80,7 +82,7 @@ namespace AvalonStudio.Toolchains.Clang
             return Path.Combine(project.CurrentDirectory, "link.ld");
         }
 
-        public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
+        /*public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
         {
             return new List<string>
             {
@@ -92,7 +94,7 @@ namespace AvalonStudio.Toolchains.Clang
                 Path.Combine(ContentDirectory, "lib", "gcc", "arm-none-eabi", "6.3.1", "include-fixed"),
                 Path.Combine(ContentDirectory, "arm-none-eabi", "include")
             };
-        }
+        }*/
 
         private void GenerateLinkerScript(IStandardProject project)
         {
@@ -105,12 +107,13 @@ namespace AvalonStudio.Toolchains.Clang
                 System.IO.File.Delete(linkerScript);
             }
 
-            var rendered = Template.Engine.Parse("ArmLinkerScriptTemplate.template", new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start = settings.InRam1Start, InRam1Size = settings.InRam1Size });
+            throw new NotImplementedException();
+            //var rendered = Template.Engine.CompileRenderAsync("ArmLinkerScriptTemplate.template", new { InRom1Start = settings.InRom1Start, InRom1Size = settings.InRom1Size, InRam1Start = settings.InRam1Start, InRam1Size = settings.InRam1Size }).GetAwaiter().GetResult();
 
-            using (var sw = System.IO.File.CreateText(linkerScript))
-            {
-                sw.Write(rendered);
-            }
+            //using (var sw = System.IO.File.CreateText(linkerScript))
+            //{
+            //    sw.Write(rendered);
+            //}
         }
 
         public override string GetBaseLibraryArguments(IStandardProject superProject)
@@ -430,13 +433,17 @@ namespace AvalonStudio.Toolchains.Clang
             return result;
         }
 
-        public async override Task InstallAsync(IConsole console, IProject project)
+        public async override Task<bool> InstallAsync(IConsole console, IProject project)
         {
-            if(!await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console))
+            if(await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console) == PackageEnsureStatus.Installed)
             {
                 // this ensures content directory is re-evaluated if we just installed the toolchain.
                 _contentDirectory = null;
             }
+
+            await base.InstallAsync(console, project);
+
+            return true;
         }
     }
 }

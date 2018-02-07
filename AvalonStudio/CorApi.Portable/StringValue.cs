@@ -19,17 +19,17 @@ namespace CorApi.Portable
                 unsafe
                 {
                     int count = 0;
-                    GetString(0, out count, IntPtr.Zero);
+                    GetLength(out count);
 
                     if (count == 0)
                     {
                         return null;
-                    }
+                    }                    
 
                     var temp = stackalloc char[count];
                     GetString(count, out count, (IntPtr)temp);
 
-                    return new string(temp, 0, count - 1);
+                    return new string(temp, 0, count);
                 }
             }
         }

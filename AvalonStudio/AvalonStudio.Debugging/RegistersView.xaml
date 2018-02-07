@@ -3,7 +3,7 @@
              xmlns:vm="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging">
     	<controls:ToolControl Title="Registers">
         <Grid>
-            <ListBox BorderThickness="0" Items="{Binding Model}" Background="{StyleResource ThemeControlDarkBrush}"
+            <ListBox BorderThickness="0" Items="{Binding Model}" Background="{DynamicResource ThemeControlBackgroundBrush}"
                  VirtualizationMode="None">
                 <ListBox.DataTemplates>
                     <DataTemplate DataType="vm:RegisterViewModel">

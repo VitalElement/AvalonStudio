@@ -3,6 +3,7 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
+using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using System;
 using System.Collections;
@@ -21,6 +22,9 @@ namespace AvalonStudio.Toolchains.Standard
 
         private int fileCount;
         private int numTasks;
+        private IShell _shell;
+
+        protected IShell Shell => _shell;
 
         private readonly object resultLock = new object();
 
@@ -77,21 +81,31 @@ namespace AvalonStudio.Toolchains.Standard
                 {
                     console.WriteLine(ee.Data);
                 }
-            }, false, project.CurrentDirectory, true, project.ToolChain?.BinDirectory);
+            }, false, project.CurrentDirectory, true, true, project.ToolChain?.BinDirectory);
 
             return exitCode;
         }
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
         {
-            await InstallAsync(console, project);
-
-            if (!ValidateToolchainExecutables(console))
+            if(!await InstallAsync(console, project))
             {
+                console.WriteLine("Failed: Unable to install or initialise toolchain.");
                 return false;
             }
 
             console.Clear();
+
+            console.WriteLine("Starting Build...");
+            console.WriteLine();
+
+            if (!ValidateToolchainExecutables(console))
+            {
+                console.WriteLine("Failed: Unable to find toolchain executables.");
+                return false;
+            }
+
+            await BeforeBuild(console, project);
 
             var preBuildCommands = (project as IStandardProject).PreBuildCommands;
             var postBuildCommands = (project as IStandardProject).PostBuildCommands;
@@ -104,8 +118,6 @@ namespace AvalonStudio.Toolchains.Standard
 
                 result = ExecuteCommands(console, project, preBuildCommands);
             }
-            
-            console.WriteLine("Starting Build...");
 
             terminateBuild = !result;
 
@@ -645,7 +657,12 @@ namespace AvalonStudio.Toolchains.Standard
             }
         }
 
-        public abstract Task InstallAsync(IConsole console, IProject project);
+        public virtual async Task BeforeBuild(IConsole console, IProject project)
+        {
+            _shell = IoC.Get<IShell>();
+        }
+          
+        public abstract Task<bool> InstallAsync(IConsole console, IProject project);
 
         public Task InstallAsync(IConsole console)
         {

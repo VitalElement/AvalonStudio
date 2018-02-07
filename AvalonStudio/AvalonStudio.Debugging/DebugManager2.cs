@@ -55,7 +55,7 @@
         {
             _currentStackFrame = frame;
 
-            FrameChanged?.Invoke(this, new EventArgs());
+            FrameChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public StackFrame SelectedFrame
@@ -166,6 +166,8 @@
             CanStop = canStop.StartWith(false);
 
             CanStep = canStep.StartWith(false);
+
+            _shell.OnSolutionChanged.Subscribe(_ => LoadBreakpoints());
         }
 
         public void BeforeActivation()
@@ -177,7 +179,7 @@
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                DebugSessionEnded?.Invoke(this, new EventArgs());
+                DebugSessionEnded?.Invoke(this, EventArgs.Empty);
 
                 _shell.CurrentPerspective = Perspective.Editor;
 
@@ -190,6 +192,7 @@
                 if (_session != null)
                 {
                     _session.Exit();
+                    _session.TargetUnhandledException -= _session_TargetStopped;
                     _session.TargetStopped -= _session_TargetStopped;
                     _session.TargetHitBreakpoint -= _session_TargetStopped;
                     _session.TargetSignaled -= _session_TargetStopped;
@@ -251,10 +254,7 @@
 
             _session = debugger2.CreateSession(project);
 
-            _session.Breakpoints = Breakpoints;
-
-            _session.Run(debugger2.GetDebuggerStartInfo(project), debugger2.GetDebuggerSessionOptions(project));
-
+            _session.TargetUnhandledException += _session_TargetStopped;
             _session.TargetStopped += _session_TargetStopped;
             _session.TargetHitBreakpoint += _session_TargetStopped;
             _session.TargetSignaled += _session_TargetStopped;
@@ -263,9 +263,13 @@
             _session.TargetStarted += _session_TargetStarted;
             _session.TargetReady += _session_TargetReady;
 
+            _session.Breakpoints = Breakpoints;
+
+            _session.Run(debugger2.GetDebuggerStartInfo(project), debugger2.GetDebuggerSessionOptions(project));
+
             _shell.CurrentPerspective = Perspective.Debug;
 
-            DebugSessionStarted?.Invoke(this, new EventArgs());
+            DebugSessionStarted?.Invoke(this, EventArgs.Empty);
         }
 
         private void _session_TargetReady(object sender, TargetEventArgs e)
@@ -277,8 +281,11 @@
         {
             if (_lastDocument != null)
             {
-                _lastDocument.ClearDebugHighlight();
-                _lastDocument = null;
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    _lastDocument.ClearDebugHighlight();
+                    _lastDocument = null;
+                });
             }
 
             TargetStarted?.Invoke(this, e);
@@ -308,7 +315,7 @@
                     if (document != null)
                     {
                         _lastDocument = document;
-                        file = document?.ProjectFile;
+                        file = document?.SourceFile;
                     }
 
                     if (file == null)
@@ -318,7 +325,10 @@
 
                     if (file != null)
                     {
-                        Dispatcher.UIThread.InvokeTaskAsync(() => { _lastDocument = _shell.OpenDocument(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true); }).Wait();
+                        Dispatcher.UIThread.InvokeAsync(async () => 
+                        {
+                            _lastDocument = await _shell.OpenDocumentAsync(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true);
+                        }).Wait();
                     }
                     else
                     {
@@ -333,7 +343,7 @@
                     _console.WriteLine($"Hit Watch Point {wp.Expression}");
                 }
 
-                Dispatcher.UIThread.InvokeTaskAsync(() =>
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     TargetStopped?.Invoke(this, e);
                     SetFrame(currentFrame);

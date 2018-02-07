@@ -1,0 +1,20 @@
+﻿/******************************************************************************
+ *  Description: 
+ *
+ *       Author: 
+ *         Date: @DateTime.Now.ToString()
+ *
+ ******************************************************************************/
+@{
+string s = string.Format("{0}.h", Model.ClassName);
+}
+
+#include "@s"
+
+@Model.ClassName::@Model.ClassName ()
+{
+}
+
+@Model.ClassName::~@Model.ClassName ()
+{
+}
