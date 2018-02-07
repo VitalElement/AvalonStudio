@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpGenTools.Sdk" Version="1.0.0-rc1" />
+    <PackageReference Include="SharpGenTools.Sdk" Version="1.0.0-ci213" />
   </ItemGroup>
 
 </Project>
