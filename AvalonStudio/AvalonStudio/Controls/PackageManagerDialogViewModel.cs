@@ -40,7 +40,14 @@ namespace AvalonStudio.Controls
             {
                 InvalidateInstalledPackages();
 
-                await DownloadCatalog();
+                try
+                {
+                    await DownloadCatalog();
+                }
+                catch (Exception)
+                {
+                    // TODO indicate error accessing catalog.
+                }
             });
 
             InstallCommand = ReactiveCommand.Create(async () =>

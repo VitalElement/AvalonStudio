@@ -133,14 +133,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             var dlg = new OpenFileDialog();
             dlg.Title = "Open Solution";
 
-            if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
-            {
-                dlg.InitialDirectory = Platform.ProjectDirectory;
-            }
-            else
-            {
-                dlg.InitialFileName = Platform.ProjectDirectory;
-            }
+            dlg.InitialDirectory = Platform.ProjectDirectory;
 
             var allExtensions = new List<string>();
 
