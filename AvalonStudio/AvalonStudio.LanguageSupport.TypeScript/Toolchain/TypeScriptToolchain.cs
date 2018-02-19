@@ -98,9 +98,9 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain
             return new string[0];
         }
 
-        public Task InstallAsync(IConsole console)
+        public Task<bool> InstallAsync(IConsole console, IProject project)
         {
-            return Task.FromResult(0);
+            return Task.FromResult(true);
         }
     }
 }

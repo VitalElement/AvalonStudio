@@ -83,12 +83,19 @@ namespace AvalonStudio.Debugging.GDB.JLink
             return new JLinkSettingsFormViewModel(project);
         }
 
-        public async Task InstallAsync(IConsole console)
+        public async Task<bool> InstallAsync(IConsole console, IProject project)
         {
             if (Platform.PlatformIdentifier != Platforms.PlatformID.Unix)
             {
-                await PackageManager.EnsurePackage("AvalonStudio.Debuggers.JLink", console);
+                switch(await PackageManager.EnsurePackage("AvalonStudio.Debuggers.JLink", console))
+                {
+                    case PackageEnsureStatus.NotFound:
+                    case PackageEnsureStatus.Unknown:
+                        return false;
+                }
             }
+
+            return true;
         }
     }
 }
