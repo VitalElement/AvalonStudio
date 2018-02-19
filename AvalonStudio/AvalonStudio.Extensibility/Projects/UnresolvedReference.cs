@@ -11,8 +11,6 @@
 
     public class LoadingProject : IProject
     {
-        private bool _exists;
-
         public int CompareTo(ISolutionItem other)
         {
             return this.DefaultCompareTo(other);
@@ -21,8 +19,6 @@
         public LoadingProject(ISolution solution, string location)
         {
             Location = location;
-
-            _exists = File.Exists(location);
         }
 
         public IProjectFolder Parent { get; set; }
@@ -58,12 +54,7 @@
         {
             get
             {
-                if (_exists)
-                {
-                    return Path.GetFileNameWithoutExtension(Location) + " (loading)";
-                }
-
-                return Path.GetFileNameWithoutExtension(Location) + " (Not Found)";
+                return Path.GetFileNameWithoutExtension(Location);
             }
             set { }
         }
@@ -117,7 +108,14 @@
 
         public int CompareTo(IProject other)
         {
-            return Name.CompareTo(other.Name);
+            if (GetType() == other.GetType())
+            {
+                return Name.CompareTo(other.Name);
+            }
+            else
+            {
+                return GetType().FullName.CompareTo(other.GetType().FullName);
+            }
         }
 
         public void Dispose()
@@ -255,7 +253,14 @@
 
         public int CompareTo(IProject other)
         {
-            return Name.CompareTo(other.Name);
+            if (GetType() == other.GetType())
+            {
+                return Name.CompareTo(other.Name);
+            }
+            else
+            {
+                return GetType().FullName.CompareTo(other.GetType().FullName);
+            }
         }
 
         public void Dispose()
