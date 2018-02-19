@@ -470,5 +470,10 @@ namespace AvalonStudio.Extensibility.Projects
         {
             return Projects.FirstOrDefault(p => p.Name == name);
         }
+
+        public IProject FindProjectByPath(string absolutePath)
+        {
+            return Projects.FirstOrDefault(p => p.Location.NormalizePath() == absolutePath.NormalizePath());
+        }
     }
 }

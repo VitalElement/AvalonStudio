@@ -232,5 +232,10 @@ namespace AvalonStudio.Projects
         {
             throw new NotImplementedException();
         }
+
+        public IProject FindProjectByPath(string path)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

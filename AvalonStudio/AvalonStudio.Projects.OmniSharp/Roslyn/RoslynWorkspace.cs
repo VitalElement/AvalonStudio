@@ -126,11 +126,17 @@ namespace RoslynPad.Roslyn
                 buildHost = new MSBuildHost(sdkPath);
             }
 
-            var (info, projectReferences, targetPath) = await buildHost.LoadProject(solutionDir, projectFile); 
+            var (info, projectReferences, targetPath) = await buildHost.LoadProject(solutionDir, projectFile);
 
-            OnProjectAdded(info);
-
-            return (CurrentSolution.GetProject(info.Id), projectReferences, targetPath);
+            if (info != null)
+            {
+                OnProjectAdded(info);
+                return (CurrentSolution.GetProject(info.Id), projectReferences, targetPath);
+            }
+            else
+            {
+                return (null, projectReferences, targetPath);
+            }
         }
 
         public async Task ReevaluateProject(AvalonStudio.Projects.IProject project)
@@ -181,7 +187,7 @@ namespace RoslynPad.Roslyn
             }
         }
 
-        public void ResolveReference(AvalonStudio.Projects.IProject project, string reference)
+        public bool ResolveReference(AvalonStudio.Projects.IProject project, string reference)
         {
             var referencePath = Path.Combine(project.LocationDirectory, reference).NormalizePath();
             var projects = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(referencePath) == 0);
@@ -200,10 +206,12 @@ namespace RoslynPad.Roslyn
                 }
 
                 ResolveChildReferences(proj.Id, referencedProject.Id);
+
+                return true;
             }
             else
             {
-                // TODO: mark as unresolved.
+                return false;
             }
         }
 

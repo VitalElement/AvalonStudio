@@ -140,10 +140,21 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                 }
                 else
                 {
-                    throw new Exception("Must specify target framework to load project.");
+                    //throw new Exception("Must specify target framework to load project.");
+                    Console.WriteLine($"Non-Dotnet core project trying anyway.");
+                    targetFramework = "";
                 }
 
-                var loadData = SendRequest(new ProjectInfoRequest { SolutionDirectory = solutionDirectory, FullPath = projectFile, TargetFramework = targetFramework });
+                ProjectInfoResponse loadData = null;
+
+                try
+                {
+                    loadData = SendRequest(new ProjectInfoRequest { SolutionDirectory = solutionDirectory, FullPath = projectFile, TargetFramework = targetFramework });
+                }
+                catch(Exception)
+                {
+                    return (null, null, null);
+                }
 
                 string commandLine = "";
                 bool foundCommandLine = false;

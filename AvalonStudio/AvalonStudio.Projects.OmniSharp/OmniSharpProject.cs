@@ -2,9 +2,11 @@
 using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects.OmniSharp.ProjectTypes;
+using AvalonStudio.Projects.Standard;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
+using AvalonStudio.Utils;
 using RoslynPad.Roslyn;
 using System;
 using System.Collections.Generic;
@@ -22,6 +24,12 @@ namespace AvalonStudio.Projects.OmniSharp
         public static async Task<OmniSharpProject> Create(ISolution solution, string path)
         {
             var (project, projectReferences, targetPath) = await RoslynWorkspace.GetWorkspace(solution).AddProject(solution.CurrentDirectory, path);
+
+            if(project == null)
+            {
+                return null;
+            }
+
             var roslynProject = project;
             var references = projectReferences;
             OmniSharpProject result = new OmniSharpProject(path)
@@ -46,6 +54,8 @@ namespace AvalonStudio.Projects.OmniSharp
             Settings = new ExpandoObject();
             Project = this;
 
+            Items.InsertSorted(new ReferenceFolder(this));
+
             var fileWatcher = new FileSystemWatcher(CurrentDirectory, Path.GetFileName(Location))
             {
                 EnableRaisingEvents = true,
@@ -57,7 +67,7 @@ namespace AvalonStudio.Projects.OmniSharp
             fileWatcher.Changed += async (sender, e) =>
             {
                 // todo restore packages and re-evaluate.
-                RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
+                await RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
             };
 
             FileAdded += (sender, e) =>
@@ -192,7 +202,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override void AddReference(IProject project)
         {
-            throw new NotImplementedException();
+            References.Add(project);
         }
 
         public override int CompareTo(IProjectFolder other)
@@ -241,7 +251,23 @@ namespace AvalonStudio.Projects.OmniSharp
             {
                 foreach (var unresolvedReference in UnresolvedReferences)
                 {
-                    RoslynWorkspace.GetWorkspace(Solution).ResolveReference(this, unresolvedReference);
+                    var fullReferencePath = this.ResolveReferencePath(unresolvedReference);
+
+                    if (RoslynWorkspace.GetWorkspace(Solution).ResolveReference(this, unresolvedReference))
+                    {
+                        var currentProject = Solution.FindProjectByPath(fullReferencePath);
+
+                        if(currentProject == null)
+                        {
+                            throw new Exception("Error loading msbuild project, out of sync");
+                        }
+
+                        AddReference(currentProject);
+                    }
+                    else
+                    {
+                        AddReference(new UnresolvedReference(Solution, Path.Combine(Solution.CurrentDirectory, Path.GetFileNameWithoutExtension(fullReferencePath))));
+                    }
                 }
             }
         }
