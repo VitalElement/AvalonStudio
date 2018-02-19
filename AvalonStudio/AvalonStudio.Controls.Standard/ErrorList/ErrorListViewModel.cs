@@ -32,7 +32,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             {
                 this.RaiseAndSetIfChanged(ref selectedError, value);
 
-                Dispatcher.UIThread.InvokeTaskAsync(async () =>
+                Dispatcher.UIThread.InvokeAsync(async () =>
                 {
                     if (value != null)
                     {

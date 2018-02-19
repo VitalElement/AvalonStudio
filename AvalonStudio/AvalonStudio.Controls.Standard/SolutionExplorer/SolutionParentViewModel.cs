@@ -46,14 +46,7 @@
 
                 dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Project", Extensions = extensions });
 
-                if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
-                {
-                    dlg.InitialDirectory = Model.Solution.CurrentDirectory;
-                }
-                else
-                {
-                    dlg.InitialFileName = Model.Solution.CurrentDirectory;
-                }
+                dlg.InitialDirectory = Model.Solution.CurrentDirectory;
 
                 dlg.AllowMultiple = false;
 

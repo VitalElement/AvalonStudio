@@ -3,11 +3,11 @@
 /////////////////////////////////////////////////////////////////////
 
 #addin "Cake.FileHelpers"
-#addin "nuget:?package=NuGet.Core&version=2.14.0"
 
 //////////////////////////////////////////////////////////////////////
 // TOOLS
 //////////////////////////////////////////////////////////////////////
+#tool "nuget:?package=NuGet.CommandLine&version=4.3.0"
 
 ///////////////////////////////////////////////////////////////////////////////
 // USINGS
@@ -75,7 +75,7 @@ if (isRunningOnAppVeyor)
 // DIRECTORIES
 ///////////////////////////////////////////////////////////////////////////////
 
-var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.10.25017\bin\HostX86\x86\editbin.exe";
+var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\bin\HostX86\x86\editbin.exe";
 
 var artifactsDir = (DirectoryPath)Directory("./artifacts");
 var zipRootDir = artifactsDir.Combine("zip");
@@ -107,7 +107,7 @@ public NuGetPackSettings GetPackSettings(string rid, string version, string nuge
     var nuspecNuGetBehaviors = new NuGetPackSettings()
     {
         Id = "VitalElement.AvalonBuild." + rid,
-        Version = version,
+        Version = version.Replace("v",""),
         Authors = new [] { "VitalElement" },
         Owners = new [] { "Dan Walmsley (dan at walms.co.uk)" },
         LicenseUrl = new Uri("http://opensource.org/licenses/MIT"),
@@ -116,7 +116,7 @@ public NuGetPackSettings GetPackSettings(string rid, string version, string nuge
         Symbols = false,
         NoPackageAnalysis = true,
         Description = "Command Line build tools for AvalonStudio.",
-        Copyright = "Copyright 2017",
+        Copyright = "Copyright 2018",
         Tags = new [] { "AvalonStudio", "AvalonBuild" },
         Files = new []
         {

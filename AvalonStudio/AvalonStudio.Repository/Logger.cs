@@ -1,4 +1,5 @@
-﻿using NuGet.Common;
+﻿using System.Threading.Tasks;
+using NuGet.Common;
 
 namespace AvalonStudio.Repositories
 {
@@ -21,5 +22,24 @@ namespace AvalonStudio.Repositories
         public void LogInformationSummary(string data) => $"Infosummary: {data}".Dump();
 
         public void LogErrorSummary(string data) => $"LogErrorSummary: {data }".Dump();
+
+        public void Log(LogLevel level, string data) => $"LOG: {data}".Dump();
+
+        public Task LogAsync(LogLevel level, string data)
+        {
+            $"LOG: {data}".Dump();
+            return Task.CompletedTask;
+        }
+
+        public void Log(ILogMessage message)
+        {
+            $"LOG: {message.Message}".Dump();
+        }
+
+        public Task LogAsync(ILogMessage message)
+        {
+            $"LOG: {message.Message}".Dump();
+            return Task.CompletedTask;
+        }
     }
 }

@@ -1,11 +1,9 @@
 ﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
-using AvalonStudio.Shell;
+using AvalonStudio.Extensibility.Settings;
 using ReactiveUI;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
 
 namespace AvalonStudio.Controls.Standard.SettingsDialog
 {
@@ -38,9 +36,9 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
                 _categoryViewModels.Add(_categories[category]);
             }
 
-            _categories[category].Dialogs.Add(viewModel);       
-            
-            if(_categoryViewModels.Count == 1)
+            _categories[category].Dialogs.Add(viewModel);
+
+            if (_categoryViewModels.Count == 1)
             {
                 SelectedSetting = viewModel;
 
@@ -63,21 +61,5 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
                 }
             }
         }
-    }
-
-    public class SettingsCategoryViewModel : ReactiveObject
-    {
-        private bool _isExpanded;
-
-        public string Title { get; set; }
-
-        public ObservableCollection<SettingsViewModel> Dialogs { get; set; }        
-
-        public bool IsExpanded
-        {
-            get { return _isExpanded; }
-            set { this.RaiseAndSetIfChanged(ref _isExpanded, value); }
-        }
-
     }
 }

@@ -67,7 +67,7 @@ namespace AvalonStudio.Extensibility.Projects
 
                 await LoadProjectLoadingPlaceholdersAsync();
 
-                await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                await Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     BuildTree();
                 });
@@ -119,7 +119,7 @@ namespace AvalonStudio.Extensibility.Projects
                 newItems.Add(newItem);
             }
 
-            await Dispatcher.UIThread.InvokeTaskAsync(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 foreach (var newItem in newItems)
                 {
@@ -146,17 +146,20 @@ namespace AvalonStudio.Extensibility.Projects
 
                 var newProject = await Project.LoadProjectFileAsync(this, Guid.Parse(project.TypeGuid), Path.Combine(this.CurrentDirectory, project.FilePath));
 
-                newProject.Id = placeHolder.Id;
-                newProject.Solution = this;
+                if (newProject != null)
+                {
+                    newProject.Id = placeHolder.Id;
+                    newProject.Solution = this;
 
-                SetItemParent(newProject, placeHolder.Parent);
+                    SetItemParent(newProject, placeHolder.Parent);
 
-                placeHolder.SetParentInternal(null);
-                _solutionItems.Remove(placeHolder.Id);
+                    placeHolder.SetParentInternal(null);
+                    _solutionItems.Remove(placeHolder.Id);
 
-                _solutionItems.Add(newProject.Id, newProject);
+                    _solutionItems.Add(newProject.Id, newProject);
 
-                await newProject.LoadFilesAsync();
+                    await newProject.LoadFilesAsync();
+                }
             }
         }
 
@@ -168,17 +171,35 @@ namespace AvalonStudio.Extensibility.Projects
 
             foreach (var project in solutionProjects)
             {
-                var newProject = new LoadingProject(this, project.FilePath);
+                if (File.Exists(project.FilePath))
+                {
+                    var newProject = new LoadingProject(this, project.FilePath)
+                    {
+                        Id = Guid.Parse(project.Id),
+                        Solution = this
+                    };
 
-                newProject.Id = Guid.Parse(project.Id);
-                newProject.Solution = this;
-                (newProject as ISolutionItem).Parent = this;
+                    (newProject as ISolutionItem).Parent = this;
 
-                _solutionItems.Add(newProject.Id, newProject);
-                newItems.Add(newProject);
+                    _solutionItems.Add(newProject.Id, newProject);
+                    newItems.Add(newProject);
+                }
+                else
+                {
+                    var newProject = new NotFoundProject(this, project.FilePath)
+                    {
+                        Id = Guid.Parse(project.Id),
+                        Solution = this
+                    };
+
+                    (newProject as ISolutionItem).Parent = this;
+
+                    _solutionItems.Add(newProject.Id, newProject);
+                    newItems.Add(newProject);
+                }
             }
             
-            await Dispatcher.UIThread.InvokeTaskAsync(() =>
+            await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 foreach (var newItem in newItems)
                 {
@@ -338,6 +359,17 @@ namespace AvalonStudio.Extensibility.Projects
             if (item is ISolution)
             {
                 throw new InvalidOperationException();
+            }
+
+            if(item is IProject project)
+            {
+                foreach(var parent in Projects.Where(p => p != project))
+                {
+                    if (parent.RemoveReference(project))
+                    {
+                        parent.Save();
+                    }
+                }
             }
 
             if (item is ISolutionFolder folder)

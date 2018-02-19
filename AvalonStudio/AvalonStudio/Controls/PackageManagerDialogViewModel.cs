@@ -4,8 +4,7 @@ using AvalonStudio.MVVM;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
-using NuGet.Common;
-using NuGet.Protocol.Core.Types;
+
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -15,17 +14,15 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
-    public class PackageManagerDialogViewModel : ModalDialogViewModelBase, IConsole, ILogger
+    public class PackageManagerDialogViewModel : ModalDialogViewModelBase, IConsole
     {
-        private ObservableCollection<IPackageSearchMetadata> availablePackages;
+        private ObservableCollection<PackageMetaData> availablePackages;
 
         private bool enableInterface = true;
 
-        private IPackageSearchMetadata selectedPackage;
+        private PackageMetaData selectedPackage;
 
-        private PackageManager _packageManager;
-
-        private VersionInfoViewModel selectedVersion;
+        private string selectedVersion;
 
         private string status;
 
@@ -37,15 +34,20 @@ namespace AvalonStudio.Controls
         public PackageManagerDialogViewModel()
             : base("Packages")
         {
-            _packageManager = new PackageManager(this);
-
-            AvailablePackages = new ObservableCollection<IPackageSearchMetadata>();
+            AvailablePackages = new ObservableCollection<PackageMetaData>();
 
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 InvalidateInstalledPackages();
 
-                await DownloadCatalog();
+                try
+                {
+                    await DownloadCatalog();
+                }
+                catch (Exception)
+                {
+                    // TODO indicate error accessing catalog.
+                }
             });
 
             InstallCommand = ReactiveCommand.Create(async () =>
@@ -112,7 +114,7 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref status, value); }
         }
 
-        public IPackageSearchMetadata SelectedPackage
+        public PackageMetaData SelectedPackage
         {
             get
             {
@@ -122,7 +124,7 @@ namespace AvalonStudio.Controls
             {
                 if (value != null)
                 {
-                    Task.Run(async () => { Versions = (await value.GetVersionsAsync()).Select(vi => new VersionInfoViewModel(vi)); });
+                    Task.Run(async () => { Versions = (await value.GetVersionsAsync()); });
                 }
 
                 this.RaiseAndSetIfChanged(ref selectedPackage, value);
@@ -130,15 +132,15 @@ namespace AvalonStudio.Controls
             }
         }
 
-        private IEnumerable<VersionInfoViewModel> _versions;
+        private IEnumerable<string> _versions;
 
-        public IEnumerable<VersionInfoViewModel> Versions
+        public IEnumerable<string> Versions
         {
             get { return _versions; }
             set { this.RaiseAndSetIfChanged(ref _versions, value); }
         }
 
-        public VersionInfoViewModel SelectedVersion
+        public string SelectedVersion
         {
             get
             {
@@ -150,7 +152,7 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public ObservableCollection<IPackageSearchMetadata> AvailablePackages
+        public ObservableCollection<PackageMetaData> AvailablePackages
         {
             get { return availablePackages; }
             set { this.RaiseAndSetIfChanged(ref availablePackages, value); }
@@ -208,9 +210,9 @@ namespace AvalonStudio.Controls
 
         private async Task DownloadCatalog()
         {
-            var packages = await _packageManager.ListPackages(100);
+            var packages = await PackageManager.ListPackagesAsync(100);
 
-            foreach (var package in packages.Where(p => p.Title.EndsWith(Platform.AvalonRID)))
+            foreach (var package in packages.Where(p => p.Title.EndsWith(Platform.AvalonRID) || p.Tags.Contains("gccdescription")))
             {
                 availablePackages.Add(package);
             }

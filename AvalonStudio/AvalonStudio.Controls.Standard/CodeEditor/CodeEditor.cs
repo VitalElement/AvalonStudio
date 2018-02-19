@@ -715,7 +715,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (SourceFile != null && Document != null && IsDirty)
             {
-                FormatAll();
+                try
+                {
+                    FormatAll();
+                }
+                catch (Exception)
+                {
+
+                }
 
                 if (Settings.GetSettings<EditorSettings>().RemoveTrailingWhitespaceOnSave)
                 {
@@ -752,7 +759,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     TextSegmentCollection<Diagnostic> diagnostics = null;
 
-                    await Dispatcher.UIThread.InvokeTaskAsync(() =>
+                    await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
                         diagnostics = new TextSegmentCollection<Diagnostic>(Document);
