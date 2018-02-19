@@ -230,9 +230,9 @@ namespace AvalonStudio.Projects.OmniSharp
             return null;
         }
 
-        public override void RemoveReference(IProject project)
+        public override bool RemoveReference(IProject project)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public override void ResolveReferences()

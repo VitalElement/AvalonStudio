@@ -715,7 +715,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (SourceFile != null && Document != null && IsDirty)
             {
-                FormatAll();
+                try
+                {
+                    FormatAll();
+                }
+                catch (Exception)
+                {
+
+                }
 
                 if (Settings.GetSettings<EditorSettings>().RemoveTrailingWhitespaceOnSave)
                 {

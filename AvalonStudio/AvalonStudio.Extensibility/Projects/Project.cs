@@ -22,7 +22,7 @@ namespace AvalonStudio.Projects
                 return await LoadProjectFileAsync(solution, projectType.ProjectTypeId, fileName);
             }
 
-            return new UnsupportedProjectType(fileName);
+            return new UnsupportedProjectType(solution, fileName);
         }
 
         public static async Task<IProject> LoadProjectFileAsync(ISolution solution, Guid projectTypeId, string fileName)
@@ -34,7 +34,7 @@ namespace AvalonStudio.Projects
                 return await projectType.LoadAsync(solution, fileName);
             }
 
-            return new UnsupportedProjectType(fileName);
+            return new UnsupportedProjectType(solution, fileName);
         }
     }
 }

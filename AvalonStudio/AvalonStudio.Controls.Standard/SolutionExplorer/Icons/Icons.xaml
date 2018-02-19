@@ -9,7 +9,16 @@
                 <GeometryDrawing Brush="#FFA2A2A2" Geometry="F1M12,11L8,11 8,9 12,9z M7,10L4,10 4,8 7,8z M9,6L3,6 3,11 7,11 7,12 13,12 13,7 9,7z M14,13L2,13 2,5 14,5z M1,14L15,14 15,2 1,2z" />
                 <GeometryDrawing Brush="Transparent" Geometry="F1M8,11L12,11 12,9 8,9z M13,7L9,7 9,6 3,6 3,11 7,11 7,12 13,12z M14,13L2,13 2,5 14,5z M4,8L7,8 7,10 4,10z" />
             </DrawingGroup>
-            
+
+            <DrawingGroup x:Key="NotFoundProjectIcon">
+                <GeometryDrawing Brush="Transparent" Geometry="F1M16,2L16,16 0,16 0,2 0.76,2C1.567,0.794 2.94,0 4.5,0 6.06,0 7.433,0.794 8.24,2z" />
+                <GeometryDrawing Brush="#FFA2A2A2" Geometry="F1M15,3L15,15 1,15 1,7.297C1.288,7.657,1.616,7.983,2,8.24L2,14 14,14 14,6 8.725,6C8.892,5.529 9,5.029 9,4.5 9,3.971 8.892,3.471 8.725,3z" />
+                <GeometryDrawing Brush="Transparent" Geometry="F1M14,6L14,14 2,14 2,8.24C2.715,8.719 3.574,9 4.5,9 6.456,9 8.104,7.744 8.725,6z" />
+                <GeometryDrawing Brush="#FF1AA1E2" Geometry="F1M6,4C6,4.551,5.552,5,5,5L5,5.5 4,5.5 4,5C4,4.449,4.448,4,5,4L5,3C4.921,2.956 4.747,2.898 4.5,2.898 4.253,2.898 4.079,2.956 4,3L4,4 3,4 3,3C3,2.42 3.631,2 4.5,2 5.369,2 6,2.42 6,3z M5,7L4,7 4,6 5,6z M4.5,1C2.567,1 1,2.567 1,4.5 1,6.433 2.567,8 4.5,8 6.433,8 8,6.433 8,4.5 8,2.567 6.433,1 4.5,1" />
+                <GeometryDrawing Brush="Transparent" Geometry="F1M4,7L5.001,7 5.001,6 4,6z" />
+                <GeometryDrawing Brush="Transparent" Geometry="F1M4.5,2C3.631,2,3,2.42,3,3L3,4 4,4 4,3C4.079,2.956 4.253,2.898 4.5,2.898 4.747,2.898 4.921,2.956 5,3L5,4C4.448,4,4,4.449,4,5L4,5.5 5,5.5 5,5C5.552,5,6,4.551,6,4L6,3C6,2.42,5.369,2,4.5,2" />
+            </DrawingGroup>
+
             <DrawingGroup x:Key="UnknownProjectIcon">
                 <GeometryDrawing Brush="Transparent" Geometry="F1M16,2L16,16 0,16 0,2 0.76,2C1.567,0.794 2.94,0 4.5,0 6.06,0 7.433,0.794 8.24,2z" />
                 <GeometryDrawing Brush="#FFA2A2A2" Geometry="F1M15,3L15,15 1,15 1,7.297C1.288,7.657,1.616,7.983,2,8.24L2,14 14,14 14,6 8.725,6C8.892,5.529 9,5.029 9,4.5 9,3.971 8.892,3.471 8.725,3z" />

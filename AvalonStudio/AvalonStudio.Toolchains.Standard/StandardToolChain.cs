@@ -88,10 +88,21 @@ namespace AvalonStudio.Toolchains.Standard
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
         {
-            if(!await InstallAsync(console, project))
+            try
             {
-                console.WriteLine("Failed: Unable to install or initialise toolchain.");
-                return false;
+                if (!await InstallAsync(console, project))
+                {
+                    console.WriteLine("Failed: Unable to install or initialise toolchain.");
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                console.WriteLine("Failed: Unable to install or initialise toolchain. Due to an unexpected error.");
+                console.WriteLine();
+
+                console.WriteLine(e.Message);
+                console.WriteLine(e.StackTrace);
             }
 
             console.Clear();

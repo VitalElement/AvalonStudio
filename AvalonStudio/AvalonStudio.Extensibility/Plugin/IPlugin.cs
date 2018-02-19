@@ -1,3 +1,4 @@
+using AvalonStudio.Projects;
 using AvalonStudio.Utils;
 using System;
 using System.Threading.Tasks;
@@ -13,9 +14,9 @@ namespace AvalonStudio.Extensibility.Plugin
 
     public interface IInstallable
     {
-        Task InstallAsync(IConsole console);
+        Task<bool> InstallAsync(IConsole console, IProject project);
     }
-    
+
     public interface IPlugin : IExtension
     {
         string Name { get; }

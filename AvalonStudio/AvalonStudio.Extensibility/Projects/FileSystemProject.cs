@@ -447,7 +447,7 @@
 
         public abstract void ExcludeFolder(IProjectFolder folder);
 
-        public abstract void RemoveReference(IProject project);
+        public abstract bool RemoveReference(IProject project);
 
         public abstract void ResolveReferences();
 

@@ -64,9 +64,9 @@ namespace AvalonStudio.Debugging.GDB.Remote
             return new RemoteGdbSettingsFormViewModel(project);
         }
 
-        public Task InstallAsync(IConsole console)
+        public Task<bool> InstallAsync(IConsole console, IProject project)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
     }
 }
