@@ -214,11 +214,11 @@ namespace AvalonStudio.Toolchains.GCC
                 Directory.CreateDirectory(outputDir);
             }
 
-            var outputName = Path.GetFileNameWithoutExtension(outputPath) + ExecutableExtension;
+            var outputName = Path.GetFileName(outputPath);
 
             if (project.Type == ProjectType.StaticLibrary)
             {
-                outputName = Path.GetFileNameWithoutExtension(outputPath) + StaticLibraryExtension;
+                outputName = Path.GetFileName(outputPath);
             }
 
             var executable = Path.Combine(outputDir, outputName);
