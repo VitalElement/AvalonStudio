@@ -146,17 +146,20 @@ namespace AvalonStudio.Extensibility.Projects
 
                 var newProject = await Project.LoadProjectFileAsync(this, Guid.Parse(project.TypeGuid), Path.Combine(this.CurrentDirectory, project.FilePath));
 
-                newProject.Id = placeHolder.Id;
-                newProject.Solution = this;
+                if (newProject != null)
+                {
+                    newProject.Id = placeHolder.Id;
+                    newProject.Solution = this;
 
-                SetItemParent(newProject, placeHolder.Parent);
+                    SetItemParent(newProject, placeHolder.Parent);
 
-                placeHolder.SetParentInternal(null);
-                _solutionItems.Remove(placeHolder.Id);
+                    placeHolder.SetParentInternal(null);
+                    _solutionItems.Remove(placeHolder.Id);
 
-                _solutionItems.Add(newProject.Id, newProject);
+                    _solutionItems.Add(newProject.Id, newProject);
 
-                await newProject.LoadFilesAsync();
+                    await newProject.LoadFilesAsync();
+                }
             }
         }
 

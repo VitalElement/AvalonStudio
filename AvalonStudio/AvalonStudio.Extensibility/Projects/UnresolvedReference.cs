@@ -11,6 +11,8 @@
 
     public class LoadingProject : IProject
     {
+        private bool _exists;
+
         public int CompareTo(ISolutionItem other)
         {
             return this.DefaultCompareTo(other);
@@ -19,6 +21,8 @@
         public LoadingProject(ISolution solution, string location)
         {
             Location = location;
+
+            _exists = File.Exists(location);
         }
 
         public IProjectFolder Parent { get; set; }
@@ -52,7 +56,15 @@
 
         public string Name
         {
-            get { return Path.GetFileNameWithoutExtension(Location) + " (loading)"; }
+            get
+            {
+                if (_exists)
+                {
+                    return Path.GetFileNameWithoutExtension(Location) + " (loading)";
+                }
+
+                return Path.GetFileNameWithoutExtension(Location) + " (Not Found)";
+            }
             set { }
         }
 

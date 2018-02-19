@@ -479,6 +479,8 @@ namespace AvalonStudio.Projects.CPlusPlus
             if (!System.IO.File.Exists(filename))
             {
                 Console.WriteLine("Unable for find project file: " + filename);
+
+                return null;
             }
 
             var project = SerializedObject.Deserialize<CPlusPlusProject>(filename);
