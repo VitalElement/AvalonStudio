@@ -171,14 +171,32 @@ namespace AvalonStudio.Extensibility.Projects
 
             foreach (var project in solutionProjects)
             {
-                var newProject = new LoadingProject(this, project.FilePath);
+                if (File.Exists(project.FilePath))
+                {
+                    var newProject = new LoadingProject(this, project.FilePath)
+                    {
+                        Id = Guid.Parse(project.Id),
+                        Solution = this
+                    };
 
-                newProject.Id = Guid.Parse(project.Id);
-                newProject.Solution = this;
-                (newProject as ISolutionItem).Parent = this;
+                    (newProject as ISolutionItem).Parent = this;
 
-                _solutionItems.Add(newProject.Id, newProject);
-                newItems.Add(newProject);
+                    _solutionItems.Add(newProject.Id, newProject);
+                    newItems.Add(newProject);
+                }
+                else
+                {
+                    var newProject = new NotFoundProject(this, project.FilePath)
+                    {
+                        Id = Guid.Parse(project.Id),
+                        Solution = this
+                    };
+
+                    (newProject as ISolutionItem).Parent = this;
+
+                    _solutionItems.Add(newProject.Id, newProject);
+                    newItems.Add(newProject);
+                }
             }
             
             await Dispatcher.UIThread.InvokeAsync(() =>
