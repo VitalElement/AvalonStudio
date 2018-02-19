@@ -147,7 +147,7 @@ namespace AvalonStudio.CommandLineTools
 
         public static int ExecuteShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs>
             outputReceivedCallback, Action<object, DataReceivedEventArgs> errorReceivedCallback = null, bool resolveExecutable = true,
-            string workingDirectory = "", bool executeInShell = true, bool includeSystemPaths = true, params string[] extraPaths)
+            string workingDirectory = "", bool executeInShell = true, bool includeSystemPaths = true, bool createNoWindow = true, params string[] extraPaths)
         {
             using (var shellProc = new Process
             {
@@ -179,20 +179,20 @@ namespace AvalonStudio.CommandLineTools
                     {
                         shellProc.StartInfo.FileName = ResolveFullExecutablePath("cmd.exe");
                         shellProc.StartInfo.Arguments = $"/C {(resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName)} {args}";
-                        shellProc.StartInfo.CreateNoWindow = CreateNoWindow;
+                        shellProc.StartInfo.CreateNoWindow = createNoWindow;
                     }
                     else //Unix
                     {
                         shellProc.StartInfo.FileName = "sh";
                         shellProc.StartInfo.Arguments = $"-c \"{(resolveExecutable ? ResolveFullExecutablePath(commandName) : commandName)} {args}\"";
-                        shellProc.StartInfo.CreateNoWindow = CreateNoWindow;
+                        shellProc.StartInfo.CreateNoWindow = createNoWindow;
                     }
                 }
                 else
                 {
                     shellProc.StartInfo.FileName = (resolveExecutable ? ResolveFullExecutablePath(commandName, true, extraPaths) : commandName);
                     shellProc.StartInfo.Arguments = args;
-                    shellProc.StartInfo.CreateNoWindow = CreateNoWindow;
+                    shellProc.StartInfo.CreateNoWindow = createNoWindow;
                 }
 
                 shellProc.OutputDataReceived += (s, a) => outputReceivedCallback(s, a);
