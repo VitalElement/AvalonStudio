@@ -60,7 +60,7 @@ namespace AvalonStudio.Projects
         /// <summary>
         ///     Resolves all references in the project.
         /// </summary>
-        void ResolveReferences();
+        Task ResolveReferencesAsync();
 
         /// <summary>
         /// This is called only once when a project is loaded and is used to populate the files.

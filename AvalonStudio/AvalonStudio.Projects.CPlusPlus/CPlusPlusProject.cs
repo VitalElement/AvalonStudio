@@ -16,6 +16,7 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("AvalonStudio.Projects.CPlusPlus.UnitTests")]
 
@@ -122,7 +123,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         /// <summary>
         ///     Resolves each reference, cloning and updating Git referenced projects where possible.
         /// </summary>
-        public override void ResolveReferences()
+        public override Task ResolveReferencesAsync()
         {
             foreach (var reference in UnloadedReferences)
             {
@@ -146,6 +147,8 @@ namespace AvalonStudio.Projects.CPlusPlus
                     AddReference(new UnresolvedReference(Solution, Path.Combine(Solution.CurrentDirectory, reference.Name)));
                 }
             }
+
+            return Task.CompletedTask;
         }
 
         public IList<string> GetReferencedIncludes()

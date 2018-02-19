@@ -194,7 +194,7 @@ namespace AvalonStudio.Projects
 
                 foreach (var project in solution.Projects)
                 {
-                    project.ResolveReferences();
+                    project.ResolveReferencesAsync();
                 }
 
                 solution.StartupProject = solution.Projects.SingleOrDefault(p => p.Name == solution.StartupItem);

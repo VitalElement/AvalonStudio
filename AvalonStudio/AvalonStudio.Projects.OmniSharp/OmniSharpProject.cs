@@ -1,6 +1,8 @@
-﻿using AvalonStudio.Debugging;
+﻿using AvalonStudio.CommandLineTools;
+using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
+using AvalonStudio.Projects.OmniSharp.DotnetCli;
 using AvalonStudio.Projects.OmniSharp.ProjectTypes;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Shell;
@@ -56,6 +58,9 @@ namespace AvalonStudio.Projects.OmniSharp
 
             Items.InsertSorted(new ReferenceFolder(this));
 
+            ExcludedFiles.Add("bin");
+            ExcludedFiles.Add("obj");
+
             var fileWatcher = new FileSystemWatcher(CurrentDirectory, Path.GetFileName(Location))
             {
                 EnableRaisingEvents = true,
@@ -66,6 +71,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
             fileWatcher.Changed += async (sender, e) =>
             {
+                RestoreRequired = true;
                 // todo restore packages and re-evaluate.
                 await RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
             };
@@ -80,6 +86,29 @@ namespace AvalonStudio.Projects.OmniSharp
                 }
             };
         }
+
+        public async Task<bool> Restore (IConsole console)
+        {
+            return await Task.Factory.StartNew(() =>
+            {
+                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"restore", (s, e) =>
+                {
+                    console.WriteLine(e.Data);
+                }, (s, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        console.WriteLine();
+                        console.WriteLine(e.Data);
+                    }
+                },
+                false, CurrentDirectory, false);
+
+                return exitCode == 0;
+            });
+        }
+
+        public bool RestoreRequired { get; set; } = true;
 
         protected override bool FilterProjectFile => false;
 
@@ -245,7 +274,7 @@ namespace AvalonStudio.Projects.OmniSharp
             return false;
         }
 
-        public override void ResolveReferences()
+        public override async Task ResolveReferencesAsync()
         {
             if (UnresolvedReferences != null)
             {
@@ -270,6 +299,26 @@ namespace AvalonStudio.Projects.OmniSharp
                     }
                 }
             }
+
+            if(RestoreRequired)
+            {
+                await Restore(IoC.Get<IConsole>());
+
+                MarkRestored();
+            }
+        }
+
+        internal void MarkRestored()
+        {
+            foreach (var reference in References)
+            {
+                if (reference is OmniSharpProject netProject)
+                {
+                    netProject.MarkRestored();
+                }
+            }
+
+            RestoreRequired = false;
         }
 
         public override void Save()

@@ -133,8 +133,9 @@ namespace AvalonStudio.Extensibility.Tests
             return false;
         }
 
-        public void ResolveReferences()
+        public Task ResolveReferencesAsync()
         {
+            return Task.CompletedTask;
         }
 
         public void Save()

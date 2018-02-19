@@ -30,33 +30,93 @@ namespace AvalonStudio.Toolchains.MSBuild
         {
         }
 
-        public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
+        private async Task<bool> BuildImpl (IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
-            return await Task.Factory.StartNew(() =>
-            {
-                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, "build /m", (s, e) =>
-                {
-                    console.WriteLine(e.Data);
+            var netProject = project as OmniSharpProject;
 
-                    if (!string.IsNullOrEmpty(e.Data))
+            if (netProject.RestoreRequired)
+            {
+                var result = await netProject.Restore(console);
+
+                if (!result)
+                {
+                    return false;
+                }
+
+                netProject.MarkRestored();
+            }
+
+            foreach (var reference in project.References)
+            {
+                if (!await BuildImpl(console, reference, label, definitions))
+                {
+                    return false;
+                }
+            }
+
+            bool requiresBuild = false;
+
+            if (project.Executable != null)
+            {
+                if (!File.Exists(project.Executable))
+                {
+                    requiresBuild = true;
+                }
+                else
+                {
+                    var lastBuildDate = File.GetLastWriteTime(project.Executable);
+
+                    foreach (var file in project.SourceFiles)
                     {
-                        if (e.Data.StartsWith($"  {project.Name} -> "))
+                        if (File.GetLastWriteTime(file.Location) > lastBuildDate)
                         {
-                            project.Executable = e.Data.Substring($"  {project.Name} -> ".Length);
+                            requiresBuild = true;
+                            break;
                         }
                     }
-                }, (s, e) =>
-                {
-                    if (e.Data != null)
-                    {
-                        console.WriteLine();
-                        console.WriteLine(e.Data);
-                    }
-                },
-                false, project.CurrentDirectory, false);
+                }
+            }
 
-                return exitCode == 0;
-            });
+            if (requiresBuild)
+            {
+                return await Task.Factory.StartNew(() =>
+                {
+                    var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"msbuild {Path.GetFileName(project.Location)} /p:BuildProjectReferences=false /v:minimal", (s, e) =>
+                    {
+                        console.WriteLine(e.Data);
+                    }, (s, e) =>
+                    {
+                        if (e.Data != null)
+                        {
+                            console.WriteLine();
+                            console.WriteLine(e.Data);
+                        }
+                    },
+                    false, project.CurrentDirectory, false);
+
+                    return exitCode == 0;
+                });
+            }
+            else
+            {
+                console.WriteLine($"[Skipped] {project.Name} -> {project.Location}");
+            }
+
+            return true;
+        }
+
+        public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
+        {
+            if(await BuildImpl(console, project, label, definitions))
+            {
+                console.WriteLine("Build Successful");
+                return true;
+            }
+            else
+            {
+                console.WriteLine("Build Failed");
+                return false;
+            }
         }
 
         public bool CanHandle(IProject project)

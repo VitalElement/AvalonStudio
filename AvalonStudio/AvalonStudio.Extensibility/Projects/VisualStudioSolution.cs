@@ -78,7 +78,7 @@ namespace AvalonStudio.Extensibility.Projects
         {
             await LoadProjectsAsyncImpl();
 
-            ResolveReferences();
+            await ResolveReferences();
         }
 
         private async Task LoadFilesAsync()
@@ -128,11 +128,11 @@ namespace AvalonStudio.Extensibility.Projects
             });
         }
 
-        private void ResolveReferences()
+        private async Task ResolveReferences()
         {
             foreach (var project in Projects)
             {
-                project.ResolveReferences();
+                await project.ResolveReferencesAsync();
             }
         }
 
