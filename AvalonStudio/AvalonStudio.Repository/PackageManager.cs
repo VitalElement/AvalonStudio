@@ -73,7 +73,7 @@ namespace AvalonStudio.Packages
             {
                 var location = GetPackageDirectory(package);
 
-                if(!string.IsNullOrEmpty(location))
+                if (!string.IsNullOrEmpty(location))
                 {
                     var files = Directory.EnumerateFiles(location, "*.*", SearchOption.AllDirectories);
 
@@ -125,9 +125,21 @@ namespace AvalonStudio.Packages
         /// <returns>true if the package was already installed.</returns>
         private static async Task<PackageEnsureStatus> EnsurePackage(string packageId, string packageVersion, ILogger console, int chmodFileMode = DefaultFilePermissions, bool ignoreRid = false)
         {
-            var identity = new PackageIdentity(ignoreRid ? packageId : packageId + "." + Platform.AvalonRID, new NuGetVersion(packageVersion));
+            var identity = new PackageIdentity(ignoreRid ? packageId : packageId + "." + Platform.AvalonRID,
+                string.IsNullOrEmpty(packageVersion) ? null : new NuGetVersion(packageVersion));
 
-            if (GetPackageDirectory(identity) == string.Empty)
+            bool installed = false;
+
+            if (!identity.HasVersion)
+            {
+                installed = GetPackageDirectory(packageId) != string.Empty;
+            }
+            else
+            {
+                installed = GetPackageDirectory(identity) != string.Empty;
+            }
+
+            if (!installed)
             {
                 console.LogInformation($"Package: {packageId} will be installed.");
                 console.LogInformation($"This may take some time...");
@@ -167,7 +179,7 @@ namespace AvalonStudio.Packages
 
                     return PackageEnsureStatus.Installed;
                 }
-                
+
             }
             else
             {
@@ -338,7 +350,7 @@ namespace AvalonStudio.Packages
             }
         }
 
-        public static string GetPackageDirectory(PackageIdentity identity)
+        private static string GetPackageDirectory(PackageIdentity identity)
         {
             string result = string.Empty;
 
@@ -352,11 +364,11 @@ namespace AvalonStudio.Packages
             return result;
         }
 
-        public static string GetPackageDirectory(string genericPackageId, string version = null)
+        public static string GetPackageDirectory(string genericPackageId, string version = null, bool ignoreRid = false)
         {
             var result = string.Empty;
 
-            var expectedFolder = genericPackageId + "." + Platform.AvalonRID;
+            var expectedFolder = ignoreRid ? genericPackageId : genericPackageId + "." + Platform.AvalonRID;
 
             IEnumerable<PackageIdentity> packageIds;
 
