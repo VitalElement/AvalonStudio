@@ -67,6 +67,16 @@ namespace AvalonStudio.Extensibility.Templating
             _environmentSettings.SettingsLoader.Save();
         }
 
+        public void InstallPackages(IEnumerable<string> installationRequests, IList<string> nuGetSources)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InstallPackages(IEnumerable<string> installationRequests, IList<string> nuGetSources, bool debugAllowDevInstall)
+        {
+            throw new NotImplementedException();
+        }
+
         private bool OriginalRequestIsImplicitPackageVersionSyntax(string req)
         {
             if (req.IndexOfAny(new[] { '*', '?', '/', '\\' }) < 0 && req.IndexOf("::", StringComparison.Ordinal) < 0)
