@@ -30,7 +30,7 @@ namespace AvalonStudio.Toolchains.MSBuild
         {
         }
 
-        private async Task<bool> BuildImpl (IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
+        private async Task<bool> BuildImpl (IConsole console, IProject project, List<IProject> builtList, string label = "", IEnumerable<string> definitions = null)
         {
             var netProject = project as OmniSharpProject;
 
@@ -48,7 +48,7 @@ namespace AvalonStudio.Toolchains.MSBuild
 
             foreach (var reference in project.References)
             {
-                if (!await BuildImpl(console, reference, label, definitions))
+                if (!await BuildImpl(console, reference, builtList, label, definitions))
                 {
                     return false;
                 }
@@ -56,50 +56,56 @@ namespace AvalonStudio.Toolchains.MSBuild
 
             bool requiresBuild = false;
 
-            if (project.Executable != null)
+            if (!builtList.Contains(project))
             {
-                if (!File.Exists(project.Executable))
+                if (project.Executable != null)
                 {
-                    requiresBuild = true;
-                }
-                else
-                {
-                    var lastBuildDate = File.GetLastWriteTime(project.Executable);
-
-                    foreach (var file in project.SourceFiles)
+                    if (!File.Exists(project.Executable))
                     {
-                        if (File.GetLastWriteTime(file.Location) > lastBuildDate)
+                        requiresBuild = true;
+                    }
+                    else
+                    {
+                        var lastBuildDate = File.GetLastWriteTime(project.Executable);
+
+                        foreach (var file in project.SourceFiles)
                         {
-                            requiresBuild = true;
-                            break;
+                            if (File.GetLastWriteTime(file.Location) > lastBuildDate)
+                            {
+                                requiresBuild = true;
+                                break;
+                            }
                         }
                     }
                 }
-            }
 
-            if (requiresBuild)
-            {
-                return await Task.Factory.StartNew(() =>
+                if (requiresBuild)
                 {
-                    var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"msbuild {Path.GetFileName(project.Location)} /p:BuildProjectReferences=false /v:minimal", (s, e) =>
+                    return await Task.Factory.StartNew(() =>
                     {
-                        console.WriteLine(e.Data);
-                    }, (s, e) =>
-                    {
-                        if (e.Data != null)
+                        var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"msbuild {Path.GetFileName(project.Location)} /p:BuildProjectReferences=false /v:minimal", (s, e) =>
                         {
-                            console.WriteLine();
                             console.WriteLine(e.Data);
-                        }
-                    },
-                    false, project.CurrentDirectory, false);
+                        }, (s, e) =>
+                        {
+                            if (e.Data != null)
+                            {
+                                console.WriteLine();
+                                console.WriteLine(e.Data);
+                            }
+                        },
+                        false, project.CurrentDirectory, false);
 
-                    return exitCode == 0;
-                });
-            }
-            else
-            {
-                console.WriteLine($"[Skipped] {project.Name} -> {project.Location}");
+                        builtList.Add(project);
+
+                        return exitCode == 0;
+                    });
+                }
+                else
+                {
+                    console.WriteLine($"[Skipped] {project.Name} -> {project.Executable}");
+                    builtList.Add(project);
+                }
             }
 
             return true;
@@ -107,7 +113,9 @@ namespace AvalonStudio.Toolchains.MSBuild
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
-            if(await BuildImpl(console, project, label, definitions))
+            var builtList = new List<IProject>();
+
+            if(await BuildImpl(console, project, builtList, label, definitions))
             {
                 console.WriteLine("Build Successful");
                 return true;
