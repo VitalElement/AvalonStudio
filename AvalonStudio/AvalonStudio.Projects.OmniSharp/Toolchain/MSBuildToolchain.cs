@@ -30,7 +30,7 @@ namespace AvalonStudio.Toolchains.MSBuild
         {
         }
 
-        private async Task<bool> BuildImpl (IConsole console, IProject project, List<IProject> builtList, string label = "", IEnumerable<string> definitions = null)
+        private async Task<bool> BuildImpl(IConsole console, IProject project, List<IProject> builtList, string label = "", IEnumerable<string> definitions = null)
         {
             var netProject = project as OmniSharpProject;
 
@@ -115,7 +115,9 @@ namespace AvalonStudio.Toolchains.MSBuild
         {
             var builtList = new List<IProject>();
 
-            if(await BuildImpl(console, project, builtList, label, definitions))
+            console.WriteLine();
+
+            if (await BuildImpl(console, project, builtList, label, definitions))
             {
                 console.WriteLine("Build Successful");
                 return true;

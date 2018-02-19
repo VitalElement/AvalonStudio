@@ -27,7 +27,7 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             var (project, projectReferences, targetPath) = await RoslynWorkspace.GetWorkspace(solution).AddProject(solution.CurrentDirectory, path);
 
-            if(project == null)
+            if (project == null)
             {
                 return null;
             }
@@ -87,11 +87,11 @@ namespace AvalonStudio.Projects.OmniSharp
             };
         }
 
-        public async Task<bool> Restore (IConsole console)
+        public async Task<bool> Restore(IConsole console)
         {
             return await Task.Factory.StartNew(() =>
             {
-                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"restore", (s, e) =>
+                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"restore {Path.GetFileName(Location)}", (s, e) =>
                 {
                     console.WriteLine(e.Data);
                 }, (s, e) =>
@@ -154,7 +154,7 @@ namespace AvalonStudio.Projects.OmniSharp
             {
                 if (detectedTargetPath != null)
                     return detectedTargetPath;
-                if(RoslynProject.OutputFilePath == null)
+                if (RoslynProject.OutputFilePath == null)
                 {
                     return null;
                 }
@@ -286,7 +286,7 @@ namespace AvalonStudio.Projects.OmniSharp
                     {
                         var currentProject = Solution.FindProjectByPath(fullReferencePath);
 
-                        if(currentProject == null)
+                        if (currentProject == null)
                         {
                             throw new Exception("Error loading msbuild project, out of sync");
                         }
@@ -300,7 +300,7 @@ namespace AvalonStudio.Projects.OmniSharp
                 }
             }
 
-            if(RestoreRequired)
+            if (RestoreRequired)
             {
                 await Restore(IoC.Get<IConsole>());
 
