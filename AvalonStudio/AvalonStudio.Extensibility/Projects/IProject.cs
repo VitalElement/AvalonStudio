@@ -44,7 +44,12 @@ namespace AvalonStudio.Projects
 
         void AddReference(IProject project);
 
-        void RemoveReference(IProject project);
+        /// <summary>
+        /// Removes a reference from the project.
+        /// </summary>
+        /// <param name="project">The project to remove.</param>
+        /// <returns>true if a reference was removed, false if no reference was removed.</returns>
+        bool RemoveReference(IProject project);
 
         ISourceFile FindFile(string path);
 

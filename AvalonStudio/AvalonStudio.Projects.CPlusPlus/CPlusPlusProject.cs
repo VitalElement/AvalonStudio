@@ -107,9 +107,16 @@ namespace AvalonStudio.Projects.CPlusPlus
             References.InsertSorted(project);
         }
 
-        public override void RemoveReference(IProject project)
+        public override bool RemoveReference(IProject project)
         {
-            References.Remove(project);
+            if (References.Contains(project))
+            {
+                References.Remove(project);
+
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -136,7 +143,7 @@ namespace AvalonStudio.Projects.CPlusPlus
                 }
                 else
                 {
-                    AddReference(new UnresolvedReference(Solution, Path.Combine(Solution.Location, reference.Name)));
+                    AddReference(new UnresolvedReference(Solution, Path.Combine(Solution.CurrentDirectory, reference.Name)));
                 }
             }
         }

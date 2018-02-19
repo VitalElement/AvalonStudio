@@ -343,6 +343,17 @@ namespace AvalonStudio.Extensibility.Projects
                 throw new InvalidOperationException();
             }
 
+            if(item is IProject project)
+            {
+                foreach(var parent in Projects.Where(p => p != project))
+                {
+                    if (parent.RemoveReference(project))
+                    {
+                        parent.Save();
+                    }
+                }
+            }
+
             if (item is ISolutionFolder folder)
             {
                 foreach (var child in folder.Items.ToList())

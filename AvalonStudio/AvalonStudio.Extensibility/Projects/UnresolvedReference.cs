@@ -138,14 +138,14 @@
             throw new NotImplementedException();
         }
 
-        public void RemoveReference(IProject project)
+        public bool RemoveReference(IProject project)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public void ResolveReferences()
         {
-
+            
         }
 
         public void Save()
@@ -276,9 +276,9 @@
             throw new NotImplementedException();
         }
 
-        public void RemoveReference(IProject project)
+        public bool RemoveReference(IProject project)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
         public void ResolveReferences()
