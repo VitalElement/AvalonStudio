@@ -147,7 +147,7 @@ namespace AvalonStudio.Toolchains.MSBuild
             }
         }
 
-        private List<Task<(bool result, IProject project)>> QueueItems (List<IProject> toBuild, BuildQueue queue)
+        private List<Task<(bool result, IProject project)>> QueueItems (List<IProject> toBuild, List<IProject> built, BuildQueue queue)
         {
             var tasks = new List<Task<(bool result, IProject project)>>();
 
@@ -159,14 +159,14 @@ namespace AvalonStudio.Toolchains.MSBuild
 
                 foreach(var dep in item.References.OfType<OmniSharpProject>())
                 {
-                    if(toBuild.Contains(dep))
+                    if(!built.Contains(dep))
                     {
                         canBuild = false;
                         break;
                     }
                 }
 
-                if(canBuild && !queue.Contains(item))
+                if(canBuild)
                 {
                     toRemove.Add(item);
                     tasks.Add(queue.BuildAsync(item));
@@ -227,13 +227,15 @@ namespace AvalonStudio.Toolchains.MSBuild
         {
             var buildRunner = new BuildRunner();
 
+            var builtProjects = new List<IProject>();
+
             IEnumerable<IProject> projects = new List<IProject> { project };
 
             projects = projects.Flatten(p => p.References);
 
             var toBuild = projects.ToList();
 
-            var buildTasks = QueueItems(toBuild, buildRunner.Queue);
+            var buildTasks = QueueItems(toBuild, builtProjects, buildRunner.Queue);
 
             buildRunner.Start(async proj =>
             {
@@ -256,13 +258,15 @@ namespace AvalonStudio.Toolchains.MSBuild
                     }
 
                     buildTasks.Remove(completeTask);
+
+                    builtProjects.Add(completeTask.Result.project);
                 }
 
                 if(canContinue)
                 {
                     if (toBuild.Count > 0)
                     {
-                        buildTasks = buildTasks.Concat(QueueItems(toBuild, buildRunner.Queue)).ToList();
+                        buildTasks = buildTasks.Concat(QueueItems(toBuild, builtProjects, buildRunner.Queue)).ToList();
                     }     
                     
                     if(toBuild.Count == 0 && buildTasks.Count == 0)
