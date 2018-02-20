@@ -83,7 +83,7 @@ namespace AvalonStudio.Toolchains.MSBuild
                 {
                     return await Task.Factory.StartNew(() =>
                     {
-                        var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"msbuild {Path.GetFileName(project.Location)} /p:BuildProjectReferences=false /v:minimal", (s, e) =>
+                        var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"msbuild {Path.GetFileName(project.Location)} /p:BuildProjectReferences=false /m /nologo", (s, e) =>
                         {
                             console.WriteLine(e.Data);
                         }, (s, e) =>
