@@ -15,13 +15,13 @@ namespace AvalonStudio.Projects.OmniSharp.Toolchain
 
         public BuildQueue Queue => _queue;
 
-        public void Start (Func<IProject, Task<bool>> buildActionAsync)
+        public void Start (Func<IProject, Task<bool>> buildActionAsync, CancellationToken cancellationToken)
         {
             for(int i = 0; i < Environment.ProcessorCount; i++)
             {
                 new Thread(() =>
                 {
-                    while (_queue.Count > 0)
+                    while (!cancellationToken.IsCancellationRequested)
                     {
                         var (project, completionSource) = _queue.GetNextItem();
 

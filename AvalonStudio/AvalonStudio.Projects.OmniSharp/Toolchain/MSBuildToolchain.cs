@@ -192,6 +192,8 @@ namespace AvalonStudio.Toolchains.MSBuild
 
             var builtProjects = new List<IProject>();
 
+            var cancellationSouce = new CancellationTokenSource();
+
             IEnumerable<IProject> projects = new List<IProject> { project };
 
             projects = projects.Flatten(p => p.References);
@@ -203,7 +205,7 @@ namespace AvalonStudio.Toolchains.MSBuild
             buildRunner.Start(async proj =>
             {
                 return await BuildImpl(console, proj);
-            });
+            }, cancellationSouce.Token);
 
             bool canContinue = true;
             
@@ -243,6 +245,8 @@ namespace AvalonStudio.Toolchains.MSBuild
                     break;
                 }
             }
+
+            cancellationSouce.Cancel();
 
             if (canContinue)
             {
