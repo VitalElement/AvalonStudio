@@ -159,6 +159,8 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                 string commandLine = "";
                 bool foundCommandLine = false;
 
+                // TODO wait for host process to exit?
+
                 lock (outputLines)
                 {
                     foreach (var line in outputLines)
@@ -173,7 +175,15 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                         else
                         {
                             commandLine = line.Trim();
-                            break;
+
+                            if (!string.IsNullOrEmpty(commandLine))
+                            {
+                                break;
+                            }
+                            else
+                            {
+
+                            }
                         }
                     }
                 }

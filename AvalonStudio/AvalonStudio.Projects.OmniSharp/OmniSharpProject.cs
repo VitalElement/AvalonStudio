@@ -317,7 +317,7 @@ namespace AvalonStudio.Projects.OmniSharp
             }
 
             if (RestoreRequired)
-            {
+            { 
                 var statusBar = IoC.Get<IStatusBar>();
 
                 statusBar.SetText($"Restoring Packages for project: {Name}");

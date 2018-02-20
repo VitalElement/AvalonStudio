@@ -6,11 +6,56 @@ namespace AvalonStudio.Toolchains.MSBuild
     using AvalonStudio.Projects;
     using AvalonStudio.Projects.OmniSharp;
     using AvalonStudio.Projects.OmniSharp.DotnetCli;
+    using AvalonStudio.Projects.OmniSharp.Toolchain;
     using AvalonStudio.Utils;
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
+
+    public static class IEnumerableExtensions
+    {
+        /// <summary>
+        /// Flattens an object hierarchy.
+        /// </summary>
+        /// <param name="rootLevel">The root level in the hierarchy.</param>
+        /// <param name="nextLevel">A function that returns the next level below a given item.</param>
+        /// <returns><![CDATA[An IEnumerable<T> containing every item from every level in the hierarchy.]]></returns>
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> rootLevel, Func<T, IEnumerable<T>> nextLevel)
+        {
+            HashSet<T> accumulation = new HashSet<T>();
+
+            flattenLevel<T>(accumulation, rootLevel, nextLevel);
+
+            foreach (var item in rootLevel)
+            {
+                accumulation.Add(item);
+            }
+
+            return accumulation;
+        }
+
+        /// <summary>
+        /// Recursive helper method that traverses a hierarchy, accumulating items along the way.
+        /// </summary>
+        /// <param name="accumulation">A collection in which to accumulate items.</param>
+        /// <param name="currentLevel">The current level we are traversing.</param>
+        /// <param name="nextLevel">A function that returns the next level below a given item.</param>
+        private static void flattenLevel<T>(HashSet<T> accumulation, IEnumerable<T> currentLevel, Func<T, IEnumerable<T>> nextLevel)
+        {
+            foreach (T item in currentLevel)
+            {
+                flattenLevel<T>(accumulation, nextLevel(item), nextLevel);
+
+                foreach (var child in currentLevel)
+                {
+                    accumulation.Add(child);
+                }
+            }
+        }
+    }
 
     public class MSBuildToolchain : IToolChain
     {
@@ -65,7 +110,78 @@ namespace AvalonStudio.Toolchains.MSBuild
             return requiresBuild;
         }
 
-        private async Task<bool> BuildImpl(IConsole console, IProject project, List<IProject> builtList, string label = "", IEnumerable<string> definitions = null)
+        private async Task<(bool result, IProject project)> BuildImpl(IConsole console, IProject project, BuildQueue queue)
+        {
+            var netProject = project as OmniSharpProject;
+
+            var dependencyTasks = new List<Task<(bool result, IProject project)>>();
+
+            foreach (var reference in project.References)
+            {
+                dependencyTasks.Add(BuildImpl(console, reference, queue));
+            }
+
+            if (dependencyTasks.Count > 0)
+            {
+                await Task.WhenAll(dependencyTasks);
+            }
+
+            bool depsBuiltOk = true;
+
+            foreach (var dependencyTask in dependencyTasks)
+            {
+                if (!dependencyTask.Result.result)
+                {
+                    depsBuiltOk = false;
+                    break;
+                }
+            }
+
+            if (depsBuiltOk)
+            {
+                return await queue.BuildAsync(project);
+            }
+            else
+            {
+                return (false, project);
+            }
+        }
+
+        private List<Task<(bool result, IProject project)>> QueueItems (List<IProject> toBuild, BuildQueue queue)
+        {
+            var tasks = new List<Task<(bool result, IProject project)>>();
+
+            var toRemove = new List<IProject>();
+
+            foreach(var item in toBuild)
+            {
+                bool canBuild = true;
+
+                foreach(var dep in item.References.OfType<OmniSharpProject>())
+                {
+                    if(toBuild.Contains(dep))
+                    {
+                        canBuild = false;
+                        break;
+                    }
+                }
+
+                if(canBuild && !queue.Contains(item))
+                {
+                    toRemove.Add(item);
+                    tasks.Add(queue.BuildAsync(item));
+                }
+            }
+
+            foreach(var item in toRemove)
+            {
+                toBuild.Remove(item);
+            }
+
+            return tasks;
+        }
+
+        private async Task<bool> BuildImpl (IConsole console, IProject project)
         {
             var netProject = project as OmniSharpProject;
 
@@ -81,55 +197,87 @@ namespace AvalonStudio.Toolchains.MSBuild
                 netProject.MarkRestored();
             }
 
-            foreach (var reference in project.References)
+            if (RequiresBuilding(project))
             {
-                if (!await BuildImpl(console, reference, builtList, label, definitions))
+                return await Task.Factory.StartNew(() =>
                 {
-                    return false;
-                }
-            }
-
-            if (!builtList.Contains(project))
-            {
-                if (RequiresBuilding(project))
-                {
-                    return await Task.Factory.StartNew(() =>
+                    var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"msbuild {Path.GetFileName(project.Location)} /p:BuildProjectReferences=false /nologo", (s, e) =>
                     {
-                        var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"msbuild {Path.GetFileName(project.Location)} /p:BuildProjectReferences=false /m /nologo", (s, e) =>
+                        console.WriteLine(e.Data);
+                    }, (s, e) =>
+                    {
+                        if (e.Data != null)
                         {
+                            console.WriteLine();
                             console.WriteLine(e.Data);
-                        }, (s, e) =>
-                        {
-                            if (e.Data != null)
-                            {
-                                console.WriteLine();
-                                console.WriteLine(e.Data);
-                            }
-                        },
-                        false, project.CurrentDirectory, false);
+                        }
+                    },
+                    false, project.CurrentDirectory, false);
 
-                        builtList.Add(project);
-
-                        return exitCode == 0;
-                    });
-                }
-                else
-                {
-                    console.WriteLine($"[Skipped] {project.Name} -> {project.Executable}");
-                    builtList.Add(project);
-                }
+                    return exitCode == 0;
+                });
             }
+
+            console.WriteLine($"[Skipped] {project.Name} -> {project.Executable}");
 
             return true;
         }
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
-            var builtList = new List<IProject>();
+            var buildRunner = new BuildRunner();
 
-            console.WriteLine();
+            IEnumerable<IProject> projects = new List<IProject> { project };
 
-            if (await BuildImpl(console, project, builtList, label, definitions))
+            projects = projects.Flatten(p => p.References);
+
+            var toBuild = projects.ToList();
+
+            var buildTasks = QueueItems(toBuild, buildRunner.Queue);
+
+            buildRunner.Start(async proj =>
+            {
+                return await BuildImpl(console, proj);
+            });
+
+            bool canContinue = true;
+            
+            while (true)
+            {
+                var result = await Task.WhenAny(buildTasks);
+
+                var completedTasks = buildTasks.Where(t => t.IsCompleted).ToList();
+
+                foreach(var completeTask in completedTasks)
+                {
+                    if(!completeTask.Result.result)
+                    {
+                        canContinue = false;
+                    }
+
+                    buildTasks.Remove(completeTask);
+                }
+
+                if(canContinue)
+                {
+                    if (toBuild.Count > 0)
+                    {
+                        buildTasks = buildTasks.Concat(QueueItems(toBuild, buildRunner.Queue)).ToList();
+                    }     
+                    
+                    if(toBuild.Count == 0 && buildTasks.Count == 0)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    // TODO cancel build queue.
+                    break;
+                }
+            }
+
+            if (canContinue)
             {
                 console.WriteLine("Build Successful");
                 return true;
