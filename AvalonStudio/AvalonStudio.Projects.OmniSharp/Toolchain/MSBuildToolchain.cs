@@ -30,6 +30,41 @@ namespace AvalonStudio.Toolchains.MSBuild
         {
         }
 
+        private static bool RequiresBuilding(IProject project)
+        {
+            bool requiresBuild = false;
+
+            if (project.Executable != null)
+            {
+                if (!File.Exists(project.Executable))
+                {
+                    requiresBuild = true;
+                }
+                else
+                {
+                    var lastBuildDate = File.GetLastWriteTime(project.Executable);
+
+                    if (File.GetLastWriteTime(project.Location) > lastBuildDate)
+                    {
+                        requiresBuild = true;
+                    }
+                    else
+                    {
+                        foreach (var file in project.SourceFiles)
+                        {
+                            if (File.GetLastWriteTime(file.Location) > lastBuildDate)
+                            {
+                                requiresBuild = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return requiresBuild;
+        }
+
         private async Task<bool> BuildImpl(IConsole console, IProject project, List<IProject> builtList, string label = "", IEnumerable<string> definitions = null)
         {
             var netProject = project as OmniSharpProject;
@@ -54,32 +89,9 @@ namespace AvalonStudio.Toolchains.MSBuild
                 }
             }
 
-            bool requiresBuild = false;
-
             if (!builtList.Contains(project))
             {
-                if (project.Executable != null)
-                {
-                    if (!File.Exists(project.Executable))
-                    {
-                        requiresBuild = true;
-                    }
-                    else
-                    {
-                        var lastBuildDate = File.GetLastWriteTime(project.Executable);
-
-                        foreach (var file in project.SourceFiles)
-                        {
-                            if (File.GetLastWriteTime(file.Location) > lastBuildDate)
-                            {
-                                requiresBuild = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (requiresBuild)
+                if (RequiresBuilding(project))
                 {
                     return await Task.Factory.StartNew(() =>
                     {
