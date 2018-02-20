@@ -32,7 +32,7 @@ namespace AvalonStudio.Toolchains.Standard
 
         public StandardToolChain()
         {
-            Jobs = 4;
+            Jobs = Environment.ProcessorCount;
         }
 
         public int Jobs { get; set; }
