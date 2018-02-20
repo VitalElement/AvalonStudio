@@ -10,9 +10,15 @@
       </StackPanel>
     </Grid>
     <Grid>
-      <StackPanel Orientation="Horizontal" Gap="4">
-        <TextBlock Text="Version:" />
-        <TextBlock Text="{Binding Version}" />
+      <StackPanel Gap="10">
+        <StackPanel Orientation="Horizontal" Gap="4">
+          <TextBlock Text="Version:" />
+          <TextBlock Text="{Binding Version}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Gap="4">
+          <TextBlock Text="Platform:" />
+          <TextBlock Text="{Binding PlatformString}" />
+        </StackPanel>
       </StackPanel>
     </Grid>
   </DockPanel>
