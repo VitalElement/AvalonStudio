@@ -1,6 +1,8 @@
-﻿using AvalonStudio.CommandLineTools;
+﻿using Avalonia.Threading;
+using AvalonStudio.CommandLineTools;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects.OmniSharp.DotnetCli;
 using AvalonStudio.Projects.OmniSharp.ProjectTypes;
@@ -87,19 +89,33 @@ namespace AvalonStudio.Projects.OmniSharp
             };
         }
 
-        public async Task<bool> Restore(IConsole console)
+        public async Task<bool> Restore(IConsole console, IStatusBar statusBar = null)
         {
             return await Task.Factory.StartNew(() =>
             {
                 var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"restore {Path.GetFileName(Location)}", (s, e) =>
                 {
-                    console.WriteLine(e.Data);
+                    if (statusBar != null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(e.Data))
+                        {
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                statusBar.SetText(e.Data.Trim());
+                            });
+                        }
+                    }
+
+                    console?.WriteLine(e.Data);
                 }, (s, e) =>
                 {
                     if (e.Data != null)
                     {
-                        console.WriteLine();
-                        console.WriteLine(e.Data);
+                        if (console != null)
+                        {
+                            console.WriteLine();
+                            console.WriteLine(e.Data);
+                        }
                     }
                 },
                 false, CurrentDirectory, false);
@@ -302,7 +318,13 @@ namespace AvalonStudio.Projects.OmniSharp
 
             if (RestoreRequired)
             {
-                await Restore(IoC.Get<IConsole>());
+                var statusBar = IoC.Get<IStatusBar>();
+
+                statusBar.SetText($"Restoring Packages for project: {Name}");
+
+                await Restore(null, statusBar);
+
+                statusBar.ClearText();
 
                 MarkRestored();
             }
