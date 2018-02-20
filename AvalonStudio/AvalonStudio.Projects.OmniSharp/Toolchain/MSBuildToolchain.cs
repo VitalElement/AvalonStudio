@@ -110,43 +110,6 @@ namespace AvalonStudio.Toolchains.MSBuild
             return requiresBuild;
         }
 
-        private async Task<(bool result, IProject project)> BuildImpl(IConsole console, IProject project, BuildQueue queue)
-        {
-            var netProject = project as OmniSharpProject;
-
-            var dependencyTasks = new List<Task<(bool result, IProject project)>>();
-
-            foreach (var reference in project.References)
-            {
-                dependencyTasks.Add(BuildImpl(console, reference, queue));
-            }
-
-            if (dependencyTasks.Count > 0)
-            {
-                await Task.WhenAll(dependencyTasks);
-            }
-
-            bool depsBuiltOk = true;
-
-            foreach (var dependencyTask in dependencyTasks)
-            {
-                if (!dependencyTask.Result.result)
-                {
-                    depsBuiltOk = false;
-                    break;
-                }
-            }
-
-            if (depsBuiltOk)
-            {
-                return await queue.BuildAsync(project);
-            }
-            else
-            {
-                return (false, project);
-            }
-        }
-
         private List<Task<(bool result, IProject project)>> QueueItems (List<IProject> toBuild, List<IProject> built, BuildQueue queue)
         {
             var tasks = new List<Task<(bool result, IProject project)>>();
