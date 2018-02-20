@@ -767,9 +767,13 @@ namespace AvalonStudio
 
                 if (solutionType != null)
                 {
+                    StatusBar.SetText($"Loading Solution: {path}");
+
                     var solution = await solutionType.LoadAsync(path);
 
                     await solution.LoadSolutionAsync();
+
+                    StatusBar.ClearText();
 
                     CurrentSolution = solution;
 

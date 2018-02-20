@@ -10,6 +10,7 @@ using System.Linq;
 using AvalonStudio.Platforms;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using AvalonStudio.Extensibility.Shell;
 
 namespace AvalonStudio.Extensibility.Projects
 {
@@ -130,18 +131,28 @@ namespace AvalonStudio.Extensibility.Projects
 
         private async Task ResolveReferences()
         {
+            var statusBar = IoC.Get<IStatusBar>();
+
             foreach (var project in Projects)
             {
+                statusBar.SetText($"Resolving References: {project.Name}");
+
                 await project.ResolveReferencesAsync();
             }
+
+            statusBar.ClearText();
         }
 
         private async Task LoadProjectsAsyncImpl()
         {
+            var statusBar = IoC.Get<IStatusBar>();
+
             var solutionProjects = _solutionModel.Projects.Where(p => p.TypeGuid != ProjectTypeGuids.SolutionFolderGuid);
 
             foreach (var project in solutionProjects)
             {
+                statusBar.SetText($"Loading Project: {project.FilePath}");
+
                 var placeHolder = _solutionItems[Guid.Parse(project.Id)];
 
                 var newProject = await Project.LoadProjectFileAsync(this, Guid.Parse(project.TypeGuid), Path.Combine(this.CurrentDirectory, project.FilePath));
@@ -161,6 +172,8 @@ namespace AvalonStudio.Extensibility.Projects
                     await newProject.LoadFilesAsync();
                 }
             }
+
+            statusBar.ClearText();
         }
 
         private async Task LoadProjectLoadingPlaceholdersAsync ()
