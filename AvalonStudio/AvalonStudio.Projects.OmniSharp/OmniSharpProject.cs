@@ -322,7 +322,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
                 statusBar.SetText($"Restoring Packages for project: {Name}");
 
-                await Restore(null, statusBar);
+                //await Restore(null, statusBar);
 
                 statusBar.ClearText();
 

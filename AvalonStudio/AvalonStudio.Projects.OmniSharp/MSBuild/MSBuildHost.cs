@@ -11,13 +11,15 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Process = System.Diagnostics.Process;
 
 namespace AvalonStudio.Projects.OmniSharp.MSBuild
 {
-    public class MSBuildHost
+    public class MSBuildHost : IDisposable
     {
         private WireHelper _connection;
         private TcpClient _client;
@@ -26,13 +28,26 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
         private List<string> errorLines = new List<string>();
         private Process hostProcess;
         private string _sdkPath;
+        private AutoResetEvent requestComplete = new AutoResetEvent(false);
+        private int _id;
 
-        public MSBuildHost(string sdkPath)
+        public MSBuildHost(string sdkPath, int id = -1)
         {
             _sdkPath = sdkPath;
+
+            _id = id;
         }
 
-        void EnsureConnection()
+        public int Id => _id;
+
+        public void Dispose()
+        {
+            _client.Dispose();
+            
+            hostProcess?.Kill();
+        }
+
+        public void EnsureConnection()
         {
             if (_connection == null || !_client.Connected)
             {
@@ -55,6 +70,11 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                             lock (outputLines)
                             {
                                 outputLines.Add(e.Data);
+                            }
+
+                            if(e.Data == "*** Request Handled")
+                            {
+                                requestComplete.Set();
                             }
                         }
                     },
@@ -116,6 +136,75 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
             return result;
         }
 
+        public Task<(bool result, List<string> outputAssemblies, string consoleOutput)> BuildProject(IProject project)
+        {
+            lock (outputLines)
+            {
+                outputLines.Clear();
+                errorLines.Clear();
+            }
+
+            return Task.Run(() =>
+            {
+                var xproject = XDocument.Load(project.Location);
+
+                var frameworks = GetTargetFrameworks(xproject);
+
+                var targetFramework = frameworks.FirstOrDefault();
+
+                if (targetFramework != null)
+                {
+                    Console.WriteLine($"Automatically selecting {targetFramework} as TargetFramework");
+                }
+                else
+                {
+                    //throw new Exception("Must specify target framework to load project.");
+                    Console.WriteLine($"Non-Dotnet core project trying anyway.");
+                    targetFramework = "";
+                }
+
+                var output = SendRequest(new BuildProjectRequest { SolutionDirectory = project.Solution.CurrentDirectory, FullPath = project.Location, TargetFramework = targetFramework });
+
+                requestComplete.WaitOne();
+
+                var builder = new StringBuilder();
+
+                bool foundCommandLine = false;
+                bool compilerOutputStarted = false;
+                int skippedLines = 0;
+
+                lock (outputLines)
+                {
+                    foreach (var line in outputLines.Take(outputLines.Count - 1))
+                    {
+                        if (!foundCommandLine)
+                        {
+                            if (line == "CoreCompile:")
+                            {
+                                foundCommandLine = true;
+                            }
+                        }
+                        else
+                        {
+                            var commandLine = line.Trim();
+
+                            compilerOutputStarted = true;
+                        }
+
+                        if (compilerOutputStarted && (++skippedLines > 2))
+                        {
+                            builder.AppendLine(line);
+                        }
+                    }
+
+                    outputLines.Clear();
+                    errorLines.Clear();
+                }
+
+                return (output.Success, output.OutputAssemblies, builder.ToString());
+            });
+        }
+
         public async Task<(ProjectInfo info, List<string> projectReferences, string targetPath)> LoadProject(string solutionDirectory, string projectFile)
         {
             lock (outputLines)
@@ -155,6 +244,8 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                 {
                     return (null, null, null);
                 }
+
+                requestComplete.WaitOne();
 
                 string commandLine = "";
                 bool foundCommandLine = false;

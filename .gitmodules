@@ -6,7 +6,7 @@
 	url = https://github.com/AvaloniaUI/AvaloniaEdit
 [submodule "AvalonStudio/Avalonia.Ide"]
 	path = AvalonStudio/Avalonia.Ide
-	url = https://github.com/kekekeks/Avalonia.Ide.git
+	url = https://github.com/danwalmsley/Avalonia.Ide.git
 [submodule "templating"]
 	path = templating
 	url = https://github.com/VitalElement/templating.git

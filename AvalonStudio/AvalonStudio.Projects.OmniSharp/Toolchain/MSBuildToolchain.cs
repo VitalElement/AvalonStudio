@@ -6,6 +6,7 @@ namespace AvalonStudio.Toolchains.MSBuild
     using AvalonStudio.Projects;
     using AvalonStudio.Projects.OmniSharp;
     using AvalonStudio.Projects.OmniSharp.DotnetCli;
+    using AvalonStudio.Projects.OmniSharp.MSBuild;
     using AvalonStudio.Projects.OmniSharp.Toolchain;
     using AvalonStudio.Utils;
     using System;
@@ -110,33 +111,33 @@ namespace AvalonStudio.Toolchains.MSBuild
             return requiresBuild;
         }
 
-        private List<Task<(bool result, IProject project)>> QueueItems (List<IProject> toBuild, List<IProject> built, BuildQueue queue)
+        private List<Task<(bool result, IProject project)>> QueueItems(List<IProject> toBuild, List<IProject> built, BuildRunner runner)
         {
             var tasks = new List<Task<(bool result, IProject project)>>();
 
             var toRemove = new List<IProject>();
 
-            foreach(var item in toBuild)
+            foreach (var item in toBuild)
             {
                 bool canBuild = true;
 
-                foreach(var dep in item.References.OfType<OmniSharpProject>())
+                foreach (var dep in item.References.OfType<OmniSharpProject>())
                 {
-                    if(!built.Contains(dep))
+                    if (!built.Contains(dep))
                     {
                         canBuild = false;
                         break;
                     }
                 }
 
-                if(canBuild)
+                if (canBuild)
                 {
                     toRemove.Add(item);
-                    tasks.Add(queue.BuildAsync(item));
+                    tasks.Add(runner.Queue(item));
                 }
             }
 
-            foreach(var item in toRemove)
+            foreach (var item in toRemove)
             {
                 toBuild.Remove(item);
             }
@@ -144,52 +145,8 @@ namespace AvalonStudio.Toolchains.MSBuild
             return tasks;
         }
 
-        private async Task<bool> BuildImpl (IConsole console, IProject project)
-        {
-            var netProject = project as OmniSharpProject;
-
-            if (netProject.RestoreRequired)
-            {
-                var result = await netProject.Restore(console);
-
-                if (!result)
-                {
-                    return false;
-                }
-
-                netProject.MarkRestored();
-            }
-
-            if (RequiresBuilding(project))
-            {
-                return await Task.Factory.StartNew(() =>
-                {
-                    var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"msbuild {Path.GetFileName(project.Location)} /p:BuildProjectReferences=false /nologo", (s, e) =>
-                    {
-                        console.WriteLine(e.Data);
-                    }, (s, e) =>
-                    {
-                        if (e.Data != null)
-                        {
-                            console.WriteLine();
-                            console.WriteLine(e.Data);
-                        }
-                    },
-                    false, project.CurrentDirectory, false);
-
-                    return exitCode == 0;
-                });
-            }
-
-            console.WriteLine($"[Skipped] {project.Name} -> {project.Executable}");
-
-            return true;
-        }
-
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
-            var buildRunner = new BuildRunner();
-
             var builtProjects = new List<IProject>();
 
             var cancellationSouce = new CancellationTokenSource();
@@ -200,63 +157,104 @@ namespace AvalonStudio.Toolchains.MSBuild
 
             var toBuild = projects.ToList();
 
-            var buildTasks = QueueItems(toBuild, builtProjects, buildRunner.Queue);
-
-            buildRunner.Start(async proj =>
+            using (var buildRunner = new BuildRunner())
             {
-                return await BuildImpl(console, proj);
-            }, cancellationSouce.Token);
 
-            bool canContinue = true;
-            
-            while (true)
-            {
-                var result = await Task.WhenAny(buildTasks);
+                console.WriteLine($"Creating: {Environment.ProcessorCount} build nodes.");
+                buildRunner.Initialise();
 
-                var completedTasks = buildTasks.Where(t => t.IsCompleted).ToList();
-
-                foreach(var completeTask in completedTasks)
+                buildRunner.Start(cancellationSouce.Token, (node, proj) =>
                 {
-                    if(!completeTask.Result.result)
+                    var netProject = proj as OmniSharpProject;
+
+                    if (netProject.RestoreRequired)
                     {
-                        canContinue = false;
+                        var buildResult = netProject.Restore(console).GetAwaiter().GetResult();
+
+                        if (!buildResult)
+                        {
+                            return false;
+                        }
+
+                        netProject.MarkRestored();
                     }
 
-                    buildTasks.Remove(completeTask);
-
-                    builtProjects.Add(completeTask.Result.project);
-                }
-
-                if(canContinue)
-                {
-                    if (toBuild.Count > 0)
+                    if (RequiresBuilding(proj))
                     {
-                        buildTasks = buildTasks.Concat(QueueItems(toBuild, builtProjects, buildRunner.Queue)).ToList();
-                    }     
-                    
-                    if(toBuild.Count == 0 && buildTasks.Count == 0)
+                        var result = node.BuildProject(proj).GetAwaiter().GetResult();
+
+                        console.WriteLine($"[{proj.Name}] (Build Node: {node.Id})");
+
+                        console.WriteLine(result.consoleOutput);
+
+                        if (result.result)
+                        {
+                            foreach (var output in result.outputAssemblies)
+                            {
+                                console.WriteLine($"{proj.Name} -> {output}");
+                            }
+                        }
+
+                        return result.result;
+                    }
+
+                    console.WriteLine($"[Skipped] {proj.Name} -> {proj.Executable}");
+
+                    return true;
+                });
+
+                var buildTasks = QueueItems(toBuild, builtProjects, buildRunner);
+
+                bool canContinue = true;
+
+                while (true)
+                {
+                    var result = await Task.WhenAny(buildTasks);
+
+                    var completedTasks = buildTasks.Where(t => t.IsCompleted).ToList();
+
+                    foreach (var completeTask in completedTasks)
+                    {
+                        if (!completeTask.Result.result)
+                        {
+                            canContinue = false;
+                        }
+
+                        buildTasks.Remove(completeTask);
+
+                        builtProjects.Add(completeTask.Result.project);
+                    }
+
+                    if (canContinue)
+                    {
+                        if (toBuild.Count > 0)
+                        {
+                            buildTasks = buildTasks.Concat(QueueItems(toBuild, builtProjects, buildRunner)).ToList();
+                        }
+
+                        if (toBuild.Count == 0 && buildTasks.Count == 0)
+                        {
+                            break;
+                        }
+                    }
+                    else
                     {
                         break;
                     }
                 }
+
+                cancellationSouce.Cancel();
+
+                if (canContinue)
+                {
+                    console.WriteLine("Build Successful");
+                    return true;
+                }
                 else
                 {
-                    // TODO cancel build queue.
-                    break;
+                    console.WriteLine("Build Failed");
+                    return false;
                 }
-            }
-
-            cancellationSouce.Cancel();
-
-            if (canContinue)
-            {
-                console.WriteLine("Build Successful");
-                return true;
-            }
-            else
-            {
-                console.WriteLine("Build Failed");
-                return false;
             }
         }
 
