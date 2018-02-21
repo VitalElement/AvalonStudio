@@ -3,7 +3,7 @@
 	url = https://github.com/VitalElement/AvalonStudio.DebuggerLibs.git
 [submodule "AvaloniaEdit"]
 	path = AvaloniaEdit
-	url = https://github.com/danwalmsley/AvaloniaEdit
+	url = https://github.com/danwalmsley/AvaloniaEdit.git
 [submodule "AvalonStudio/Avalonia.Ide"]
 	path = AvalonStudio/Avalonia.Ide
 	url = https://github.com/kekekeks/Avalonia.Ide.git
