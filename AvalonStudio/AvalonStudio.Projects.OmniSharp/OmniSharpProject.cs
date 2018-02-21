@@ -124,7 +124,7 @@ namespace AvalonStudio.Projects.OmniSharp
             });
         }
 
-        public bool RestoreRequired { get; set; } = true;
+        public bool RestoreRequired { get; set; } = false;
 
         protected override bool FilterProjectFile => false;
 
@@ -290,7 +290,7 @@ namespace AvalonStudio.Projects.OmniSharp
             return false;
         }
 
-        public override async Task ResolveReferencesAsync()
+        public override Task ResolveReferencesAsync()
         {
             if (UnresolvedReferences != null)
             {
@@ -316,18 +316,7 @@ namespace AvalonStudio.Projects.OmniSharp
                 }
             }
 
-            if (RestoreRequired)
-            { 
-                var statusBar = IoC.Get<IStatusBar>();
-
-                statusBar.SetText($"Restoring Packages for project: {Name}");
-
-                //await Restore(null, statusBar);
-
-                statusBar.ClearText();
-
-                MarkRestored();
-            }
+            return Task.CompletedTask;
         }
 
         internal void MarkRestored()

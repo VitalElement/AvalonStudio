@@ -206,5 +206,4 @@ namespace AvalonStudio.Projects.OmniSharp.DotnetCli
             return false;
         }
     }
-
 }

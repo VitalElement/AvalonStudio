@@ -11,6 +11,7 @@ using AvalonStudio.Platforms;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility.Shell;
+using AvalonStudio.CommandLineTools;
 
 namespace AvalonStudio.Extensibility.Projects
 {
@@ -25,6 +26,8 @@ namespace AvalonStudio.Extensibility.Projects
         {
             return new VisualStudioSolution(SlnFile.Read(fileName));
         }
+
+        public bool IsRestored { get; set; } = false;
 
         /// <summary>
         /// Allows disabling of serialization to disk. Useful for UnitTesting.
@@ -143,9 +146,48 @@ namespace AvalonStudio.Extensibility.Projects
             statusBar.ClearText();
         }
 
+        public async Task<bool> Restore(string dotnetExecutable, IConsole console, IStatusBar statusBar = null)
+        {
+            return await Task.Factory.StartNew(() =>
+            {
+                var exitCode = PlatformSupport.ExecuteShellCommand(dotnetExecutable, $"restore {Path.GetFileName(Location)}", (s, e) =>
+                {
+                    if (statusBar != null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(e.Data))
+                        {
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                statusBar.SetText(e.Data.Trim());
+                            });
+                        }
+                    }
+
+                    console?.WriteLine(e.Data);
+                }, (s, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        if (console != null)
+                        {
+                            console.WriteLine();
+                            console.WriteLine(e.Data);
+                        }
+                    }
+                },
+                false, CurrentDirectory, false);
+
+                IsRestored = true;
+
+                return exitCode == 0;
+            });
+        }
+
         private async Task LoadProjectsAsyncImpl()
         {
             var statusBar = IoC.Get<IStatusBar>();
+
+
 
             var solutionProjects = _solutionModel.Projects.Where(p => p.TypeGuid != ProjectTypeGuids.SolutionFolderGuid);
 
