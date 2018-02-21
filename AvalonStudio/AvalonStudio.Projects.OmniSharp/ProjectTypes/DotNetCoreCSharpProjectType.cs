@@ -39,9 +39,9 @@ namespace AvalonStudio.Projects.OmniSharp.ProjectTypes
 
                     statusBar.SetText($"Restoring Packages for solution: {solution.Name}");
 
-                    await vsSolution.Restore(DotNetCliService.Instance.DotNetPath, null, statusBar);
+                    await vsSolution.Restore(DotNetCliService.Instance.DotNetPath, null, statusBar);                    
 
-                    statusBar.ClearText();
+                    IoC.Get<IStatusBar>().SetText($"Loading projects for solution: {solution.Name}");
                 }
             }
 

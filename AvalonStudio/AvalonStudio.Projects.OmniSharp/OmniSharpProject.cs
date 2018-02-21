@@ -27,8 +27,6 @@ namespace AvalonStudio.Projects.OmniSharp
         private string detectedTargetPath;
         public static async Task<OmniSharpProject> Create(ISolution solution, string path)
         {
-            IoC.Get<IStatusBar>().SetText($"Loading projects for solution: {solution.Name}");
-
             var (project, projectReferences, targetPath) = await RoslynWorkspace.GetWorkspace(solution).AddProject(solution.CurrentDirectory, path);
 
             if (project == null)
