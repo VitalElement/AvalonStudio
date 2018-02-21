@@ -43,63 +43,65 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
         public void Dispose()
         {
             _client.Dispose();
-            
+
             hostProcess?.Kill();
         }
 
-        public void EnsureConnection()
+        public Task EnsureConnectionAsync()
         {
-            if (_connection == null || !_client.Connected)
+            return Task.Run(() =>
             {
-                _client?.Dispose();
-
-                using (var l = new OneShotTcpServer())
+                if (_connection == null || !_client.Connected)
                 {
-                    var path = typeof(NextRequestType).Assembly.GetModules()[0].FullyQualifiedName;
-                    path = Path.Combine(Path.GetDirectoryName(path), "host.csproj");
+                    _client?.Dispose();
 
-                    string args = $"\"{_sdkPath}MSBuild.dll\" /p:AvaloniaIdePort={l.Port} {path}";
-
-                    Console.WriteLine(args);
-
-                    hostProcess = PlatformSupport.LaunchShellCommand("dotnet", args,
-                    (sender, e) =>
+                    using (var l = new OneShotTcpServer())
                     {
-                        if (e.Data != null)
-                        {
-                            lock (outputLines)
-                            {
-                                outputLines.Add(e.Data);
-                            }
+                        var path = typeof(NextRequestType).Assembly.GetModules()[0].FullyQualifiedName;
+                        path = Path.Combine(Path.GetDirectoryName(path), "host.csproj");
 
-                            if(e.Data == "*** Request Handled")
-                            {
-                                requestComplete.Set();
-                            }
-                        }
-                    },
-                    (sender, e) =>
-                    {
-                        if (e.Data != null)
-                        {
-                            lock (errorLines)
-                            {
-                                errorLines.Add(e.Data);
-                            }
-                        }
-                    }, false, Platforms.Platform.ExecutionPath, false);
+                        string args = $"\"{_sdkPath}MSBuild.dll\" /p:AvaloniaIdePort={l.Port} {path}";
 
-                    _client = l.WaitForOneConnection();
-                    _connection = new WireHelper(_client.GetStream());
+                        Console.WriteLine(args);
+
+                        hostProcess = PlatformSupport.LaunchShellCommand("dotnet", args,
+                        (sender, e) =>
+                        {
+                            if (e.Data != null)
+                            {
+                                lock (outputLines)
+                                {
+                                    outputLines.Add(e.Data);
+                                }
+
+                                if (e.Data == "*** Request Handled")
+                                {
+                                    requestComplete.Set();
+                                }
+                            }
+                        },
+                        (sender, e) =>
+                        {
+                            if (e.Data != null)
+                            {
+                                lock (errorLines)
+                                {
+                                    errorLines.Add(e.Data);
+                                }
+                            }
+                        }, false, Platforms.Platform.ExecutionPath, false);
+
+                        _client = l.WaitForOneConnection();
+                        _connection = new WireHelper(_client.GetStream());
+                    }
                 }
-            }
+            });
         }
 
         public TRes SendRequest<TRes>(RequestBase<TRes> req)
         {
             lock (_lock)
             {
-                EnsureConnection();
                 _connection.SendRequest(req);
                 var e = _connection.Read<ResponseEnvelope<TRes>>();
                 if (e.Exception != null)
@@ -240,7 +242,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                 {
                     loadData = SendRequest(new ProjectInfoRequest { SolutionDirectory = solutionDirectory, FullPath = projectFile, TargetFramework = targetFramework });
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     return (null, null, null);
                 }

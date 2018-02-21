@@ -101,16 +101,20 @@ namespace AvalonStudio.Projects.OmniSharp.Toolchain
             _nodes = new BlockingCollection<MSBuildHost>(Environment.ProcessorCount);
         }
 
-        public void Initialise()
+        public async Task InitialiseAsync()
         {
+            var tasks = new List<Task>();
+
             for (int i = 0; i < Environment.ProcessorCount; i++)
             {
                 var newNode = new MSBuildHost(DotNetCliService.Instance.Info.BasePath, i + 1);
 
                 _nodes.Add(newNode);
 
-                newNode.EnsureConnection();
+                tasks.Add(newNode.EnsureConnectionAsync());
             }
+
+            await Task.WhenAll(tasks);
         }
 
         public void Dispose()

@@ -124,6 +124,8 @@ namespace RoslynPad.Roslyn
             if (buildHost == null)
             {
                 buildHost = new MSBuildHost(sdkPath);
+
+                await buildHost.EnsureConnectionAsync();
             }
 
             var (info, projectReferences, targetPath) = await buildHost.LoadProject(solutionDir, projectFile);

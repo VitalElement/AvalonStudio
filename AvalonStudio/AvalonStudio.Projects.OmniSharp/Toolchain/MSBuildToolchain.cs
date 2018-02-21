@@ -160,7 +160,7 @@ namespace AvalonStudio.Toolchains.MSBuild
             using (var buildRunner = new BuildRunner())
             {
                 console.WriteLine($"Creating: {Environment.ProcessorCount} build nodes.");
-                buildRunner.Initialise();
+                await buildRunner.InitialiseAsync();
 
                 var startTime = DateTime.Now;
 
