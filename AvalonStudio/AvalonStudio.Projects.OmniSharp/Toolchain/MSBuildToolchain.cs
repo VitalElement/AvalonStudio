@@ -159,9 +159,10 @@ namespace AvalonStudio.Toolchains.MSBuild
 
             using (var buildRunner = new BuildRunner())
             {
-
                 console.WriteLine($"Creating: {Environment.ProcessorCount} build nodes.");
                 buildRunner.Initialise();
+
+                var startTime = DateTime.Now;
 
                 buildRunner.Start(cancellationSouce.Token, (node, proj) =>
                 {
@@ -183,15 +184,13 @@ namespace AvalonStudio.Toolchains.MSBuild
                     {
                         var result = node.BuildProject(proj).GetAwaiter().GetResult();
 
-                        console.WriteLine($"[{proj.Name}] (Build Node: {node.Id})");
-
                         console.WriteLine(result.consoleOutput);
 
                         if (result.result)
                         {
                             foreach (var output in result.outputAssemblies)
                             {
-                                console.WriteLine($"{proj.Name} -> {output}");
+                                console.WriteLine($"[Node: {node.Id}] {proj.Name} -> {output}");
                             }
                         }
 
@@ -245,14 +244,16 @@ namespace AvalonStudio.Toolchains.MSBuild
 
                 cancellationSouce.Cancel();
 
+                var duration = DateTime.Now - startTime;
+
                 if (canContinue)
                 {
-                    console.WriteLine("Build Successful");
+                    console.WriteLine($"Build Successful - {duration.ToString()}");
                     return true;
                 }
                 else
                 {
-                    console.WriteLine("Build Failed");
+                    console.WriteLine($"Build Failed - {duration.ToString()}");
                     return false;
                 }
             }
