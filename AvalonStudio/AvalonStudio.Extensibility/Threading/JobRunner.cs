@@ -77,10 +77,7 @@ namespace AvalonStudio.Extensibility.Threading
                         {
                             job.Tcs.SetException(e);
                         }
-
                     }
-
-
                 }).Start();
             }
         }
