@@ -63,7 +63,7 @@ namespace AvalonStudio.Extensibility.Projects
             Items = new ObservableCollection<ISolutionItem>();
         }
 
-        public async Task LoadSolutionAsync ()
+        public async Task LoadSolutionAsync()
         {
             await Task.Run(async () =>
             {
@@ -78,11 +78,11 @@ namespace AvalonStudio.Extensibility.Projects
             });
         }
 
-        public async Task LoadProjectsAsync ()
+        public async Task LoadProjectsAsync()
         {
-            await LoadProjectsAsyncImpl();
+            await LoadProjectsImplAsync();
 
-            await ResolveReferences();
+            await ResolveReferencesAsync();
         }
 
         private async Task LoadFilesAsync()
@@ -132,7 +132,7 @@ namespace AvalonStudio.Extensibility.Projects
             });
         }
 
-        private async Task ResolveReferences()
+        private async Task ResolveReferencesAsync()
         {
             var statusBar = IoC.Get<IStatusBar>();
 
@@ -183,11 +183,9 @@ namespace AvalonStudio.Extensibility.Projects
             });
         }
 
-        private async Task LoadProjectsAsyncImpl()
+        private async Task LoadProjectsImplAsync()
         {
             var statusBar = IoC.Get<IStatusBar>();
-
-
 
             var solutionProjects = _solutionModel.Projects.Where(p => p.TypeGuid != ProjectTypeGuids.SolutionFolderGuid);
 
@@ -218,7 +216,7 @@ namespace AvalonStudio.Extensibility.Projects
             statusBar.ClearText();
         }
 
-        private async Task LoadProjectLoadingPlaceholdersAsync ()
+        private async Task LoadProjectLoadingPlaceholdersAsync()
         {
             var solutionProjects = _solutionModel.Projects.Where(p => p.TypeGuid != ProjectTypeGuids.SolutionFolderGuid);
 
@@ -253,7 +251,7 @@ namespace AvalonStudio.Extensibility.Projects
                     newItems.Add(newProject);
                 }
             }
-            
+
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 foreach (var newItem in newItems)
@@ -339,17 +337,17 @@ namespace AvalonStudio.Extensibility.Projects
 
         public Guid Id { get; set; }
 
-        public void UpdateItem (ISolutionItem item)
+        public void UpdateItem(ISolutionItem item)
         {
             var slnProject = _solutionModel.Projects.FirstOrDefault(p => Guid.Parse(p.Id) == item.Id);
 
-            if(slnProject != null)
+            if (slnProject != null)
             {
-                if(item is ISolutionFolder)
+                if (item is ISolutionFolder)
                 {
                     slnProject.FilePath = slnProject.Name = item.Name;
                 }
-                else if(item is IProject project)
+                else if (item is IProject project)
                 {
                     slnProject.FilePath = CurrentDirectory.MakeRelativePath(project.Location);
                     slnProject.Name = project.Name;
@@ -416,9 +414,9 @@ namespace AvalonStudio.Extensibility.Projects
                 throw new InvalidOperationException();
             }
 
-            if(item is IProject project)
+            if (item is IProject project)
             {
-                foreach(var parent in Projects.Where(p => p != project))
+                foreach (var parent in Projects.Where(p => p != project))
                 {
                     if (parent.RemoveReference(project))
                     {
@@ -435,7 +433,7 @@ namespace AvalonStudio.Extensibility.Projects
                 }
             }
 
-            if(item == StartupProject)
+            if (item == StartupProject)
             {
                 StartupProject = null;
             }
