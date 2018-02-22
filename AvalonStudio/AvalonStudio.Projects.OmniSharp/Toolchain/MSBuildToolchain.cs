@@ -203,13 +203,16 @@ namespace AvalonStudio.Toolchains.MSBuild
                     {
                         var result = node.BuildProject(proj).GetAwaiter().GetResult();
 
-                        console.WriteLine(result.consoleOutput);
+                        console.WriteLine();
+                        console.WriteLine($"[{proj.Name}] Node = {node.Id}");
+
+                        console.Write(result.consoleOutput);
 
                         if (result.result)
                         {
                             foreach (var output in result.outputAssemblies)
                             {
-                                console.WriteLine($"[Node: {node.Id}] {proj.Name} -> {output}");
+                                console.WriteLine($"{proj.Name} -> {output}");
                             }
                         }
 

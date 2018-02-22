@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -171,9 +172,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
 
                 var builder = new StringBuilder();
 
-                bool foundCommandLine = false;
-                bool compilerOutputStarted = false;
-                int skippedLines = 0;
+                bool foundCommandLine = false;                
 
                 lock (outputLines)
                 {
@@ -188,14 +187,10 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                         }
                         else
                         {
-                            var commandLine = line.Trim();
-
-                            compilerOutputStarted = true;
-                        }
-
-                        if (compilerOutputStarted && (++skippedLines > 2))
-                        {
-                            builder.AppendLine(line);
+                            if (Regex.IsMatch(line, ": (warning|error)"))
+                            {
+                                builder.AppendLine(line);
+                            }
                         }
                     }
 
