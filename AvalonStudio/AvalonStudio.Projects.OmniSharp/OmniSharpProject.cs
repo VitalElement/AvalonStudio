@@ -336,13 +336,19 @@ namespace AvalonStudio.Projects.OmniSharp
         {   
         }
 
+        private static object s_unloadLock = new object();
+
         public override Task UnloadAsync()
         {
-            var workspace = RoslynWorkspace.GetWorkspace(Solution);
-            
-            workspace.DisposeNodes();
+            lock (s_unloadLock)
+            {
+                var workspace = RoslynWorkspace.GetWorkspace(Solution, false);
 
-            workspace.Dispose();
+                if (workspace != null)
+                {
+                    RoslynWorkspace.DisposeWorkspace(Solution);                    
+                }
+            }
 
             return Task.CompletedTask;
         }

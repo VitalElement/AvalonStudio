@@ -148,23 +148,30 @@ namespace RoslynPad.Roslyn
         {
             lock (s_solutionWorkspaces)
             {
-                if (!s_solutionWorkspaces.ContainsKey(solution))
+                if (s_solutionWorkspaces.ContainsKey(solution))
                 {
                     var workspace = s_solutionWorkspaces[solution];
 
                     s_solutionWorkspaces.Remove(solution);
 
                     workspace.Dispose(true);
+
+                    workspace.DisposeNodes();
                 }
             }
         }
 
-        public static RoslynWorkspace GetWorkspace(AvalonStudio.Projects.ISolution solution)
+        public static RoslynWorkspace GetWorkspace(AvalonStudio.Projects.ISolution solution, bool create = true)
         {
             lock (s_solutionWorkspaces)
             {
                 if (!s_solutionWorkspaces.ContainsKey(solution))
                 {
+                    if(!create)
+                    {
+                        return null;
+                    }
+
                     //await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
 
                     //var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
@@ -203,7 +210,7 @@ namespace RoslynPad.Roslyn
 
                     workspace.InitialiseBuildNodesAsync(true).Wait();
                 }
-
+                
                 return s_solutionWorkspaces[solution];
             }
         }

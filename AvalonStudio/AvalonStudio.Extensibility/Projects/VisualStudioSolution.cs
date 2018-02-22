@@ -306,6 +306,8 @@ namespace AvalonStudio.Extensibility.Projects
             {
                 statusBar.ClearText();
             });
+
+            jobrunner.Stop();
         }
 
         private async Task LoadProjectLoadingPlaceholdersAsync()
