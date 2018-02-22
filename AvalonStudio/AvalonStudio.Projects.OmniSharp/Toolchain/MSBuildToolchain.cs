@@ -96,16 +96,35 @@ namespace AvalonStudio.Toolchains.MSBuild
                     }
                     else
                     {
-                        foreach (var file in project.SourceFiles)
+                        foreach(var dependency in project.References)
                         {
-                            if (File.GetLastWriteTime(file.Location) > lastBuildDate)
+                            // TODO implement public API analysis to determine if we need to rebuild or not.
+
+                            if (File.GetLastWriteTime(dependency.Executable) > lastBuildDate)
                             {
                                 requiresBuild = true;
                                 break;
                             }
                         }
+
+                        if (!requiresBuild)
+                        {
+                            foreach (var file in project.SourceFiles)
+                            {
+                                if (File.GetLastWriteTime(file.Location) > lastBuildDate)
+                                {
+                                    requiresBuild = true;
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
+            }
+            else
+            {
+                // TODO unsure about this case, or if its possible?
+                requiresBuild = true;
             }
 
             return requiresBuild;
