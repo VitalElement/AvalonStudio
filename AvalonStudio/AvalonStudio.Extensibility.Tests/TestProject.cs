@@ -141,5 +141,10 @@ namespace AvalonStudio.Extensibility.Tests
         public void Save()
         {
         }
+
+        public Task UnloadAsync()
+        {
+            return Task.CompletedTask;
+        }
     }
 }
