@@ -341,7 +341,9 @@ namespace AvalonStudio.Projects.OmniSharp
         public override Task UnloadAsync()
         {
             lock (s_unloadLock)
-            {
+            {                
+                RoslynProject = null;
+
                 var workspace = RoslynWorkspace.GetWorkspace(Solution, false);
 
                 if (workspace != null)

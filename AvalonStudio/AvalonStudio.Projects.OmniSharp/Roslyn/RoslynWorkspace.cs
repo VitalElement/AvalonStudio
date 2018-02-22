@@ -35,7 +35,7 @@ namespace RoslynPad.Roslyn
         private readonly NuGetConfiguration _nuGetConfiguration;
         private readonly Dictionary<DocumentId, AvalonEditTextContainer> _openDocumentTextLoaders;
         private readonly ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>> _diagnosticsUpdatedNotifiers;
-        private readonly BlockingCollection<MSBuildHost> _buildNodes;        
+        private readonly BlockingCollection<MSBuildHost> _buildNodes;
         private readonly string dotnetPath;
         private readonly string sdkPath;
 
@@ -55,12 +55,12 @@ namespace RoslynPad.Roslyn
 
             this.EnableDiagnostics(DiagnosticOptions.Semantic | DiagnosticOptions.Syntax);
 
-            GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;            
+            GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;
         }
 
-        public void DisposeNodes ()
+        public void DisposeNodes()
         {
-            foreach(var node in _buildNodes)
+            foreach (var node in _buildNodes)
             {
                 node.Dispose();
             }
@@ -75,8 +75,8 @@ namespace RoslynPad.Roslyn
             for (int i = 0; i < Environment.ProcessorCount; i++)
             {
                 var newNode = new MSBuildHost(DotNetCliService.Instance.Info.BasePath, i + 1);
-                
-                tasks.Add(newNode.EnsureConnectionAsync().ContinueWith(t=>
+
+                tasks.Add(newNode.EnsureConnectionAsync().ContinueWith(t =>
                 {
                     _buildNodes.Add(newNode);
                 }));
@@ -92,7 +92,7 @@ namespace RoslynPad.Roslyn
             }
         }
 
-        public static Task<RoslynWorkspace> CreateWorkspaceAsync (AvalonStudio.Projects.ISolution solution)
+        public static Task<RoslynWorkspace> CreateWorkspaceAsync(AvalonStudio.Projects.ISolution solution)
         {
             return Task.Run(() =>
             {
@@ -154,7 +154,7 @@ namespace RoslynPad.Roslyn
 
                     s_solutionWorkspaces.Remove(solution);
 
-                    workspace.Dispose(true);
+                    workspace.Dispose();
 
                     workspace.DisposeNodes();
                 }
@@ -167,7 +167,7 @@ namespace RoslynPad.Roslyn
             {
                 if (!s_solutionWorkspaces.ContainsKey(solution))
                 {
-                    if(!create)
+                    if (!create)
                     {
                         return null;
                     }
@@ -210,7 +210,7 @@ namespace RoslynPad.Roslyn
 
                     workspace.InitialiseBuildNodesAsync(true).Wait();
                 }
-                
+
                 return s_solutionWorkspaces[solution];
             }
         }
@@ -426,6 +426,12 @@ namespace RoslynPad.Roslyn
         protected override void Dispose(bool finalize)
         {
             base.Dispose(finalize);
+
+            ApplyingTextChange = null;
+
+            GetService<IDiagnosticService>().DiagnosticsUpdated -= OnDiagnosticsUpdated;
+
+            this.DisableDiagnostics();                        
         }
 
         protected override void ApplyDocumentTextChanged(DocumentId document, SourceText newText)
