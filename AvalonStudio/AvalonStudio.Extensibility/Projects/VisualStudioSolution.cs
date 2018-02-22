@@ -620,5 +620,19 @@ namespace AvalonStudio.Extensibility.Projects
         {
             return Projects.FirstOrDefault(p => p.Location.NormalizePath() == absolutePath.NormalizePath());
         }
+
+        public Task UnloadSolutionAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public async Task UnloadProjectsAsync()
+        {
+            // TODO parallelise this on a job runner.
+            foreach(var project in Projects)
+            {
+                await project.UnloadAsync();
+            }
+        }
     }
 }

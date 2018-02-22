@@ -479,5 +479,7 @@
         {
             return this.DefaultCompareTo(other);
         }
+
+        public abstract Task UnloadAsync();
     }
 }

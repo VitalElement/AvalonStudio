@@ -333,8 +333,18 @@ namespace AvalonStudio.Projects.OmniSharp
         }
 
         public override void Save()
+        {   
+        }
+
+        public override Task UnloadAsync()
         {
-            throw new NotImplementedException();
+            var workspace = RoslynWorkspace.GetWorkspace(Solution);
+            
+            workspace.DisposeNodes();
+
+            workspace.Dispose();
+
+            return Task.CompletedTask;
         }
 
         public override List<string> ExcludedFiles { get; set; }

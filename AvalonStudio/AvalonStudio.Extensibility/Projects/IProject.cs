@@ -67,6 +67,8 @@ namespace AvalonStudio.Projects
         /// </summary>
         Task LoadFilesAsync();
 
+        Task UnloadAsync();
+
         void Save();
     }
 }

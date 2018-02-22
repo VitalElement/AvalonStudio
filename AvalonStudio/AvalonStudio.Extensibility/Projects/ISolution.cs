@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects
@@ -29,6 +28,10 @@ namespace AvalonStudio.Projects
         Task LoadSolutionAsync();
 
         Task LoadProjectsAsync();
+
+        Task UnloadSolutionAsync();
+
+        Task UnloadProjectsAsync();
 
         void Save();
     }

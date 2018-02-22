@@ -58,6 +58,16 @@ namespace RoslynPad.Roslyn
             GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;            
         }
 
+        public void DisposeNodes ()
+        {
+            foreach(var node in _buildNodes)
+            {
+                node.Dispose();
+            }
+
+            _buildNodes.Dispose();
+        }
+
         public async Task InitialiseBuildNodesAsync(bool returnAfter1Ready = false)
         {
             var tasks = new List<Task>();
@@ -132,6 +142,21 @@ namespace RoslynPad.Roslyn
                     return s_solutionWorkspaces[solution];
                 }
             });
+        }
+
+        public static void DisposeWorkspace(AvalonStudio.Projects.ISolution solution)
+        {
+            lock (s_solutionWorkspaces)
+            {
+                if (!s_solutionWorkspaces.ContainsKey(solution))
+                {
+                    var workspace = s_solutionWorkspaces[solution];
+
+                    s_solutionWorkspaces.Remove(solution);
+
+                    workspace.Dispose(true);
+                }
+            }
         }
 
         public static RoslynWorkspace GetWorkspace(AvalonStudio.Projects.ISolution solution)

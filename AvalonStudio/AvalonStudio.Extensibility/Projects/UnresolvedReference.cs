@@ -155,6 +155,11 @@
         {
             return Task.CompletedTask;
         }
+
+        public Task UnloadAsync()
+        {
+            return Task.CompletedTask;
+        }
     }
 
     public class NotFoundProject : PlaceHolderProject

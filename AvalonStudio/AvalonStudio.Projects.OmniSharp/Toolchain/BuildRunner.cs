@@ -44,6 +44,8 @@ namespace AvalonStudio.Projects.OmniSharp.Toolchain
             }
 
             _runner.Stop();
+
+            _nodes.Dispose();
         }
 
         private MSBuildHost GetNode()
