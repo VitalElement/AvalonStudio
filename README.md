@@ -42,7 +42,7 @@ Install .NET Core 2 from: https://www.microsoft.com/net/download/core
 
 These instructions are roughly the same for all platforms:
 
-cd into the repository directory `/AvalonStudio/AvalonStudio`
+cd into the repository directory `/AvalonStudio/AvalonStudio/AvalonStudio`
 
 ```sh
 dotnet restore
