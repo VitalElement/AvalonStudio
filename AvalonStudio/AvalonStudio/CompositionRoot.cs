@@ -16,6 +16,9 @@ namespace AvalonStudio
             var conventions = new ConventionBuilder();
             conventions.ForTypesDerivedFrom<IExtension>().Export<IExtension>();
 
+            // TODO AppDomain here is a custom appdomain from namespace AvalonStudio.Extensibility.Utils. It is able
+            // to load any assembly in the bin directory (so not really appdomain) we need to get rid of this
+            // once all our default extensions are published with a manifest and copied to extensions dir.
             IEnumerable<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
             foreach (var extension in extensions)
