@@ -63,20 +63,32 @@ namespace AvalonStudio.Projects.OmniSharp
             ExcludedFiles.Add("bin");
             ExcludedFiles.Add("obj");
 
-            var fileWatcher = new FileSystemWatcher(CurrentDirectory, Path.GetFileName(Location))
+            try
             {
-                EnableRaisingEvents = true,
-                IncludeSubdirectories = false,
+                var fileWatcher = new FileSystemWatcher(CurrentDirectory, Path.GetFileName(Location))
+                {
+                    EnableRaisingEvents = true,
+                    IncludeSubdirectories = false,
 
-                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
-            };
+                    NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
+                };
 
-            fileWatcher.Changed += async (sender, e) =>
+                fileWatcher.Changed += async (sender, e) =>
+                {
+                    RestoreRequired = true;
+                    // todo restore packages and re-evaluate.
+                    await RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
+                };
+            }
+            catch (System.IO.IOException e)
             {
-                RestoreRequired = true;
-                // todo restore packages and re-evaluate.
-                await RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
-            };
+                var console = IoC.Get<IConsole>();
+
+                console.WriteLine("Reached Max INotify Limit, to use AvalonStudio on Unix increase the INotify Limit");
+                console.WriteLine("often it is set here: '/proc/sys/fs/inotify/max_user_watches'");
+                
+                console.WriteLine(e.Message);
+            }
 
             FileAdded += (sender, e) =>
             {
