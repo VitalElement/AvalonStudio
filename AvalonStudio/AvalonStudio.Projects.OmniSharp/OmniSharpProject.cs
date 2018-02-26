@@ -1,10 +1,16 @@
-﻿using AvalonStudio.Debugging;
+﻿using Avalonia.Threading;
+using AvalonStudio.CommandLineTools;
+using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Platforms;
+using AvalonStudio.Projects.OmniSharp.DotnetCli;
 using AvalonStudio.Projects.OmniSharp.ProjectTypes;
+using AvalonStudio.Projects.Standard;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
+using AvalonStudio.Utils;
 using RoslynPad.Roslyn;
 using System;
 using System.Collections.Generic;
@@ -22,6 +28,12 @@ namespace AvalonStudio.Projects.OmniSharp
         public static async Task<OmniSharpProject> Create(ISolution solution, string path)
         {
             var (project, projectReferences, targetPath) = await RoslynWorkspace.GetWorkspace(solution).AddProject(solution.CurrentDirectory, path);
+
+            if (project == null)
+            {
+                return null;
+            }
+
             var roslynProject = project;
             var references = projectReferences;
             OmniSharpProject result = new OmniSharpProject(path)
@@ -46,6 +58,11 @@ namespace AvalonStudio.Projects.OmniSharp
             Settings = new ExpandoObject();
             Project = this;
 
+            Items.InsertSorted(new ReferenceFolder(this));
+
+            ExcludedFiles.Add("bin");
+            ExcludedFiles.Add("obj");
+
             var fileWatcher = new FileSystemWatcher(CurrentDirectory, Path.GetFileName(Location))
             {
                 EnableRaisingEvents = true,
@@ -56,8 +73,9 @@ namespace AvalonStudio.Projects.OmniSharp
 
             fileWatcher.Changed += async (sender, e) =>
             {
+                RestoreRequired = true;
                 // todo restore packages and re-evaluate.
-                RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
+                await RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
             };
 
             FileAdded += (sender, e) =>
@@ -70,6 +88,43 @@ namespace AvalonStudio.Projects.OmniSharp
                 }
             };
         }
+
+        public async Task<bool> Restore(IConsole console, IStatusBar statusBar = null)
+        {
+            return await Task.Factory.StartNew(() =>
+            {
+                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"restore {Path.GetFileName(Location)}", (s, e) =>
+                {
+                    if (statusBar != null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(e.Data))
+                        {
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                statusBar.SetText(e.Data.Trim());
+                            });
+                        }
+                    }
+
+                    console?.WriteLine(e.Data);
+                }, (s, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        if (console != null)
+                        {
+                            console.WriteLine();
+                            console.WriteLine(e.Data);
+                        }
+                    }
+                },
+                false, CurrentDirectory, false);
+
+                return exitCode == 0;
+            });
+        }
+
+        public bool RestoreRequired { get; set; } = false;
 
         protected override bool FilterProjectFile => false;
 
@@ -115,7 +170,7 @@ namespace AvalonStudio.Projects.OmniSharp
             {
                 if (detectedTargetPath != null)
                     return detectedTargetPath;
-                if(RoslynProject.OutputFilePath == null)
+                if (RoslynProject.OutputFilePath == null)
                 {
                     return null;
                 }
@@ -192,7 +247,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override void AddReference(IProject project)
         {
-            throw new NotImplementedException();
+            References.Add(project);
         }
 
         public override int CompareTo(IProjectFolder other)
@@ -235,15 +290,46 @@ namespace AvalonStudio.Projects.OmniSharp
             return false;
         }
 
-        public override void ResolveReferences()
+        public override Task ResolveReferencesAsync()
         {
             if (UnresolvedReferences != null)
             {
                 foreach (var unresolvedReference in UnresolvedReferences)
                 {
-                    RoslynWorkspace.GetWorkspace(Solution).ResolveReference(this, unresolvedReference);
+                    var fullReferencePath = this.ResolveReferencePath(unresolvedReference);
+
+                    if (RoslynWorkspace.GetWorkspace(Solution).ResolveReference(this, unresolvedReference))
+                    {
+                        var currentProject = Solution.FindProjectByPath(fullReferencePath);
+
+                        if (currentProject == null)
+                        {
+                            throw new Exception("Error loading msbuild project, out of sync");
+                        }
+
+                        AddReference(currentProject);
+                    }
+                    else
+                    {
+                        AddReference(new UnresolvedReference(Solution, Path.Combine(Solution.CurrentDirectory, Path.GetFileNameWithoutExtension(fullReferencePath))));
+                    }
                 }
             }
+
+            return Task.CompletedTask;
+        }
+
+        internal void MarkRestored()
+        {
+            foreach (var reference in References)
+            {
+                if (reference is OmniSharpProject netProject)
+                {
+                    netProject.MarkRestored();
+                }
+            }
+
+            RestoreRequired = false;
         }
 
         public override void Save()

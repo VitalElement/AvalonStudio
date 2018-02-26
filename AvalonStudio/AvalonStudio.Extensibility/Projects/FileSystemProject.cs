@@ -449,7 +449,7 @@
 
         public abstract bool RemoveReference(IProject project);
 
-        public abstract void ResolveReferences();
+        public abstract Task ResolveReferencesAsync();
 
         public abstract void Save();
 

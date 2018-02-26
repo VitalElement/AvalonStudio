@@ -34,6 +34,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AvalonStudio.Extensibility.Shell;
 
 namespace AvalonStudio
 {
@@ -97,6 +98,10 @@ namespace AvalonStudio
             IoC.RegisterConstant<IShell>(this);
             IoC.RegisterConstant(this);
 
+            StatusBar = new StatusBarViewModel();
+
+            IoC.RegisterConstant<IStatusBar>(StatusBar);
+
             foreach (var extension in extensions)
             {
                 extension.BeforeActivation();
@@ -104,7 +109,6 @@ namespace AvalonStudio
 
             CurrentPerspective = Perspective.Editor;
 
-            StatusBar = new StatusBarViewModel();
             DocumentTabs = new DocumentTabControlViewModel();
 
             Console = IoC.Get<IConsole>();
@@ -241,9 +245,7 @@ namespace AvalonStudio
             RightBottomTabs.SelectedTool = RightBottomTabs.Tools.FirstOrDefault();
             MiddleTopTabs.SelectedTool = MiddleTopTabs.Tools.FirstOrDefault();
 
-            StatusBar.LineNumber = 1;
-            StatusBar.Column = 1;
-            StatusBar.PlatformString = Platform.OSDescription + " " + Platform.AvalonRID;
+            IoC.Get<IStatusBar>().ClearText();
 
             ProcessCancellationToken = new CancellationTokenSource();
 
@@ -765,9 +767,13 @@ namespace AvalonStudio
 
                 if (solutionType != null)
                 {
+                    StatusBar.SetText($"Loading Solution: {path}");
+
                     var solution = await solutionType.LoadAsync(path);
 
                     await solution.LoadSolutionAsync();
+
+                    StatusBar.ClearText();
 
                     CurrentSolution = solution;
 

@@ -212,9 +212,9 @@ Program.main();
             return false;
         }
 
-        public override void ResolveReferences()
+        public override Task ResolveReferencesAsync()
         {
-            //throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public override void Save()

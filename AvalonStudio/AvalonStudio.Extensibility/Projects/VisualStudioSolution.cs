@@ -10,6 +10,8 @@ using System.Linq;
 using AvalonStudio.Platforms;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using AvalonStudio.Extensibility.Shell;
+using AvalonStudio.CommandLineTools;
 
 namespace AvalonStudio.Extensibility.Projects
 {
@@ -24,6 +26,8 @@ namespace AvalonStudio.Extensibility.Projects
         {
             return new VisualStudioSolution(SlnFile.Read(fileName));
         }
+
+        public bool IsRestored { get; set; } = false;
 
         /// <summary>
         /// Allows disabling of serialization to disk. Useful for UnitTesting.
@@ -59,7 +63,7 @@ namespace AvalonStudio.Extensibility.Projects
             Items = new ObservableCollection<ISolutionItem>();
         }
 
-        public async Task LoadSolutionAsync ()
+        public async Task LoadSolutionAsync()
         {
             await Task.Run(async () =>
             {
@@ -74,11 +78,11 @@ namespace AvalonStudio.Extensibility.Projects
             });
         }
 
-        public async Task LoadProjectsAsync ()
+        public async Task LoadProjectsAsync()
         {
-            await LoadProjectsAsyncImpl();
+            await LoadProjectsImplAsync();
 
-            ResolveReferences();
+            await ResolveReferencesAsync();
         }
 
         private async Task LoadFilesAsync()
@@ -128,20 +132,67 @@ namespace AvalonStudio.Extensibility.Projects
             });
         }
 
-        private void ResolveReferences()
+        private async Task ResolveReferencesAsync()
         {
+            var statusBar = IoC.Get<IStatusBar>();
+
             foreach (var project in Projects)
             {
-                project.ResolveReferences();
+                statusBar.SetText($"Resolving References: {project.Name}");
+
+                await project.ResolveReferencesAsync();
             }
+
+            statusBar.ClearText();
         }
 
-        private async Task LoadProjectsAsyncImpl()
+        public async Task<bool> Restore(string dotnetExecutable, IConsole console, IStatusBar statusBar = null)
         {
+            return await Task.Factory.StartNew(() =>
+            {
+                var exitCode = PlatformSupport.ExecuteShellCommand(dotnetExecutable, $"restore {Path.GetFileName(Location)}", (s, e) =>
+                {
+                    if (statusBar != null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(e.Data))
+                        {
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                statusBar.SetText(e.Data.Trim());
+                            });
+                        }
+                    }
+
+                    console?.WriteLine(e.Data);
+                }, (s, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        if (console != null)
+                        {
+                            console.WriteLine();
+                            console.WriteLine(e.Data);
+                        }
+                    }
+                },
+                false, CurrentDirectory, false);
+
+                IsRestored = true;
+
+                return exitCode == 0;
+            });
+        }
+
+        private async Task LoadProjectsImplAsync()
+        {
+            var statusBar = IoC.Get<IStatusBar>();
+
             var solutionProjects = _solutionModel.Projects.Where(p => p.TypeGuid != ProjectTypeGuids.SolutionFolderGuid);
 
             foreach (var project in solutionProjects)
             {
+                statusBar.SetText($"Loading Project: {project.FilePath}");
+
                 var placeHolder = _solutionItems[Guid.Parse(project.Id)];
 
                 var newProject = await Project.LoadProjectFileAsync(this, Guid.Parse(project.TypeGuid), Path.Combine(this.CurrentDirectory, project.FilePath));
@@ -161,9 +212,11 @@ namespace AvalonStudio.Extensibility.Projects
                     await newProject.LoadFilesAsync();
                 }
             }
+
+            statusBar.ClearText();
         }
 
-        private async Task LoadProjectLoadingPlaceholdersAsync ()
+        private async Task LoadProjectLoadingPlaceholdersAsync()
         {
             var solutionProjects = _solutionModel.Projects.Where(p => p.TypeGuid != ProjectTypeGuids.SolutionFolderGuid);
 
@@ -198,7 +251,7 @@ namespace AvalonStudio.Extensibility.Projects
                     newItems.Add(newProject);
                 }
             }
-            
+
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 foreach (var newItem in newItems)
@@ -284,17 +337,17 @@ namespace AvalonStudio.Extensibility.Projects
 
         public Guid Id { get; set; }
 
-        public void UpdateItem (ISolutionItem item)
+        public void UpdateItem(ISolutionItem item)
         {
             var slnProject = _solutionModel.Projects.FirstOrDefault(p => Guid.Parse(p.Id) == item.Id);
 
-            if(slnProject != null)
+            if (slnProject != null)
             {
-                if(item is ISolutionFolder)
+                if (item is ISolutionFolder)
                 {
                     slnProject.FilePath = slnProject.Name = item.Name;
                 }
-                else if(item is IProject project)
+                else if (item is IProject project)
                 {
                     slnProject.FilePath = CurrentDirectory.MakeRelativePath(project.Location);
                     slnProject.Name = project.Name;
@@ -371,9 +424,9 @@ namespace AvalonStudio.Extensibility.Projects
                 throw new InvalidOperationException();
             }
 
-            if(item is IProject project)
+            if (item is IProject project)
             {
-                foreach(var parent in Projects.Where(p => p != project))
+                foreach (var parent in Projects.Where(p => p != project))
                 {
                     if (parent.RemoveReference(project))
                     {
@@ -390,7 +443,7 @@ namespace AvalonStudio.Extensibility.Projects
                 }
             }
 
-            if(item == StartupProject)
+            if (item == StartupProject)
             {
                 StartupProject = null;
             }
@@ -486,6 +539,11 @@ namespace AvalonStudio.Extensibility.Projects
         public IProject FindProject(string name)
         {
             return Projects.FirstOrDefault(p => p.Name == name);
+        }
+
+        public IProject FindProjectByPath(string absolutePath)
+        {
+            return Projects.FirstOrDefault(p => p.Location.NormalizePath() == absolutePath.NormalizePath());
         }
     }
 }

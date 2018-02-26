@@ -1,4 +1,8 @@
-﻿using System;
+﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Projects;
+using AvalonStudio.Extensibility.Shell;
+using AvalonStudio.Projects.OmniSharp.DotnetCli;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -27,6 +31,20 @@ namespace AvalonStudio.Projects.OmniSharp.ProjectTypes
 
         public async Task<IProject> LoadAsync(ISolution solution, string filePath)
         {
+            if(solution is VisualStudioSolution vsSolution)
+            {
+                if(!vsSolution.IsRestored)
+                {
+                    var statusBar = IoC.Get<IStatusBar>();
+
+                    statusBar.SetText($"Restoring Packages for solution: {solution.Name}");
+
+                    await vsSolution.Restore(DotNetCliService.Instance.DotNetPath, null, statusBar);                    
+
+                    IoC.Get<IStatusBar>().SetText($"Loading projects for solution: {solution.Name}");
+                }
+            }
+
             return await OmniSharpProject.Create(solution, filePath);
         }
     }
