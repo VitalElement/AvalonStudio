@@ -1,18 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AvalonStudio.Extensibility
 {
     public interface IExtensionManifest
     {
         string Name { get; }
-        string Version { get; }
+        Version Version { get; }
         string Description { get; }
         string Icon { get; }
 
-        IDictionary<string, IEnumerable<string>> Assets { get; }
+        IReadOnlyDictionary<string, IEnumerable<string>> Assets { get; }
 
-        IDictionary<string, object> AdditionalData { get; set; }
+        IReadOnlyDictionary<string, object> AdditionalData { get; }
 
-        IEnumerable<string> GetMefComponents();
+        IEnumerable<string> GetAssets(string assetsType);
     }
 }

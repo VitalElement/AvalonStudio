@@ -1,0 +1,33 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:AvalonStudio.Extensibility.Converters;assembly=AvalonStudio.Extensibility"
+             Background="{DynamicResource ThemeBackgroundBrush}">
+
+  <ListBox Items="{Binding InstalledExtensions}"
+           SelectedItem="{Binding SelectedExtension}"
+           Background="{DynamicResource ThemeControlDarkBrush}">
+    <ListBox.ItemTemplate>
+      <DataTemplate>
+        <Grid ColumnDefinitions="Auto,*,Auto"
+              Margin="8">
+          <Image Grid.Column="0"
+                 Width="48"
+                 Height="48"
+                 Margin="0,0,16,0"
+                 Source="{Binding Icon, Converter={x:Static converters:BitmapValueConverter.Instance}}" />
+          <Grid Grid.Column="1"
+                RowDefinitions="*,*">
+            <TextBlock Grid.Row="0"
+                       Classes="h2"
+                       Text="{Binding Name}" />
+            <TextBlock Grid.Row="1"
+                       Text="{Binding Description}" />
+          </Grid>
+          <TextBlock Grid.Column="2"
+                     Text="{Binding Version}" />
+        </Grid>
+      </DataTemplate>
+    </ListBox.ItemTemplate>
+  </ListBox>
+
+</UserControl>
