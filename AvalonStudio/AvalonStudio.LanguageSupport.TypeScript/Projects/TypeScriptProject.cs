@@ -223,9 +223,9 @@ Program.main();
             SerializedObject.Serialize(Location, this); //Write the project
         }
 
-        public override Task UnloadAsync()
+        public async override Task UnloadAsync()
         {
-            return Task.CompletedTask;
+            await base.UnloadAsync();
         }
     }
 }

@@ -350,8 +350,10 @@ namespace AvalonStudio.Projects.OmniSharp
 
         private static object s_unloadLock = new object();
 
-        public override Task UnloadAsync()
+        public override async Task UnloadAsync()
         {
+            await base.UnloadAsync();
+
             lock (s_unloadLock)
             {                
                 RoslynProject = null;
@@ -363,8 +365,6 @@ namespace AvalonStudio.Projects.OmniSharp
                     RoslynWorkspace.DisposeWorkspace(Solution);                    
                 }
             }
-
-            return Task.CompletedTask;
         }
 
         public override List<string> ExcludedFiles { get; set; }

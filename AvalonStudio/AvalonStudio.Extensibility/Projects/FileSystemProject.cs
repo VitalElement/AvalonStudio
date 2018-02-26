@@ -493,6 +493,12 @@
             return this.DefaultCompareTo(other);
         }
 
-        public abstract Task UnloadAsync();
+        public virtual Task UnloadAsync()
+        {
+            fileSystemWatcher?.Dispose();
+            folderSystemWatcher?.Dispose();
+
+            return Task.CompletedTask;
+        }
     }
 }
