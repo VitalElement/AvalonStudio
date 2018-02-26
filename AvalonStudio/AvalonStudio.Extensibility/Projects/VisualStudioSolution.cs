@@ -474,6 +474,16 @@ namespace AvalonStudio.Extensibility.Projects
                         FilePath = CurrentDirectory.MakeRelativePath(project.Location)
                     });
 
+                    var debug1 = new SlnPropertySet(project.Id.GetGuidString()); debug1["Debug|Any CPU.ActiveCfg"] = "Debug|Any CPU";
+                    var debug2 = new SlnPropertySet(project.Id.GetGuidString()); debug2["Debug|Any CPU.Build.0"] = "Debug|Any CPU";
+                    var release1 = new SlnPropertySet(project.Id.GetGuidString()); release1["Release|Any CPU.ActiveCfg"] = "Release|Any CPU";
+                    var release2 = new SlnPropertySet(project.Id.GetGuidString()); release2["Release|Any CPU.Build.0"] = "Release|Any CPU";
+
+                    _solutionModel.ProjectConfigurationsSection.Add(debug1);
+                    _solutionModel.ProjectConfigurationsSection.Add(debug2);
+                    _solutionModel.ProjectConfigurationsSection.Add(release1);
+                    _solutionModel.ProjectConfigurationsSection.Add(release2);
+
                     return (T)project;
                 }
                 else
@@ -541,6 +551,13 @@ namespace AvalonStudio.Extensibility.Projects
             if (currentSlnProject != null)
             {
                 _solutionModel.Projects.Remove(currentSlnProject);
+            }
+
+            var propsToRemove = _solutionModel.ProjectConfigurationsSection.Where(props => Guid.Parse(props.Id) == item.Id).ToList();
+
+            foreach (var prop in propsToRemove)
+            {
+                _solutionModel.ProjectConfigurationsSection.Remove(prop);
             }
         }
 

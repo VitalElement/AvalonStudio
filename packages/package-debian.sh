@@ -1,6 +1,9 @@
 BUILD_DIR=$(pwd)/../AvalonStudio/AvalonStudio
 PACK_DIR=$(pwd)/deb-build
-BUILD_VERSION=$(git describe --tags)
+BUILD_VERSION_TMP=$(git describe --tags)
+BUILD_VERSION=${BUILD_VERSION_TMP#v}
+echo ${BUILD_VERSION}
+
 TARG_DIR=$PACK_DIR/avalon-studio_$BUILD_VERSION/opt/vitalelement/avalonstudio/bin
 
 rm -rf $TARG_DIR

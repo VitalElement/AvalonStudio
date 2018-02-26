@@ -26,26 +26,32 @@ An extensible, cross platform IDE written in C# for Embedded C/C++, .NET Core, A
 
 ### Getting the code
 
-Clone the repo.
-```
+Clone the repository.
+
+```sh
 git clone https://github.com/VitalElement/AvalonStudio --recursive
 
 cd AvalonStudio
 ```
 
 ### Install Dependencies
+
 Install .NET Core 2 from: https://www.microsoft.com/net/download/core
 
 ### Building the project
+
 These instructions are roughly the same for all platforms:
 
-cd into the repo directory `/AvalonStudio/AvalonStudio`
+cd into the repository directory `/AvalonStudio/AvalonStudio/AvalonStudio`
 
-`dotnet restore`
-`dotnet build`
+```sh
+dotnet restore
+dotnet build
+```
 
 ### Running locally built binaries
 
-cd to /AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.0/
-`dotnet ./AvalonStudio.dll`
-
+```sh
+cd /AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.0/
+dotnet ./AvalonStudio.dll
+```
