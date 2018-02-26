@@ -238,5 +238,15 @@ namespace AvalonStudio.Projects
         {
             throw new NotImplementedException();
         }
+
+        public Task UnloadSolutionAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task UnloadProjectsAsync()
+        {
+            return Task.CompletedTask;
+        }
     }
 }

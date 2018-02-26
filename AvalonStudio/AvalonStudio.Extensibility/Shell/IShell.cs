@@ -69,7 +69,7 @@ namespace AvalonStudio.Shell
 
         Task OpenSolutionAsync(string path);
 
-        void CloseSolution();
+        Task CloseSolutionAsync();
 
         void AddDocument(IDocumentTabViewModel document, bool temporary = true);
 

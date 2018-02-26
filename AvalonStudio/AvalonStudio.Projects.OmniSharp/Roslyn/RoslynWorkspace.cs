@@ -35,7 +35,7 @@ namespace RoslynPad.Roslyn
         private readonly NuGetConfiguration _nuGetConfiguration;
         private readonly Dictionary<DocumentId, AvalonEditTextContainer> _openDocumentTextLoaders;
         private readonly ConcurrentDictionary<DocumentId, Action<DiagnosticsUpdatedArgs>> _diagnosticsUpdatedNotifiers;
-        private MSBuildHost buildHost;
+        private readonly BlockingCollection<MSBuildHost> _buildNodes;
         private readonly string dotnetPath;
         private readonly string sdkPath;
 
@@ -51,25 +51,65 @@ namespace RoslynPad.Roslyn
 
             _compositionContext = compositionContext;
 
+            _buildNodes = new BlockingCollection<MSBuildHost>();
+
             this.EnableDiagnostics(DiagnosticOptions.Semantic | DiagnosticOptions.Syntax);
 
             GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;
         }
 
-        public static RoslynWorkspace GetWorkspace(AvalonStudio.Projects.ISolution solution)
+        public void DisposeNodes()
         {
-            if (!s_solutionWorkspaces.ContainsKey(solution))
+            foreach (var node in _buildNodes)
             {
-                //await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
+                node.Dispose();
+            }
 
-                //var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
+            _buildNodes.Dispose();
+        }
 
-                var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
+        public async Task InitialiseBuildNodesAsync(bool returnAfter1Ready = false)
+        {
+            var tasks = new List<Task>();
 
-                var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+            for (int i = 0; i < Environment.ProcessorCount; i++)
+            {
+                var newNode = new MSBuildHost(DotNetCliService.Instance.Info.BasePath, i + 1);
 
-                var assemblies = new[]
+                tasks.Add(newNode.EnsureConnectionAsync().ContinueWith(t =>
                 {
+                    _buildNodes.Add(newNode);
+                }));
+            }
+
+            if (returnAfter1Ready)
+            {
+                await Task.WhenAny(tasks);
+            }
+            else
+            {
+                await Task.WhenAll(tasks);
+            }
+        }
+
+        public static Task<RoslynWorkspace> CreateWorkspaceAsync(AvalonStudio.Projects.ISolution solution)
+        {
+            return Task.Run(() =>
+            {
+                lock (s_solutionWorkspaces)
+                {
+                    if (!s_solutionWorkspaces.ContainsKey(solution))
+                    {
+                        //await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
+
+                        //var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
+
+                        var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
+
+                        var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+
+                        var assemblies = new[]
+                        {
                     // Microsoft.CodeAnalysis.Workspaces
                     typeof(WorkspacesResources).GetTypeInfo().Assembly,
                     // Microsoft.CodeAnalysis.CSharp.Workspaces 
@@ -81,23 +121,98 @@ namespace RoslynPad.Roslyn
                     typeof(RoslynWorkspace).Assembly,
                 };
 
-                var partTypes = MefHostServices.DefaultAssemblies.Concat(assemblies)
-                        .Distinct()
-                        .SelectMany(x => x.GetTypes())
-                        .ToArray();
+                        var partTypes = MefHostServices.DefaultAssemblies.Concat(assemblies)
+                                .Distinct()
+                                .SelectMany(x => x.GetTypes())
+                                .ToArray();
 
-                var compositionContext = new ContainerConfiguration()
-                    .WithParts(partTypes)
-                    .CreateContainer();
+                        var compositionContext = new ContainerConfiguration()
+                            .WithParts(partTypes)
+                            .CreateContainer();
 
-                var host = MefHostServices.Create(compositionContext);
+                        var host = MefHostServices.Create(compositionContext);
 
-                var workspace = new RoslynWorkspace(host, null, compositionContext, DotNetCliService.Instance.Info.Executable, DotNetCliService.Instance.Info.BasePath);
+                        var workspace = new RoslynWorkspace(host, null, compositionContext, DotNetCliService.Instance.Info.Executable, DotNetCliService.Instance.Info.BasePath);
 
-                workspace.RegisterWorkspace(solution);
+                        workspace.RegisterWorkspace(solution);
+
+                        workspace.InitialiseBuildNodesAsync(true).Wait();
+                    }
+
+                    return s_solutionWorkspaces[solution];
+                }
+            });
+        }
+
+        public static void DisposeWorkspace(AvalonStudio.Projects.ISolution solution)
+        {
+            lock (s_solutionWorkspaces)
+            {
+                if (s_solutionWorkspaces.ContainsKey(solution))
+                {
+                    var workspace = s_solutionWorkspaces[solution];
+
+                    s_solutionWorkspaces.Remove(solution);
+
+                    workspace.Dispose();
+
+                    workspace.DisposeNodes();
+                }
             }
+        }
 
-            return s_solutionWorkspaces[solution];
+        public static RoslynWorkspace GetWorkspace(AvalonStudio.Projects.ISolution solution, bool create = true)
+        {
+            lock (s_solutionWorkspaces)
+            {
+                if (!s_solutionWorkspaces.ContainsKey(solution))
+                {
+                    if (!create)
+                    {
+                        return null;
+                    }
+
+                    //await PackageManager.EnsurePackage("AvalonStudio.Languages.CSharp", IoC.Get<IConsole>());
+
+                    //var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
+
+                    var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
+
+                    var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+
+                    var assemblies = new[]
+                    {
+                    // Microsoft.CodeAnalysis.Workspaces
+                    typeof(WorkspacesResources).GetTypeInfo().Assembly,
+                    // Microsoft.CodeAnalysis.CSharp.Workspaces 
+                    typeof(CSharpWorkspaceResources).GetTypeInfo().Assembly,
+                    // Microsoft.CodeAnalysis.Features
+                    typeof(FeaturesResources).GetTypeInfo().Assembly,
+                    // Microsoft.CodeAnalysis.CSharp.Features
+                    typeof(CSharpFeaturesResources).GetTypeInfo().Assembly,
+                    typeof(RoslynWorkspace).Assembly,
+                };
+
+                    var partTypes = MefHostServices.DefaultAssemblies.Concat(assemblies)
+                            .Distinct()
+                            .SelectMany(x => x.GetTypes())
+                            .ToArray();
+
+                    var compositionContext = new ContainerConfiguration()
+                        .WithParts(partTypes)
+                        .CreateContainer();
+
+                    var host = MefHostServices.Create(compositionContext);
+
+                    var workspace = new RoslynWorkspace(host, null, compositionContext, DotNetCliService.Instance.Info.Executable, DotNetCliService.Instance.Info.BasePath);
+
+                    workspace.RegisterWorkspace(solution);
+
+                    workspace.InitialiseBuildNodesAsync(true).Wait();
+                }
+
+                return s_solutionWorkspaces[solution];
+            }
         }
 
         internal RoslynWorkspace RegisterWorkspace(AvalonStudio.Projects.ISolution solution) => s_solutionWorkspaces[solution] = this;
@@ -121,14 +236,11 @@ namespace RoslynPad.Roslyn
 
         public async Task<(Project project, List<string> projectReferences, string targetPath)> AddProject(string solutionDir, string projectFile)
         {
-            if (buildHost == null)
-            {
-                buildHost = new MSBuildHost(sdkPath);
-
-                await buildHost.EnsureConnectionAsync();
-            }
+            var buildHost = _buildNodes.Take();
 
             var (info, projectReferences, targetPath) = await buildHost.LoadProject(solutionDir, projectFile);
+
+            _buildNodes.Add(buildHost);
 
             if (info != null)
             {
@@ -145,7 +257,11 @@ namespace RoslynPad.Roslyn
         {
             var proj = project as OmniSharpProject;
 
+            var buildHost = _buildNodes.Take();
+
             var loadData = await buildHost.LoadProject(project.Solution.CurrentDirectory, project.Location);
+
+            _buildNodes.Add(buildHost);
         }
 
         public ProjectId GetProjectId(AvalonStudio.Projects.IProject project)
@@ -310,6 +426,12 @@ namespace RoslynPad.Roslyn
         protected override void Dispose(bool finalize)
         {
             base.Dispose(finalize);
+
+            ApplyingTextChange = null;
+
+            GetService<IDiagnosticService>().DiagnosticsUpdated -= OnDiagnosticsUpdated;
+
+            this.DisableDiagnostics();                        
         }
 
         protected override void ApplyDocumentTextChanged(DocumentId document, SourceText newText)

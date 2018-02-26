@@ -222,5 +222,10 @@ Program.main();
             //TODO: Anything with references?
             SerializedObject.Serialize(Location, this); //Write the project
         }
+
+        public override Task UnloadAsync()
+        {
+            return Task.CompletedTask;
+        }
     }
 }

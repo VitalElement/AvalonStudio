@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.CommandLineTools;
+using AvalonStudio.Extensibility.Threading;
 
 namespace AvalonStudio.Extensibility.Projects
 {
@@ -28,6 +29,10 @@ namespace AvalonStudio.Extensibility.Projects
         }
 
         public bool IsRestored { get; set; } = false;
+
+        private object _restoreLock = new object();
+
+        private TaskCompletionSource<bool> _restoreTaskCompletionSource;
 
         /// <summary>
         /// Allows disabling of serialization to disk. Useful for UnitTesting.
@@ -146,41 +151,86 @@ namespace AvalonStudio.Extensibility.Projects
             statusBar.ClearText();
         }
 
-        public async Task<bool> Restore(string dotnetExecutable, IConsole console, IStatusBar statusBar = null)
+        public Task<bool> Restore(string dotnetExecutable, IConsole console, IStatusBar statusBar = null, bool checkLock = false)
         {
-            return await Task.Factory.StartNew(() =>
+            bool restore = !checkLock;
+
+            if (checkLock)
             {
-                var exitCode = PlatformSupport.ExecuteShellCommand(dotnetExecutable, $"restore {Path.GetFileName(Location)}", (s, e) =>
+                lock (_restoreLock)
                 {
-                    if (statusBar != null)
+                    restore = !IsRestored;
+
+                    if (restore)
                     {
-                        if (!string.IsNullOrWhiteSpace(e.Data))
+                        IsRestored = true;
+
+                        _restoreTaskCompletionSource = new TaskCompletionSource<bool>();
+                    }
+                }
+            }
+
+            if (restore)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    statusBar.SetText($"Restoring Packages for solution: {Name}");
+
+                    var exitCode = PlatformSupport.ExecuteShellCommand(dotnetExecutable, $"restore {Path.GetFileName(Location)}", (s, e) =>
+                    {
+                        if (statusBar != null)
                         {
-                            Dispatcher.UIThread.InvokeAsync(() =>
+                            if (!string.IsNullOrWhiteSpace(e.Data))
                             {
-                                statusBar.SetText(e.Data.Trim());
-                            });
+                                Dispatcher.UIThread.InvokeAsync(() =>
+                                {
+                                    statusBar.SetText(e.Data.Trim());
+                                });
+                            }
                         }
-                    }
 
-                    console?.WriteLine(e.Data);
-                }, (s, e) =>
-                {
-                    if (e.Data != null)
+                        console?.WriteLine(e.Data);
+                    }, (s, e) =>
                     {
-                        if (console != null)
+                        if (e.Data != null)
                         {
-                            console.WriteLine();
-                            console.WriteLine(e.Data);
+                            if (console != null)
+                            {
+                                console.WriteLine();
+                                console.WriteLine(e.Data);
+                            }
                         }
+                    },
+                    false, CurrentDirectory, false);
+
+                    IsRestored = true;
+
+                    var result = exitCode == 0;
+
+                    _restoreTaskCompletionSource.SetResult(result);
+
+                    lock (_restoreLock)
+                    {
+                        _restoreTaskCompletionSource = null;
                     }
-                },
-                false, CurrentDirectory, false);
 
-                IsRestored = true;
-
-                return exitCode == 0;
-            });
+                    return result;
+                });
+            }
+            else
+            {
+                lock (_restoreLock)
+                {
+                    if (_restoreTaskCompletionSource != null)
+                    {
+                        return _restoreTaskCompletionSource.Task;
+                    }
+                    else
+                    {
+                        return Task.FromResult(true);
+                    }
+                }
+            }
         }
 
         private async Task LoadProjectsImplAsync()
@@ -189,31 +239,75 @@ namespace AvalonStudio.Extensibility.Projects
 
             var solutionProjects = _solutionModel.Projects.Where(p => p.TypeGuid != ProjectTypeGuids.SolutionFolderGuid);
 
+            var tasks = new List<Task<IProject>>();
+
+            var jobrunner = new JobRunner<(ISolutionItem placeHolder, SlnProject projectInfo, string path), IProject>(Environment.ProcessorCount, loadInfo =>
+            {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    statusBar.SetText($"Loading Project: {loadInfo.path}");
+                });
+
+                var task = Project.LoadProjectFileAsync(this, Guid.Parse(loadInfo.projectInfo.TypeGuid), loadInfo.path);
+
+                var result = task.GetAwaiter().GetResult();
+
+                if (result != null)
+                {
+                    result.Id = loadInfo.placeHolder.Id;
+                    result.Solution = this;
+
+                    result.LoadFilesAsync().Wait();
+                }
+
+                return result;
+            });
+
             foreach (var project in solutionProjects)
             {
-                statusBar.SetText($"Loading Project: {project.FilePath}");
-
                 var placeHolder = _solutionItems[Guid.Parse(project.Id)];
 
-                var newProject = await Project.LoadProjectFileAsync(this, Guid.Parse(project.TypeGuid), Path.Combine(this.CurrentDirectory, project.FilePath));
+                tasks.Add(jobrunner.Add((placeHolder, project, Path.Combine(CurrentDirectory, project.FilePath))));
+            }
 
-                if (newProject != null)
+            while (true)
+            {
+                var currentProjectTask = await Task.WhenAny(tasks);
+
+                tasks.Remove(currentProjectTask);
+
+                if (currentProjectTask.IsCompleted)
                 {
-                    newProject.Id = placeHolder.Id;
-                    newProject.Solution = this;
+                    var newProject = currentProjectTask.Result;
 
-                    SetItemParent(newProject, placeHolder.Parent);
+                    if (newProject != null)
+                    {
+                        var placeHolder = _solutionItems[newProject.Id];
 
-                    placeHolder.SetParentInternal(null);
-                    _solutionItems.Remove(placeHolder.Id);
+                        if (newProject != null)
+                        {
+                            SetItemParent(newProject, placeHolder.Parent);
 
-                    _solutionItems.Add(newProject.Id, newProject);
+                            placeHolder.SetParentInternal(null);
+                            _solutionItems.Remove(placeHolder.Id);
 
-                    await newProject.LoadFilesAsync();
+                            _solutionItems.Add(newProject.Id, newProject);
+                        }
+                    }
+                }
+
+                if (tasks.Count == 0)
+                {
+                    break;
                 }
             }
 
-            statusBar.ClearText();
+            Dispatcher.UIThread.Post(() =>
+            {
+                statusBar.ClearText();
+            });
+
+            jobrunner.Stop();
         }
 
         private async Task LoadProjectLoadingPlaceholdersAsync()
@@ -544,6 +638,20 @@ namespace AvalonStudio.Extensibility.Projects
         public IProject FindProjectByPath(string absolutePath)
         {
             return Projects.FirstOrDefault(p => p.Location.NormalizePath() == absolutePath.NormalizePath());
+        }
+
+        public Task UnloadSolutionAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public async Task UnloadProjectsAsync()
+        {
+            // TODO parallelise this on a job runner.
+            foreach(var project in Projects)
+            {
+                await project.UnloadAsync();
+            }
         }
     }
 }

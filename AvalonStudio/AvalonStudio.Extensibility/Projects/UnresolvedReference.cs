@@ -69,7 +69,7 @@
 
         public Guid ProjectTypeId => Guid.Empty;
 
-        public IReadOnlyList<ISourceFile> SourceFiles => throw new NotImplementedException();
+        public IReadOnlyList<ISourceFile> SourceFiles => null;
 
         public event EventHandler FileAdded;
 
@@ -133,7 +133,7 @@
 
         public ISourceFile FindFile(string path)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public bool RemoveReference(IProject project)
@@ -152,6 +152,11 @@
         }
 
         public Task LoadFilesAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task UnloadAsync()
         {
             return Task.CompletedTask;
         }

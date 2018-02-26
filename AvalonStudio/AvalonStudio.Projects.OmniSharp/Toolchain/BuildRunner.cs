@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Projects.OmniSharp.DotnetCli;
+﻿using AvalonStudio.Extensibility.Threading;
+using AvalonStudio.Projects.OmniSharp.DotnetCli;
 using AvalonStudio.Projects.OmniSharp.MSBuild;
 using System;
 using System.Collections.Concurrent;
@@ -8,88 +9,6 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects.OmniSharp.Toolchain
 {
-    class JobRunner<T, TRes>
-    {
-        AutoResetEvent _ev = new AutoResetEvent(false);
-        Queue<Job> _items = new Queue<Job>();
-        private bool _finished;
-
-        struct Job
-        {
-            public T Data { get; set; }
-            public TaskCompletionSource<TRes> Tcs { get; set; }
-        }
-
-        public Task<TRes> Add(T job)
-        {
-            var tcs = new TaskCompletionSource<TRes>();
-            lock (_items)
-            {
-                _items.Enqueue(new Job { Data = job, Tcs = tcs });
-                _ev.Set();
-            }
-
-            return tcs.Task;
-        }
-
-
-        public void Stop()
-        {
-            lock (_items)
-            {
-                _finished = true;
-                _ev.Set();
-            }
-        }
-
-        public JobRunner(int concurrency, Func<T, TRes> cb)
-        {
-            for (var c = 0; c < concurrency; c++)
-            {
-                new Thread(() =>
-                {
-                    while (true)
-                    {
-                        var job = default(Job);
-                        lock (_items)
-                        {
-                            if (_items.Count > 0)
-                            {
-                                job = _items.Dequeue();
-                                if (_items.Count > 0)
-                                    _ev.Set();
-                            }
-                            else if (_finished)
-                            {
-                                //Unblock other threads
-                                _ev.Set();
-                                return;
-                            }
-                        }
-                        if (job.Tcs == null)
-                        {
-                            _ev.WaitOne();
-                            continue;
-                        }
-
-                        try
-                        {
-                            job.Tcs.SetResult(cb(job.Data));
-                        }
-                        catch (Exception e)
-                        {
-                            job.Tcs.SetException(e);
-                        }
-
-                    }
-
-
-                }).Start();
-            }
-        }
-    }
-
-
     class BuildRunner : IDisposable
     {
         private JobRunner<(IProject project, TaskCompletionSource<(bool result, IProject project)>), bool> _runner;
@@ -125,6 +44,8 @@ namespace AvalonStudio.Projects.OmniSharp.Toolchain
             }
 
             _runner.Stop();
+
+            _nodes.Dispose();
         }
 
         private MSBuildHost GetNode()
