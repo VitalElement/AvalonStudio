@@ -96,7 +96,7 @@ namespace AvalonStudio.Toolchains.MSBuild
                     }
                     else
                     {
-                        foreach(var dependency in project.References)
+                        foreach (var dependency in project.References)
                         {
                             // TODO implement public API analysis to determine if we need to rebuild or not.
 
@@ -232,19 +232,11 @@ namespace AvalonStudio.Toolchains.MSBuild
                 {
                     var result = await Task.WhenAny(buildTasks);
 
-                    var completedTasks = buildTasks.Where(t => t.IsCompleted).ToList();
+                    canContinue = result.Result.result;
 
-                    foreach (var completeTask in completedTasks)
-                    {
-                        if (!completeTask.Result.result)
-                        {
-                            canContinue = false;
-                        }
+                    buildTasks.Remove(result);
 
-                        buildTasks.Remove(completeTask);
-
-                        builtProjects.Add(completeTask.Result.project);
-                    }
+                    builtProjects.Add(result.Result.project);
 
                     if (canContinue)
                     {
