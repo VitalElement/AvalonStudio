@@ -25,6 +25,8 @@ namespace AvalonStudio.Projects.OmniSharp
     public class OmniSharpProject : FileSystemProject
     {
         private string detectedTargetPath;
+        private FileSystemWatcher fileWatcher;
+
         public static async Task<OmniSharpProject> Create(ISolution solution, string path)
         {
             var (project, projectReferences, targetPath) = await RoslynWorkspace.GetWorkspace(solution).AddProject(solution.CurrentDirectory, path);
@@ -65,7 +67,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
             try
             {
-                var fileWatcher = new FileSystemWatcher(CurrentDirectory, Path.GetFileName(Location))
+                fileWatcher = new FileSystemWatcher(CurrentDirectory, Path.GetFileName(Location))
                 {
                     EnableRaisingEvents = true,
                     IncludeSubdirectories = false,
@@ -353,6 +355,8 @@ namespace AvalonStudio.Projects.OmniSharp
         public override async Task UnloadAsync()
         {
             await base.UnloadAsync();
+
+            fileWatcher?.Dispose();
 
             lock (s_unloadLock)
             {                
