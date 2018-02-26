@@ -9,7 +9,6 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
 using Serilog;
 using System;
-using System.Linq;
 
 namespace AvalonStudio
 {
@@ -29,8 +28,10 @@ namespace AvalonStudio
 
                 PackageSources.InitialisePackageSources();
 
-                var extensionManager = new ExtensionManager();
-                var extensions = extensionManager.LoadExtensions();
+                ExtensionManager.Initialise();
+
+                var extensionManager = IoC.Get<ExtensionManager>();
+                var extensions = extensionManager.GetInstalledExtensions();
                 var container = CompositionRoot.CreateContainer(extensions);
 
                 ShellViewModel.Instance = container.GetExport<ShellViewModel>();
