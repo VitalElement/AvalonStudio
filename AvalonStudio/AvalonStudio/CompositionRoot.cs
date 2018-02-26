@@ -1,6 +1,6 @@
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
-using System;
+using AvalonStudio.Extensibility.Utils;
 using System.Collections.Generic;
 using System.Composition.Convention;
 using System.Composition.Hosting;
@@ -29,7 +29,7 @@ namespace AvalonStudio
                     {
                         assemblies = assemblies.Append(Assembly.LoadFrom(assembly));
                     }
-                    catch (Exception e)
+                    catch (System.Exception e)
                     {
                         // todo: log exception
                     }
