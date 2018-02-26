@@ -372,6 +372,11 @@ namespace AvalonStudio.Platforms
             {
                 Directory.CreateDirectory(InBuiltSnippetsFolder);
             }
+
+            if (!Directory.Exists(ExtensionsFolder))
+            {
+                Directory.CreateDirectory(ExtensionsFolder);
+            }
         }
 
         public static void OpenFolderInExplorer(string path)
