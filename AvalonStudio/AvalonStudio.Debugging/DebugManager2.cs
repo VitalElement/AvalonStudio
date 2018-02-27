@@ -190,8 +190,7 @@ namespace AvalonStudio.Debugging
             lock (_sessionLock)
             {
                 if (_session != null)
-                {
-                    _session.Exit();
+                { 
                     _session.TargetUnhandledException -= _session_TargetStopped;
                     _session.TargetStopped -= _session_TargetStopped;
                     _session.TargetHitBreakpoint -= _session_TargetStopped;
@@ -233,7 +232,7 @@ namespace AvalonStudio.Debugging
 
             bool success = false;
 
-            await _shell.TaskRunner.RunTask(() => success = _shell.BuildAsync(project).GetAwaiter().GetResult());
+            success = await _shell.BuildAsync(project);
 
             if (!success)
             {
@@ -252,7 +251,6 @@ namespace AvalonStudio.Debugging
 
             if (await debugger2.InstallAsync(IoC.Get<IConsole>(), project))
             {
-
                 _session = debugger2.CreateSession(project);
 
                 _session.TargetUnhandledException += _session_TargetStopped;
