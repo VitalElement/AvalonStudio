@@ -45,11 +45,11 @@ namespace AvalonStudio.Languages.Xaml
             return result;
         }
 
-        private static CodeCompletionKind FromAvaloniaCompletionKind (CompletionKind kind)
+        private static CodeCompletionKind FromAvaloniaCompletionKind(CompletionKind kind)
         {
             CodeCompletionKind result = CodeCompletionKind.None;
 
-            switch(kind)
+            switch (kind)
             {
                 case CompletionKind.Class:
                     return CodeCompletionKind.ClassPublic;
@@ -73,33 +73,46 @@ namespace AvalonStudio.Languages.Xaml
 
             string text = string.Empty;
 
-            await Dispatcher.UIThread.InvokeAsync(()=> 
-            {
-                text = editor.Document.Text;
-            });
+            CreateMetaDataIfRequired(editor.SourceFile.Project.Solution.StartupProject.Executable);
 
-            var completionSet = engine.GetCompletions(metaData, text, index);
-
-            if (completionSet != null)
+            if (metaData != null)
             {
-                foreach (var completion in completionSet.Completions)
+                await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
-                    {
-                        BriefComment = completion.Description,
-                        Kind = FromAvaloniaCompletionKind(completion.Kind),
-                        RecommendImmediateSuggestions = completion.InsertText.Contains("=") || completion.InsertText.EndsWith('.')
-                    });
-                }
-            }
+                    text = editor.Document.Text;
+                });
 
-            results.Contexts = CompletionContext.AnyType;
+                var completionSet = engine.GetCompletions(metaData, text, index);
+
+                if (completionSet != null)
+                {
+                    foreach (var completion in completionSet.Completions)
+                    {
+                        results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
+                        {
+                            BriefComment = completion.Description,
+                            Kind = FromAvaloniaCompletionKind(completion.Kind),
+                            RecommendImmediateSuggestions = completion.InsertText.Contains("=") || completion.InsertText.EndsWith('.')
+                        });
+                    }
+                }
+
+                results.Contexts = CompletionContext.AnyType;
+            }
 
             return await Task.FromResult(results);
         }
 
         private static CompletionEngine engine = null;
         private static Metadata metaData = null;
+
+        private void CreateMetaDataIfRequired(string executable)
+        {
+            if (metaData == null && File.Exists(executable))
+            {
+                metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(executable);
+            }
+        }
 
         public override void RegisterSourceFile(IEditor editor)
         {
@@ -108,10 +121,7 @@ namespace AvalonStudio.Languages.Xaml
                 engine = new CompletionEngine();
             }
 
-            if (metaData == null)
-            {
-                metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(editor.SourceFile.Project.Solution.StartupProject.Executable);
-            }
+            CreateMetaDataIfRequired(editor.SourceFile.Project.Solution.StartupProject.Executable);
         }
 
         public override void UnregisterSourceFile(IEditor editor)
