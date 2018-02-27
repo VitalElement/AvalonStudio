@@ -280,7 +280,7 @@ namespace AvalonStudio
             });
         }
 
-        public IMenu BuildEditorContextMenu ()
+        public IMenu BuildEditorContextMenu()
         {
             var menuBuilder = new MenuBuilder(_menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
 
@@ -500,7 +500,7 @@ namespace AvalonStudio
 
             if (project != null)
             {
-                Build(project);
+                BuildAsync(project).GetAwaiter();
             }
         }
 
@@ -528,8 +528,10 @@ namespace AvalonStudio
             }
         }
 
-        public void Build(IProject project)
+        public async Task<bool> BuildAsync(IProject project)
         {
+            bool result = false;
+
             SaveAll();
 
             Console.Clear();
@@ -538,9 +540,9 @@ namespace AvalonStudio
             {
                 BuildStarting?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
 
-                TaskRunner.RunTask(() =>
+                await TaskRunner.RunTask(() =>
                 {
-                    project.ToolChain.Build(Console, project).Wait();
+                    result = project.ToolChain.Build(Console, project).GetAwaiter().GetResult();
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
@@ -552,6 +554,8 @@ namespace AvalonStudio
             {
                 Console.WriteLine($"No toolchain selected for {project.Name}");
             }
+
+            return result;
         }
 
         public void ShowQuickCommander()

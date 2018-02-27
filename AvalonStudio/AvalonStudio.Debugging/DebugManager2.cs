@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging
 {
     using Avalonia.Threading;
     using AvalonStudio.Documents;
@@ -148,7 +148,7 @@
 
             var isRunning = hasSession.Merge(started).Merge(stopped).StartWith(false);
 
-            var canRun = _shell.OnSolutionLoaded().CombineLatest(isRunning, hasSession, _shell.OnCurrentTaskChanged(), (loaded, running, session, hasTask) => 
+            var canRun = _shell.OnSolutionLoaded().CombineLatest(isRunning, hasSession, _shell.OnCurrentTaskChanged(), (loaded, running, session, hasTask) =>
             {
                 return loaded && !running && (!hasTask || (hasTask && session));
             });
@@ -233,7 +233,7 @@
 
             bool success = false;
 
-            await _shell.TaskRunner.RunTask(()=> success = project.ToolChain.Build(_console, project).GetAwaiter().GetResult());
+            await _shell.TaskRunner.RunTask(() => success = _shell.BuildAsync(project).GetAwaiter().GetResult());
 
             if (!success)
             {
@@ -327,7 +327,7 @@
 
                     if (file != null)
                     {
-                        Dispatcher.UIThread.InvokeAsync(async () => 
+                        Dispatcher.UIThread.InvokeAsync(async () =>
                         {
                             _lastDocument = await _shell.OpenDocumentAsync(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true);
                         }).Wait();

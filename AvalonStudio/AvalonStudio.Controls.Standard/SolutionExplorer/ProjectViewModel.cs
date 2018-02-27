@@ -50,13 +50,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 //shell.Debug(model);
             });
 
-            BuildCommand = ReactiveCommand.Create(() => shell.Build(model));
+            BuildCommand = ReactiveCommand.Create(async () => await shell.BuildAsync(model));
 
-            CleanCommand = ReactiveCommand.Create(()=>shell.Clean(model));
+            CleanCommand = ReactiveCommand.Create(() => shell.Clean(model));
 
             ManageReferencesCommand = ReactiveCommand.Create(() => { });
 
-            SetProjectCommand = ReactiveCommand.Create(()=>
+            SetProjectCommand = ReactiveCommand.Create(() =>
             {
                 model.Solution.StartupProject = model;
                 model.Solution.Save();
@@ -65,14 +65,14 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 var root = this.FindRoot();
 
-                if(root != null)
+                if (root != null)
                 {
                     root.VisitChildren(solutionItem =>
                     {
                         solutionItem.RaisePropertyChanged(nameof(FontWeight));
                     });
                 }
-                
+
             });
 
             OpenInExplorerCommand = ReactiveCommand.Create(() => Platform.OpenFolderInExplorer(Model.CurrentDirectory));
@@ -90,7 +90,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 Model.Solution.Save();
             });
 
-            DevConsoleCommand = ReactiveCommand.Create(() => 
+            DevConsoleCommand = ReactiveCommand.Create(() =>
             {
                 PlatformSupport.LaunchShell(Model.CurrentDirectory, Model.ToolChain?.BinDirectory, Model.Debugger2?.BinDirectory);
             });
