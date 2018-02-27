@@ -36,7 +36,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                         configuration = null;
                     });
 
-                    shell.AddDocument(configuration);
+                    shell.AddDocument(configuration, false);
                 }
                 else
                 {

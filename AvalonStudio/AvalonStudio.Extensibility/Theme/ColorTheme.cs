@@ -91,19 +91,22 @@ namespace AvalonStudio.Extensibility.Theme
 
         public static void LoadTheme(ColorTheme theme)
         {
-            Application.Current.Resources["ThemeBackgroundBrush"] = theme.Background;
-            Application.Current.Resources["ThemeControlBackgroundBrush"] = theme.ControlBackground;
-            Application.Current.Resources["ThemeControlDarkBrush"] = theme.ControlDark;
-            Application.Current.Resources["ThemeControlMidBrush"] = theme.ControlMid;
-            Application.Current.Resources["ThemeControlLightBrush"] = theme.ControlLight;
-            Application.Current.Resources["ThemeForegroundBrush"] = theme.Foreground;
-            Application.Current.Resources["ThemeBorderDarkBrush"] = theme.BorderDark;
-            Application.Current.Resources["ThemeEditorBackground"] = theme.EditorBackground;
-            Application.Current.Resources["ApplicationAccentBrush"] = theme.Accent;
-            Application.Current.Resources["ApplicationAccentBrushLight"] = theme.AccentLight;
-            Application.Current.Resources["ApplicationAccentForegroundBrush"] = theme.AccentForeground;
+            if (CurrentTheme != theme)
+            {
+                Application.Current.Resources["ThemeBackgroundBrush"] = theme.Background;
+                Application.Current.Resources["ThemeControlBackgroundBrush"] = theme.ControlBackground;
+                Application.Current.Resources["ThemeControlDarkBrush"] = theme.ControlDark;
+                Application.Current.Resources["ThemeControlMidBrush"] = theme.ControlMid;
+                Application.Current.Resources["ThemeControlLightBrush"] = theme.ControlLight;
+                Application.Current.Resources["ThemeForegroundBrush"] = theme.Foreground;
+                Application.Current.Resources["ThemeBorderDarkBrush"] = theme.BorderDark;
+                Application.Current.Resources["ThemeEditorBackground"] = theme.EditorBackground;
+                Application.Current.Resources["ApplicationAccentBrush"] = theme.Accent;
+                Application.Current.Resources["ApplicationAccentBrushLight"] = theme.AccentLight;
+                Application.Current.Resources["ApplicationAccentForegroundBrush"] = theme.AccentForeground;
 
-            CurrentTheme = theme;
+                CurrentTheme = theme;
+            }
         }
 
         public static ColorTheme CurrentTheme { get; private set; }
