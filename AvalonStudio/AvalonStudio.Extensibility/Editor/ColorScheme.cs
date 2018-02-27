@@ -184,8 +184,11 @@ namespace AvalonStudio.Extensibility.Editor
 
         public static void LoadColorScheme(ColorScheme colorScheme)
         {
-            Application.Current.Resources["EditorColorScheme"] = colorScheme;
-            CurrentColorScheme = colorScheme;
+            if (colorScheme != CurrentColorScheme)
+            {
+                Application.Current.Resources["EditorColorScheme"] = colorScheme;
+                CurrentColorScheme = colorScheme;
+            }
         }
 
         public static ColorScheme CurrentColorScheme { get; private set; }
