@@ -2,6 +2,7 @@
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Commands;
 using ReactiveUI;
+using System.Composition;
 using System.Windows.Input;
 
 namespace AvalonStudio.Shell.Commands
@@ -10,13 +11,14 @@ namespace AvalonStudio.Shell.Commands
     {
         private ReactiveCommand _command;
 
-        public ExtensionsCommandDefinition()
+        [ImportingConstructor]
+        public ExtensionsCommandDefinition(IExtensionManager extensionManager)
         {
             _command = ReactiveCommand.Create(
                 () =>
                 {
                     var shell = IoC.Get<IShell>();
-                    shell.AddDocument(new ExtensionManagerDialogViewModel());
+                    shell.AddDocument(new ExtensionManagerDialogViewModel(extensionManager));
                 });
         }
 

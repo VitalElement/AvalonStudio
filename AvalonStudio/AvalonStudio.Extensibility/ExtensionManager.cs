@@ -1,26 +1,18 @@
 ﻿using AvalonStudio.Platforms;
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.IO;
 
 namespace AvalonStudio.Extensibility
 {
-    public sealed class ExtensionManager
+    [Export(typeof(IExtensionManager))]
+    [Shared]
+    internal class ExtensionManager : IExtensionManager
     {
         private const string ExtensionManifestFilename = "extension.json";
 
         private IEnumerable<IExtensionManifest> _installedExtensions;
-
-        private ExtensionManager() { }
-
-        public static void Initialise()
-        {
-            if (IoC.Get<ExtensionManager>() == null)
-            {
-                var extensionManager = new ExtensionManager();
-                IoC.RegisterConstant(extensionManager);
-            }
-        }
 
         public IEnumerable<IExtensionManifest> GetInstalledExtensions()
         {

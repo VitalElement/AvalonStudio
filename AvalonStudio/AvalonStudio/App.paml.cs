@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Diagnostics;
 using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
-using AvalonStudio.Extensibility;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
@@ -24,19 +23,14 @@ namespace AvalonStudio
 
             var builder = AppBuilder.Configure<App>().UseReactiveUI().AvalonStudioPlatformDetect().AfterSetup(async _ =>
             {
+                var container = CompositionRoot.CreateContainer();
+
                 Platform.Initialise();
-
                 PackageSources.InitialisePackageSources();
-
-                ExtensionManager.Initialise();
-
-                var extensionManager = IoC.Get<ExtensionManager>();
-                var extensions = extensionManager.GetInstalledExtensions();
-                var container = CompositionRoot.CreateContainer(extensions);
 
                 ShellViewModel.Instance = container.GetExport<ShellViewModel>();
 
-                await PackageManager.LoadAssetsAsync();
+                await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
             });
 
             InitializeLogging();
