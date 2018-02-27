@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.Standard.SolutionExplorer;assembly=AvalonStudio.Controls.Standard">
   <Controls:ToolControl Title="Solution Explorer">
@@ -28,6 +28,9 @@
         <TreeView.Styles>
           <Style Selector="TreeViewItem">
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+          </Style>
+          <Style Selector="ContextMenu">
+            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
           </Style>
         </TreeView.Styles>
         <TreeView.DataTemplates>

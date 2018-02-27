@@ -79,7 +79,7 @@ namespace AvalonStudio.Shell
 
         void InvalidateErrors();
 
-        void Build(IProject project);
+        Task<bool> BuildAsync(IProject project);
 
         void Clean(IProject project);
 
