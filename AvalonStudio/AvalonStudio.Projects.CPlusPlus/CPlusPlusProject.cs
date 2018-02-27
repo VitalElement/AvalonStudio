@@ -693,10 +693,5 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             return Name.CompareTo(other.Name);
         }
-
-        public async override Task UnloadAsync()
-        {
-            await base.UnloadAsync();
-        }
     }
 }
