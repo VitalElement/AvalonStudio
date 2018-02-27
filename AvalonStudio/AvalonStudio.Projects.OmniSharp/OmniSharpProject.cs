@@ -26,6 +26,7 @@ namespace AvalonStudio.Projects.OmniSharp
     {
         private string detectedTargetPath;
         private FileSystemWatcher fileWatcher;
+        private DateTime lastProjectFileRead = DateTime.MinValue;
 
         public static async Task<OmniSharpProject> Create(ISolution solution, string path)
         {
@@ -77,9 +78,29 @@ namespace AvalonStudio.Projects.OmniSharp
 
                 fileWatcher.Changed += async (sender, e) =>
                 {
-                    RestoreRequired = true;
-                    // todo restore packages and re-evaluate.
-                    await RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
+                    var lastWriteTime = File.GetLastWriteTime(e.FullPath);
+
+                    if (lastWriteTime != lastProjectFileRead)
+                    {
+                        lastProjectFileRead = lastWriteTime;
+
+                        RestoreRequired = true;
+
+                        var statusBar = IoC.Get<IStatusBar>();
+
+                        statusBar.SetText($"Project: {Name} has changed, running restore...");
+
+                        await Restore(null, statusBar);
+
+                        RestoreRequired = false;
+
+                        statusBar.SetText($"Project: {Name} has changed, re-evaluating project...");
+
+                        // todo restore packages and re-evaluate.
+                        await RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
+
+                        statusBar.ClearText();
+                    }
                 };
             }
             catch (System.IO.IOException e)
@@ -88,7 +109,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
                 console.WriteLine("Reached Max INotify Limit, to use AvalonStudio on Unix increase the INotify Limit");
                 console.WriteLine("often it is set here: '/proc/sys/fs/inotify/max_user_watches'");
-                
+
                 console.WriteLine(e.Message);
             }
 
@@ -347,7 +368,7 @@ namespace AvalonStudio.Projects.OmniSharp
         }
 
         public override void Save()
-        {   
+        {
         }
 
         private static object s_unloadLock = new object();
@@ -359,14 +380,14 @@ namespace AvalonStudio.Projects.OmniSharp
             fileWatcher?.Dispose();
 
             lock (s_unloadLock)
-            {                
+            {
                 RoslynProject = null;
 
                 var workspace = RoslynWorkspace.GetWorkspace(Solution, false);
 
                 if (workspace != null)
                 {
-                    RoslynWorkspace.DisposeWorkspace(Solution);                    
+                    RoslynWorkspace.DisposeWorkspace(Solution);
                 }
             }
         }

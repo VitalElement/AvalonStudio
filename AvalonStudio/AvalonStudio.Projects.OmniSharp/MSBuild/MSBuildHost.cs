@@ -172,25 +172,13 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
 
                 var builder = new StringBuilder();
 
-                bool foundCommandLine = false;                
-
                 lock (outputLines)
                 {
                     foreach (var line in outputLines.Take(outputLines.Count - 1))
                     {
-                        if (!foundCommandLine)
+                        if (Regex.IsMatch(line, ": (warning|error)"))
                         {
-                            if (line == "CoreCompile:")
-                            {
-                                foundCommandLine = true;
-                            }
-                        }
-                        else
-                        {
-                            if (Regex.IsMatch(line, ": (warning|error)"))
-                            {
-                                builder.AppendLine(line);
-                            }
+                            builder.AppendLine(line);
                         }
                     }
 
@@ -244,47 +232,9 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
 
                 requestComplete.WaitOne();
 
-                string commandLine = "";
-                bool foundCommandLine = false;
-
-                // TODO wait for host process to exit?
-
-                lock (outputLines)
+                if (loadData.CscCommandLine != null && loadData.CscCommandLine.Count > 0)
                 {
-                    foreach (var line in outputLines)
-                    {
-                        if (!foundCommandLine)
-                        {
-                            if (line == "CoreCompile:")
-                            {
-                                foundCommandLine = true;
-                            }
-                        }
-                        else
-                        {
-                            commandLine = line.Trim();
-
-                            if (!string.IsNullOrEmpty(commandLine))
-                            {
-                                break;
-                            }
-                            else
-                            {
-
-                            }
-                        }
-                    }
-                }
-
-                if (foundCommandLine)
-                {
-                    var cscIndex = commandLine.IndexOf("csc.exe");
-
-                    commandLine = commandLine.Substring(cscIndex + 7);
-
-                    var commandLineParts = commandLine.Split(' ').Where(s => s.Length > 1 && s[0] == '/' && !s.StartsWith("/reference")).Select(s => s.Substring(1));
-
-                    var projectOptions = ParseArguments(commandLineParts);
+                    var projectOptions = ParseArguments(loadData.CscCommandLine.Skip(1));
 
                     var projectInfo = ProjectInfo.Create(
                         ProjectId.CreateNewId(),
@@ -302,6 +252,8 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                 }
                 else
                 {
+                    IoC.Get<IConsole>($"Project may have failed to load correctly: {Path.GetFileNameWithoutExtension(projectFile)}");
+
                     var projectInfo = ProjectInfo.Create(
                         ProjectId.CreateNewId(),
                         VersionStamp.Create(),
@@ -309,7 +261,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                         LanguageNames.CSharp,
                         projectFile);
 
-                    return (projectInfo, null, null);
+                    return (projectInfo, projectReferences, loadData?.TargetPath);
                 }
             });
         }
@@ -338,7 +290,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
             {
                 var argParts = arg.Split(':');
 
-                var argument = argParts[0].Replace("+", "");
+                var argument = argParts[0].Replace("+", "").Replace("/", "");
                 var value = "";
 
                 if (argParts.Count() > 1)
