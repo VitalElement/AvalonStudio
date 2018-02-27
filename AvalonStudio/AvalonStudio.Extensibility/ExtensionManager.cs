@@ -5,33 +5,56 @@ using System.IO;
 
 namespace AvalonStudio.Extensibility
 {
-    public class ExtensionManager
+    public sealed class ExtensionManager
     {
-        public IEnumerable<IExtensionManifest> LoadExtensions()
+        private const string ExtensionManifestFilename = "extension.json";
+
+        private IEnumerable<IExtensionManifest> _installedExtensions;
+
+        private ExtensionManager() { }
+
+        public static void Initialise()
         {
+            if (IoC.Get<ExtensionManager>() == null)
+            {
+                var extensionManager = new ExtensionManager();
+                IoC.RegisterConstant(extensionManager);
+            }
+        }
+
+        public IEnumerable<IExtensionManifest> GetInstalledExtensions()
+        {
+            if (_installedExtensions == null)
+            {
+                _installedExtensions = LoadExtensions();
+            }
+
+            return _installedExtensions;
+        }
+
+        private List<IExtensionManifest> LoadExtensions()
+        {
+            var extensions = new List<IExtensionManifest>();
+
             foreach (var directory in Directory.GetDirectories(Platform.ExtensionsFolder))
             {
-                var extensionManifest = Path.Combine(directory, "extension.json");
+                var extensionManifest = Path.Combine(directory, ExtensionManifestFilename);
 
                 if (File.Exists(extensionManifest))
                 {
-                    IExtensionManifest extension = null;
-
                     try
                     {
-                        extension = ExtensionManifest.LoadFromManifest(extensionManifest);
+                        var extension = new ExtensionManifest(extensionManifest);
+                        extensions.Add(extension);
                     }
                     catch (Exception e)
                     {
                         // todo: log exception
                     }
-
-                    if (extension != null)
-                    {
-                        yield return extension;
-                    }
                 }
             }
+
+            return extensions;
         }
     }
 }

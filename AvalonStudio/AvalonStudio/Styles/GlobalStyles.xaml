@@ -17,6 +17,10 @@
     <Style Selector="TextBlock.h1">
         <Setter Property="FontSize" Value="22" />
     </Style>
+
+    <Style Selector="TextBlock.h2">
+        <Setter Property="FontSize" Value="18" />
+    </Style>
     
     <Style Selector="Button.h3">
         <Setter Property="FontSize" Value="14" />
