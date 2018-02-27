@@ -309,7 +309,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                         LanguageNames.CSharp,
                         projectFile);
 
-                    return (projectInfo, null, null);
+                    return (projectInfo, projectReferences, loadData?.TargetPath);
                 }
             });
         }
