@@ -61,6 +61,9 @@ namespace AvalonStudio.Extensibility.Projects
             _solutionModel = solutionModel;
             _solutionItems = new Dictionary<Guid, ISolutionItem>();
 
+            _solutionModel.SolutionConfigurationsSection["Debug|Any CPU"] = "Debug|Any CPU";
+            _solutionModel.SolutionConfigurationsSection["Release|Any CPU"] = "Release|Any CPU";
+
             Parent = Solution = this;
 
             Id = Guid.NewGuid();
