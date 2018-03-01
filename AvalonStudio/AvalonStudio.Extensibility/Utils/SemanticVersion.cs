@@ -1,13 +1,700 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using Microsoft.DotNet.PlatformAbstractions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 
 namespace AvalonStudio.Extensibility.Utils
 {
+    /// <summary>
+    /// Version comparison modes.
+    /// </summary>
+    public enum VersionComparison
+    {
+        /// <summary>
+        /// Semantic version 2.0.1-rc comparison with additional compares for extra NuGetVersion fields.
+        /// </summary>
+        Default = 0,
+
+        /// <summary>
+        /// Compares only the version numbers.
+        /// </summary>
+        Version = 1,
+
+        /// <summary>
+        /// Include Version number and Release labels in the compare.
+        /// </summary>
+        VersionRelease = 2,
+
+        /// <summary>
+        /// Include all metadata during the compare.
+        /// </summary>
+        VersionReleaseMetadata = 3
+    }
+
+
+    /// <summary>
+    /// IVersionComparer represents a version comparer capable of sorting and determining the equality of
+    /// SemanticVersion objects.
+    /// </summary>
+    public interface IVersionComparer : IEqualityComparer<SemanticVersion>, IComparer<SemanticVersion>
+    {
+    }
+
+    public sealed class VersionComparer : IVersionComparer
+    {
+        private readonly VersionComparison _mode;
+
+        /// <summary>
+        /// Creates a VersionComparer using the default mode.
+        /// </summary>
+        public VersionComparer()
+        {
+            _mode = VersionComparison.Default;
+        }
+
+        /// <summary>
+        /// Creates a VersionComparer that respects the given comparison mode.
+        /// </summary>
+        /// <param name="versionComparison">comparison mode</param>
+        public VersionComparer(VersionComparison versionComparison)
+        {
+            _mode = versionComparison;
+        }
+
+        /// <summary>
+        /// Determines if both versions are equal.
+        /// </summary>
+        public bool Equals(SemanticVersion x, SemanticVersion y)
+        {
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(y, null))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(x, null))
+            {
+                return false;
+            }
+
+            if (_mode == VersionComparison.Default || _mode == VersionComparison.VersionRelease)
+            {
+                // Compare the version and release labels
+                return (x.Major == y.Major
+                    && x.Minor == y.Minor
+                    && x.Patch == y.Patch
+                    && GetRevisionOrZero(x) == GetRevisionOrZero(y)
+                    && AreReleaseLabelsEqual(x, y));
+            }
+
+            // Use the full comparer for non-default scenarios
+            return Compare(x, y) == 0;
+        }
+
+        /// <summary>
+        /// Compares the given versions using the VersionComparison mode.
+        /// </summary>
+        public static int Compare(SemanticVersion version1, SemanticVersion version2, VersionComparison versionComparison)
+        {
+            IVersionComparer comparer = new VersionComparer(versionComparison);
+            return comparer.Compare(version1, version2);
+        }
+
+        /// <summary>
+        /// Compare versions.
+        /// </summary>
+        public int Compare(SemanticVersion x, SemanticVersion y)
+        {
+            if (ReferenceEquals(x, y))
+            {
+                return 0;
+            }
+
+            if (ReferenceEquals(y, null))
+            {
+                return 1;
+            }
+
+            if (ReferenceEquals(x, null))
+            {
+                return -1;
+            }
+
+            // compare version
+            var result = x.Major.CompareTo(y.Major);
+            if (result != 0)
+            {
+                return result;
+            }
+
+            result = x.Minor.CompareTo(y.Minor);
+            if (result != 0)
+            {
+                return result;
+            }
+
+            result = x.Patch.CompareTo(y.Patch);
+            if (result != 0)
+            {
+                return result;
+            }
+
+            if (_mode != VersionComparison.Version)
+            {
+                // compare release labels
+                var xLabels = GetReleaseLabelsOrNull(x);
+                var yLabels = GetReleaseLabelsOrNull(y);
+
+                if (xLabels != null
+                    && yLabels == null)
+                {
+                    return -1;
+                }
+
+                if (xLabels == null
+                    && yLabels != null)
+                {
+                    return 1;
+                }
+
+                if (xLabels != null
+                    && yLabels != null)
+                {
+                    result = CompareReleaseLabels(xLabels, yLabels);
+                    if (result != 0)
+                    {
+                        return result;
+                    }
+                }
+
+                // compare the metadata
+                if (_mode == VersionComparison.VersionReleaseMetadata)
+                {
+                    result = StringComparer.OrdinalIgnoreCase.Compare(x.Metadata ?? string.Empty, y.Metadata ?? string.Empty);
+                    if (result != 0)
+                    {
+                        return result;
+                    }
+                }
+            }
+
+            return 0;
+        }
+
+        /// <summary>
+        /// A default comparer that compares metadata as strings.
+        /// </summary>
+        public static readonly IVersionComparer Default = new VersionComparer(VersionComparison.Default);
+
+        /// <summary>
+        /// A comparer that uses only the version numbers.
+        /// </summary>
+        public static readonly IVersionComparer Version = new VersionComparer(VersionComparison.Version);
+
+        /// <summary>
+        /// Compares versions without comparing the metadata.
+        /// </summary>
+        public static readonly IVersionComparer VersionRelease = new VersionComparer(VersionComparison.VersionRelease);
+
+        /// <summary>
+        /// A version comparer that follows SemVer 2.0.0 rules.
+        /// </summary>
+        public static IVersionComparer VersionReleaseMetadata = new VersionComparer(VersionComparison.VersionReleaseMetadata);
+
+        /// <summary>
+        /// Compares sets of release labels.
+        /// </summary>
+        private static int CompareReleaseLabels(string[] version1, string[] version2)
+        {
+            var result = 0;
+
+            var count = Math.Max(version1.Length, version2.Length);
+
+            for (var i = 0; i < count; i++)
+            {
+                var aExists = i < version1.Length;
+                var bExists = i < version2.Length;
+
+                if (!aExists && bExists)
+                {
+                    return -1;
+                }
+
+                if (aExists && !bExists)
+                {
+                    return 1;
+                }
+
+                // compare the labels
+                result = CompareRelease(version1[i], version2[i]);
+
+                if (result != 0)
+                {
+                    return result;
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Release labels are compared as numbers if they are numeric, otherwise they will be compared
+        /// as strings.
+        /// </summary>
+        private static int CompareRelease(string version1, string version2)
+        {
+            var version1Num = 0;
+            var version2Num = 0;
+            var result = 0;
+
+            // check if the identifiers are numeric
+            var v1IsNumeric = int.TryParse(version1, out version1Num);
+            var v2IsNumeric = int.TryParse(version2, out version2Num);
+
+            // if both are numeric compare them as numbers
+            if (v1IsNumeric && v2IsNumeric)
+            {
+                result = version1Num.CompareTo(version2Num);
+            }
+            else if (v1IsNumeric || v2IsNumeric)
+            {
+                // numeric labels come before alpha labels
+                if (v1IsNumeric)
+                {
+                    result = -1;
+                }
+                else
+                {
+                    result = 1;
+                }
+            }
+            else
+            {
+                // Ignoring 2.0.0 case sensitive compare. Everything will be compared case insensitively as 2.0.1 specifies.
+                result = StringComparer.OrdinalIgnoreCase.Compare(version1, version2);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns an array of release labels from the version, or null.
+        /// </summary>
+        private static string[] GetReleaseLabelsOrNull(SemanticVersion version)
+        {
+            string[] labels = null;
+
+            // Check if labels exist
+            if (version.IsPrerelease)
+            {
+                // Try to use string[] which is how labels are normally stored.
+                var enumerable = version.ReleaseLabels;
+                labels = enumerable as string[];
+
+                if (labels != null && enumerable != null)
+                {
+                    // This is not the expected type, enumerate and convert to an array.
+                    labels = enumerable.ToArray();
+                }
+            }
+
+            return labels;
+        }
+
+        /// <summary>
+        /// Compare release labels
+        /// </summary>
+        private static bool AreReleaseLabelsEqual(SemanticVersion x, SemanticVersion y)
+        {
+            var xLabels = GetReleaseLabelsOrNull(x);
+            var yLabels = GetReleaseLabelsOrNull(y);
+
+            if (xLabels == null && yLabels != null)
+            {
+                return false;
+            }
+
+            if (xLabels != null && yLabels == null)
+            {
+                return false;
+            }
+
+            if (xLabels != null && yLabels != null)
+            {
+                // Both versions must have the same number of labels to be equal
+                if (xLabels.Length != yLabels.Length)
+                {
+                    return false;
+                }
+
+                // Check if the labels are the same
+                for (var i = 0; i < xLabels.Length; i++)
+                {
+                    if (!StringComparer.OrdinalIgnoreCase.Equals(xLabels[i], yLabels[i]))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            // labels are equal
+            return true;
+        }
+
+        /// <summary>
+        /// Returns the fourth version number or zero.
+        /// </summary>
+        private static int GetRevisionOrZero(SemanticVersion version)
+        {
+            return 0;
+        }
+
+        public int GetHashCode(SemanticVersion obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// Custom formatter for NuGet versions.
+    /// </summary>
+    public class VersionFormatter : IFormatProvider, ICustomFormatter
+    {
+        /// <summary>
+        /// A static instance of the VersionFormatter class.
+        /// </summary>
+        public static readonly VersionFormatter Instance = new VersionFormatter();
+
+        /// <summary>
+        /// Format a version string.
+        /// </summary>
+        public string Format(string format, object arg, IFormatProvider formatProvider)
+        {
+            if (arg == null)
+            {
+                throw new ArgumentNullException(nameof(arg));
+            }
+
+            string formatted = null;
+            var argType = arg.GetType();
+
+            if (argType == typeof(IFormattable))
+            {
+                formatted = ((IFormattable)arg).ToString(format, formatProvider);
+            }
+            else if (!String.IsNullOrEmpty(format))
+            {
+                var version = arg as SemanticVersion;
+
+                if (version != null)
+                {
+                    // single char identifiers
+                    if (format.Length == 1)
+                    {
+                        formatted = Format(format[0], version);
+                    }
+                    else
+                    {
+                        var sb = new StringBuilder(format.Length);
+
+                        for (var i = 0; i < format.Length; i++)
+                        {
+                            var s = Format(format[i], version);
+
+                            if (s == null)
+                            {
+                                sb.Append(format[i]);
+                            }
+                            else
+                            {
+                                sb.Append(s);
+                            }
+                        }
+
+                        formatted = sb.ToString();
+                    }
+                }
+            }
+
+            return formatted;
+        }
+
+        /// <summary>
+        /// Get version format type.
+        /// </summary>
+        public object GetFormat(Type formatType)
+        {
+            if (formatType == typeof(ICustomFormatter)
+                || formatType == typeof(SemanticVersion))
+            {
+                return this;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Create a normalized version string. This string is unique for each version 'identity' 
+        /// and does not include leading zeros or metadata.
+        /// </summary>
+        private static string GetNormalizedString(SemanticVersion version)
+        {
+            var normalized = Format('V', version);
+
+            if (version.IsPrerelease)
+            {
+                normalized = $"{normalized}-{version.Release}";
+            }
+
+            return normalized;
+        }
+
+        /// <summary>
+        /// Create the full version string including metadata. This is primarily for display purposes.
+        /// </summary>
+        private static string GetFullString(SemanticVersion version)
+        {
+            var fullString = GetNormalizedString(version);
+
+            if (version.HasMetadata)
+            {
+                fullString = $"{fullString}+{version.Metadata}";
+            }
+
+            return fullString;
+        }
+
+        private static string Format(char c, SemanticVersion version)
+        {
+            string s = null;
+
+            switch (c)
+            {
+                case 'N':
+                    s = GetNormalizedString(version);
+                    break;
+                case 'R':
+                    s = version.Release;
+                    break;
+                case 'M':
+                    s = version.Metadata;
+                    break;
+                case 'V':
+                    s = FormatVersion(version);
+                    break;
+                case 'F':
+                    s = GetFullString(version);
+                    break;
+                case 'x':
+                    s = string.Format(CultureInfo.InvariantCulture, "{0}", version.Major);
+                    break;
+                case 'y':
+                    s = string.Format(CultureInfo.InvariantCulture, "{0}", version.Minor);
+                    break;
+                case 'z':
+                    s = string.Format(CultureInfo.InvariantCulture, "{0}", version.Patch);
+                    break;
+            }
+
+            return s;
+        }
+
+        private static string FormatVersion(SemanticVersion version)
+        {
+            return string.Format(CultureInfo.InvariantCulture, "{0}.{1}.{2}{3}", version.Major, version.Minor, version.Patch, null);
+        }
+    }
+
+    /// <summary>
+    /// A base version operations
+    /// </summary>
+    public partial class SemanticVersion : IFormattable, IComparable, IComparable<SemanticVersion>, IEquatable<SemanticVersion>
+    {
+        /// <summary>
+        /// Gives a normalized representation of the version.
+        /// This string is unique to the identity of the version and does not contain metadata.
+        /// </summary>
+        public virtual string ToNormalizedString()
+        {
+            return ToString("N", VersionFormatter.Instance);
+        }
+
+        /// <summary>
+        /// Gives a full representation of the version include metadata.
+        /// This string is not unique to the identity of the version. Other versions 
+        /// that differ on metadata will have a different full string representation.
+        /// </summary>
+        public virtual string ToFullString()
+        {
+            return ToString("F", VersionFormatter.Instance);
+        }
+
+        /// <summary>
+        /// Get the normalized string.
+        /// </summary>
+        public override string ToString()
+        {
+            return ToNormalizedString();
+        }
+
+        /// <summary>
+        /// Custom string format.
+        /// </summary>
+        public virtual string ToString(string format, IFormatProvider formatProvider)
+        {
+            string formattedString = null;
+
+            if (formatProvider == null
+                || !TryFormatter(format, formatProvider, out formattedString))
+            {
+                formattedString = ToString();
+            }
+
+            return formattedString;
+        }
+
+        /// <summary>
+        /// Internal string formatter.
+        /// </summary>
+        protected bool TryFormatter(string format, IFormatProvider formatProvider, out string formattedString)
+        {
+            var formatted = false;
+            formattedString = null;
+
+            if (formatProvider != null)
+            {
+                var formatter = formatProvider.GetFormat(this.GetType()) as ICustomFormatter;
+                if (formatter != null)
+                {
+                    formatted = true;
+                    formattedString = formatter.Format(format, this, formatProvider);
+                }
+            }
+
+            return formatted;
+        }
+
+        /// <summary>
+        /// Hash code
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return VersionComparer.Default.GetHashCode(this);
+        }
+
+        /// <summary>
+        /// Object compare.
+        /// </summary>
+        public virtual int CompareTo(object obj)
+        {
+            return CompareTo(obj as SemanticVersion);
+        }
+
+        /// <summary>
+        /// Compare to another SemanticVersion.
+        /// </summary>
+        public virtual int CompareTo(SemanticVersion other)
+        {
+            return CompareTo(other, VersionComparison.Default);
+        }
+
+        /// <summary>
+        /// Equals
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as SemanticVersion);
+        }
+
+        /// <summary>
+        /// Equals
+        /// </summary>
+        public virtual bool Equals(SemanticVersion other)
+        {
+            return VersionComparer.Default.Equals(this, other);
+        }
+
+        /// <summary>
+        /// True if the VersionBase objects are equal based on the given comparison mode.
+        /// </summary>
+        public virtual bool Equals(SemanticVersion other, VersionComparison versionComparison)
+        {
+            var comparer = new VersionComparer(versionComparison);
+            return comparer.Equals(this, other);
+        }
+
+        /// <summary>
+        /// Compares NuGetVersion objects using the given comparison mode.
+        /// </summary>
+        public virtual int CompareTo(SemanticVersion other, VersionComparison versionComparison)
+        {
+            var comparer = new VersionComparer(versionComparison);
+            return comparer.Compare(this, other);
+        }
+
+        /// <summary>
+        /// Equals
+        /// </summary>
+        public static bool operator ==(SemanticVersion version1, SemanticVersion version2)
+        {
+            return Equals(version1, version2);
+        }
+
+        /// <summary>
+        /// Not equal
+        /// </summary>
+        public static bool operator !=(SemanticVersion version1, SemanticVersion version2)
+        {
+            return !Equals(version1, version2);
+        }
+
+        /// <summary>
+        /// Less than
+        /// </summary>
+        public static bool operator <(SemanticVersion version1, SemanticVersion version2)
+        {
+            return Compare(version1, version2) < 0;
+        }
+
+        /// <summary>
+        /// Less than or equal
+        /// </summary>
+        public static bool operator <=(SemanticVersion version1, SemanticVersion version2)
+        {
+            return Compare(version1, version2) <= 0;
+        }
+
+        /// <summary>
+        /// Greater than
+        /// </summary>
+        public static bool operator >(SemanticVersion version1, SemanticVersion version2)
+        {
+            return Compare(version1, version2) > 0;
+        }
+
+        /// <summary>
+        /// Greater than or equal
+        /// </summary>
+        public static bool operator >=(SemanticVersion version1, SemanticVersion version2)
+        {
+            return Compare(version1, version2) >= 0;
+        }
+
+        private static int Compare(SemanticVersion version1, SemanticVersion version2)
+        {
+            return VersionComparer.Default.Compare(version1, version2);
+        }
+    }
+
     public partial class SemanticVersion
     {
         // Reusable set of empty release labels
