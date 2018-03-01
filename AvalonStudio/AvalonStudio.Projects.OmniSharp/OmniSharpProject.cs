@@ -171,7 +171,7 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             get
             {
-                return new List<object>() { new ToolchainSettingsFormViewModel() };
+                return new List<object>();
             }
         }
 

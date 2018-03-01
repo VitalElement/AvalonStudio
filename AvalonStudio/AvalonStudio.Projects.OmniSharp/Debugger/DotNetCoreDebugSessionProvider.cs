@@ -2,10 +2,8 @@
 {
     using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Projects;
-    using AvalonStudio.GlobalSettings;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
-    using AvalonStudio.Projects.OmniSharp;
     using AvalonStudio.Utils;
     using Mono.Debugging.Client;
     using Mono.Debugging.Win32;
@@ -14,7 +12,7 @@
 
     public class DotNetCoreDebugger : IDebugger2
     {
-        public string BinDirectory => Path.GetDirectoryName(Settings.GetSettings<DotNetToolchainSettings>().DotNetPath);
+        public string BinDirectory => DotNetCliService.Instance.DotNetPath;
 
         public void Activation()
         {

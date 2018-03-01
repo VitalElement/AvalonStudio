@@ -1,6 +1,7 @@
 namespace AvalonStudio.Toolchains.MSBuild
 {
     using AvalonStudio.CommandLineTools;
+    using AvalonStudio.Extensibility.Projects;
     using AvalonStudio.GlobalSettings;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
@@ -280,15 +281,8 @@ namespace AvalonStudio.Toolchains.MSBuild
         {
             await Task.Factory.StartNew(() =>
             {
-                var settings = Settings.GetSettings<DotNetToolchainSettings>();
-
-                if (string.IsNullOrEmpty(settings.DotNetPath))
-                {
-                    console.WriteLine("Please configure the location of the dotnet runtime and sdk.");
-                    return;
-                }
-
-                var exitCode = PlatformSupport.ExecuteShellCommand(settings.DotNetPath, "clean", (s, e) => console.WriteLine(e.Data), (s, e) =>
+                console.Write($"Cleaning Project: {project.Name}...");
+                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.DotNetPath, "clean /nologo", (s, e) => console.WriteLine(e.Data), (s, e) =>
                 {
                     if (e.Data != null)
                     {
@@ -298,6 +292,8 @@ namespace AvalonStudio.Toolchains.MSBuild
                 },
                 false, project.CurrentDirectory, false);
             });
+
+            console.WriteLine("Done.");
         }
 
         public IList<object> GetConfigurationPages(IProject project)
