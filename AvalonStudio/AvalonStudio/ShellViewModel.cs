@@ -34,6 +34,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AvalonStudio.Extensibility.Shell;
 
 namespace AvalonStudio
 {
@@ -97,6 +98,10 @@ namespace AvalonStudio
             IoC.RegisterConstant<IShell>(this);
             IoC.RegisterConstant(this);
 
+            StatusBar = new StatusBarViewModel();
+
+            IoC.RegisterConstant<IStatusBar>(StatusBar);
+
             foreach (var extension in extensions)
             {
                 extension.BeforeActivation();
@@ -104,7 +109,6 @@ namespace AvalonStudio
 
             CurrentPerspective = Perspective.Editor;
 
-            StatusBar = new StatusBarViewModel();
             DocumentTabs = new DocumentTabControlViewModel();
 
             Console = IoC.Get<IConsole>();
@@ -241,9 +245,7 @@ namespace AvalonStudio
             RightBottomTabs.SelectedTool = RightBottomTabs.Tools.FirstOrDefault();
             MiddleTopTabs.SelectedTool = MiddleTopTabs.Tools.FirstOrDefault();
 
-            StatusBar.LineNumber = 1;
-            StatusBar.Column = 1;
-            StatusBar.PlatformString = Platform.OSDescription + " " + Platform.AvalonRID;
+            IoC.Get<IStatusBar>().ClearText();
 
             ProcessCancellationToken = new CancellationTokenSource();
 
@@ -278,7 +280,7 @@ namespace AvalonStudio
             });
         }
 
-        public IMenu BuildEditorContextMenu ()
+        public IMenu BuildEditorContextMenu()
         {
             var menuBuilder = new MenuBuilder(_menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
 
@@ -498,7 +500,7 @@ namespace AvalonStudio
 
             if (project != null)
             {
-                Build(project);
+                BuildAsync(project).GetAwaiter();
             }
         }
 
@@ -526,8 +528,10 @@ namespace AvalonStudio
             }
         }
 
-        public void Build(IProject project)
+        public async Task<bool> BuildAsync(IProject project)
         {
+            bool result = false;
+
             SaveAll();
 
             Console.Clear();
@@ -536,9 +540,9 @@ namespace AvalonStudio
             {
                 BuildStarting?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
 
-                TaskRunner.RunTask(() =>
+                await TaskRunner.RunTask(() =>
                 {
-                    project.ToolChain.Build(Console, project).Wait();
+                    result = project.ToolChain.Build(Console, project).GetAwaiter().GetResult();
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
@@ -550,6 +554,8 @@ namespace AvalonStudio
             {
                 Console.WriteLine($"No toolchain selected for {project.Name}");
             }
+
+            return result;
         }
 
         public void ShowQuickCommander()
@@ -756,7 +762,7 @@ namespace AvalonStudio
         {
             if (CurrentSolution != null)
             {
-                CloseSolution();
+                await CloseSolutionAsync();
             }
 
             if (System.IO.File.Exists(path))
@@ -765,9 +771,15 @@ namespace AvalonStudio
 
                 if (solutionType != null)
                 {
+                    StatusBar.SetText($"Loading Solution: {path}");
+
                     var solution = await solutionType.LoadAsync(path);
 
                     await solution.LoadSolutionAsync();
+
+                    await solution.RestoreSolutionAsync();
+
+                    StatusBar.ClearText();
 
                     CurrentSolution = solution;
 
@@ -776,7 +788,7 @@ namespace AvalonStudio
             }
         }
 
-        public void CloseSolution()
+        public async Task CloseSolutionAsync()
         {
             var documentsToClose = DocumentTabs.Documents.ToList();
 
@@ -787,6 +799,10 @@ namespace AvalonStudio
                     DocumentTabs.CloseDocument(evm);
                 }
             }
+
+            await CurrentSolution.UnloadProjectsAsync();
+
+            await CurrentSolution.UnloadSolutionAsync();
 
             CurrentSolution = null;
         }

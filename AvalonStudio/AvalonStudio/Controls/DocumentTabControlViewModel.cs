@@ -108,7 +108,7 @@ namespace AvalonStudio.Controls
                         newSelectedTab = Documents[index];
                         break;
                     }
-                    else
+                    else if(index != current)
                     {
                         break;
                     }

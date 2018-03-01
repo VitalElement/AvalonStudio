@@ -2,6 +2,7 @@
 {
     using Avalonia.Threading;
     using AvalonStudio.Debugging;
+    using AvalonStudio.Extensibility;
     using AvalonStudio.Platforms;
     using AvalonStudio.TestFrameworks;
     using AvalonStudio.Toolchains;
@@ -131,22 +132,34 @@
                 file.Project = this;
             }
 
-            folderSystemWatcher = new FileSystemWatcher(CurrentDirectory);
-            folderSystemWatcher.Created += FolderSystemWatcher_Created;
-            folderSystemWatcher.Renamed += FolderSystemWatcher_Renamed;
-            folderSystemWatcher.Deleted += FolderSystemWatcher_Deleted;
-            folderSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
-            folderSystemWatcher.IncludeSubdirectories = true;
-            folderSystemWatcher.EnableRaisingEvents = true;
+            try
+            {
+                folderSystemWatcher = new FileSystemWatcher(CurrentDirectory);
+                folderSystemWatcher.Created += FolderSystemWatcher_Created;
+                folderSystemWatcher.Renamed += FolderSystemWatcher_Renamed;
+                folderSystemWatcher.Deleted += FolderSystemWatcher_Deleted;
+                folderSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
+                folderSystemWatcher.IncludeSubdirectories = true;
+                folderSystemWatcher.EnableRaisingEvents = true;
 
-            fileSystemWatcher = new FileSystemWatcher(CurrentDirectory);
-            fileSystemWatcher.Changed += FileSystemWatcher_Changed;
-            fileSystemWatcher.Created += FileSystemWatcher_Created;
-            fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
-            fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
-            fileSystemWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
-            fileSystemWatcher.IncludeSubdirectories = true;
-            fileSystemWatcher.EnableRaisingEvents = true;
+                fileSystemWatcher = new FileSystemWatcher(CurrentDirectory);
+                fileSystemWatcher.Changed += FileSystemWatcher_Changed;
+                fileSystemWatcher.Created += FileSystemWatcher_Created;
+                fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
+                fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
+                fileSystemWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
+                fileSystemWatcher.IncludeSubdirectories = true;
+                fileSystemWatcher.EnableRaisingEvents = true;
+            }
+            catch(System.IO.IOException e)
+            {
+                var console = IoC.Get<IConsole>();
+
+                console.WriteLine("Reached Max INotify Limit, to use AvalonStudio on Unix increase the INotify Limit");
+                console.WriteLine("often it is set here: '/proc/sys/fs/inotify/max_user_watches'");
+                
+                console.WriteLine(e.Message);
+            }
         }
 
         private void FileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
@@ -447,9 +460,9 @@
 
         public abstract void ExcludeFolder(IProjectFolder folder);
 
-        public abstract void RemoveReference(IProject project);
+        public abstract bool RemoveReference(IProject project);
 
-        public abstract void ResolveReferences();
+        public abstract Task ResolveReferencesAsync();
 
         public abstract void Save();
 
@@ -478,6 +491,14 @@
         public int CompareTo(ISolutionItem other)
         {
             return this.DefaultCompareTo(other);
+        }
+
+        public virtual Task UnloadAsync()
+        {
+            fileSystemWatcher?.Dispose();
+            folderSystemWatcher?.Dispose();
+
+            return Task.CompletedTask;
         }
     }
 }

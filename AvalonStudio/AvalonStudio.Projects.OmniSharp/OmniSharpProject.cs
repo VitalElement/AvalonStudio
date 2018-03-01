@@ -1,10 +1,16 @@
-﻿using AvalonStudio.Debugging;
+﻿using Avalonia.Threading;
+using AvalonStudio.CommandLineTools;
+using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Projects;
+using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects.OmniSharp.ProjectTypes;
+using AvalonStudio.Projects.Standard;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
+using AvalonStudio.Utils;
 using RoslynPad.Roslyn;
 using System;
 using System.Collections.Generic;
@@ -19,9 +25,18 @@ namespace AvalonStudio.Projects.OmniSharp
     public class OmniSharpProject : FileSystemProject
     {
         private string detectedTargetPath;
+        private FileSystemWatcher fileWatcher;
+        private DateTime lastProjectFileRead = DateTime.MinValue;
+
         public static async Task<OmniSharpProject> Create(ISolution solution, string path)
         {
             var (project, projectReferences, targetPath) = await RoslynWorkspace.GetWorkspace(solution).AddProject(solution.CurrentDirectory, path);
+
+            if (project == null)
+            {
+                return null;
+            }
+
             var roslynProject = project;
             var references = projectReferences;
             OmniSharpProject result = new OmniSharpProject(path)
@@ -46,19 +61,57 @@ namespace AvalonStudio.Projects.OmniSharp
             Settings = new ExpandoObject();
             Project = this;
 
-            var fileWatcher = new FileSystemWatcher(CurrentDirectory, Path.GetFileName(Location))
-            {
-                EnableRaisingEvents = true,
-                IncludeSubdirectories = false,
+            Items.InsertSorted(new ReferenceFolder(this));
 
-                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
-            };
+            ExcludedFiles.Add("bin");
+            ExcludedFiles.Add("obj");
 
-            fileWatcher.Changed += async (sender, e) =>
+            try
             {
-                // todo restore packages and re-evaluate.
-                RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
-            };
+                fileWatcher = new FileSystemWatcher(CurrentDirectory, Path.GetFileName(Location))
+                {
+                    EnableRaisingEvents = true,
+                    IncludeSubdirectories = false,
+
+                    NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
+                };
+
+                fileWatcher.Changed += async (sender, e) =>
+                {
+                    var lastWriteTime = File.GetLastWriteTime(e.FullPath);
+
+                    if (lastWriteTime != lastProjectFileRead)
+                    {
+                        lastProjectFileRead = lastWriteTime;
+
+                        RestoreRequired = true;
+
+                        var statusBar = IoC.Get<IStatusBar>();
+
+                        statusBar.SetText($"Project: {Name} has changed, running restore...");
+
+                        await Restore(null, statusBar);
+
+                        RestoreRequired = false;
+
+                        statusBar.SetText($"Project: {Name} has changed, re-evaluating project...");
+
+                        // todo restore packages and re-evaluate.
+                        await RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
+
+                        statusBar.ClearText();
+                    }
+                };
+            }
+            catch (System.IO.IOException e)
+            {
+                var console = IoC.Get<IConsole>();
+
+                console.WriteLine("Reached Max INotify Limit, to use AvalonStudio on Unix increase the INotify Limit");
+                console.WriteLine("often it is set here: '/proc/sys/fs/inotify/max_user_watches'");
+
+                console.WriteLine(e.Message);
+            }
 
             FileAdded += (sender, e) =>
             {
@@ -71,6 +124,43 @@ namespace AvalonStudio.Projects.OmniSharp
             };
         }
 
+        public async Task<bool> Restore(IConsole console, IStatusBar statusBar = null)
+        {
+            return await Task.Factory.StartNew(() =>
+            {
+                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"restore {Path.GetFileName(Location)}", (s, e) =>
+                {
+                    if (statusBar != null)
+                    {
+                        if (!string.IsNullOrWhiteSpace(e.Data))
+                        {
+                            Dispatcher.UIThread.InvokeAsync(() =>
+                            {
+                                statusBar.SetText(e.Data.Trim());
+                            });
+                        }
+                    }
+
+                    console?.WriteLine(e.Data);
+                }, (s, e) =>
+                {
+                    if (e.Data != null)
+                    {
+                        if (console != null)
+                        {
+                            console.WriteLine();
+                            console.WriteLine(e.Data);
+                        }
+                    }
+                },
+                false, CurrentDirectory, false);
+
+                return exitCode == 0;
+            });
+        }
+
+        public bool RestoreRequired { get; set; } = false;
+
         protected override bool FilterProjectFile => false;
 
         public List<string> UnresolvedReferences { get; set; }
@@ -81,7 +171,7 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             get
             {
-                return new List<object>() { new ToolchainSettingsFormViewModel() };
+                return new List<object>();
             }
         }
 
@@ -115,7 +205,7 @@ namespace AvalonStudio.Projects.OmniSharp
             {
                 if (detectedTargetPath != null)
                     return detectedTargetPath;
-                if(RoslynProject.OutputFilePath == null)
+                if (RoslynProject.OutputFilePath == null)
                 {
                     return null;
                 }
@@ -192,7 +282,7 @@ namespace AvalonStudio.Projects.OmniSharp
 
         public override void AddReference(IProject project)
         {
-            throw new NotImplementedException();
+            References.Add(project);
         }
 
         public override int CompareTo(IProjectFolder other)
@@ -230,25 +320,76 @@ namespace AvalonStudio.Projects.OmniSharp
             return null;
         }
 
-        public override void RemoveReference(IProject project)
+        public override bool RemoveReference(IProject project)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
-        public override void ResolveReferences()
+        public override Task ResolveReferencesAsync()
         {
             if (UnresolvedReferences != null)
             {
                 foreach (var unresolvedReference in UnresolvedReferences)
                 {
-                    RoslynWorkspace.GetWorkspace(Solution).ResolveReference(this, unresolvedReference);
+                    var fullReferencePath = this.ResolveReferencePath(unresolvedReference);
+
+                    if (RoslynWorkspace.GetWorkspace(Solution).ResolveReference(this, unresolvedReference))
+                    {
+                        var currentProject = Solution.FindProjectByPath(fullReferencePath);
+
+                        if (currentProject == null)
+                        {
+                            throw new Exception("Error loading msbuild project, out of sync");
+                        }
+
+                        AddReference(currentProject);
+                    }
+                    else
+                    {
+                        AddReference(new UnresolvedReference(Solution, Path.Combine(Solution.CurrentDirectory, Path.GetFileNameWithoutExtension(fullReferencePath))));
+                    }
                 }
             }
+
+            return Task.CompletedTask;
+        }
+
+        internal void MarkRestored()
+        {
+            foreach (var reference in References)
+            {
+                if (reference is OmniSharpProject netProject)
+                {
+                    netProject.MarkRestored();
+                }
+            }
+
+            RestoreRequired = false;
         }
 
         public override void Save()
         {
-            throw new NotImplementedException();
+        }
+
+        private static object s_unloadLock = new object();
+
+        public override async Task UnloadAsync()
+        {
+            await base.UnloadAsync();
+
+            fileWatcher?.Dispose();
+
+            lock (s_unloadLock)
+            {
+                RoslynProject = null;
+
+                var workspace = RoslynWorkspace.GetWorkspace(Solution, false);
+
+                if (workspace != null)
+                {
+                    RoslynWorkspace.DisposeWorkspace(Solution);
+                }
+            }
         }
 
         public override List<string> ExcludedFiles { get; set; }

@@ -1,5 +1,7 @@
+using Avalonia.Threading;
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -23,6 +25,7 @@ namespace AvalonStudio.Toolchains.Standard
         private int fileCount;
         private int numTasks;
         private IShell _shell;
+        private IStatusBar _statusBar;
 
         protected IShell Shell => _shell;
 
@@ -32,7 +35,7 @@ namespace AvalonStudio.Toolchains.Standard
 
         public StandardToolChain()
         {
-            Jobs = 4;
+            Jobs = Environment.ProcessorCount;
         }
 
         public int Jobs { get; set; }
@@ -88,10 +91,21 @@ namespace AvalonStudio.Toolchains.Standard
 
         public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
         {
-            if(!await InstallAsync(console, project))
+            try
             {
-                console.WriteLine("Failed: Unable to install or initialise toolchain.");
-                return false;
+                if (!await InstallAsync(console, project))
+                {
+                    console.WriteLine("Failed: Unable to install or initialise toolchain.");
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                console.WriteLine("Failed: Unable to install or initialise toolchain. Due to an unexpected error.");
+                console.WriteLine();
+
+                console.WriteLine(e.Message);
+                console.WriteLine(e.StackTrace);
             }
 
             console.Clear();
@@ -250,6 +264,7 @@ namespace AvalonStudio.Toolchains.Standard
         public void Activation()
         {
             //throw new NotImplementedException();
+            _statusBar = IoC.Get<IStatusBar>();
         }
 
         public string Name
@@ -402,8 +417,10 @@ namespace AvalonStudio.Toolchains.Standard
 
             if (link)
             {
+                _statusBar?.SetText($"Linking: {compileResult.Project.Name}");
                 console.OverWrite(string.Format("[LL]    [{0}]", compileResult.Project.Name));
                 linkResult = Link(console, superProject, compileResult.Project, compileResult, executable);
+                _statusBar?.ClearText();
             }
 
             if (linkResult.ExitCode == 0)
@@ -502,6 +519,8 @@ namespace AvalonStudio.Toolchains.Standard
                         
                         var sourceFiles = project.SourceFiles.ToList();
 
+                        _statusBar?.SetText($"Building Project: {project.Name}");
+
                         foreach (var file in sourceFiles)
                         {
                             if (terminateBuild)
@@ -595,6 +614,8 @@ namespace AvalonStudio.Toolchains.Standard
                                 }
                             }
                         }
+
+                        _statusBar?.ClearText();
                     }
                 }
             }

@@ -128,16 +128,23 @@ namespace AvalonStudio.Extensibility.Tests
             throw new NotImplementedException();
         }
 
-        public void RemoveReference(IProject project)
+        public bool RemoveReference(IProject project)
         {
+            return false;
         }
 
-        public void ResolveReferences()
+        public Task ResolveReferencesAsync()
         {
+            return Task.CompletedTask;
         }
 
         public void Save()
         {
+        }
+
+        public Task UnloadAsync()
+        {
+            return Task.CompletedTask;
         }
     }
 }

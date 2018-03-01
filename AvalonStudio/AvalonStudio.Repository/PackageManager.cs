@@ -45,7 +45,13 @@ namespace AvalonStudio.Packages
             }
         }
 
-        private const string DefaultPackageSource = "https://nuget.vitalelement.co.uk/repository/AvalonStudio/";
+        private static List<Lazy<INuGetResourceProvider>> s_providers = new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3());            
+
+        private static readonly IEnumerable<SourceRepository> s_sourceRepositories = new List<SourceRepository> {
+                    new SourceRepository(new PackageSource("http://nuget1.vitalelement.co.uk/repository/AvalonStudio/"), s_providers),
+                    new SourceRepository(new PackageSource("http://nuget2.vitalelement.co.uk/repository/AvalonStudio/"), s_providers),
+                    new SourceRepository(new PackageSource("https://nuget.vitalelement.co.uk/repository/AvalonStudio/"), s_providers)
+            };
 
         public static NuGetFramework GetFramework()
         {
@@ -73,7 +79,7 @@ namespace AvalonStudio.Packages
             {
                 var location = GetPackageDirectory(package);
 
-                if(!string.IsNullOrEmpty(location))
+                if (!string.IsNullOrEmpty(location))
                 {
                     var files = Directory.EnumerateFiles(location, "*.*", SearchOption.AllDirectories);
 
@@ -125,9 +131,21 @@ namespace AvalonStudio.Packages
         /// <returns>true if the package was already installed.</returns>
         private static async Task<PackageEnsureStatus> EnsurePackage(string packageId, string packageVersion, ILogger console, int chmodFileMode = DefaultFilePermissions, bool ignoreRid = false)
         {
-            var identity = new PackageIdentity(ignoreRid ? packageId : packageId + "." + Platform.AvalonRID, new NuGetVersion(packageVersion));
+            var identity = new PackageIdentity(ignoreRid ? packageId : packageId + "." + Platform.AvalonRID,
+                string.IsNullOrEmpty(packageVersion) ? null : new NuGetVersion(packageVersion));
 
-            if (GetPackageDirectory(identity) == string.Empty)
+            bool installed = false;
+
+            if (!identity.HasVersion)
+            {
+                installed = GetPackageDirectory(packageId) != string.Empty;
+            }
+            else
+            {
+                installed = GetPackageDirectory(identity) != string.Empty;
+            }
+
+            if (!installed)
             {
                 console.LogInformation($"Package: {packageId} will be installed.");
                 console.LogInformation($"This may take some time...");
@@ -167,7 +185,7 @@ namespace AvalonStudio.Packages
 
                     return PackageEnsureStatus.Installed;
                 }
-                
+
             }
             else
             {
@@ -182,15 +200,11 @@ namespace AvalonStudio.Packages
                 logger = new ConsoleNuGetLogger();
             }
 
-            PackageIdentity identity = new PackageIdentity(packageId, new NuGet.Versioning.NuGetVersion(version));
-
-            List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();
-
-            providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
+            PackageIdentity identity = new PackageIdentity(packageId, new NuGet.Versioning.NuGetVersion(version));            
 
             var settings = NuGet.Configuration.Settings.LoadDefaultSettings(Platform.ReposDirectory, null, new MachineWideSettings(), false, true);
 
-            ISourceRepositoryProvider sourceRepositoryProvider = new SourceRepositoryProvider(settings, providers);  // See part 2
+            ISourceRepositoryProvider sourceRepositoryProvider = new SourceRepositoryProvider(settings, s_providers);  // See part 2
 
             using (var installedPackageCache = GetCache())
             {
@@ -209,12 +223,10 @@ namespace AvalonStudio.Packages
                     ResolutionContext resolutionContext = new ResolutionContext(
                         DependencyBehavior.Lowest, allowPrereleaseVersions, allowUnlisted, VersionConstraints.None);
 
-                    INuGetProjectContext projectContext = new ProjectContext(logger);
-                    var sourceRepositories = new List<SourceRepository>();
-                    sourceRepositories.Add(new SourceRepository(new NuGet.Configuration.PackageSource(DefaultPackageSource), providers));
+                    INuGetProjectContext projectContext = new ProjectContext(logger);                    
 
                     await packageManager.InstallPackageAsync(packageManager.PackagesFolderNuGetProject,
-                        identity, resolutionContext, projectContext, sourceRepositories,
+                        identity, resolutionContext, projectContext, s_sourceRepositories,
                         Array.Empty<SourceRepository>(),  // This is a list of secondary source respositories, probably empty
                         CancellationToken.None);
 
@@ -276,15 +288,13 @@ namespace AvalonStudio.Packages
         public static async Task<IEnumerable<PackageMetaData>> ListPackagesAsync(int max = 20)
         {
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();
-            providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
+            providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support            
 
-            PackageSource packageSource = new PackageSource(DefaultPackageSource);
-            SourceRepository sourceRepository = new SourceRepository(packageSource, providers);
-
-            var packageMetadataResource = await sourceRepository.GetResourceAsync<PackageMetadataResource>();
+            var defaultRepo = s_sourceRepositories.FirstOrDefault();
+            var packageMetadataResource = await defaultRepo.GetResourceAsync<PackageMetadataResource>();
 
             var prov = new V2FeedListResourceProvider();
-            var feed = await prov.TryCreate(sourceRepository, CancellationToken.None);
+            var feed = await prov.TryCreate(defaultRepo, CancellationToken.None);
             var lister = (V2FeedListResource)feed.Item2;
 
             var results = await lister.ListAsync(string.Empty, true, false, false, new ConsoleNuGetLogger(), CancellationToken.None);
@@ -320,12 +330,11 @@ namespace AvalonStudio.Packages
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();
             providers.AddRange(Repository.Provider.GetCoreV3());  // Add v3 API support
 
-            PackageSource packageSource = new PackageSource(DefaultPackageSource);
-            SourceRepository sourceRepository = new SourceRepository(packageSource, providers);
+            var defaultRepo = s_sourceRepositories.FirstOrDefault();
 
-            var packageMetadataResource = await sourceRepository.GetResourceAsync<PackageMetadataResource>();
+            var packageMetadataResource = await defaultRepo.GetResourceAsync<PackageMetadataResource>();
 
-            var searchResource = await sourceRepository.GetResourceAsync<PackageSearchResource>();
+            var searchResource = await defaultRepo.GetResourceAsync<PackageSearchResource>();
 
             return await searchResource.SearchAsync(packageName, new SearchFilter(true), 0, 100, logger, CancellationToken.None);
         }
@@ -338,7 +347,7 @@ namespace AvalonStudio.Packages
             }
         }
 
-        public static string GetPackageDirectory(PackageIdentity identity)
+        private static string GetPackageDirectory(PackageIdentity identity)
         {
             string result = string.Empty;
 
@@ -352,11 +361,11 @@ namespace AvalonStudio.Packages
             return result;
         }
 
-        public static string GetPackageDirectory(string genericPackageId, string version = null)
+        public static string GetPackageDirectory(string genericPackageId, string version = null, bool ignoreRid = false)
         {
             var result = string.Empty;
 
-            var expectedFolder = genericPackageId + "." + Platform.AvalonRID;
+            var expectedFolder = ignoreRid ? genericPackageId : genericPackageId + "." + Platform.AvalonRID;
 
             IEnumerable<PackageIdentity> packageIds;
 

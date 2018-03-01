@@ -3,10 +3,9 @@ language: csharp
 os:
   - linux
 dist: trusty
-
-script:
-  - ./install-latest-dotnet.sh
-  - ./build.sh --configuration "Release"
+dotnet: 2.1.4
+script:  
+  - ./build.sh --configuration "Release"  
 
 notifications:
   webhooks:

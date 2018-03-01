@@ -159,7 +159,7 @@ namespace AvalonStudio.Shell
             throw new NotImplementedException();
         }
 
-        public void Build(IProject project)
+        public Task<bool> BuildAsync(IProject project)
         {
             throw new NotImplementedException();
         }

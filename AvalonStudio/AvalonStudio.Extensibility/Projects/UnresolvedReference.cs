@@ -9,14 +9,14 @@
     using System.IO;
     using System.Threading.Tasks;
 
-    public class LoadingProject : IProject
+    public class PlaceHolderProject : IProject
     {
         public int CompareTo(ISolutionItem other)
         {
             return this.DefaultCompareTo(other);
         }
 
-        public LoadingProject(ISolution solution, string location)
+        public PlaceHolderProject(ISolution solution, string location)
         {
             Location = location;
         }
@@ -52,7 +52,10 @@
 
         public string Name
         {
-            get { return Path.GetFileNameWithoutExtension(Location) + " (loading)"; }
+            get
+            {
+                return Path.GetFileNameWithoutExtension(Location);
+            }
             set { }
         }
 
@@ -66,7 +69,7 @@
 
         public Guid ProjectTypeId => Guid.Empty;
 
-        public IReadOnlyList<ISourceFile> SourceFiles => throw new NotImplementedException();
+        public IReadOnlyList<ISourceFile> SourceFiles => null;
 
         public event EventHandler FileAdded;
 
@@ -105,7 +108,14 @@
 
         public int CompareTo(IProject other)
         {
-            return Name.CompareTo(other.Name);
+            if (GetType() == other.GetType())
+            {
+                return Name.CompareTo(other.Name);
+            }
+            else
+            {
+                return GetType().FullName.CompareTo(other.GetType().FullName);
+            }
         }
 
         public void Dispose()
@@ -123,17 +133,17 @@
 
         public ISourceFile FindFile(string path)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
-        public void RemoveReference(IProject project)
+        public bool RemoveReference(IProject project)
         {
-            throw new NotImplementedException();
+            return false;
         }
 
-        public void ResolveReferences()
+        public Task ResolveReferencesAsync()
         {
-
+            return Task.CompletedTask;
         }
 
         public void Save()
@@ -142,146 +152,34 @@
         }
 
         public Task LoadFilesAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task UnloadAsync()
         {
             return Task.CompletedTask;
         }
     }
 
-    public class UnresolvedReference : IProject
+    public class NotFoundProject : PlaceHolderProject
     {
-        public int CompareTo(ISolutionItem other)
+        public NotFoundProject(ISolution solution, string location) : base(solution, location)
         {
-            return this.DefaultCompareTo(other);
         }
+    }
 
-        public UnresolvedReference(ISolution solution, string location)
+    public class LoadingProject : PlaceHolderProject
+    {
+        public LoadingProject(ISolution solution, string location) : base(solution, location)
         {
-            Location = location;
         }
+    }
 
-        public IProjectFolder Parent { get; set; }
-
-        public ISolution Solution { get; set; }
-
-        public ObservableCollection<IProject> References => null;
-
-        public IToolChain ToolChain { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public IDebugger Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ITestFramework TestFramework { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool Hidden { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public string CurrentDirectory => throw new NotImplementedException();
-
-        public IList<object> ConfigurationPages => throw new NotImplementedException();
-
-        public string Executable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public dynamic ToolchainSettings => throw new NotImplementedException();
-
-        public dynamic DebugSettings => throw new NotImplementedException();
-
-        public dynamic Settings => throw new NotImplementedException();
-
-        public ObservableCollection<IProjectItem> Items => throw new NotImplementedException();
-
-        public string Location { get; set; }
-
-        public string LocationDirectory => throw new NotImplementedException();
-
-        public string Name
+    public class UnresolvedReference : PlaceHolderProject
+    {
+        public UnresolvedReference(ISolution solution, string location) : base(solution, location)
         {
-            get { return Path.GetFileNameWithoutExtension(Location); }
-            set { }
-        }
-
-        public bool CanRename => false;
-
-        public IProject Project { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public Guid Id { get; set; }
-
-        ISolutionFolder ISolutionItem.Parent { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public Guid ProjectTypeId => Guid.Empty;
-
-        public IReadOnlyList<ISourceFile> SourceFiles => throw new NotImplementedException();
-
-        public event EventHandler FileAdded;
-
-        event EventHandler<ISourceFile> IProject.FileAdded
-        {
-            add
-            {
-                throw new NotImplementedException();
-            }
-
-            remove
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public void AddReference(IProject project)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int CompareTo(IProjectItem other)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int CompareTo(IProjectFolder other)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int CompareTo(string other)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int CompareTo(IProject other)
-        {
-            return Name.CompareTo(other.Name);
-        }
-
-        public void Dispose()
-        { }
-
-        public void ExcludeFile(ISourceFile file)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ExcludeFolder(IProjectFolder folder)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ISourceFile FindFile(string path)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveReference(IProject project)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ResolveReferences()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Save()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task LoadFilesAsync()
-        {
-            return Task.CompletedTask;
         }
     }
 }

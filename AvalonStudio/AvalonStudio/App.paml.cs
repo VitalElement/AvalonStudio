@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Diagnostics;
 using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
@@ -27,7 +28,11 @@ namespace AvalonStudio
 
                 PackageSources.InitialisePackageSources();
 
-                var container = CompositionRoot.CreateContainer();
+                ExtensionManager.Initialise();
+
+                var extensionManager = IoC.Get<ExtensionManager>();
+                var extensions = extensionManager.GetInstalledExtensions();
+                var container = CompositionRoot.CreateContainer(extensions);
 
                 ShellViewModel.Instance = container.GetExport<ShellViewModel>();
 

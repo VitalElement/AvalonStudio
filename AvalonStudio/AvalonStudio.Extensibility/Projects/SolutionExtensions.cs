@@ -79,6 +79,10 @@ namespace AvalonStudio.Projects
             {
                 return 1;
             }
+            else if(item is IProject && other is IProject)
+            {
+                return (item as IProject).CompareTo(other as IProject);
+            }
             else
             {
                 return item.Name.CompareTo(other.Name);

@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging
 {
     using Avalonia.Threading;
     using AvalonStudio.Documents;
@@ -148,7 +148,7 @@
 
             var isRunning = hasSession.Merge(started).Merge(stopped).StartWith(false);
 
-            var canRun = _shell.OnSolutionLoaded().CombineLatest(isRunning, hasSession, _shell.OnCurrentTaskChanged(), (loaded, running, session, hasTask) => 
+            var canRun = _shell.OnSolutionLoaded().CombineLatest(isRunning, hasSession, _shell.OnCurrentTaskChanged(), (loaded, running, session, hasTask) =>
             {
                 return loaded && !running && (!hasTask || (hasTask && session));
             });
@@ -190,8 +190,7 @@
             lock (_sessionLock)
             {
                 if (_session != null)
-                {
-                    _session.Exit();
+                { 
                     _session.TargetUnhandledException -= _session_TargetStopped;
                     _session.TargetStopped -= _session_TargetStopped;
                     _session.TargetHitBreakpoint -= _session_TargetStopped;
@@ -233,7 +232,7 @@
 
             bool success = false;
 
-            await _shell.TaskRunner.RunTask(()=> success = project.ToolChain.Build(_console, project).GetAwaiter().GetResult());
+            success = await _shell.BuildAsync(project);
 
             if (!success)
             {
@@ -250,26 +249,27 @@
 
             var debugger2 = project.Debugger2 as IDebugger2;
 
-            await debugger2.InstallAsync(IoC.Get<IConsole>());
+            if (await debugger2.InstallAsync(IoC.Get<IConsole>(), project))
+            {
+                _session = debugger2.CreateSession(project);
 
-            _session = debugger2.CreateSession(project);
+                _session.TargetUnhandledException += _session_TargetStopped;
+                _session.TargetStopped += _session_TargetStopped;
+                _session.TargetHitBreakpoint += _session_TargetStopped;
+                _session.TargetSignaled += _session_TargetStopped;
+                _session.TargetInterrupted += _session_TargetStopped;
+                _session.TargetExited += _session_TargetExited;
+                _session.TargetStarted += _session_TargetStarted;
+                _session.TargetReady += _session_TargetReady;
 
-            _session.TargetUnhandledException += _session_TargetStopped;
-            _session.TargetStopped += _session_TargetStopped;
-            _session.TargetHitBreakpoint += _session_TargetStopped;
-            _session.TargetSignaled += _session_TargetStopped;
-            _session.TargetInterrupted += _session_TargetStopped;
-            _session.TargetExited += _session_TargetExited;
-            _session.TargetStarted += _session_TargetStarted;
-            _session.TargetReady += _session_TargetReady;
+                _session.Breakpoints = Breakpoints;
 
-            _session.Breakpoints = Breakpoints;
+                _session.Run(debugger2.GetDebuggerStartInfo(project), debugger2.GetDebuggerSessionOptions(project));
 
-            _session.Run(debugger2.GetDebuggerStartInfo(project), debugger2.GetDebuggerSessionOptions(project));
+                _shell.CurrentPerspective = Perspective.Debug;
 
-            _shell.CurrentPerspective = Perspective.Debug;
-
-            DebugSessionStarted?.Invoke(this, EventArgs.Empty);
+                DebugSessionStarted?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void _session_TargetReady(object sender, TargetEventArgs e)
@@ -325,7 +325,7 @@
 
                     if (file != null)
                     {
-                        Dispatcher.UIThread.InvokeAsync(async () => 
+                        Dispatcher.UIThread.InvokeAsync(async () =>
                         {
                             _lastDocument = await _shell.OpenDocumentAsync(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true);
                         }).Wait();

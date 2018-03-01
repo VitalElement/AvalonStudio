@@ -10,6 +10,9 @@ using System.Linq;
 using AvalonStudio.Platforms;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using AvalonStudio.Extensibility.Shell;
+using AvalonStudio.CommandLineTools;
+using AvalonStudio.Extensibility.Threading;
 
 namespace AvalonStudio.Extensibility.Projects
 {
@@ -24,6 +27,12 @@ namespace AvalonStudio.Extensibility.Projects
         {
             return new VisualStudioSolution(SlnFile.Read(fileName));
         }
+
+        public bool IsRestored { get; set; } = false;
+
+        private object _restoreLock = new object();
+
+        private TaskCompletionSource<bool> _restoreTaskCompletionSource;
 
         /// <summary>
         /// Allows disabling of serialization to disk. Useful for UnitTesting.
@@ -52,6 +61,9 @@ namespace AvalonStudio.Extensibility.Projects
             _solutionModel = solutionModel;
             _solutionItems = new Dictionary<Guid, ISolutionItem>();
 
+            _solutionModel.SolutionConfigurationsSection["Debug|Any CPU"] = "Debug|Any CPU";
+            _solutionModel.SolutionConfigurationsSection["Release|Any CPU"] = "Release|Any CPU";
+
             Parent = Solution = this;
 
             Id = Guid.NewGuid();
@@ -59,7 +71,7 @@ namespace AvalonStudio.Extensibility.Projects
             Items = new ObservableCollection<ISolutionItem>();
         }
 
-        public async Task LoadSolutionAsync ()
+        public async Task LoadSolutionAsync()
         {
             await Task.Run(async () =>
             {
@@ -74,11 +86,19 @@ namespace AvalonStudio.Extensibility.Projects
             });
         }
 
-        public async Task LoadProjectsAsync ()
+        public async Task RestoreSolutionAsync ()
         {
-            await LoadProjectsAsyncImpl();
+            if(!string.IsNullOrEmpty(DotNetCliService.Instance.DotNetPath))
+            {
+                await Restore(null, IoC.Get<IStatusBar>());
+            }
+        }
 
-            ResolveReferences();
+        public async Task LoadProjectsAsync()
+        {
+            await LoadProjectsImplAsync();
+
+            await ResolveReferencesAsync();
         }
 
         private async Task LoadFilesAsync()
@@ -128,39 +148,180 @@ namespace AvalonStudio.Extensibility.Projects
             });
         }
 
-        private void ResolveReferences()
+        private async Task ResolveReferencesAsync()
         {
+            var statusBar = IoC.Get<IStatusBar>();
+
             foreach (var project in Projects)
             {
-                project.ResolveReferences();
+                statusBar.SetText($"Resolving References: {project.Name}");
+
+                await project.ResolveReferencesAsync();
+            }
+
+            statusBar.ClearText();
+        }
+
+        public Task<bool> Restore(IConsole console, IStatusBar statusBar = null, bool checkLock = false)
+        {
+            bool restore = !checkLock;
+
+            if (checkLock)
+            {
+                lock (_restoreLock)
+                {
+                    restore = !IsRestored;
+
+                    if (restore)
+                    {
+                        IsRestored = true;
+
+                        _restoreTaskCompletionSource = new TaskCompletionSource<bool>();
+                    }
+                }
+            }
+
+            if (restore)
+            {
+                return Task.Factory.StartNew(() =>
+                {
+                    statusBar.SetText($"Restoring Packages for solution: {Name}");
+
+                    var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.DotNetPath, $"restore {Path.GetFileName(Location)}", (s, e) =>
+                    {
+                        if (statusBar != null)
+                        {
+                            if (!string.IsNullOrWhiteSpace(e.Data))
+                            {
+                                Dispatcher.UIThread.InvokeAsync(() =>
+                                {
+                                    statusBar.SetText(e.Data.Trim());
+                                });
+                            }
+                        }
+
+                        console?.WriteLine(e.Data);
+                    }, (s, e) =>
+                    {
+                        if (e.Data != null)
+                        {
+                            if (console != null)
+                            {
+                                console.WriteLine();
+                                console.WriteLine(e.Data);
+                            }
+                        }
+                    },
+                    false, CurrentDirectory, false);
+
+                    IsRestored = true;
+
+                    var result = exitCode == 0;
+
+                    _restoreTaskCompletionSource?.SetResult(result);
+
+                    lock (_restoreLock)
+                    {
+                        _restoreTaskCompletionSource = null;
+                    }
+
+                    return result;
+                });
+            }
+            else
+            {
+                lock (_restoreLock)
+                {
+                    if (_restoreTaskCompletionSource != null)
+                    {
+                        return _restoreTaskCompletionSource.Task;
+                    }
+                    else
+                    {
+                        return Task.FromResult(true);
+                    }
+                }
             }
         }
 
-        private async Task LoadProjectsAsyncImpl()
+        private async Task LoadProjectsImplAsync()
         {
+            var statusBar = IoC.Get<IStatusBar>();
+
             var solutionProjects = _solutionModel.Projects.Where(p => p.TypeGuid != ProjectTypeGuids.SolutionFolderGuid);
+
+            var tasks = new List<Task<IProject>>();
+
+            var jobrunner = new JobRunner<(ISolutionItem placeHolder, SlnProject projectInfo, string path), IProject>(Environment.ProcessorCount, loadInfo =>
+            {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    statusBar.SetText($"Loading Project: {loadInfo.path}");
+                });
+
+                var task = Project.LoadProjectFileAsync(this, Guid.Parse(loadInfo.projectInfo.TypeGuid), loadInfo.path);
+
+                var result = task.GetAwaiter().GetResult();
+
+                if (result != null)
+                {
+                    result.Id = loadInfo.placeHolder.Id;
+                    result.Solution = this;
+
+                    result.LoadFilesAsync().Wait();
+                }
+
+                return result;
+            });
 
             foreach (var project in solutionProjects)
             {
                 var placeHolder = _solutionItems[Guid.Parse(project.Id)];
 
-                var newProject = await Project.LoadProjectFileAsync(this, Guid.Parse(project.TypeGuid), Path.Combine(this.CurrentDirectory, project.FilePath));
-
-                newProject.Id = placeHolder.Id;
-                newProject.Solution = this;
-
-                SetItemParent(newProject, placeHolder.Parent);
-
-                placeHolder.SetParentInternal(null);
-                _solutionItems.Remove(placeHolder.Id);
-
-                _solutionItems.Add(newProject.Id, newProject);
-
-                await newProject.LoadFilesAsync();
+                tasks.Add(jobrunner.Add((placeHolder, project, Path.Combine(CurrentDirectory, project.FilePath))));
             }
+
+            while (true)
+            {
+                var currentProjectTask = await Task.WhenAny(tasks);
+
+                tasks.Remove(currentProjectTask);
+
+                if (currentProjectTask.IsCompleted)
+                {
+                    var newProject = currentProjectTask.Result;
+
+                    if (newProject != null)
+                    {
+                        var placeHolder = _solutionItems[newProject.Id];
+
+                        if (newProject != null)
+                        {
+                            SetItemParent(newProject, placeHolder.Parent);
+
+                            placeHolder.SetParentInternal(null);
+                            _solutionItems.Remove(placeHolder.Id);
+
+                            _solutionItems.Add(newProject.Id, newProject);
+                        }
+                    }
+                }
+
+                if (tasks.Count == 0)
+                {
+                    break;
+                }
+            }
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                statusBar.ClearText();
+            });
+
+            jobrunner.Stop();
         }
 
-        private async Task LoadProjectLoadingPlaceholdersAsync ()
+        private async Task LoadProjectLoadingPlaceholdersAsync()
         {
             var solutionProjects = _solutionModel.Projects.Where(p => p.TypeGuid != ProjectTypeGuids.SolutionFolderGuid);
 
@@ -168,16 +329,34 @@ namespace AvalonStudio.Extensibility.Projects
 
             foreach (var project in solutionProjects)
             {
-                var newProject = new LoadingProject(this, project.FilePath);
+                if (File.Exists(project.FilePath))
+                {
+                    var newProject = new LoadingProject(this, project.FilePath)
+                    {
+                        Id = Guid.Parse(project.Id),
+                        Solution = this
+                    };
 
-                newProject.Id = Guid.Parse(project.Id);
-                newProject.Solution = this;
-                (newProject as ISolutionItem).Parent = this;
+                    (newProject as ISolutionItem).Parent = this;
 
-                _solutionItems.Add(newProject.Id, newProject);
-                newItems.Add(newProject);
+                    _solutionItems.Add(newProject.Id, newProject);
+                    newItems.Add(newProject);
+                }
+                else
+                {
+                    var newProject = new NotFoundProject(this, project.FilePath)
+                    {
+                        Id = Guid.Parse(project.Id),
+                        Solution = this
+                    };
+
+                    (newProject as ISolutionItem).Parent = this;
+
+                    _solutionItems.Add(newProject.Id, newProject);
+                    newItems.Add(newProject);
+                }
             }
-            
+
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 foreach (var newItem in newItems)
@@ -263,17 +442,17 @@ namespace AvalonStudio.Extensibility.Projects
 
         public Guid Id { get; set; }
 
-        public void UpdateItem (ISolutionItem item)
+        public void UpdateItem(ISolutionItem item)
         {
             var slnProject = _solutionModel.Projects.FirstOrDefault(p => Guid.Parse(p.Id) == item.Id);
 
-            if(slnProject != null)
+            if (slnProject != null)
             {
-                if(item is ISolutionFolder)
+                if (item is ISolutionFolder)
                 {
                     slnProject.FilePath = slnProject.Name = item.Name;
                 }
-                else if(item is IProject project)
+                else if (item is IProject project)
                 {
                     slnProject.FilePath = CurrentDirectory.MakeRelativePath(project.Location);
                     slnProject.Name = project.Name;
@@ -305,6 +484,16 @@ namespace AvalonStudio.Extensibility.Projects
                         Name = project.Name,
                         FilePath = CurrentDirectory.MakeRelativePath(project.Location)
                     });
+
+                    var debug1 = new SlnPropertySet(project.Id.GetGuidString()); debug1["Debug|Any CPU.ActiveCfg"] = "Debug|Any CPU";
+                    var debug2 = new SlnPropertySet(project.Id.GetGuidString()); debug2["Debug|Any CPU.Build.0"] = "Debug|Any CPU";
+                    var release1 = new SlnPropertySet(project.Id.GetGuidString()); release1["Release|Any CPU.ActiveCfg"] = "Release|Any CPU";
+                    var release2 = new SlnPropertySet(project.Id.GetGuidString()); release2["Release|Any CPU.Build.0"] = "Release|Any CPU";
+
+                    _solutionModel.ProjectConfigurationsSection.Add(debug1);
+                    _solutionModel.ProjectConfigurationsSection.Add(debug2);
+                    _solutionModel.ProjectConfigurationsSection.Add(release1);
+                    _solutionModel.ProjectConfigurationsSection.Add(release2);
 
                     return (T)project;
                 }
@@ -340,6 +529,17 @@ namespace AvalonStudio.Extensibility.Projects
                 throw new InvalidOperationException();
             }
 
+            if (item is IProject project)
+            {
+                foreach (var parent in Projects.Where(p => p != project))
+                {
+                    if (parent.RemoveReference(project))
+                    {
+                        parent.Save();
+                    }
+                }
+            }
+
             if (item is ISolutionFolder folder)
             {
                 foreach (var child in folder.Items.ToList())
@@ -348,7 +548,7 @@ namespace AvalonStudio.Extensibility.Projects
                 }
             }
 
-            if(item == StartupProject)
+            if (item == StartupProject)
             {
                 StartupProject = null;
             }
@@ -362,6 +562,13 @@ namespace AvalonStudio.Extensibility.Projects
             if (currentSlnProject != null)
             {
                 _solutionModel.Projects.Remove(currentSlnProject);
+            }
+
+            var propsToRemove = _solutionModel.ProjectConfigurationsSection.Where(props => Guid.Parse(props.Id) == item.Id).ToList();
+
+            foreach (var prop in propsToRemove)
+            {
+                _solutionModel.ProjectConfigurationsSection.Remove(prop);
             }
         }
 
@@ -438,5 +645,24 @@ namespace AvalonStudio.Extensibility.Projects
         {
             return Projects.FirstOrDefault(p => p.Name == name);
         }
+
+        public IProject FindProjectByPath(string absolutePath)
+        {
+            return Projects.FirstOrDefault(p => p.Location.NormalizePath() == absolutePath.NormalizePath());
+        }
+
+        public Task UnloadSolutionAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public async Task UnloadProjectsAsync()
+        {
+            // TODO parallelise this on a job runner.
+            foreach(var project in Projects)
+            {
+                await project.UnloadAsync();
+            }
+        }        
     }
 }

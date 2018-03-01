@@ -44,7 +44,12 @@ namespace AvalonStudio.Projects
 
         void AddReference(IProject project);
 
-        void RemoveReference(IProject project);
+        /// <summary>
+        /// Removes a reference from the project.
+        /// </summary>
+        /// <param name="project">The project to remove.</param>
+        /// <returns>true if a reference was removed, false if no reference was removed.</returns>
+        bool RemoveReference(IProject project);
 
         ISourceFile FindFile(string path);
 
@@ -55,12 +60,14 @@ namespace AvalonStudio.Projects
         /// <summary>
         ///     Resolves all references in the project.
         /// </summary>
-        void ResolveReferences();
+        Task ResolveReferencesAsync();
 
         /// <summary>
         /// This is called only once when a project is loaded and is used to populate the files.
         /// </summary>
         Task LoadFilesAsync();
+
+        Task UnloadAsync();
 
         void Save();
     }

@@ -11,13 +11,16 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Process = System.Diagnostics.Process;
 
 namespace AvalonStudio.Projects.OmniSharp.MSBuild
 {
-    public class MSBuildHost
+    public class MSBuildHost : IDisposable
     {
         private WireHelper _connection;
         private TcpClient _client;
@@ -26,60 +29,80 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
         private List<string> errorLines = new List<string>();
         private Process hostProcess;
         private string _sdkPath;
+        private AutoResetEvent requestComplete = new AutoResetEvent(false);
+        private int _id;
 
-        public MSBuildHost(string sdkPath)
+        public MSBuildHost(string sdkPath, int id = -1)
         {
             _sdkPath = sdkPath;
+
+            _id = id;
         }
 
-        void EnsureConnection()
+        public int Id => _id;
+
+        public void Dispose()
         {
-            if (_connection == null || !_client.Connected)
+            _client.Dispose();
+
+            hostProcess?.Kill();
+        }
+
+        public Task EnsureConnectionAsync()
+        {
+            return Task.Run(() =>
             {
-                _client?.Dispose();
-
-                using (var l = new OneShotTcpServer())
+                if (_connection == null || !_client.Connected)
                 {
-                    var path = typeof(NextRequestType).Assembly.GetModules()[0].FullyQualifiedName;
-                    path = Path.Combine(Path.GetDirectoryName(path), "host.csproj");
+                    _client?.Dispose();
 
-                    string args = $"\"{_sdkPath}MSBuild.dll\" /p:AvaloniaIdePort={l.Port} {path}";
-
-                    Console.WriteLine(args);
-
-                    hostProcess = PlatformSupport.LaunchShellCommand("dotnet", args,
-                    (sender, e) =>
+                    using (var l = new OneShotTcpServer())
                     {
-                        if (e.Data != null)
-                        {
-                            lock (outputLines)
-                            {
-                                outputLines.Add(e.Data);
-                            }
-                        }
-                    },
-                    (sender, e) =>
-                    {
-                        if (e.Data != null)
-                        {
-                            lock (errorLines)
-                            {
-                                errorLines.Add(e.Data);
-                            }
-                        }
-                    }, false, Platforms.Platform.ExecutionPath, false);
+                        var path = typeof(NextRequestType).Assembly.GetModules()[0].FullyQualifiedName;
+                        path = Path.Combine(Path.GetDirectoryName(path), "host.csproj");
 
-                    _client = l.WaitForOneConnection();
-                    _connection = new WireHelper(_client.GetStream());
+                        string args = $"msbuild /p:AvaloniaIdePort={l.Port} {path}";
+
+                        Console.WriteLine(args);
+
+                        hostProcess = PlatformSupport.LaunchShellCommand("dotnet", args,
+                        (sender, e) =>
+                        {
+                            if (e.Data != null)
+                            {
+                                lock (outputLines)
+                                {
+                                    outputLines.Add(e.Data);
+                                }
+
+                                if (e.Data == "*** Request Handled")
+                                {
+                                    requestComplete.Set();
+                                }
+                            }
+                        },
+                        (sender, e) =>
+                        {
+                            if (e.Data != null)
+                            {
+                                lock (errorLines)
+                                {
+                                    errorLines.Add(e.Data);
+                                }
+                            }
+                        }, false, Platforms.Platform.ExecutionPath, false);
+
+                        _client = l.WaitForOneConnection();
+                        _connection = new WireHelper(_client.GetStream());
+                    }
                 }
-            }
+            });
         }
 
         public TRes SendRequest<TRes>(RequestBase<TRes> req)
         {
             lock (_lock)
             {
-                EnsureConnection();
                 _connection.SendRequest(req);
                 var e = _connection.Read<ResponseEnvelope<TRes>>();
                 if (e.Exception != null)
@@ -116,6 +139,57 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
             return result;
         }
 
+        public Task<(bool result, List<string> outputAssemblies, string consoleOutput)> BuildProject(IProject project)
+        {
+            lock (outputLines)
+            {
+                outputLines.Clear();
+                errorLines.Clear();
+            }
+
+            return Task.Run(() =>
+            {
+                var xproject = XDocument.Load(project.Location);
+
+                var frameworks = GetTargetFrameworks(xproject);
+
+                var targetFramework = frameworks.FirstOrDefault();
+
+                if (targetFramework != null)
+                {
+                    Console.WriteLine($"Automatically selecting {targetFramework} as TargetFramework");
+                }
+                else
+                {
+                    //throw new Exception("Must specify target framework to load project.");
+                    Console.WriteLine($"Non-Dotnet core project trying anyway.");
+                    targetFramework = "";
+                }
+
+                var output = SendRequest(new BuildProjectRequest { SolutionDirectory = project.Solution.CurrentDirectory, FullPath = project.Location, TargetFramework = targetFramework });
+
+                requestComplete.WaitOne();
+
+                var builder = new StringBuilder();
+
+                lock (outputLines)
+                {
+                    foreach (var line in outputLines.Take(outputLines.Count - 1))
+                    {
+                        if (Regex.IsMatch(line, ": (warning|error)"))
+                        {
+                            builder.AppendLine(line);
+                        }
+                    }
+
+                    outputLines.Clear();
+                    errorLines.Clear();
+                }
+
+                return (output.Success, output.OutputAssemblies, builder.ToString());
+            });
+        }
+
         public async Task<(ProjectInfo info, List<string> projectReferences, string targetPath)> LoadProject(string solutionDirectory, string projectFile)
         {
             lock (outputLines)
@@ -140,42 +214,27 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                 }
                 else
                 {
-                    throw new Exception("Must specify target framework to load project.");
+                    //throw new Exception("Must specify target framework to load project.");
+                    Console.WriteLine($"Non-Dotnet core project trying anyway.");
+                    targetFramework = "";
                 }
 
-                var loadData = SendRequest(new ProjectInfoRequest { SolutionDirectory = solutionDirectory, FullPath = projectFile, TargetFramework = targetFramework });
+                ProjectInfoResponse loadData = null;
 
-                string commandLine = "";
-                bool foundCommandLine = false;
-
-                lock (outputLines)
+                try
                 {
-                    foreach (var line in outputLines)
-                    {
-                        if (!foundCommandLine)
-                        {
-                            if (line == "CoreCompile:")
-                            {
-                                foundCommandLine = true;
-                            }
-                        }
-                        else
-                        {
-                            commandLine = line.Trim();
-                            break;
-                        }
-                    }
+                    loadData = SendRequest(new ProjectInfoRequest { SolutionDirectory = solutionDirectory, FullPath = projectFile, TargetFramework = targetFramework });
+                }
+                catch (Exception)
+                {
+                    return (null, null, null);
                 }
 
-                if (foundCommandLine)
+                requestComplete.WaitOne();
+
+                if (loadData.CscCommandLine != null && loadData.CscCommandLine.Count > 0)
                 {
-                    var cscIndex = commandLine.IndexOf("csc.exe");
-
-                    commandLine = commandLine.Substring(cscIndex + 7);
-
-                    var commandLineParts = commandLine.Split(' ').Where(s => s.Length > 1 && s[0] == '/' && !s.StartsWith("/reference")).Select(s => s.Substring(1));
-
-                    var projectOptions = ParseArguments(commandLineParts);
+                    var projectOptions = ParseArguments(loadData.CscCommandLine.Skip(1));
 
                     var projectInfo = ProjectInfo.Create(
                         ProjectId.CreateNewId(),
@@ -193,6 +252,8 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                 }
                 else
                 {
+                    IoC.Get<IConsole>($"Project may have failed to load correctly: {Path.GetFileNameWithoutExtension(projectFile)}");
+
                     var projectInfo = ProjectInfo.Create(
                         ProjectId.CreateNewId(),
                         VersionStamp.Create(),
@@ -200,7 +261,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                         LanguageNames.CSharp,
                         projectFile);
 
-                    return (projectInfo, null, null);
+                    return (projectInfo, projectReferences, loadData?.TargetPath);
                 }
             });
         }
@@ -229,7 +290,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
             {
                 var argParts = arg.Split(':');
 
-                var argument = argParts[0].Replace("+", "");
+                var argument = argParts[0].Replace("+", "").Replace("/", "");
                 var value = "";
 
                 if (argParts.Count() > 1)

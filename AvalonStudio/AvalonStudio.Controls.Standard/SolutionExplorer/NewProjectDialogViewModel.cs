@@ -3,6 +3,7 @@ using Avalonia.Controls.Templates;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Projects;
+using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Languages;
 using AvalonStudio.Platforms;
@@ -34,17 +35,17 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private string solutionName;
 
-        private IEnumerable<string> GetProjectFiles (string path)
+        private IEnumerable<string> GetProjectFiles(string path)
         {
             var files = Directory.EnumerateFiles(path);
 
             var ptExtensions = shell.ProjectTypes.SelectMany(pt => pt.Extensions);
 
-            var result = files.Where(f => ptExtensions.Contains(Path.GetExtension(f).Replace(".","")));
+            var result = files.Where(f => ptExtensions.Contains(Path.GetExtension(f).Replace(".", "")));
 
             var directories = Directory.EnumerateDirectories(path);
 
-            foreach(var directory in directories)
+            foreach (var directory in directories)
             {
                 result = result.Concat(GetProjectFiles(directory));
             }
@@ -84,19 +85,24 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             OKCommand = ReactiveCommand.Create(async () =>
             {
-            bool generateSolutionDirs = false;
-            bool loadNewSolution = false;
+                Close();
 
-            if (_solutionFolder == null)
-            {
-                loadNewSolution = true;
-                generateSolutionDirs = true;
+                bool loadNewSolution = false;
 
-                var destination = Path.Combine(location, solutionName);
-                _solutionFolder = VisualStudioSolution.Create(destination, solutionName, false, AvalonStudioSolution.Extension);
-            }
+                if (_solutionFolder == null)
+                {
+                    IoC.Get<IStatusBar>().SetText("Creating new Solution...");
+                    loadNewSolution = true;
 
-            var templateManager = IoC.Get<TemplateManager>();
+                    var destination = Path.Combine(location, solutionName);
+                    _solutionFolder = VisualStudioSolution.Create(destination, solutionName, false, VisualStudioSolution.Extension);
+                }
+                else
+                {
+                    IoC.Get<IStatusBar>().SetText("Creating new project...");
+                }
+
+                var templateManager = IoC.Get<TemplateManager>();
 
                 var templateDestination = Path.Combine(_solutionFolder.Solution.CurrentDirectory, name);
 
@@ -106,7 +112,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                     bool defaultSet = _solutionFolder.Solution.StartupProject != null;
 
-                    foreach(var projectFile in projectFiles)
+                    foreach (var projectFile in projectFiles)
                     {
                         var project = await Project.LoadProjectFileAsync(_solutionFolder.Solution, projectFile);
                         _solutionFolder.Solution.AddItem(project, _solutionFolder);
@@ -116,19 +122,30 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                             defaultSet = true;
                             _solutionFolder.Solution.StartupProject = project;
                         }
+
+                        if(!loadNewSolution)
+                        {                            
+                            await project.LoadFilesAsync();
+
+                            await project.ResolveReferencesAsync();
+                        }                        
                     }
                 }
 
-                _solutionFolder.Solution.Save();
+                _solutionFolder.Solution.Save();                
 
                 if (loadNewSolution)
                 {
                     await shell.OpenSolutionAsync(_solutionFolder.Solution.Location);
+                }         
+                else
+                {
+                    await _solutionFolder.Solution.RestoreSolutionAsync();
                 }
 
                 _solutionFolder = null;
 
-                Close();
+                IoC.Get<IStatusBar>().ClearText();
             },
             this.WhenAny(x => x.Location, x => x.SolutionName, (location, solution) => solution.Value != null && !Directory.Exists(Path.Combine(location.Value, solution.Value))));
         }

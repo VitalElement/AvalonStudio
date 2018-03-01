@@ -16,6 +16,7 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("AvalonStudio.Projects.CPlusPlus.UnitTests")]
 
@@ -107,15 +108,22 @@ namespace AvalonStudio.Projects.CPlusPlus
             References.InsertSorted(project);
         }
 
-        public override void RemoveReference(IProject project)
+        public override bool RemoveReference(IProject project)
         {
-            References.Remove(project);
+            if (References.Contains(project))
+            {
+                References.Remove(project);
+
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
         ///     Resolves each reference, cloning and updating Git referenced projects where possible.
         /// </summary>
-        public override void ResolveReferences()
+        public override Task ResolveReferencesAsync()
         {
             foreach (var reference in UnloadedReferences)
             {
@@ -136,9 +144,11 @@ namespace AvalonStudio.Projects.CPlusPlus
                 }
                 else
                 {
-                    AddReference(new UnresolvedReference(Solution, Path.Combine(Solution.Location, reference.Name)));
+                    AddReference(new UnresolvedReference(Solution, Path.Combine(Solution.CurrentDirectory, reference.Name)));
                 }
             }
+
+            return Task.CompletedTask;
         }
 
         public IList<string> GetReferencedIncludes()
@@ -317,7 +327,14 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         public override int CompareTo(IProject other)
         {
-            return Name.CompareTo(other.Name);
+            if (GetType() == other.GetType())
+            {
+                return Name.CompareTo(other.Name);
+            }
+            else
+            {
+                return GetType().FullName.CompareTo(other.GetType().FullName);
+            }
         }
 
         public override void ExcludeFile(ISourceFile file)
@@ -459,7 +476,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                 if (!string.IsNullOrEmpty(settings.PostBuildCommands))
                 {
-                    result.AddRange(settings.PostBuildCommands.Split(new string[] { Environment.NewLine }, StringSplitOptions.None)); 
+                    result.AddRange(settings.PostBuildCommands.Split(new string[] { Environment.NewLine }, StringSplitOptions.None));
                 }
 
                 return result;
@@ -467,7 +484,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         }
 
         [JsonIgnore]
-        public override Guid ProjectTypeId => CPlusPlusProjectType.TypeId; 
+        public override Guid ProjectTypeId => CPlusPlusProjectType.TypeId;
 
         public static string GenerateProjectFileName(string name)
         {
@@ -479,6 +496,8 @@ namespace AvalonStudio.Projects.CPlusPlus
             if (!System.IO.File.Exists(filename))
             {
                 Console.WriteLine("Unable for find project file: " + filename);
+
+                return null;
             }
 
             var project = SerializedObject.Deserialize<CPlusPlusProject>(filename);
@@ -509,7 +528,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             if (!System.IO.File.Exists(projectFile))
             {
-                var project = new CPlusPlusProject();                
+                var project = new CPlusPlusProject();
                 project.Location = projectFile;
 
                 project.Save();

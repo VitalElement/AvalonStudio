@@ -1,8 +1,10 @@
 ﻿using AvalonStudio.GlobalSettings;
+using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.IO;
 
 namespace AvalonStudio.Projects
 {
@@ -56,6 +58,11 @@ namespace AvalonStudio.Projects
         public static void SetGenericSettings<T>(this IProject project, T value) where T : new()
         {
             SettingsSerializer.SetSettings<T>(() => project.Settings, () => project.Save(), value);
+        }
+
+        public static string ResolveReferencePath (this IProject project, string relativeReferencePath)
+        {
+            return Path.Combine(project.CurrentDirectory, relativeReferencePath).NormalizePath();
         }
     }
 }

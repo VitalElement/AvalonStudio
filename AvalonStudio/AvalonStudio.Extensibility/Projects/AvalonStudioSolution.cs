@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects
 {
+    [Obsolete("No longer used or supported. Remains here only to allow migration of projects still on the old format.")]
     public class AvalonStudioSolution : ISolution
     {
         public const string Extension = "asln";
@@ -33,7 +34,7 @@ namespace AvalonStudio.Projects
 
         public T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem
         {
-            if(item is IProject project)
+            if (item is IProject project)
             {
                 var currentProject = Projects.FirstOrDefault(p => p.Name == project.Name);
 
@@ -50,7 +51,7 @@ namespace AvalonStudio.Projects
 
         public void RemoveItem(ISolutionItem item)
         {
-            if(item is IProject project)
+            if (item is IProject project)
             {
                 Items.Remove(project);
                 ProjectReferences.Remove(CurrentDirectory.MakeRelativePath(project.Location).ToAvalonPath());
@@ -124,7 +125,7 @@ namespace AvalonStudio.Projects
         public ISolution Solution { get; set; }
         public ISolutionFolder Parent { get; set; }
 
-        public Guid Id { get; set; }        
+        public Guid Id { get; set; }
 
         private static async Task<IProject> LoadProjectAsync(ISolution solution, string reference)
         {
@@ -148,13 +149,13 @@ namespace AvalonStudio.Projects
             return result;
         }
 
-        public static VisualStudioSolution ConvertToSln (ISolution solution)
+        public static VisualStudioSolution ConvertToSln(ISolution solution)
         {
             var result = VisualStudioSolution.Create(solution.CurrentDirectory, solution.Name, true, AvalonStudioSolution.Extension);
 
-            foreach(var item in solution.Items)
+            foreach (var item in solution.Items)
             {
-                if(item is IProject project)
+                if (item is IProject project)
                 {
                     result.AddItem(project);
                 }
@@ -174,7 +175,7 @@ namespace AvalonStudio.Projects
                 return VisualStudioSolution.Load(fileName);
             }
             catch (Exception e)
-            { 
+            {
                 var solution = SerializedObject.Deserialize<AvalonStudioSolution>(fileName);
 
                 solution.Location = fileName.NormalizePath().ToPlatformPath();
@@ -194,7 +195,7 @@ namespace AvalonStudio.Projects
 
                 foreach (var project in solution.Projects)
                 {
-                    project.ResolveReferences();
+                    await project.ResolveReferencesAsync();
                 }
 
                 solution.StartupProject = solution.Projects.SingleOrDefault(p => p.Name == solution.StartupItem);
@@ -231,6 +232,26 @@ namespace AvalonStudio.Projects
         public Task LoadSolutionAsync()
         {
             throw new NotImplementedException();
+        }
+
+        public IProject FindProjectByPath(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UnloadSolutionAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task UnloadProjectsAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public Task RestoreSolutionAsync()
+        {
+            return Task.CompletedTask;
         }
     }
 }

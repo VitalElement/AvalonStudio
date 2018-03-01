@@ -1,34 +1,43 @@
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Utils;
-using AvalonStudio.Projects;
+using System.Collections.Generic;
 using System.Composition.Convention;
 using System.Composition.Hosting;
-using System.IO;
+using System.Linq;
+using System.Reflection;
 
 namespace AvalonStudio
 {
     internal static class CompositionRoot
     {
-        private static readonly string PluginsFolder = "Plugins";
-
-        public static CompositionHost CreateContainer()
+        public static CompositionHost CreateContainer(IEnumerable<IExtensionManifest> extensions)
         {
-            EnsurePluginsFolder();
-
             var conventions = new ConventionBuilder();
+            conventions.ForTypesDerivedFrom<IExtension>().Export<IExtension>();
 
-            conventions.ForTypesDerivedFrom<IExtension>().Export<IExtension>();            
+            // TODO AppDomain here is a custom appdomain from namespace AvalonStudio.Extensibility.Utils. It is able
+            // to load any assembly in the bin directory (so not really appdomain) we need to get rid of this
+            // once all our default extensions are published with a manifest and copied to extensions dir.
+            IEnumerable<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (var extension in extensions)
+            {
+                foreach (var assembly in extension.GetMefComponents())
+                {
+                    try
+                    {
+                        assemblies = assemblies.Append(Assembly.LoadFrom(assembly));
+                    }
+                    catch (System.Exception e)
+                    {
+                        // todo: log exception
+                    }
+                }
+            }
 
             var configuration = new ContainerConfiguration().WithAssemblies(assemblies, conventions);
-
             return configuration.CreateContainer();
-        }
-
-        private static void EnsurePluginsFolder()
-        {
-            Directory.CreateDirectory(PluginsFolder);
         }
     }
 }
