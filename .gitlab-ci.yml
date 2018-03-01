@@ -11,3 +11,5 @@ AvalonStudio:
   - git submodule update --init --recursive
   - dotnet --info
   - ./build.sh
+  - cd ./packages
+  - ./package-debian.sh
