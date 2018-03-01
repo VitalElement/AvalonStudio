@@ -777,6 +777,8 @@ namespace AvalonStudio
 
                     await solution.LoadSolutionAsync();
 
+                    await solution.RestoreSolutionAsync();
+
                     StatusBar.ClearText();
 
                     CurrentSolution = solution;

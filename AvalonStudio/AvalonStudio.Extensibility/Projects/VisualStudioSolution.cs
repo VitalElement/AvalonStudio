@@ -86,6 +86,14 @@ namespace AvalonStudio.Extensibility.Projects
             });
         }
 
+        public async Task RestoreSolutionAsync ()
+        {
+            if(!string.IsNullOrEmpty(DotNetCliService.Instance.DotNetPath))
+            {
+                await Restore(null, IoC.Get<IStatusBar>());
+            }
+        }
+
         public async Task LoadProjectsAsync()
         {
             await LoadProjectsImplAsync();
@@ -154,7 +162,7 @@ namespace AvalonStudio.Extensibility.Projects
             statusBar.ClearText();
         }
 
-        public Task<bool> Restore(string dotnetExecutable, IConsole console, IStatusBar statusBar = null, bool checkLock = false)
+        public Task<bool> Restore(IConsole console, IStatusBar statusBar = null, bool checkLock = false)
         {
             bool restore = !checkLock;
 
@@ -179,7 +187,7 @@ namespace AvalonStudio.Extensibility.Projects
                 {
                     statusBar.SetText($"Restoring Packages for solution: {Name}");
 
-                    var exitCode = PlatformSupport.ExecuteShellCommand(dotnetExecutable, $"restore {Path.GetFileName(Location)}", (s, e) =>
+                    var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.DotNetPath, $"restore {Path.GetFileName(Location)}", (s, e) =>
                     {
                         if (statusBar != null)
                         {
@@ -210,7 +218,7 @@ namespace AvalonStudio.Extensibility.Projects
 
                     var result = exitCode == 0;
 
-                    _restoreTaskCompletionSource.SetResult(result);
+                    _restoreTaskCompletionSource?.SetResult(result);
 
                     lock (_restoreLock)
                     {
@@ -655,6 +663,6 @@ namespace AvalonStudio.Extensibility.Projects
             {
                 await project.UnloadAsync();
             }
-        }
+        }        
     }
 }

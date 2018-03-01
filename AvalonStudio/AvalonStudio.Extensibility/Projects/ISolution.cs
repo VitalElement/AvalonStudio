@@ -25,6 +25,8 @@ namespace AvalonStudio.Projects
 
         IProject FindProjectByPath(string path);
 
+        Task RestoreSolutionAsync();
+
         Task LoadSolutionAsync();
 
         Task LoadProjectsAsync();

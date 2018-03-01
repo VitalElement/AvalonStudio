@@ -248,5 +248,10 @@ namespace AvalonStudio.Projects
         {
             return Task.CompletedTask;
         }
+
+        public Task RestoreSolutionAsync()
+        {
+            return Task.CompletedTask;
+        }
     }
 }

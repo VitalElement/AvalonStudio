@@ -1,17 +1,15 @@
 ﻿using AvalonStudio.CommandLineTools;
-using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Utils;
-using NuGet.Versioning;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AvalonStudio.Projects.OmniSharp.DotnetCli
+namespace AvalonStudio.Extensibility.Projects
 {
     public class DotNetCliService
     {       

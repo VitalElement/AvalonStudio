@@ -87,16 +87,19 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 Close();
 
-                IoC.Get<IStatusBar>().SetText("Creating new Solution");
-
                 bool loadNewSolution = false;
 
                 if (_solutionFolder == null)
                 {
+                    IoC.Get<IStatusBar>().SetText("Creating new Solution...");
                     loadNewSolution = true;
 
                     var destination = Path.Combine(location, solutionName);
                     _solutionFolder = VisualStudioSolution.Create(destination, solutionName, false, VisualStudioSolution.Extension);
+                }
+                else
+                {
+                    IoC.Get<IStatusBar>().SetText("Creating new project...");
                 }
 
                 var templateManager = IoC.Get<TemplateManager>();
@@ -119,6 +122,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                             defaultSet = true;
                             _solutionFolder.Solution.StartupProject = project;
                         }
+
+                        if(!loadNewSolution)
+                        {                            
+                            await project.LoadFilesAsync();
+
+                            await project.ResolveReferencesAsync();
+                        }                        
                     }
                 }
 
@@ -127,9 +137,15 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 if (loadNewSolution)
                 {
                     await shell.OpenSolutionAsync(_solutionFolder.Solution.Location);
+                }         
+                else
+                {
+                    await _solutionFolder.Solution.RestoreSolutionAsync();
                 }
 
                 _solutionFolder = null;
+
+                IoC.Get<IStatusBar>().ClearText();
             },
             this.WhenAny(x => x.Location, x => x.SolutionName, (location, solution) => solution.Value != null && !Directory.Exists(Path.Combine(location.Value, solution.Value))));
         }

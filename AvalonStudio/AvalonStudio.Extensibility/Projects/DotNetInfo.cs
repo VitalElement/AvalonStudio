@@ -1,10 +1,10 @@
-﻿using AvalonStudio.Platforms;
-using NuGet.Versioning;
+﻿using AvalonStudio.Extensibility.Utils;
+using AvalonStudio.Platforms;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace AvalonStudio.Projects.OmniSharp.DotnetCli
+namespace AvalonStudio.Extensibility.Projects
 {
     public class DotNetInfo
     {

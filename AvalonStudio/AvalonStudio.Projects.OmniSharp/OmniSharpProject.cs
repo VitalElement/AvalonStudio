@@ -2,9 +2,9 @@
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Platforms;
-using AvalonStudio.Projects.OmniSharp.DotnetCli;
 using AvalonStudio.Projects.OmniSharp.ProjectTypes;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Shell;

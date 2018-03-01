@@ -1,5 +1,5 @@
-﻿using AvalonStudio.Extensibility.Threading;
-using AvalonStudio.Projects.OmniSharp.DotnetCli;
+﻿using AvalonStudio.Extensibility.Projects;
+using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Projects.OmniSharp.MSBuild;
 using System;
 using System.Collections.Concurrent;

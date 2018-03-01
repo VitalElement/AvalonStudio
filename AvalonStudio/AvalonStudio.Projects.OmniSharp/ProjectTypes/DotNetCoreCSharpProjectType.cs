@@ -1,9 +1,4 @@
-﻿using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Projects;
-using AvalonStudio.Extensibility.Shell;
-using AvalonStudio.Projects.OmniSharp.DotnetCli;
-using RoslynPad.Roslyn;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -32,13 +27,6 @@ namespace AvalonStudio.Projects.OmniSharp.ProjectTypes
 
         public async Task<IProject> LoadAsync(ISolution solution, string filePath)
         {
-            if (solution is VisualStudioSolution vsSolution)
-            {
-                var workspace = await RoslynWorkspace.CreateWorkspaceAsync(vsSolution);                
-
-                await vsSolution.Restore(DotNetCliService.Instance.DotNetPath, null, IoC.Get<IStatusBar>(), true);
-            }
-
             return await OmniSharpProject.Create(solution, filePath);
         }
     }

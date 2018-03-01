@@ -5,8 +5,6 @@ namespace AvalonStudio.Toolchains.MSBuild
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
     using AvalonStudio.Projects.OmniSharp;
-    using AvalonStudio.Projects.OmniSharp.DotnetCli;
-    using AvalonStudio.Projects.OmniSharp.MSBuild;
     using AvalonStudio.Projects.OmniSharp.Toolchain;
     using AvalonStudio.Utils;
     using System;
