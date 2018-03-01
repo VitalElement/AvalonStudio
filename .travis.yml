@@ -5,8 +5,7 @@ os:
 dist: trusty
 dotnet: 2.1.4
 script:  
-  - ./build.sh --configuration "Release"
-  - ./packages/package-debian.sh
+  - ./build.sh --configuration "Release"  
 
 notifications:
   webhooks:
