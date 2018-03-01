@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RoslynPad.Roslyn;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -27,6 +28,8 @@ namespace AvalonStudio.Projects.OmniSharp.ProjectTypes
 
         public async Task<IProject> LoadAsync(ISolution solution, string filePath)
         {
+            await RoslynWorkspace.CreateWorkspaceAsync(solution);
+
             return await OmniSharpProject.Create(solution, filePath);
         }
     }
