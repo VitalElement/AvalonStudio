@@ -3,9 +3,8 @@ language: csharp
 os:
   - linux
 dist: trusty
-
-script:
-  - ./install-latest-dotnet.sh
+dotnet: 2.1.4
+script:  
   - ./build.sh --configuration "Release"
   - ./packages/package-debian.sh
 
