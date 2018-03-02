@@ -12,9 +12,9 @@
   </ItemGroup>-->
 
   <ItemGroup>
-    <PackageReference Include="SharpGen.Runtime" Version="1.0.2" />
+    <PackageReference Include="SharpGen.Runtime" Version="1.0.3" />
     <PackageReference Include="SharpGen.Runtime.COM" Version="1.0.2" />
-    <PackageReference Include="SharpGenTools.Sdk" Version="1.0.3-ci272" PrivateAssets="all" />
+    <PackageReference Include="SharpGenTools.Sdk" Version="1.0.3" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>
