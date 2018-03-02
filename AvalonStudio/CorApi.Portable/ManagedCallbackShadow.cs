@@ -5,7 +5,8 @@
 //
 
 using CorApi.Portable;
-using SharpDX;
+using SharpGen.Runtime;
+using SharpGen.Runtime.Win32;
 using System;
 using System.Runtime.InteropServices;
 
@@ -13,8 +14,7 @@ namespace CorDebug
 {
     class ManagedCallback2Shadow : ComObjectShadow
     {
-        private static readonly ManagedCallback2Vtbl Vtbl = new ManagedCallback2Vtbl();
-        public class ManagedCallback2Vtbl : ComObjectVtbl
+        protected class ManagedCallback2Vtbl : ComObjectVtbl
         {
             public ManagedCallback2Vtbl() : base(8 /* count methods there */)
             {
@@ -109,17 +109,12 @@ namespace CorDebug
             }
         }
 
-        protected override CppObjectVtbl GetVtbl
-        {
-            get { return Vtbl; }
-        }
+        protected override CppObjectVtbl Vtbl { get; } = new ManagedCallback2Vtbl();
     }
 
-    public class ManagedCallbackShadow : SharpDX.ComObjectShadow
+    public class ManagedCallbackShadow : SharpGen.Runtime.ComObjectShadow
     {
-        private static readonly ManagedCallbackVtbl Vtbl = new ManagedCallbackVtbl();
-
-        public class ManagedCallbackVtbl : ComObjectVtbl
+        protected class ManagedCallbackVtbl : ComObjectVtbl
         {
             public ManagedCallbackVtbl() : base(26)
             {
@@ -194,7 +189,7 @@ namespace CorDebug
             private delegate void OnUnloadClassCallback(IntPtr thisPtr, IntPtr appDomainRef, IntPtr c);
 
             [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-            private delegate void OnDebuggerErrorCallback(IntPtr thisPtr, IntPtr processRef, SharpDX.Result errorHR, int errorCode);
+            private delegate void OnDebuggerErrorCallback(IntPtr thisPtr, IntPtr processRef, SharpGen.Runtime.Result errorHR, int errorCode);
 
             [UnmanagedFunctionPointer(CallingConvention.StdCall)]
             private delegate void OnLogMessageCallback(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, int lLevel, string logSwitchNameRef, string messageRef);
@@ -264,7 +259,7 @@ namespace CorDebug
                 var callback = (ManagedCallbackImpl)shadow.Callback;
                 var appDomain = new AppDomain(appDomainRef);
                 var threadManaged = new Thread(threadRef);
-                callback.OnException(appDomain, threadManaged, new SharpDX.Mathematics.Interop.RawBool(unhandled > 0));
+                callback.OnException(appDomain, threadManaged, new RawBool(unhandled > 0));
             }
 
             private static void OnEvalComplete(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr evalRef)
@@ -341,7 +336,7 @@ namespace CorDebug
                 callback.OnUnloadClass(new AppDomain(appDomainRef), new Class(c));
             }
 
-            private static void OnDebuggerError(IntPtr thisPtr, IntPtr processRef, SharpDX.Result errorHR, int errorCode)
+            private static void OnDebuggerError(IntPtr thisPtr, IntPtr processRef, SharpGen.Runtime.Result errorHR, int errorCode)
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
@@ -415,7 +410,7 @@ namespace CorDebug
             {
                 var shadow = ToShadow<ManagedCallbackShadow>(thisPtr);
                 var callback = (ManagedCallbackImpl)shadow.Callback;
-                callback.OnEditAndContinueRemap(new AppDomain(appDomainRef), new Thread(threadRef), new Function(functionRef), new SharpDX.Mathematics.Interop.RawBool(fAccurate > 0));
+                callback.OnEditAndContinueRemap(new AppDomain(appDomainRef), new Thread(threadRef), new Function(functionRef), new RawBool(fAccurate > 0));
             } // todo raw bool = int?
 
             private static void OnBreakpointSetError(IntPtr thisPtr, IntPtr appDomainRef, IntPtr threadRef, IntPtr breakpointRef, int dwError)
@@ -426,9 +421,7 @@ namespace CorDebug
             }
         }
 
-        protected override CppObjectVtbl GetVtbl
-        {
-            get { return Vtbl; }
-        }
+
+        protected override CppObjectVtbl Vtbl { get; } = new ManagedCallbackVtbl();
     }
 }

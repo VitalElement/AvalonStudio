@@ -2,27 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.5</TargetFramework>
-    <PostBuildEvent></PostBuildEvent>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <DebugType>full</DebugType>
     <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <DebugSymbols>True</DebugSymbols>
-  </PropertyGroup>
+  <!--<ItemGroup>
+    <SharpGenMapping Include="Mapping.xml" />
+  </ItemGroup>-->
 
   <ItemGroup>
-    <ProjectReference Include="..\PortableCom\PortableCom.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="SharpGenTools.Sdk" Version="1.0.1" />
+    <PackageReference Include="SharpGen.Runtime" Version="1.0.2" />
+    <PackageReference Include="SharpGen.Runtime.COM" Version="1.0.2" />
+    <PackageReference Include="SharpGenTools.Sdk" Version="1.0.3-ci272" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

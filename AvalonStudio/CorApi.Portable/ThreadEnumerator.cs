@@ -44,8 +44,8 @@ namespace CorApi.Portable
         public bool MoveNext()
         {
             var a = new Thread[1];
-            int c = 0;
-            m_enum.Next(a.Length, a, out c); // might need try catch here as new api swallows result!
+            var c = 0u;
+            m_enum.Next((uint)a.Length, a, out c); // might need try catch here as new api swallows result!
             if (c == 1) // S_OK && we got 1 new element
                 m_th = new Thread(a[0].NativePointer);
             else
