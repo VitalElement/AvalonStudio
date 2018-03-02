@@ -75,6 +75,11 @@ if (isRunningOnAppVeyor)
 // DIRECTORIES
 ///////////////////////////////////////////////////////////////////////////////
 
+var msvcp140_x86 = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.12.25810\x86\Microsoft.VC141.CRT\msvcp140.dll";
+var msvcp140_x64 = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.12.25810\x64\Microsoft.VC141.CRT\msvcp140.dll";
+var vcruntime140_x86 = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.12.25810\x86\Microsoft.VC141.CRT\vcruntime140.dll";
+var vcruntime140_x64 = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.12.25810\x64\Microsoft.VC141.CRT\vcruntime140.dll";
+
 var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\bin\HostX86\x86\editbin.exe";
 
 var artifactsDir = (DirectoryPath)Directory("./artifacts");
@@ -263,6 +268,31 @@ Task("Publish-NetCore")
     }
 });
 
+Task("Copy-Redist-Files-NetCore")
+    .IsDependentOn("Publish-NetCore")
+    .Does(() =>
+{
+    foreach (var project in netCoreProjects)
+    {
+        foreach(var runtime in project.Runtimes)
+        {
+            var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
+            if (IsRunningOnWindows() && runtime == "win7-x86")
+            {
+                Information("Copying redist files for: {0}, runtime: {1}", project.Name, runtime);
+                CopyFileToDirectory(msvcp140_x86, outputDir);
+                CopyFileToDirectory(vcruntime140_x86, outputDir);
+            }
+            if (IsRunningOnWindows() && runtime == "win7-x64")
+            {
+                Information("Copying redist files for: {0}, runtime: {1}", project.Name, runtime);
+                CopyFileToDirectory(msvcp140_x64, outputDir);
+                CopyFileToDirectory(vcruntime140_x64, outputDir);
+            }
+        }
+    }
+});
+
 Task("Zip-NetCore")
     .IsDependentOn("Publish-NetCore")
     .WithCriteria(()=>isMainRepo && isMasterBranch  && !isPullRequest)
@@ -324,6 +354,7 @@ Task("Default")
     .IsDependentOn("Build-NetCore")
     .IsDependentOn("Run-Net-Core-Unit-Tests")
     .IsDependentOn("Publish-NetCore")
+    .IsDependentOn("Copy-Redist-Files-NetCore")
     .IsDependentOn("Zip-NetCore")
     .IsDependentOn("Generate-NuGetPackages")
     .IsDependentOn("Publish-AppVeyorNuget");
