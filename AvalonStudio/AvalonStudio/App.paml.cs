@@ -14,34 +14,51 @@ namespace AvalonStudio
 {
     internal class App : Application
     {
+        static void Print(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+            if (ex.InnerException != null)
+            {
+                Print(ex.InnerException);
+            }
+        }
+
         [STAThread]
         private static void Main(string[] args)
         {
-            if (args == null)
+            try
             {
-                throw new ArgumentNullException(nameof(args));
+                if (args == null)
+                {
+                    throw new ArgumentNullException(nameof(args));
+                }
+
+                var builder = AppBuilder.Configure<App>().UseReactiveUI().AvalonStudioPlatformDetect().AfterSetup(async _ =>
+                {
+                    Platform.Initialise();
+
+                    PackageSources.InitialisePackageSources();
+
+                    ExtensionManager.Initialise();
+
+                    var extensionManager = IoC.Get<ExtensionManager>();
+                    var extensions = extensionManager.GetInstalledExtensions();
+                    var container = CompositionRoot.CreateContainer(extensions);
+
+                    ShellViewModel.Instance = container.GetExport<ShellViewModel>();
+
+                    await PackageManager.LoadAssetsAsync();
+                });
+
+                InitializeLogging();
+
+                builder.Start<MainWindow>();
             }
-
-            var builder = AppBuilder.Configure<App>().UseReactiveUI().AvalonStudioPlatformDetect().AfterSetup(async _ =>
+            catch (Exception e)
             {
-                Platform.Initialise();
-
-                PackageSources.InitialisePackageSources();
-
-                ExtensionManager.Initialise();
-
-                var extensionManager = IoC.Get<ExtensionManager>();
-                var extensions = extensionManager.GetInstalledExtensions();
-                var container = CompositionRoot.CreateContainer(extensions);
-
-                ShellViewModel.Instance = container.GetExport<ShellViewModel>();
-
-                await PackageManager.LoadAssetsAsync();
-            });
-
-            InitializeLogging();
-
-            builder.Start<MainWindow>();
+                Print(e);
+            }
         }
 
         public static AppBuilder BuildAvaloniaApp()
@@ -50,8 +67,6 @@ namespace AvalonStudio
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
-
-            // DataTemplates.Add(new ViewLocatorDataTemplate());
         }
 
         private static void InitializeLogging()
