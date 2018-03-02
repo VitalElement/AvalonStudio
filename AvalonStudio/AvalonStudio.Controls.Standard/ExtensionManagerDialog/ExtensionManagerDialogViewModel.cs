@@ -6,16 +6,16 @@ namespace AvalonStudio.Controls.Standard.ExtensionManagerDialog
 {
     public class ExtensionManagerDialogViewModel : DocumentTabViewModel
     {
-        private ExtensionManager _extensionManager;
+        private IExtensionManager _extensionManager;
 
         private ObservableCollection<IExtensionManifest> _installedExtensions;
         private IExtensionManifest _selectedExtension;
 
-        public ExtensionManagerDialogViewModel()
+        public ExtensionManagerDialogViewModel(IExtensionManager extensionManager)
         {
             Title = "Extensions";
 
-            _extensionManager = IoC.Get<ExtensionManager>();
+            _extensionManager = extensionManager;
             _installedExtensions = new ObservableCollection<IExtensionManifest>(_extensionManager.GetInstalledExtensions());
         }
 
