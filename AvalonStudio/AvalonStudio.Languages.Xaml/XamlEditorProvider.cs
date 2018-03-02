@@ -1,20 +1,13 @@
-﻿using AvalonStudio.Controls;
-using AvalonStudio.Documents;
+﻿using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Projects;
+using System.Composition;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    public class XamlEditorProvider : IEditorProvider
+    [Export(typeof(IEditorProvider))]
+    internal class XamlEditorProvider : IEditorProvider
     {
-        public void Activation()
-        {
-        }
-
-        public void BeforeActivation()
-        {
-        }
-
         public bool CanEdit(ISourceFile file)
         {
             bool result = false;

@@ -47,7 +47,6 @@ namespace AvalonStudio
         private double _globalZoomLevel;
         private List<ILanguageService> _languageServices;
         private List<ISolutionType> _solutionTypes;
-        private List<IEditorProvider> _editorProviders;
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
@@ -62,6 +61,8 @@ namespace AvalonStudio
         private List<ToolBarItemGroupDefinition> _toolBarItemGroupDefinitions;
         private List<ToolBarItemDefinition> _toolBarItemDefinitions;
 
+        private IEnumerable<ExportFactory<IEditorProvider>> _editorProviders;
+
         private Perspective currentPerspective;
 
         private ISolution currentSolution;
@@ -75,12 +76,15 @@ namespace AvalonStudio
         private ObservableCollection<object> tools;
 
         [ImportingConstructor]
-        public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions)
+        public ShellViewModel(
+            [ImportMany] IEnumerable<ExportFactory<IEditorProvider>> editorProviders,
+            [ImportMany] IEnumerable<IExtension> extensions)
         {
+            _editorProviders = editorProviders;
+
             _languageServices = new List<ILanguageService>();
             _debugger2s = new List<IDebugger>();
             _projectTypes = new List<IProjectType>();
-            _editorProviders = new List<IEditorProvider>();
             _solutionTypes = new List<ISolutionType>();
             _testFrameworks = new List<ITestFramework>();
             _toolChains = new List<IToolChain>();
@@ -143,7 +147,6 @@ namespace AvalonStudio
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
-                _editorProviders.ConsumeExtension(extension);
 
                 _commandDefinitions.ConsumeExtension(extension);
             }
@@ -363,8 +366,6 @@ namespace AvalonStudio
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
-        public IEnumerable<IEditorProvider> EditorProviders => _editorProviders;
-
         public IEnumerable<ISolutionType> SolutionTypes => _solutionTypes;
 
         public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
@@ -403,7 +404,7 @@ namespace AvalonStudio
 
             if (currentTab == null)
             {
-                var provider = EditorProviders.FirstOrDefault(p => p.CanEdit(file));
+                var provider = _editorProviders.Select(p => p.CreateExport().Value).FirstOrDefault(p => p.CanEdit(file));
 
                 if (provider != null)
                 {
