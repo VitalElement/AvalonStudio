@@ -6,6 +6,7 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
 using Serilog;
 using System;
+using System.Composition;
 
 namespace AvalonStudio
 {
@@ -33,12 +34,14 @@ namespace AvalonStudio
 
                 var builder = BuildAvaloniaApp().AfterSetup(async _ =>
                 {
-                    var container = CompositionRoot.CreateContainer();
+                    var extensionManager = new ExtensionManager();
+                    var container = CompositionRoot.CreateContainer(extensionManager);
 
                     Platform.Initialise();
                     PackageSources.InitialisePackageSources();
 
-                    ShellViewModel.Instance = container.GetExport<ShellViewModel>();
+                    var shellExportFactory = container.GetExport<ExportFactory<ShellViewModel>>();
+                    ShellViewModel.Instance = shellExportFactory.CreateExport().Value;
 
                     await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
                 });

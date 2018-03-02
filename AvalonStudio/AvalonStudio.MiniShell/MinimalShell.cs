@@ -1,6 +1,5 @@
 namespace AvalonStudio.Shell
 {
-    using AvalonStudio.Controls;
     using AvalonStudio.Debugging;
     using AvalonStudio.Documents;
     using AvalonStudio.Extensibility;
@@ -19,6 +18,8 @@ namespace AvalonStudio.Shell
     using AvalonStudio.Extensibility.MainMenu;
 
     [Export]
+    [Export(typeof(IShell))]
+    [Shared]
     public class MinimalShell : IShell
     {
         public static IShell Instance { get; set; }

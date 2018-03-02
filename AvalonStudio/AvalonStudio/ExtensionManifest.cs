@@ -1,11 +1,12 @@
-﻿using AvalonStudio.Utils;
+﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Utils;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace AvalonStudio.Extensibility
+namespace AvalonStudio
 {
     internal class ExtensionManifest : IExtensionManifest
     {
