@@ -20,13 +20,6 @@ namespace CorApi.Portable
             _handleEvent = handleEvent;
         }
 
-        public virtual IDisposable Shadow { get; set; }
-
-        public virtual void Dispose()
-        {
-
-        }
-
         public virtual void OnBreak(AppDomain appDomainRef, Thread thread)
         {
             _handleEvent(ManagedCallbackType.OnBreak, new ThreadEventArgs(appDomainRef, thread, ManagedCallbackType.OnBreak));
