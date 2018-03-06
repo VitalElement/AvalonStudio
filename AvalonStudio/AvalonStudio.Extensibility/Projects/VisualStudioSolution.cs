@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Projects;
+﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using Microsoft.DotNet.Cli.Sln.Internal;
@@ -14,7 +15,7 @@ using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility.Threading;
 
-namespace AvalonStudio.Extensibility.Projects
+namespace AvalonStudio.Projects
 {
     public class VisualStudioSolution : ISolution
     {

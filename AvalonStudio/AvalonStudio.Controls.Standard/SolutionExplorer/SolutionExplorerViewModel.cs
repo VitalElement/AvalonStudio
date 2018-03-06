@@ -1,17 +1,16 @@
 using Avalonia.Controls;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Linq;
 using System;
-using Avalonia.Threading;
+using System.Collections.Generic;
+using System.Composition;
+using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -28,8 +27,14 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private SolutionViewModel solution;
 
-        public SolutionExplorerViewModel()
+        private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
+
+        [ImportingConstructor]
+        public SolutionExplorerViewModel(
+            [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes)
         {
+            _solutionTypes = solutionTypes;
+
             Title = "Solution Explorer";
         }
 
@@ -137,10 +142,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             var allExtensions = new List<string>();
 
-            foreach (var solutionType in shell.SolutionTypes)
+            foreach (var solutionType in _solutionTypes)
             {
-                allExtensions.AddRange(solutionType.Extensions);
+                allExtensions.AddRange(solutionType.Metadata.SupportedExtensions);
             }
+
+            allExtensions = allExtensions.Distinct().ToList();
 
             dlg.Filters.Add(new FileDialogFilter
             {
@@ -148,12 +155,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 Extensions = allExtensions
             });
 
-            foreach (var solutionType in shell.SolutionTypes)
+            foreach (var solutionType in _solutionTypes)
             {
                 dlg.Filters.Add(new FileDialogFilter
                 {
-                    Name = solutionType.Description,
-                    Extensions = solutionType.Extensions
+                    Name = solutionType.Value.Description,
+                    Extensions = solutionType.Metadata.SupportedExtensions.ToList()
                 });
             }
             

@@ -1,12 +1,10 @@
-﻿namespace AvalonStudio.Projects
-{
-    using AvalonStudio.Extensibility.Plugin;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+﻿using AvalonStudio.Projects;
+using System.Threading.Tasks;
 
-    public interface ISolutionType : IExtension
+namespace AvalonStudio.Projects
+{
+    public interface ISolutionType
     {
-        List<string> Extensions { get; }
         string Description { get; }
 
         Task<ISolution> LoadAsync(string path);

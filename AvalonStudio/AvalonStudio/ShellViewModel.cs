@@ -12,6 +12,7 @@ using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.MainToolBar;
 using AvalonStudio.Extensibility.Menus;
 using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Extensibility.ToolBars.Models;
@@ -46,7 +47,6 @@ namespace AvalonStudio
         private ToolBarDefinition _toolBarDefinition;
         private double _globalZoomLevel;
         private List<ILanguageService> _languageServices;
-        private List<ISolutionType> _solutionTypes;
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
@@ -61,7 +61,10 @@ namespace AvalonStudio
         private List<ToolBarItemGroupDefinition> _toolBarItemGroupDefinitions;
         private List<ToolBarItemDefinition> _toolBarItemDefinitions;
 
-        private IEnumerable<ExportFactory<IEditorProvider>> _editorProviders;
+        public Lazy<StatusBarViewModel> _statusBar;
+
+        private IEnumerable<Lazy<IEditorProvider>> _editorProviders;
+        private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
 
         private Perspective currentPerspective;
 
@@ -77,15 +80,20 @@ namespace AvalonStudio
 
         [ImportingConstructor]
         public ShellViewModel(
-            [ImportMany] IEnumerable<ExportFactory<IEditorProvider>> editorProviders,
+            Lazy<StatusBarViewModel> statusBar,
+            [ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
+            [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<IExtension> extensions)
         {
+            _statusBar = statusBar;
+            IoC.RegisterConstant<IStatusBar>(_statusBar.Value);
+
             _editorProviders = editorProviders;
+            _solutionTypes = solutionTypes;
 
             _languageServices = new List<ILanguageService>();
             _debugger2s = new List<IDebugger>();
             _projectTypes = new List<IProjectType>();
-            _solutionTypes = new List<ISolutionType>();
             _testFrameworks = new List<ITestFramework>();
             _toolChains = new List<IToolChain>();
             _menuBarDefinitions = new List<MenuBarDefinition>();
@@ -100,10 +108,6 @@ namespace AvalonStudio
 
             IoC.RegisterConstant<IShell>(this);
             IoC.RegisterConstant(this);
-
-            StatusBar = new StatusBarViewModel();
-
-            IoC.RegisterConstant<IStatusBar>(StatusBar);
 
             foreach (var extension in extensions)
             {
@@ -144,7 +148,6 @@ namespace AvalonStudio
                 _toolChains.ConsumeExtension(extension);
                 //_projectTemplates.ConsumeExtension(extension);
                 _debugger2s.ConsumeExtension(extension);
-                _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
 
@@ -362,11 +365,9 @@ namespace AvalonStudio
 
         public IErrorList ErrorList { get; }
 
-        public StatusBarViewModel StatusBar { get; }
+        public StatusBarViewModel StatusBar => _statusBar.Value;
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
-
-        public IEnumerable<ISolutionType> SolutionTypes => _solutionTypes;
 
         public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
 
@@ -404,7 +405,7 @@ namespace AvalonStudio
 
             if (currentTab == null)
             {
-                var provider = _editorProviders.Select(p => p.CreateExport().Value).FirstOrDefault(p => p.CanEdit(file));
+                var provider = _editorProviders.FirstOrDefault(p => p.Value.CanEdit(file))?.Value;
 
                 if (provider != null)
                 {
@@ -765,13 +766,15 @@ namespace AvalonStudio
 
             if (System.IO.File.Exists(path))
             {
-                var solutionType = SolutionTypes.FirstOrDefault(st => st.Extensions.Contains(System.IO.Path.GetExtension(path).Substring(1)));
+                var extension = System.IO.Path.GetExtension(path);
+                var solutionType = _solutionTypes.FirstOrDefault(
+                    s => s.Metadata.SupportedExtensions.Any(e => extension.EndsWith(e)));
 
                 if (solutionType != null)
                 {
                     StatusBar.SetText($"Loading Solution: {path}");
 
-                    var solution = await solutionType.LoadAsync(path);
+                    var solution = await solutionType.Value.LoadAsync(path);
 
                     await solution.LoadSolutionAsync();
 
