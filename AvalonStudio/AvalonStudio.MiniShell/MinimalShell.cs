@@ -1,6 +1,5 @@
 namespace AvalonStudio.Shell
 {
-    using AvalonStudio.Controls;
     using AvalonStudio.Debugging;
     using AvalonStudio.Documents;
     using AvalonStudio.Extensibility;
@@ -19,6 +18,8 @@ namespace AvalonStudio.Shell
     using AvalonStudio.Extensibility.MainMenu;
 
     [Export]
+    [Export(typeof(IShell))]
+    [Shared]
     public class MinimalShell : IShell
     {
         public static IShell Instance { get; set; }
@@ -29,7 +30,6 @@ namespace AvalonStudio.Shell
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
         private List<ITestFramework> _testFrameworks;
-        private List<IEditorProvider> _editorProviders;
 
         public event EventHandler<FileOpenedEventArgs> FileOpened;
         public event EventHandler<FileOpenedEventArgs> FileClosed;
@@ -62,7 +62,6 @@ namespace AvalonStudio.Shell
                 _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
-                _editorProviders.ConsumeExtension(extension);
             }
 
             IoC.RegisterConstant(this);
@@ -145,8 +144,6 @@ namespace AvalonStudio.Shell
         public IWorkspaceTaskRunner TaskRunner => throw new NotImplementedException();
 
         public ColorScheme CurrentColorScheme { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public IEnumerable<IEditorProvider> EditorProviders => _editorProviders;
 
         public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false,
             bool selectLine = false, bool focus = true)

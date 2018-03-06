@@ -45,8 +45,6 @@ namespace AvalonStudio.Shell
 
         ColorScheme CurrentColorScheme { get; set; }
 
-        IEnumerable<IEditorProvider> EditorProviders { get; }
-
         IEnumerable<ISolutionType> SolutionTypes { get; }
 
         IEnumerable<IProjectType> ProjectTypes { get; }
