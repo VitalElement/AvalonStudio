@@ -5,6 +5,7 @@ namespace AvalonStudio.Shell
     using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Dialogs;
     using AvalonStudio.Extensibility.Plugin;
+    using AvalonStudio.Extensibility.Projects;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
     using AvalonStudio.TestFrameworks;
@@ -25,11 +26,12 @@ namespace AvalonStudio.Shell
         public static IShell Instance { get; set; }
 
         private List<ILanguageService> _languageServices;
-        private List<ISolutionType> _solutionTypes;
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
         private List<ITestFramework> _testFrameworks;
+
+        private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
 
         public event EventHandler<FileOpenedEventArgs> FileOpened;
         public event EventHandler<FileOpenedEventArgs> FileClosed;
@@ -37,11 +39,14 @@ namespace AvalonStudio.Shell
         public event EventHandler<BuildEventArgs> BuildCompleted;
 
         [ImportingConstructor]
-        public MinimalShell([ImportMany] IEnumerable<IExtension> extensions)
+        public MinimalShell(
+            [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
+            [ImportMany] IEnumerable<IExtension> extensions)
         {
+            _solutionTypes = solutionTypes;
+
             _languageServices = new List<ILanguageService>();
             _projectTypes = new List<IProjectType>();
-            _solutionTypes = new List<ISolutionType>();
             _testFrameworks = new List<ITestFramework>();
             _toolChains = new List<IToolChain>();
 
@@ -59,7 +64,6 @@ namespace AvalonStudio.Shell
                 _languageServices.ConsumeExtension(extension);
                 _toolChains.ConsumeExtension(extension);
                 _debugger2s.ConsumeExtension(extension);
-                _solutionTypes.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
                 _testFrameworks.ConsumeExtension(extension);
             }
@@ -87,8 +91,6 @@ namespace AvalonStudio.Shell
         }
 
         public bool DebugMode { get; set; }
-
-        public IEnumerable<ISolutionType> SolutionTypes => _solutionTypes;
 
         public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
 
