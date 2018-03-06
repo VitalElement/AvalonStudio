@@ -50,7 +50,6 @@ namespace AvalonStudio
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
-        private List<ITestFramework> _testFrameworks;
         private List<MenuBarDefinition> _menuBarDefinitions;
         private List<MenuDefinition> _menuDefinitions;
         private List<MenuItemGroupDefinition> _menuItemGroupDefinitions;
@@ -65,6 +64,8 @@ namespace AvalonStudio
 
         private IEnumerable<Lazy<IEditorProvider>> _editorProviders;
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
+
+        private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
 
         private Perspective currentPerspective;
 
@@ -83,6 +84,7 @@ namespace AvalonStudio
             Lazy<StatusBarViewModel> statusBar,
             [ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
+            [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             [ImportMany] IEnumerable<IExtension> extensions)
         {
             _statusBar = statusBar;
@@ -91,10 +93,11 @@ namespace AvalonStudio
             _editorProviders = editorProviders;
             _solutionTypes = solutionTypes;
 
+            _testFrameworks = testFrameworks;
+
             _languageServices = new List<ILanguageService>();
             _debugger2s = new List<IDebugger>();
             _projectTypes = new List<IProjectType>();
-            _testFrameworks = new List<ITestFramework>();
             _toolChains = new List<IToolChain>();
             _menuBarDefinitions = new List<MenuBarDefinition>();
             _menuDefinitions = new List<MenuDefinition>();
@@ -149,7 +152,6 @@ namespace AvalonStudio
                 //_projectTemplates.ConsumeExtension(extension);
                 _debugger2s.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
-                _testFrameworks.ConsumeExtension(extension);
 
                 _commandDefinitions.ConsumeExtension(extension);
             }
@@ -377,7 +379,16 @@ namespace AvalonStudio
 
         public IEnumerable<IDebugger> Debugger2s => _debugger2s;
 
-        public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
+        public IEnumerable<ITestFramework> TestFrameworks
+        {
+            get
+            {
+                foreach (var testFramework in _testFrameworks)
+                {
+                    yield return testFramework.Value;
+                }
+            }
+        }
 
         public void AddDocument(IDocumentTabViewModel document, bool temporary = false)
         {

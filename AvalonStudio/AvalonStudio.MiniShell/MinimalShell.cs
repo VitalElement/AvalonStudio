@@ -5,7 +5,6 @@ namespace AvalonStudio.Shell
     using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Dialogs;
     using AvalonStudio.Extensibility.Plugin;
-    using AvalonStudio.Extensibility.Projects;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
     using AvalonStudio.TestFrameworks;
@@ -29,9 +28,10 @@ namespace AvalonStudio.Shell
         private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
-        private List<ITestFramework> _testFrameworks;
 
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
+
+        private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
 
         public event EventHandler<FileOpenedEventArgs> FileOpened;
         public event EventHandler<FileOpenedEventArgs> FileClosed;
@@ -41,13 +41,15 @@ namespace AvalonStudio.Shell
         [ImportingConstructor]
         public MinimalShell(
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
+            [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             [ImportMany] IEnumerable<IExtension> extensions)
         {
             _solutionTypes = solutionTypes;
 
+            _testFrameworks = testFrameworks;
+
             _languageServices = new List<ILanguageService>();
             _projectTypes = new List<IProjectType>();
-            _testFrameworks = new List<ITestFramework>();
             _toolChains = new List<IToolChain>();
 
             IoC.RegisterConstant(this, typeof(IShell));
@@ -65,7 +67,6 @@ namespace AvalonStudio.Shell
                 _toolChains.ConsumeExtension(extension);
                 _debugger2s.ConsumeExtension(extension);
                 _projectTypes.ConsumeExtension(extension);
-                _testFrameworks.ConsumeExtension(extension);
             }
 
             IoC.RegisterConstant(this);
@@ -100,7 +101,16 @@ namespace AvalonStudio.Shell
 
         public IEnumerable<IDebugger> Debugger2s => _debugger2s;
 
-        public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
+        public IEnumerable<ITestFramework> TestFrameworks
+        {
+            get
+            {
+                foreach (var testFramework in _testFrameworks)
+                {
+                    yield return testFramework.Value;
+                }
+            }
+        }
 
         public ISolution CurrentSolution
         {
