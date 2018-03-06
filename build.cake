@@ -270,6 +270,7 @@ Task("Publish-NetCore")
 
 Task("Copy-Redist-Files-NetCore")
     .IsDependentOn("Publish-NetCore")
+    .WithCriteria(()=>((isMainRepo && isMasterBranch && isRunningOnAppVeyor  && !isPullRequest) || isLocalBuild))
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
