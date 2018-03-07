@@ -47,7 +47,6 @@ namespace AvalonStudio
         private ToolBarDefinition _toolBarDefinition;
         private double _globalZoomLevel;
         private List<ILanguageService> _languageServices;
-        private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
         private List<MenuBarDefinition> _menuBarDefinitions;
@@ -64,6 +63,7 @@ namespace AvalonStudio
 
         private IEnumerable<Lazy<IEditorProvider>> _editorProviders;
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
+        private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
 
         private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
 
@@ -84,6 +84,7 @@ namespace AvalonStudio
             Lazy<StatusBarViewModel> statusBar,
             [ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
+            [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             [ImportMany] IEnumerable<IExtension> extensions)
         {
@@ -92,12 +93,12 @@ namespace AvalonStudio
 
             _editorProviders = editorProviders;
             _solutionTypes = solutionTypes;
+            _projectTypes = projectTypes;
 
             _testFrameworks = testFrameworks;
 
             _languageServices = new List<ILanguageService>();
             _debugger2s = new List<IDebugger>();
-            _projectTypes = new List<IProjectType>();
             _toolChains = new List<IToolChain>();
             _menuBarDefinitions = new List<MenuBarDefinition>();
             _menuDefinitions = new List<MenuDefinition>();
@@ -151,7 +152,6 @@ namespace AvalonStudio
                 _toolChains.ConsumeExtension(extension);
                 //_projectTemplates.ConsumeExtension(extension);
                 _debugger2s.ConsumeExtension(extension);
-                _projectTypes.ConsumeExtension(extension);
 
                 _commandDefinitions.ConsumeExtension(extension);
             }
@@ -371,7 +371,7 @@ namespace AvalonStudio
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
-        public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
+        public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes => _projectTypes;
 
         public IEnumerable<ILanguageService> LanguageServices => _languageServices;
 

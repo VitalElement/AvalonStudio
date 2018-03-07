@@ -32,7 +32,7 @@ namespace AvalonStudio.Projects
         [JsonProperty("Projects")]
         public IList<string> ProjectReferences { get; set; }
 
-        public T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem
+        public T AddItem<T>(T item, Guid? itemGuid = null, ISolutionFolder parent = null) where T : ISolutionItem
         {
             if (item is IProject project)
             {
@@ -132,14 +132,22 @@ namespace AvalonStudio.Projects
             var shell = IoC.Get<IShell>();
             IProject result = null;
 
-            var extension = Path.GetExtension(reference).Remove(0, 1);
+            var extension = Path.GetExtension(reference);
 
-            var projectType = shell.ProjectTypes.FirstOrDefault(p => p.Extensions.Contains(extension));
             var projectFilePath = Path.Combine(solution.CurrentDirectory, reference).ToPlatformPath();
 
-            if (projectType != null && System.IO.File.Exists(projectFilePath))
+            var projectType = shell.ProjectTypes.FirstOrDefault(
+                p => extension.EndsWith(p.Metadata.DefaultExtension));
+            
+            if (projectType == null)
             {
-                result = await projectType.LoadAsync(solution, projectFilePath);
+                projectType = shell.ProjectTypes.FirstOrDefault(
+                    p => p.Metadata.PossibleExtensions.Any(e => extension.EndsWith(e)));
+            }
+
+            if (projectType != null && File.Exists(projectFilePath))
+            {
+                result = await projectType.Value.LoadAsync(solution, projectFilePath);
             }
             else
             {

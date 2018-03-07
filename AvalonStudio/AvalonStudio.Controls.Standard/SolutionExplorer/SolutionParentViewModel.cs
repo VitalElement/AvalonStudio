@@ -3,7 +3,6 @@
     using Avalonia.Controls;
     using AvalonStudio.Extensibility;
     using AvalonStudio.MVVM;
-    using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
     using AvalonStudio.Shell;
     using ReactiveUI;
@@ -25,7 +24,7 @@
 
             AddNewFolderCommand = ReactiveCommand.Create(() =>
             {
-                Model.Solution.AddItem(SolutionFolder.Create("New Folder"), Model);
+                Model.Solution.AddItem(SolutionFolder.Create("New Folder"), null, Model);
 
                 Model.Solution.Save();
             });
@@ -35,17 +34,19 @@
                 var dlg = new OpenFileDialog();
                 dlg.Title = "Open Project";
 
-                var extensions = new List<string>();
-
                 var shell = IoC.Get<IShell>();
 
                 foreach (var projectType in shell.ProjectTypes)
                 {
-                    extensions.AddRange(projectType.Extensions);
+                    var projectTypeMetadata = projectType.Metadata;
+                    var extensions = new List<string>();
+
+                    extensions.Add(projectTypeMetadata.DefaultExtension);
+                    extensions.AddRange(projectTypeMetadata.PossibleExtensions);
+
+                    dlg.Filters.Add(new FileDialogFilter() { Name = projectTypeMetadata.Description, Extensions = extensions });
                 }
-
-                dlg.Filters.Add(new FileDialogFilter { Name = "AvalonStudio Project", Extensions = extensions });
-
+                
                 dlg.InitialDirectory = Model.Solution.CurrentDirectory;
 
                 dlg.AllowMultiple = false;
@@ -54,12 +55,22 @@
 
                 if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {
-                    var proj = await Project.LoadProjectFileAsync(Model.Solution, result[0]);
+                    var projectTypeGuid = Project.GetProjectTypeGuidForProject(result[0]);
 
-                    if (proj != null)
+                    if (projectTypeGuid.HasValue)
                     {
-                        Model.Solution.AddItem(proj, Model);
-                        Model.Solution.Save();
+                        var proj = await Project.LoadProjectFileAsync(Model.Solution, projectTypeGuid.Value, result[0]);
+
+                        if (proj != null)
+                        {
+                            Model.Solution.AddItem(proj, projectTypeGuid, Model);
+                            Model.Solution.Save();
+                        }
+                    }
+                    else
+                    {
+                        IoC.Get<Utils.IConsole>().WriteLine(
+                            $"The project '{result[0]}' isn't supported by any installed project type!");
                     }
                 }
             });

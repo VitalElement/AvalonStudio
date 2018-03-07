@@ -25,11 +25,11 @@ namespace AvalonStudio.Shell
         public static IShell Instance { get; set; }
 
         private List<ILanguageService> _languageServices;
-        private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
         private List<IDebugger> _debugger2s;
 
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
+        private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
 
         private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
 
@@ -41,15 +41,16 @@ namespace AvalonStudio.Shell
         [ImportingConstructor]
         public MinimalShell(
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
+            [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             [ImportMany] IEnumerable<IExtension> extensions)
         {
             _solutionTypes = solutionTypes;
+            _projectTypes = projectTypes;
 
             _testFrameworks = testFrameworks;
 
             _languageServices = new List<ILanguageService>();
-            _projectTypes = new List<IProjectType>();
             _toolChains = new List<IToolChain>();
 
             IoC.RegisterConstant(this, typeof(IShell));
@@ -66,7 +67,6 @@ namespace AvalonStudio.Shell
                 _languageServices.ConsumeExtension(extension);
                 _toolChains.ConsumeExtension(extension);
                 _debugger2s.ConsumeExtension(extension);
-                _projectTypes.ConsumeExtension(extension);
             }
 
             IoC.RegisterConstant(this);
@@ -93,7 +93,7 @@ namespace AvalonStudio.Shell
 
         public bool DebugMode { get; set; }
 
-        public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
+        public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes => _projectTypes;
 
         public IEnumerable<ILanguageService> LanguageServices => _languageServices;
 

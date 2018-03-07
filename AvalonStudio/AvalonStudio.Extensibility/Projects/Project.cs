@@ -9,20 +9,22 @@ namespace AvalonStudio.Projects
 {
     public class Project
     {
-        public static async Task<IProject> LoadProjectFileAsync (ISolution solution, string fileName)
+        public static Guid? GetProjectTypeGuidForProject(string fileName)
         {
             var shell = IoC.Get<IShell>();
 
-            var extension = Path.GetExtension(fileName).Remove(0, 1);
+            var extension = Path.GetExtension(fileName);
 
-            var projectType = shell.ProjectTypes.FirstOrDefault(p => p.Extensions.Contains(extension));
+            var projectType = shell.ProjectTypes.FirstOrDefault(
+                p => extension.EndsWith(p.Metadata.DefaultExtension));
 
-            if(projectType != null)
+            if (projectType == null)
             {
-                return await LoadProjectFileAsync(solution, projectType.ProjectTypeId, fileName);
+                projectType = shell.ProjectTypes.FirstOrDefault(
+                    p => p.Metadata.PossibleExtensions.Any(e => extension.EndsWith(e)));
             }
 
-            return new UnsupportedProjectType(solution, fileName);
+            return projectType?.Metadata.ProjectTypeGuid;
         }
 
         public static async Task<IProject> LoadProjectFileAsync(ISolution solution, Guid projectTypeId, string fileName)

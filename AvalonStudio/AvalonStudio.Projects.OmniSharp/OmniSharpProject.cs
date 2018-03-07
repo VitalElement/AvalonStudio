@@ -393,7 +393,5 @@ namespace AvalonStudio.Projects.OmniSharp
         }
 
         public override List<string> ExcludedFiles { get; set; }
-
-        public override Guid ProjectTypeId => DotNetCoreCSharpProjectType.DotNetCoreCSharpTypeId;
     }
 }

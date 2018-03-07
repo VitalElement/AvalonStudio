@@ -463,7 +463,7 @@ namespace AvalonStudio.Projects
             }
         }
 
-        public T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem
+        public T AddItem<T>(T item, Guid? itemGuid = null, ISolutionFolder parent = null) where T : ISolutionItem
         {
             item.Id = Guid.NewGuid();
             item.Solution = this;
@@ -481,7 +481,7 @@ namespace AvalonStudio.Projects
                     _solutionModel.Projects.Add(new SlnProject
                     {
                         Id = project.Id.GetGuidString(),
-                        TypeGuid = project.ProjectTypeId.GetGuidString(),
+                        TypeGuid = itemGuid?.GetGuidString(),
                         Name = project.Name,
                         FilePath = CurrentDirectory.MakeRelativePath(project.Location)
                     });
