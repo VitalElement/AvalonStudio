@@ -1,8 +1,6 @@
 using Avalonia.Controls;
-using Avalonia.Controls.Templates;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Dialogs;
-using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Languages;
@@ -10,12 +8,10 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -39,7 +35,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             var files = Directory.EnumerateFiles(path);
 
-            var ptExtensions = shell.ProjectTypes.SelectMany(pt => pt.Extensions);
+            var ptExtensions = shell.ProjectTypes.Select(pt => pt.Metadata.DefaultExtension);
 
             var result = files.Where(f => ptExtensions.Contains(Path.GetExtension(f).Replace(".", "")));
 
@@ -114,30 +110,45 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                     foreach (var projectFile in projectFiles)
                     {
-                        var project = await Project.LoadProjectFileAsync(_solutionFolder.Solution, projectFile);
-                        _solutionFolder.Solution.AddItem(project, _solutionFolder);
+                        var projectTypeGuid = Project.GetProjectTypeGuidForProject(projectFile);
 
-                        if (!defaultSet)
+                        if (projectTypeGuid.HasValue)
                         {
-                            defaultSet = true;
-                            _solutionFolder.Solution.StartupProject = project;
+                            var project = await Project.LoadProjectFileAsync(
+                                _solutionFolder.Solution, projectTypeGuid.Value, projectFile);
+
+                            if (project != null)
+                            {
+                                _solutionFolder.Solution.AddItem(project, projectTypeGuid, _solutionFolder);
+                            }
+
+                            if (!defaultSet)
+                            {
+                                defaultSet = true;
+                                _solutionFolder.Solution.StartupProject = project;
+                            }
+
+                            if (!loadNewSolution)
+                            {
+                                await project.LoadFilesAsync();
+
+                                await project.ResolveReferencesAsync();
+                            }
                         }
-
-                        if(!loadNewSolution)
-                        {                            
-                            await project.LoadFilesAsync();
-
-                            await project.ResolveReferencesAsync();
-                        }                        
+                        else
+                        {
+                            IoC.Get<Utils.IConsole>().WriteLine(
+                                $"The project '{projectFile}' isn't supported by any installed project type!");
+                        }
                     }
                 }
 
-                _solutionFolder.Solution.Save();                
+                _solutionFolder.Solution.Save();
 
                 if (loadNewSolution)
                 {
                     await shell.OpenSolutionAsync(_solutionFolder.Solution.Location);
-                }         
+                }
                 else
                 {
                     await _solutionFolder.Solution.RestoreSolutionAsync();

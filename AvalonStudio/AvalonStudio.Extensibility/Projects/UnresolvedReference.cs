@@ -67,8 +67,6 @@
 
         ISolutionFolder ISolutionItem.Parent { get; set; }
 
-        public Guid ProjectTypeId => Guid.Empty;
-
         public IReadOnlyList<ISourceFile> SourceFiles => null;
 
         public event EventHandler FileAdded;

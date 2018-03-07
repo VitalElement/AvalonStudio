@@ -45,7 +45,7 @@ namespace AvalonStudio.Shell
 
         ColorScheme CurrentColorScheme { get; set; }
 
-        IEnumerable<IProjectType> ProjectTypes { get; }
+        IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
 
         IEnumerable<ILanguageService> LanguageServices { get; }
 

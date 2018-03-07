@@ -442,8 +442,6 @@
         public abstract dynamic ToolchainSettings { get; set; }
         ISolutionFolder ISolutionItem.Parent { get; set; }
 
-        public abstract Guid ProjectTypeId { get; }        
-
         IReadOnlyList<ISourceFile> IProject.SourceFiles => SourceFiles.AsReadOnly();
 
         public abstract void AddReference(IProject project);
