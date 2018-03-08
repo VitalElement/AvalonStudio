@@ -2,6 +2,8 @@
 {
     public interface ITemplate
     {
+        string Language { get; }
+
         string Name { get; }
         string ShortName { get; }
         string DefaultName { get; }

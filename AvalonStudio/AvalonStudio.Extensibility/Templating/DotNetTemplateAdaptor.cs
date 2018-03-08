@@ -1,46 +1,43 @@
-﻿using Microsoft.TemplateEngine.Edge.Template;
-using System.Collections.Generic;
+﻿using Microsoft.TemplateEngine.Abstractions;
 
 namespace AvalonStudio.Extensibility.Templating
 {
     public class DotNetTemplateAdaptor : ITemplate
-    { 
-        private ITemplateMatchInfo _template;
-        private TemplateKind _kind;
+    {
+        public string Language { get; }
 
-        internal DotNetTemplateAdaptor(ITemplateMatchInfo template, TemplateKind kind)
+        public string Name { get; }
+        public string ShortName { get; }
+        public string Description { get; }
+        public string Author { get; }
+
+        public string DefaultName { get; }
+
+        public TemplateKind Kind { get; }
+
+        internal ITemplateInfo DotnetTemplate { get; }
+
+        internal DotNetTemplateAdaptor(ITemplateInfo template)
         {
-            _kind = kind;
-            _template = template;
-        }
+            Language = template.GetLanguage();
 
-        public string Name => _template.Info.Name;
+            Name = template.Name;
+            ShortName = template.ShortName;
+            Description = template.Description;
+            Author = template.Author;
 
-        public string ShortName => _template.Info.ShortName;
-
-        public string Description => _template.Info.Description;
-
-        public string Author => _template.Info.Author;
-
-        public string DefaultName
-        {
-            get
+            if (!string.IsNullOrEmpty(template.DefaultName))
             {
-                if (!string.IsNullOrEmpty(_template.Info.DefaultName))
-                {
-                    return _template.Info.DefaultName;
-                }
-                else
-                {
-                    return Name.Replace(" ", "").Replace(".", "");
-                }
+                DefaultName = template.DefaultName;
             }
+            else
+            {
+                DefaultName = Name.Replace(" ", "").Replace(".", "");
+            }
+
+            Kind = template.GetTemplateKind();
+
+            DotnetTemplate = template;
         }
-
-        public IReadOnlyList<string> Classifications => _template.Info.Classifications;
-
-        public TemplateKind Kind => _kind;
-
-        internal ITemplateMatchInfo DotnetTemplate => _template;
     }
 }
