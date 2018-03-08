@@ -75,8 +75,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 BorderBrush = _mainItem.BorderBrush,
                 BorderThickness = _mainItem.BorderThickness,
                 Items = new[] { _mainItem }
-            };
-
+            };            
             
             Child = new Grid { Height = 20, Width = 20, Background = Brushes.Red };
         }
@@ -163,9 +162,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             var visualLine = editor.TextArea.TextView.GetVisualLine(line);
             var height = visualLine.Height - 1;
             _headerImage.Width = _headerImage.Height = height;
-            HorizontalOffset = 0;
-            VerticalOffset = caretScreenPos.Y - height - 1;
+            HorizontalOffset = 0;            
             PlacementTarget = editor.TextArea.TextView;
+            VerticalOffset = caretScreenPos.Y - height - 1 - PlacementTarget.Bounds.Height;
             // TODO:
             //Placement = PlacementMode.Relative;
         }

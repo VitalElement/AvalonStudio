@@ -137,7 +137,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
         {
             if (_popup == null)
             {
-                _popup = new ContextActionsBulbPopup(_editor.TextArea) { CommandProvider = GetActionCommand, Icon = IconImage };
+                _popup = new ContextActionsBulbPopup(_editor.TextArea) { CommandProvider = GetActionCommand, Icon = IconImage, Height=20, Width=20 };
                 // TODO: workaround to refresh menu with latest document
                 _popup.MenuOpened += async (sender, args) =>
                 {
