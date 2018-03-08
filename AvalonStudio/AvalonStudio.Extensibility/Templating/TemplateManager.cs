@@ -114,19 +114,17 @@ namespace AvalonStudio.Extensibility.Templating
             {
                 if (string.IsNullOrEmpty(name))
                 {
-                    _commandInput.ResetArgs(templateImpl.DotnetTemplate.Info.ShortName, "--output", path);
+                    _commandInput.ResetArgs(templateImpl.DotnetTemplate.ShortName, "--output", path);
                 }
                 else
                 {
-                    _commandInput.ResetArgs(templateImpl.DotnetTemplate.Info.ShortName, "--output", path, "--name", name);
+                    _commandInput.ResetArgs(templateImpl.DotnetTemplate.ShortName, "--output", path, "--name", name);
                 }
 
                 string fallbackName = new DirectoryInfo(_commandInput.OutputPath ?? Directory.GetCurrentDirectory()).Name;
 
-                var result = await _templateCreator.InstantiateAsync(templateImpl.DotnetTemplate.Info, _commandInput.Name, fallbackName, _commandInput.OutputPath, templateImpl.DotnetTemplate.GetValidTemplateParameters(), _commandInput.SkipUpdateCheck, _commandInput.IsForceFlagSpecified, _commandInput.BaselineName).ConfigureAwait(false);
-
+                var result = await _templateCreator.InstantiateAsync(templateImpl.DotnetTemplate, _commandInput.Name, fallbackName, _commandInput.OutputPath, _commandInput.InputTemplateParams, _commandInput.SkipUpdateCheck, _commandInput.IsForceFlagSpecified, _commandInput.BaselineName).ConfigureAwait(false);
                 return (CreationResult)result.Status;
-
             }
 
             return CreationResult.NotFound;
@@ -160,14 +158,14 @@ namespace AvalonStudio.Extensibility.Templating
 
             if (templateList.TryGetUnambiguousTemplateGroupToUse(out IReadOnlyList<ITemplateMatchInfo> unambiguousTemplateGroupForDetailDisplay))
             {
-                return unambiguousTemplateGroupForDetailDisplay.Where(t => t.IsMatch).Select(ti => new DotNetTemplateAdaptor(ti, kind)).ToList().AsReadOnly();
+                return unambiguousTemplateGroupForDetailDisplay.Where(t => t.IsMatch).Select(ti => new DotNetTemplateAdaptor(ti.Info)).ToList().AsReadOnly();
             }
 
             var ambiguous = templateList.GetBestTemplateMatchList(true);
 
             var groups = HelpForTemplateResolution.GetLanguagesForTemplateInfoGroups(ambiguous, language, "C#");
 
-            return groups.Keys.Where(t => t.IsMatch).Select(ti => new DotNetTemplateAdaptor(ti, kind)).ToList().AsReadOnly();
+            return groups.Keys.Where(t => t.IsMatch).Select(ti => new DotNetTemplateAdaptor(ti.Info)).ToList().AsReadOnly();
         }
 
         private bool ConfigureLocale()
@@ -318,6 +316,20 @@ namespace AvalonStudio.Extensibility.Templating
         public void Activation()
         {
 
+        }
+
+        public IDictionary<string, IEnumerable<ITemplate>> GetProjectTemplates() => GetTemplates(TemplateKind.Project);
+        public IDictionary<string, IEnumerable<ITemplate>> GetItemTemplate() => GetTemplates(TemplateKind.Item);
+
+        private IDictionary<string, IEnumerable<ITemplate>> GetTemplates(TemplateKind kind)
+        {
+            var templates = new HashSet<ITemplateInfo>();
+            _settingsLoader.GetTemplates(templates);
+
+            return templates.Where(t => t.GetTemplateKind() == kind)
+                .Select(t => new DotNetTemplateAdaptor(t))
+                .GroupBy(t => t.Language)
+                .ToDictionary(t => t.Key, t => t.AsEnumerable<ITemplate>());
         }
     }
 }
