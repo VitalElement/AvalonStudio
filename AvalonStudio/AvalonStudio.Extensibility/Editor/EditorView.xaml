@@ -54,6 +54,7 @@
                            SourceText="{Binding SourceText}"
                            HighlightSelectedWord="False"
                            ColorScheme="{Binding ColorScheme}"
+                           ContextActionsIcon="{StaticResource Bulb}"
                            DocumentAccessor="{Binding DocumentAccessor}">
         </editor:CodeEditor>
       </Grid>

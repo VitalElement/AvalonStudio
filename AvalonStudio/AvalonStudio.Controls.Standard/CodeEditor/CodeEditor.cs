@@ -5,6 +5,7 @@ using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using AvaloniaEdit;
 using AvaloniaEdit.Document;
@@ -13,6 +14,7 @@ using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
 using AvalonStudio.CodeEditor;
+using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
 using AvalonStudio.Controls.Standard.CodeEditor.Highlighting;
 using AvalonStudio.Controls.Standard.CodeEditor.Refactoring;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
@@ -101,6 +103,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private SelectedLineBackgroundRenderer _selectedLineBackgroundRenderer;
         private RenameManager _renameManager;
         private CompositeDisposable _disposables;
+
+        private ContextActionsRenderer _contextActionsRenderer;
 
         /// <summary>
         ///     Write lock must be held before calling this.
@@ -268,6 +272,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 _columnLimitBackgroundRenderer.Column = limit;
                 this.TextArea.TextView.InvalidateLayer(KnownLayer.Background);
+            }),
+
+            this.GetObservable(ContextActionsIconProperty).Subscribe(icon =>
+            {
+                if(_contextActionsRenderer != null)
+                {
+                    _contextActionsRenderer.IconImage = icon;
+                }
             }),
 
             this.GetObservable(ColorSchemeProperty).Subscribe(colorScheme =>
@@ -814,6 +826,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _textColorizer = new TextColoringTransformer(Document);
                 _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
 
+                _contextActionsRenderer = new ContextActionsRenderer(this, _diagnosticMarkersRenderer);
+                //_contextActionsRenderer.Providers.Add(new RoslynContextActionProvider(_documentId, _roslynHost)); todo from language service.
+                _contextActionsRenderer.Providers.Add(new DummyContextActionProvider());
+
                 TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
                 TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
                 TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
@@ -1009,6 +1025,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     }
                     break;
             }
+        }
+
+        public static readonly StyledProperty<IBitmap> ContextActionsIconProperty = AvaloniaProperty.Register<CodeEditor, IBitmap>(nameof(ContextActionsIcon));
+
+        public IBitmap ContextActionsIcon
+        {
+            get => this.GetValue(ContextActionsIconProperty);
+            set => this.SetValue(ContextActionsIconProperty, value);
         }
 
         public static readonly StyledProperty<int> CaretOffsetProperty =
