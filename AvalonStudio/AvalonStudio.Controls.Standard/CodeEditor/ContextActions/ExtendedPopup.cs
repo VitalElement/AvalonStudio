@@ -49,6 +49,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
         {
             var newIsOpen = _openIfFocused && (_parent.IsFocused || IsFocused);
             base.IsOpen = newIsOpen;
+
+            if(base.IsOpen)
+            {
+                base.Open();
+            }
         }
     }
 }

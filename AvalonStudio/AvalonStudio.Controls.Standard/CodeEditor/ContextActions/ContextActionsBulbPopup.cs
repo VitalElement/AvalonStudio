@@ -47,7 +47,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             _mainItem = new MenuItem
             {
                 Styles = { CreateItemContainerStyle() },
-                Header = _headerImage
+                Header = new Grid { Height=20, Width=20, Background=Brushes.Gold }
+                //_headerImage
             };
 
             _mainItem.SubmenuOpened += (sender, args) =>
@@ -76,7 +77,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 Items = new[] { _mainItem }
             };
 
-            Child = menu;
+            
+            Child = new Grid { Height = 20, Width = 20, Background = Brushes.Red };
         }
 
         public IBitmap Icon
