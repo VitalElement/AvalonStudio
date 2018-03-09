@@ -3,11 +3,6 @@
              Background="{DynamicResource ThemeBackgroundBrush}">
     <Grid RowDefinitions="*,180" ColumnDefinitions="150,*,400">
       <TreeView Background="{DynamicResource ThemeControlDarkBrush}" BorderThickness="0" Margin="1" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}">
-        <TreeView.DataTemplates>
-          <DataTemplate DataType="lang:ILanguageService">
-            <TextBlock Text="{Binding Title}" />
-          </DataTemplate>
-        </TreeView.DataTemplates>
         <TreeView.Styles>
           <Style Selector="TreeViewItem:selected /template/ Border#header">
             <Setter Property="Background" Value="#5500557d" />

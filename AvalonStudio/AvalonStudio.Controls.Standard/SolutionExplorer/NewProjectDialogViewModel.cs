@@ -237,9 +237,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 this.RaiseAndSetIfChanged(ref _selectedLanguage, value);
 
-                if (value != null)
+                if (value != null && _allProjectTemplates.Value.TryGetValue(value, out var templates))
                 {
-                    ProjectTemplates = _allProjectTemplates.Value[value];
+                    ProjectTemplates = templates;
                 }
             }
         }
