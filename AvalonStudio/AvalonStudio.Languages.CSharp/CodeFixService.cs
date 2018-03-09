@@ -56,7 +56,8 @@ namespace RoslynPad.Roslyn.CodeFixes
         [ImportingConstructor]
         public CodeFixService(Internal.CodeFixService inner)
         {
-            _inner = inner;     
+            _inner = inner;
+            AvalonStudio.Extensibility.IoC.RegisterConstant<ICodeFixService>(this);
         }
 
         public async Task<IEnumerable<CodeFixCollection>> GetFixesAsync(Document document, TextSpan textSpan, bool includeSuppressionFixes,
