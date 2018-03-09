@@ -26,10 +26,11 @@ namespace AvalonStudio.Shell
 
         private List<ILanguageService> _languageServices;
         private List<IToolChain> _toolChains;
-        private List<IDebugger> _debugger2s;
 
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
         private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
+
+        private IEnumerable<IDebugger> _debugger2s;
 
         private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
 
@@ -42,11 +43,14 @@ namespace AvalonStudio.Shell
         public MinimalShell(
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
+            [ImportMany] IEnumerable<IDebugger> debugger2s,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             [ImportMany] IEnumerable<IExtension> extensions)
         {
             _solutionTypes = solutionTypes;
             _projectTypes = projectTypes;
+
+            _debugger2s = debugger2s;
 
             _testFrameworks = testFrameworks;
 
@@ -66,7 +70,6 @@ namespace AvalonStudio.Shell
 
                 _languageServices.ConsumeExtension(extension);
                 _toolChains.ConsumeExtension(extension);
-                _debugger2s.ConsumeExtension(extension);
             }
 
             IoC.RegisterConstant(this);
