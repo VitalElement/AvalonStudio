@@ -30,6 +30,7 @@ using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Languages;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 {
@@ -188,7 +189,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                     offset = marker.StartOffset;
                     length = marker.Length;
                 }
-                var actions = await provider.GetActions(offset, length, cancellationToken).ConfigureAwait(true);
+                var actions = await _editor.LanguageService.GetCodeFixes(_editor.DocumentAccessor, offset, length, cancellationToken).ConfigureAwait(true);
                 allActions.AddRange(actions);
             }
             return allActions;

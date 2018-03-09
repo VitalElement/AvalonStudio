@@ -6,23 +6,29 @@
     using AvalonStudio.CodeEditor;
     using AvalonStudio.Documents;
     using AvalonStudio.Editor;
+    using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
     using AvalonStudio.Utils;
     using Microsoft.CodeAnalysis.Classification;
+    using Microsoft.CodeAnalysis.CodeRefactorings;
     using Microsoft.CodeAnalysis.Completion;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.FindSymbols;
     using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Rename;
+    using Microsoft.CodeAnalysis.Text;    
     using RoslynPad.Editor.Windows;
     using RoslynPad.Roslyn;
+    using RoslynPad.Roslyn.CodeFixes;
     using RoslynPad.Roslyn.Diagnostics;
     using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
@@ -664,14 +670,14 @@
             return result;
         }
 
-        private Diagnostic FromRoslynDiagnostic(DiagnosticData diagnostic, string fileName, IProject project)
+        private Diagnostic FromRoslynDiagnostic(Microsoft.CodeAnalysis.Diagnostic diagnostic, string fileName, IProject project)
         {
             var result = new Diagnostic
             {
-                Spelling = diagnostic.Message,
+                Spelling = diagnostic.GetMessage(),
                 Level = (DiagnosticLevel)diagnostic.Severity,
-                StartOffset = diagnostic.TextSpan.Start,
-                Length = diagnostic.TextSpan.Length,
+                StartOffset = diagnostic.Location.SourceSpan.Start,
+                Length = diagnostic.Location.SourceSpan.Length,
                 File = fileName,
                 Project = project,
             };
@@ -697,9 +703,14 @@
             }
 
             // Example how to get file specific diagnostics.
-            /*var model = await document.GetSemanticModelAsync();
+            var model = await document.GetSemanticModelAsync();
 
-            var diagnostics = model.GetDiagnostics();*/
+            var diagnostics = model.GetDiagnostics();
+
+            foreach(var diagnostic in diagnostics)
+            {
+                result.Diagnostics.Add(FromRoslynDiagnostic(diagnostic, editor.SourceFile.Location, editor.SourceFile.Project));
+            }
 
             try
             {
@@ -714,7 +725,7 @@
             {
             }
 
-            result.IndexItems = await IndexBuilder.Compute(document);
+            result.IndexItems = await IndexBuilder.Compute(document);            
 
             return result;
         }
@@ -915,5 +926,229 @@
 
             return null;
         }
+
+        public async Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken)
+        {
+            var textSpan = new TextSpan(offset, length);
+
+            var dataAssociation = GetAssociatedData(editor);
+
+            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
+
+            var document = GetDocument(dataAssociation, editor.SourceFile, workspace);
+            
+            var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);                        
+
+            if (textSpan.End >= text.Length) return Array.Empty<CodeFix>();
+
+            var codeFixService = IoC.Get<ICodeFixService>();            
+
+            var fixes = await codeFixService.GetFixesAsync(document, textSpan, true, cancellationToken);
+
+            foreach(var fix in fixes)
+            {
+                foreach(var fixinner in fix.Fixes)
+                {
+                    Console.WriteLine("CodeFix->Fix :" + fixinner.Action.Title);
+                }                
+            }
+
+            var codeRefactorings = await workspace.GetService<ICodeRefactoringService>().GetRefactoringsAsync(
+                document,
+                textSpan, cancellationToken).ConfigureAwait(false);
+
+            var actions = new List<Microsoft.CodeAnalysis.CodeActions.CodeAction>();
+
+            var refactoringContext = new CodeRefactoringContext(document, textSpan, action => actions.Add(action), cancellationToken);
+
+            if(codeRefactorings.Count() > 0 || actions.Count() > 0)
+            {
+                foreach (var refactoring in codeRefactorings)
+                {                    
+                    foreach (var action in refactoring.Actions)
+                    {
+                        Console.WriteLine("Refactoring->Action: " +action.Title);
+                    }
+                }
+                
+                foreach(var action in actions)
+                {
+                    Console.WriteLine("Actions: " + action.Title);
+                }
+            }
+
+            return Enumerable.Empty<CodeFix>();
+        }
     }
+
+    internal class ProviderNode<TProvider>
+    {
+        public string ProviderName { get; set; }
+        public List<string> Before { get; set; }
+        public List<string> After { get; set; }
+        public TProvider Provider { get; set; }
+        public HashSet<ProviderNode<TProvider>> NodesBeforeMeSet { get; set; }
+
+        public static ProviderNode<TProvider> From(TProvider provider)
+        {
+            string providerName = "";
+            if (provider is Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider)
+            {
+                var exportAttribute = provider.GetType().GetCustomAttribute(typeof(Microsoft.CodeAnalysis.CodeFixes.ExportCodeFixProviderAttribute));
+                if (exportAttribute is Microsoft.CodeAnalysis.CodeFixes.ExportCodeFixProviderAttribute fixAttribute && fixAttribute.Name != null)
+                {
+                    providerName = fixAttribute.Name;
+                }
+            }
+            else
+            {
+                var exportAttribute = provider.GetType().GetCustomAttribute(typeof(ExportCodeRefactoringProviderAttribute));
+                if (exportAttribute is ExportCodeRefactoringProviderAttribute refactoringAttribute && refactoringAttribute.Name != null)
+                {
+                    providerName = refactoringAttribute.Name;
+                }
+            }
+
+            var orderAttributes = provider.GetType().GetCustomAttributes(typeof(Microsoft.CodeAnalysis.ExtensionOrderAttribute), true).Select(attr => (Microsoft.CodeAnalysis.ExtensionOrderAttribute)attr).ToList();
+            return new ProviderNode<TProvider>(provider, providerName, orderAttributes);
+        }
+
+        private ProviderNode(TProvider provider, string providerName, List<Microsoft.CodeAnalysis.ExtensionOrderAttribute> orderAttributes)
+        {
+            Provider = provider;
+            ProviderName = providerName;
+            Before = new List<string>();
+            After = new List<string>();
+            NodesBeforeMeSet = new HashSet<ProviderNode<TProvider>>();
+            orderAttributes.ForEach(attr => AddAttribute(attr));
+        }
+
+        private void AddAttribute(Microsoft.CodeAnalysis.ExtensionOrderAttribute attribute)
+        {
+            if (attribute.Before != null)
+                Before.Add(attribute.Before);
+            if (attribute.After != null)
+                After.Add(attribute.After);
+        }
+
+        internal bool CheckForCycles()
+        {
+            return CheckForCycles(new HashSet<ProviderNode<TProvider>>());
+        }
+
+        private bool CheckForCycles(HashSet<ProviderNode<TProvider>> seenNodes)
+        {
+            if (!seenNodes.Add(this))
+            {
+                //Cycle detected
+                return true;
+            }
+
+            foreach (var before in this.NodesBeforeMeSet)
+            {
+                if (before.CheckForCycles(seenNodes))
+                    return true;
+            }
+
+            seenNodes.Remove(this);
+            return false;
+        }
+    }
+
+
+    internal class Graph<T>
+    {
+        //Dictionary to map between nodes and the names
+        private Dictionary<string, ProviderNode<T>> Nodes { get; }
+        private List<ProviderNode<T>> AllNodes { get; }
+        private Graph(List<ProviderNode<T>> nodesList)
+        {
+            Nodes = new Dictionary<string, ProviderNode<T>>();
+            AllNodes = nodesList;
+        }
+        internal static Graph<T> GetGraph(List<ProviderNode<T>> nodesList)
+        {
+            var graph = new Graph<T>(nodesList);
+
+            foreach (ProviderNode<T> node in graph.AllNodes)
+            {
+                graph.Nodes[node.ProviderName] = node;
+            }
+
+            foreach (ProviderNode<T> node in graph.AllNodes)
+            {
+                foreach (var before in node.Before)
+                {
+                    if (graph.Nodes.ContainsKey(before))
+                    {
+                        var beforeNode = graph.Nodes[before];
+                        beforeNode.NodesBeforeMeSet.Add(node);
+                    }
+                }
+
+                foreach (var after in node.After)
+                {
+                    if (graph.Nodes.ContainsKey(after))
+                    {
+                        var afterNode = graph.Nodes[after];
+                        node.NodesBeforeMeSet.Add(afterNode);
+                    }
+                }
+            }
+
+            return graph;
+        }
+
+        public bool HasCycles()
+        {
+            foreach (var node in this.AllNodes)
+            {
+                if (node.CheckForCycles())
+                    return true;
+            }
+            return false;
+        }
+
+        public List<T> TopologicalSort()
+        {
+            List<T> result = new List<T>();
+            var seenNodes = new HashSet<ProviderNode<T>>();
+
+            foreach (var node in AllNodes)
+            {
+                Visit(node, result, seenNodes);
+            }
+
+            return result;
+        }
+
+        private void Visit(ProviderNode<T> node, List<T> result, HashSet<ProviderNode<T>> seenNodes)
+        {
+            if (seenNodes.Add(node))
+            {
+                foreach (var before in node.NodesBeforeMeSet)
+                {
+                    Visit(before, result, seenNodes);
+                }
+
+                result.Add(node.Provider);
+            }
+        }
+    }
+
+
+    internal static class DictionaryExtensions
+    {
+        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> valueGetter)
+        {
+            if (!dictionary.TryGetValue(key, out var value))
+            {
+                value = valueGetter(key);
+                dictionary.Add(key, value);
+            }
+
+            return value;
+        }
+    }
+
 }

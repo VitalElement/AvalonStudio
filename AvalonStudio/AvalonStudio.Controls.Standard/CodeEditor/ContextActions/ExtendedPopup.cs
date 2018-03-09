@@ -12,6 +12,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
         public ExtendedPopup(Control parent)
         {
             _parent = parent ?? throw new ArgumentNullException(nameof(parent));
+
+            ((ISetLogicalParent)this).SetParent(parent);
         }
 
         public new bool IsOpen => base.IsOpen;
@@ -52,6 +54,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 
             if(base.IsOpen)
             {
+                base.InvalidateArrange();
+                base.InvalidateMeasure();
                 base.Open();
             }
         }

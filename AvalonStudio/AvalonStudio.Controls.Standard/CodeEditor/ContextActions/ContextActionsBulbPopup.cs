@@ -17,9 +17,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Markup;
 using Avalonia.Markup.Xaml.Data;
+using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
@@ -42,14 +44,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 
             StaysOpen = true;
 
-            _headerImage = new Image();
+            _headerImage = new Image();            
 
             _mainItem = new MenuItem
             {
                 Styles = { CreateItemContainerStyle() },
-                Header = new Grid { Height=20, Width=20, Background=Brushes.Gold }
+                Header = new Grid { Height=20, Width=20, Background=Brushes.Gold },                                
                 //_headerImage
-            };
+            };            
 
             _mainItem.SubmenuOpened += (sender, args) =>
             {
@@ -75,9 +77,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 BorderBrush = _mainItem.BorderBrush,
                 BorderThickness = _mainItem.BorderThickness,
                 Items = new[] { _mainItem }
-            };            
-            
-            Child = new Grid { Height = 20, Width = 20, Background = Brushes.Red };
+            };
+
+            Child = menu;            
         }
 
         public IBitmap Icon

@@ -5,6 +5,7 @@ using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.Xaml
@@ -138,6 +139,11 @@ namespace AvalonStudio.Languages.Xaml
         }
 
         public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
