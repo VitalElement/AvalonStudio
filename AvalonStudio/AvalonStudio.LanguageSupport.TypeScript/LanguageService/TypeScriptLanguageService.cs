@@ -24,8 +24,11 @@ using File = System.IO.File;
 
 namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 {
+    [ExportLanguageService(ContentType)]
     public class TypeScriptLanguageService : ILanguageService
     {
+        private const string ContentType = "TypeScript";
+
         private TypeScriptContext _typeScriptContext;
 
         private static readonly ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation> dataAssociations =
@@ -511,14 +514,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         public async Task PrepareLanguageServiceAsync()
         {
             await _typeScriptContext.LoadComponentsAsync();
-        }
-
-        public virtual void BeforeActivation()
-        {
-        }
-
-        public virtual void Activation()
-        {
         }
 
         public Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
