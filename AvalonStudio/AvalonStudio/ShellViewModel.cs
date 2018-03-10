@@ -48,7 +48,6 @@ namespace AvalonStudio
         private double _globalZoomLevel;
         private List<ILanguageService> _languageServices;
         private List<IToolChain> _toolChains;
-        private List<IDebugger> _debugger2s;
         private List<MenuBarDefinition> _menuBarDefinitions;
         private List<MenuDefinition> _menuDefinitions;
         private List<MenuItemGroupDefinition> _menuItemGroupDefinitions;
@@ -59,11 +58,13 @@ namespace AvalonStudio
         private List<ToolBarItemGroupDefinition> _toolBarItemGroupDefinitions;
         private List<ToolBarItemDefinition> _toolBarItemDefinitions;
 
-        public Lazy<StatusBarViewModel> _statusBar;
+        private Lazy<StatusBarViewModel> _statusBar;
 
         private IEnumerable<Lazy<IEditorProvider>> _editorProviders;
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
         private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
+
+        private IEnumerable<IDebugger> _debugger2s;
 
         private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
 
@@ -85,6 +86,7 @@ namespace AvalonStudio
             [ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
+            [ImportMany] IEnumerable<IDebugger> debugger2s,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             [ImportMany] IEnumerable<IExtension> extensions)
         {
@@ -92,8 +94,11 @@ namespace AvalonStudio
             IoC.RegisterConstant<IStatusBar>(_statusBar.Value);
 
             _editorProviders = editorProviders;
+
             _solutionTypes = solutionTypes;
             _projectTypes = projectTypes;
+
+            _debugger2s = debugger2s;
 
             _testFrameworks = testFrameworks;
 
@@ -150,8 +155,6 @@ namespace AvalonStudio
 
                 _languageServices.ConsumeExtension(extension);
                 _toolChains.ConsumeExtension(extension);
-                //_projectTemplates.ConsumeExtension(extension);
-                _debugger2s.ConsumeExtension(extension);
 
                 _commandDefinitions.ConsumeExtension(extension);
             }

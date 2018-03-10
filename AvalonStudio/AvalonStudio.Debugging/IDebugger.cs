@@ -1,9 +1,8 @@
+using AvalonStudio.Projects;
+using Mono.Debugging.Client;
+
 namespace AvalonStudio.Debugging
 {
-    using AvalonStudio.Extensibility.Plugin;
-    using AvalonStudio.Projects;
-    using Mono.Debugging.Client;
-
     public enum WatchFormat
     {
         Binary,
@@ -19,6 +18,6 @@ namespace AvalonStudio.Debugging
 
         DebuggerStartInfo GetDebuggerStartInfo(IProject project);
 
-        DebuggerSessionOptions GetDebuggerSessionOptions(IProject project);        
+        DebuggerSessionOptions GetDebuggerSessionOptions(IProject project);
     }
 }
