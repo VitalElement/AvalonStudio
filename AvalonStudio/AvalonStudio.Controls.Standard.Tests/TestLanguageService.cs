@@ -35,16 +35,6 @@ namespace AvalonStudio.Controls.Standard.Tests
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => throw new NotImplementedException();
 
-        public void Activation()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void BeforeActivation()
-        {
-            throw new NotImplementedException();
-        }
-
         public bool CanHandle(IEditor editor)
         {
             throw new NotImplementedException();

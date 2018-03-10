@@ -24,8 +24,9 @@ namespace AvalonStudio.Shell
     {
         public static IShell Instance { get; set; }
 
-        private List<ILanguageService> _languageServices;
         private List<IToolChain> _toolChains;
+
+        private IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> _languageServices;
 
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
         private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
@@ -41,12 +42,15 @@ namespace AvalonStudio.Shell
 
         [ImportingConstructor]
         public MinimalShell(
+            [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
             [ImportMany] IEnumerable<IDebugger> debugger2s,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             [ImportMany] IEnumerable<IExtension> extensions)
         {
+            _languageServices = languageServices;
+
             _solutionTypes = solutionTypes;
             _projectTypes = projectTypes;
 
@@ -54,7 +58,6 @@ namespace AvalonStudio.Shell
 
             _testFrameworks = testFrameworks;
 
-            _languageServices = new List<ILanguageService>();
             _toolChains = new List<IToolChain>();
 
             IoC.RegisterConstant(this, typeof(IShell));
@@ -68,7 +71,6 @@ namespace AvalonStudio.Shell
             {
                 extension.Activation();
 
-                _languageServices.ConsumeExtension(extension);
                 _toolChains.ConsumeExtension(extension);
             }
 
@@ -98,7 +100,7 @@ namespace AvalonStudio.Shell
 
         public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes => _projectTypes;
 
-        public IEnumerable<ILanguageService> LanguageServices => _languageServices;
+        public IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices => _languageServices;
 
         public IEnumerable<IToolChain> ToolChains => _toolChains;
 

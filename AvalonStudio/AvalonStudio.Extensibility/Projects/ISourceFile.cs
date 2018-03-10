@@ -3,12 +3,6 @@ using System.IO;
 
 namespace AvalonStudio.Projects
 {
-    public enum Language
-    {
-        C,
-        Cpp
-    }
-
     public interface ISourceFile : IProjectItem, IComparable<ISourceFile>, IComparable<string>
     {
         string FilePath { get; }

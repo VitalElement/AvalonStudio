@@ -48,14 +48,6 @@
 
         public IProject Project { get; set; }
 
-        public Language Language
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public event EventHandler FileModifiedExternally;
 
         public int CompareTo(string other)

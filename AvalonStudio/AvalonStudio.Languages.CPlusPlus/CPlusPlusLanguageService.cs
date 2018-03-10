@@ -8,7 +8,6 @@ using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
-using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Utils;
 using NClang;
@@ -23,8 +22,11 @@ using System.Xml.Linq;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
-    public class CPlusPlusLanguageService : ILanguageService
+    [ExportLanguageService(ContentType)]
+    internal class CPlusPlusLanguageService : ILanguageService
     {
+        private const string ContentType = "C/C++";
+
         private static readonly ClangIndex index = ClangService.CreateIndex();
 
         private static readonly ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations =
@@ -1282,14 +1284,6 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
 
             return result;
-        }
-
-        public void BeforeActivation()
-        {
-        }
-
-        public void Activation()
-        {
         }
 
         public Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
