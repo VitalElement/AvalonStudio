@@ -49,7 +49,7 @@ namespace RoslynPad.Roslyn.CodeFixes
     }
 
     [Export(typeof(ICodeFixService)), Shared]
-    internal sealed class CodeFixService : ICodeFixService, AvalonStudio.Extensibility.Plugin.IExtension
+    internal sealed class CodeFixService : ICodeFixService
     {
         private readonly Internal.CodeFixService _inner;
 
@@ -77,16 +77,6 @@ namespace RoslynPad.Roslyn.CodeFixes
         public CodeFixProvider GetSuppressionFixer(string language, IEnumerable<string> diagnosticIds)
         {
             return _inner.GetSuppressionFixer(language, diagnosticIds);
-        }
-
-        public void BeforeActivation()
-        {
-            AvalonStudio.Extensibility.IoC.RegisterConstant<ICodeFixService>(this);
-        }
-
-        public void Activation()
-        {
-            
         }
     }
 
