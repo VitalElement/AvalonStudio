@@ -2,7 +2,6 @@ using AvaloniaEdit.Indentation;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
-using AvalonStudio.Extensibility.Plugin;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages
 {
-    public interface ILanguageService : IExtension
+    public interface ILanguageService
     {
         IIndentationStrategy IndentationStrategy { get; }
 

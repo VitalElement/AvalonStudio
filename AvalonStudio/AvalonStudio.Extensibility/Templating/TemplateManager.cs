@@ -319,7 +319,7 @@ namespace AvalonStudio.Extensibility.Templating
         }
 
         public IDictionary<string, IEnumerable<ITemplate>> GetProjectTemplates() => GetTemplates(TemplateKind.Project);
-        public IDictionary<string, IEnumerable<ITemplate>> GetItemTemplate() => GetTemplates(TemplateKind.Item);
+        public IDictionary<string, IEnumerable<ITemplate>> GetItemTemplates() => GetTemplates(TemplateKind.Item);
 
         private IDictionary<string, IEnumerable<ITemplate>> GetTemplates(TemplateKind kind)
         {

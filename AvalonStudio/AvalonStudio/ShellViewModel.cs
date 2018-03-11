@@ -12,7 +12,6 @@ using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.MainToolBar;
 using AvalonStudio.Extensibility.Menus;
 using AvalonStudio.Extensibility.Plugin;
-using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Extensibility.ToolBars.Models;
@@ -46,9 +45,7 @@ namespace AvalonStudio
         private WorkspaceTaskRunner _taskRunner;
         private ToolBarDefinition _toolBarDefinition;
         private double _globalZoomLevel;
-        private List<ILanguageService> _languageServices;
         private List<IToolChain> _toolChains;
-        private List<IDebugger> _debugger2s;
         private List<MenuBarDefinition> _menuBarDefinitions;
         private List<MenuDefinition> _menuDefinitions;
         private List<MenuItemGroupDefinition> _menuItemGroupDefinitions;
@@ -59,11 +56,15 @@ namespace AvalonStudio
         private List<ToolBarItemGroupDefinition> _toolBarItemGroupDefinitions;
         private List<ToolBarItemDefinition> _toolBarItemDefinitions;
 
-        public Lazy<StatusBarViewModel> _statusBar;
+        private Lazy<StatusBarViewModel> _statusBar;
 
         private IEnumerable<Lazy<IEditorProvider>> _editorProviders;
+        private IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> _languageServices;
+
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
         private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
+
+        private IEnumerable<IDebugger> _debugger2s;
 
         private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
 
@@ -83,8 +84,10 @@ namespace AvalonStudio
         public ShellViewModel(
             Lazy<StatusBarViewModel> statusBar,
             [ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
+            [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
+            [ImportMany] IEnumerable<IDebugger> debugger2s,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             [ImportMany] IEnumerable<IExtension> extensions)
         {
@@ -92,12 +95,15 @@ namespace AvalonStudio
             IoC.RegisterConstant<IStatusBar>(_statusBar.Value);
 
             _editorProviders = editorProviders;
+            _languageServices = languageServices;
+
             _solutionTypes = solutionTypes;
             _projectTypes = projectTypes;
 
+            _debugger2s = debugger2s;
+
             _testFrameworks = testFrameworks;
 
-            _languageServices = new List<ILanguageService>();
             _debugger2s = new List<IDebugger>();
             _toolChains = new List<IToolChain>();
             _menuBarDefinitions = new List<MenuBarDefinition>();
@@ -148,10 +154,7 @@ namespace AvalonStudio
             {
                 extension.Activation();
 
-                _languageServices.ConsumeExtension(extension);
                 _toolChains.ConsumeExtension(extension);
-                //_projectTemplates.ConsumeExtension(extension);
-                _debugger2s.ConsumeExtension(extension);
 
                 _commandDefinitions.ConsumeExtension(extension);
             }
@@ -373,7 +376,7 @@ namespace AvalonStudio
 
         public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes => _projectTypes;
 
-        public IEnumerable<ILanguageService> LanguageServices => _languageServices;
+        public IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices => _languageServices;
 
         public IEnumerable<IToolChain> ToolChains => _toolChains;
 

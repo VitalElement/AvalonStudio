@@ -812,7 +812,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _snippetManager.InitialiseSnippetsForProject(sourceFile.Project);
             }
 
-            LanguageService = _shell.LanguageServices.FirstOrDefault(o => o.CanHandle(DocumentAccessor));
+            LanguageService = _shell.LanguageServices.FirstOrDefault(o => o.Value.CanHandle(DocumentAccessor))?.Value;
 
             if (LanguageService != null)
             {

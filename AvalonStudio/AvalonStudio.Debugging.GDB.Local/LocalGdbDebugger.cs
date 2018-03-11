@@ -1,29 +1,20 @@
-﻿namespace AvalonStudio.Debuggers.GDB.Local
-{
-    using AvalonStudio.Debugging;
-    using AvalonStudio.Debugging.GDB;
-    using AvalonStudio.Extensibility;
-    using AvalonStudio.Platforms;
-    using AvalonStudio.Projects;
-    using AvalonStudio.Toolchains.GCC;
-    using Mono.Debugging.Client;
-    using System;
-    using System.IO;
-    using AvalonStudio.Utils;
-    using System.Threading.Tasks;
+﻿using AvalonStudio.Debugging;
+using AvalonStudio.Debugging.GDB;
+using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
+using AvalonStudio.Toolchains.GCC;
+using AvalonStudio.Utils;
+using Mono.Debugging.Client;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
-    public class LocalGdbDebugger : IDebugger2
+namespace AvalonStudio.Debuggers.GDB.Local
+{
+    [ExportDebugger]
+    internal class LocalGdbDebugger : IDebugger2
     {
         public string BinDirectory => null;
-
-        public void Activation()
-        {
-        }
-
-        public void BeforeActivation()
-        {
-            IoC.RegisterConstant<LocalGdbDebugger>(this);
-        }
 
         public DebuggerSession CreateSession(IProject project)
         {

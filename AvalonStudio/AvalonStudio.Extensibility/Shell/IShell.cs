@@ -47,7 +47,7 @@ namespace AvalonStudio.Shell
 
         IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
 
-        IEnumerable<ILanguageService> LanguageServices { get; }
+        IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
 
         IEnumerable<IToolChain> ToolChains { get; }
 

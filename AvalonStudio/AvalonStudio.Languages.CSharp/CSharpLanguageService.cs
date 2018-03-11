@@ -1,40 +1,36 @@
-﻿namespace AvalonStudio.Languages.CSharp
-{
-    using Avalonia.Threading;
-    using AvaloniaEdit.Indentation;
-    using AvaloniaEdit.Indentation.CSharp;
-    using AvalonStudio.CodeEditor;
-    using AvalonStudio.Documents;
-    using AvalonStudio.Editor;
-    using AvalonStudio.Extensibility;
-    using AvalonStudio.Extensibility.Languages.CompletionAssistance;
-    using AvalonStudio.Languages;
-    using AvalonStudio.Projects;
-    using AvalonStudio.Utils;
-    using Microsoft.CodeAnalysis.Classification;
-    using Microsoft.CodeAnalysis.CodeRefactorings;
-    using Microsoft.CodeAnalysis.Completion;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.FindSymbols;
-    using Microsoft.CodeAnalysis.Formatting;
-    using Microsoft.CodeAnalysis.Rename;
-    using Microsoft.CodeAnalysis.Text;    
-    using RoslynPad.Editor.Windows;
-    using RoslynPad.Roslyn;
-    using RoslynPad.Roslyn.CodeFixes;
-    using RoslynPad.Roslyn.Diagnostics;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.Immutable;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Runtime.CompilerServices;
-    using System.Threading;
-    using System.Threading.Tasks;
+﻿using Avalonia.Threading;
+using AvaloniaEdit.Indentation;
+using AvaloniaEdit.Indentation.CSharp;
+using AvalonStudio.CodeEditor;
+using AvalonStudio.Documents;
+using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+using AvalonStudio.Projects;
+using AvalonStudio.Utils;
+using Microsoft.CodeAnalysis.Classification;
+using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.FindSymbols;
+using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Rename;
+using RoslynPad.Editor.Windows;
+using RoslynPad.Roslyn;
+using RoslynPad.Roslyn.Diagnostics;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 
-    public class CSharpLanguageService : ILanguageService
+namespace AvalonStudio.Languages.CSharp
+{
+    [ExportLanguageService(ContentType)]
+    internal class CSharpLanguageService : ILanguageService
     {
+        private const string ContentType = "C#";
+
         private static readonly ConditionalWeakTable<IEditor, CSharpDataAssociation> dataAssociations =
             new ConditionalWeakTable<IEditor, CSharpDataAssociation>();
 
@@ -851,14 +847,6 @@
             return null;
         }
 
-        public void BeforeActivation()
-        {
-        }
-
-        public void Activation()
-        {
-        }
-
         public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo = "")
         {
             if (editor.SourceFile is MetaDataFile)
@@ -881,7 +869,7 @@
 
                 if (symbol != null)
                 {
-                    if(renameTo == string.Empty)
+                    if (renameTo == string.Empty)
                     {
                         renameTo = "Test" + symbol.Name + "1";
                     }
@@ -897,7 +885,7 @@
                 }
 
                 var changes = new Dictionary<string, SymbolRenameInfo>();
-                var solutionChanges = solution.GetChanges(workspace.CurrentSolution);                
+                var solutionChanges = solution.GetChanges(workspace.CurrentSolution);
 
                 foreach (var projectChange in solutionChanges.GetProjectChanges())
                 {
@@ -910,7 +898,7 @@
                             modifiedFileResponse = new SymbolRenameInfo(changedDocument.FilePath);
                             changes[changedDocument.FilePath] = modifiedFileResponse;
                         }
-                        
+
                         var originalDocument = workspace.CurrentSolution.GetDocument(changedDocumentId);
                         var linePositionSpanTextChanges = await TextChanges.GetAsync(changedDocument, originalDocument);
 

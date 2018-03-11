@@ -1,27 +1,18 @@
-﻿namespace AvalonStudio.Debugging.DotNetCore
-{
-    using AvalonStudio.Extensibility;
-    using AvalonStudio.Extensibility.Projects;
-    using AvalonStudio.Platforms;
-    using AvalonStudio.Projects;
-    using AvalonStudio.Utils;
-    using Mono.Debugging.Client;
-    using Mono.Debugging.Win32;
-    using System.IO;
-    using System.Threading.Tasks;
+﻿using AvalonStudio.Extensibility.Projects;
+using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
+using AvalonStudio.Utils;
+using Mono.Debugging.Client;
+using Mono.Debugging.Win32;
+using System.IO;
+using System.Threading.Tasks;
 
-    public class DotNetCoreDebugger : IDebugger2
+namespace AvalonStudio.Debugging.DotNetCore
+{
+    [ExportDebugger]
+    internal class DotNetCoreDebugger : IDebugger2
     {
         public string BinDirectory => DotNetCliService.Instance.DotNetPath;
-
-        public void Activation()
-        {
-        }
-
-        public void BeforeActivation()
-        {
-            IoC.RegisterConstant<DotNetCoreDebugger>(this);
-        }
 
         public DebuggerSession CreateSession(IProject project)
         {
