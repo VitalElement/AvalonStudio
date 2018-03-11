@@ -2,27 +2,36 @@
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvalonStudio.CodeEditor;
+using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Projects;
 using AvalonStudio.Utils;
 using Microsoft.CodeAnalysis.Classification;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Rename;
+using Microsoft.CodeAnalysis.Text;
 using RoslynPad.Editor.Windows;
 using RoslynPad.Roslyn;
+using RoslynPad.Roslyn.CodeFixes;
 using RoslynPad.Roslyn.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace AvalonStudio.Languages.CSharp
 {
@@ -916,8 +925,10 @@ namespace AvalonStudio.Languages.CSharp
         }
 
         public async Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken)
-        {
-            var textSpan = new TextSpan(offset, length);
+        {            
+            var location = editor.Document.GetLocation(offset);
+            var line = editor.Document.GetLineByNumber(location.Line);
+            var textSpan = new TextSpan(line.Offset, line.Length);
 
             var dataAssociation = GetAssociatedData(editor);
 
@@ -933,11 +944,15 @@ namespace AvalonStudio.Languages.CSharp
 
             var fixes = await codeFixService.GetFixesAsync(document, textSpan, true, cancellationToken);
 
+            var result = new List<CodeFix>();
+
             foreach(var fix in fixes)
-            {
+            {                
                 foreach(var fixinner in fix.Fixes)
                 {
-                    Console.WriteLine("CodeFix->Fix :" + fixinner.Action.Title);
+                    result.Add(new CodeFix { PrimaryDiagnostic = new Diagnostic { Spelling = fixinner.PrimaryDiagnostic.GetMessage() }, Action = new RosynCodeAction(fixinner.Action) });
+
+                    Console.WriteLine("CodeFix->Fix :" + fixinner.Action.Title);                    
                 }                
             }
 
@@ -945,27 +960,117 @@ namespace AvalonStudio.Languages.CSharp
                 document,
                 textSpan, cancellationToken).ConfigureAwait(false);
 
+            foreach (var refactoring in codeRefactorings)
+            {
+                foreach (var action in refactoring.Actions)
+                {
+                    result.Add(new CodeFix { Action = new RosynCodeAction(action) });
+                    Console.WriteLine("Refactoring->Action: " + action.Title);
+                }
+            }
+
             var actions = new List<Microsoft.CodeAnalysis.CodeActions.CodeAction>();
 
             var refactoringContext = new CodeRefactoringContext(document, textSpan, action => actions.Add(action), cancellationToken);
 
-            if(codeRefactorings.Count() > 0 || actions.Count() > 0)
+            foreach (var action in actions)
             {
-                foreach (var refactoring in codeRefactorings)
-                {                    
-                    foreach (var action in refactoring.Actions)
-                    {
-                        Console.WriteLine("Refactoring->Action: " +action.Title);
-                    }
-                }
-                
-                foreach(var action in actions)
-                {
-                    Console.WriteLine("Actions: " + action.Title);
-                }
+                Console.WriteLine("Actions: " + action.Title);
+
+                result.Add(new CodeFix { Action = new RosynCodeAction(action) });
             }
 
-            return Enumerable.Empty<CodeFix>();
+            //if(codeRefactorings.Count() > 0 || actions.Count() > 0)
+            //{
+            //    foreach (var refactoring in codeRefactorings)
+            //    {                    
+            //        foreach (var action in refactoring.Actions)
+            //        {
+            //            Console.WriteLine("Refactoring->Action: " +action.Title);
+            //        }
+            //    }
+
+
+            //}
+
+            return result;
+        }
+
+        public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
+        {
+            var dataAssociation = GetAssociatedData(editor);
+
+            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
+
+            return new List<IContextActionProvider>
+            {
+                new RoslynContextActionProvider(workspace)
+            };
+        }
+    }
+
+    class RoslynContextActionProvider : IContextActionProvider
+    {
+        private Microsoft.CodeAnalysis.Workspace _workspace;
+
+        public RoslynContextActionProvider(Microsoft.CodeAnalysis.Workspace workspace)
+        {
+            _workspace = workspace;
+        }
+
+        public ICommand GetActionCommand(object action)
+        {
+            //if (action is CodeAction codeAction)
+            //{
+            //    return new CodeActionCommand(this, codeAction);
+            //}
+            var codeFix = action as CodeFix;
+            if (codeFix == null || codeFix.Action.HasCodeActions()) return null;
+            return new CodeActionCommand(this, codeFix.Action);
+        }
+
+        public async Task<IEnumerable<CodeFix>> GetActions(int offset, int length, CancellationToken cancellationToken)
+        {
+            return new List<CodeFix>
+            {
+                new CodeFix{ PrimaryDiagnostic = new Diagnostic{ Spelling = "Test Action 1" }, Action = new DummyCodeAction() },
+                new CodeFix{ PrimaryDiagnostic = new Diagnostic { Spelling = "Code Action 2"}, Action = new DummyCodeAction()},
+            };
+        }
+
+        public async Task ExecuteCodeActionAsync(ICodeAction codeAction)
+        {
+            var operations = await codeAction.GetOperationsAsync(CancellationToken.None).ConfigureAwait(true);
+            foreach (var operation in operations)
+            {
+                operation.Apply(_workspace,
+                    CancellationToken.None);
+            }
+        }
+    }
+
+    class CodeActionCommand : ICommand
+    {
+        RoslynContextActionProvider _provider;
+        ICodeAction _codeAction;
+
+        public CodeActionCommand(RoslynContextActionProvider provider, ICodeAction codeAction)
+        {
+            _provider = provider;
+            _codeAction = codeAction;
+        }
+
+        public event EventHandler CanExecuteChanged
+        {
+            add { }
+            remove { }
+        }
+
+        public bool CanExecute(object parameter) => true;
+
+        public async void Execute(object parameter)
+        {
+            await _provider.ExecuteCodeActionAsync(_codeAction).ConfigureAwait(true);
         }
     }
 
@@ -1136,6 +1241,51 @@ namespace AvalonStudio.Languages.CSharp
             }
 
             return value;
+        }
+    }
+
+    public class RoslynCodeActionOperation : ICodeActionOperation
+    {
+        private CodeActionOperation _inner;
+
+        public RoslynCodeActionOperation(CodeActionOperation inner)
+        {
+            _inner = inner;
+        }
+
+        public string Title => _inner.Title;
+
+        public void Apply(object workspace, CancellationToken cancellationToken)
+        {
+            _inner.Apply(workspace as Microsoft.CodeAnalysis.Workspace, cancellationToken);
+        }
+    }
+
+    public class RosynCodeAction : ICodeAction
+    {
+        public ImmutableArray<ICodeAction> NestedCodeActions => new ImmutableArray<ICodeAction>();
+
+        private CodeAction _inner;
+
+        public RosynCodeAction (CodeAction inner)
+        {
+            _inner = inner;            
+        }
+
+        //
+        // Summary:
+        //     The sequence of operations that define the code action.
+        public async Task<ImmutableArray<ICodeActionOperation>> GetOperationsAsync(CancellationToken cancellationToken)
+        {
+            var operations = await _inner.GetOperationsAsync(cancellationToken);
+
+            return operations.Select(op => new RoslynCodeActionOperation(op)).Cast<ICodeActionOperation>().ToImmutableArray();
+        }
+
+        public Task PerformActionAsync()
+        {
+            IoC.Get<IConsole>().WriteLine("Running code action");
+            return Task.CompletedTask;
         }
     }
 

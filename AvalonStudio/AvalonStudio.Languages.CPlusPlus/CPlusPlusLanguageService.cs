@@ -1300,5 +1300,10 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

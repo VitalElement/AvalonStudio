@@ -41,7 +41,7 @@ namespace AvalonStudio.Languages
 
         public IProject Project => null;
 
-        public ICodeAction Action { get; set; }
+        public ICodeAction Action { get; set; }        
 
         //public ImmutableArray<Diagnostic> Diagnostics => _inner.Diagnostics;
 

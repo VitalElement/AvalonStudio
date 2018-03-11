@@ -13,11 +13,13 @@ using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 using RoslynPad.Editor.Windows;
+using RoslynPad.Roslyn.CodeFixes;
 using RoslynPad.Roslyn.Diagnostics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition;
 using System.Composition.Hosting;
 using System.IO;
 using System.Linq;
@@ -39,6 +41,7 @@ namespace RoslynPad.Roslyn
         private readonly string dotnetPath;
         private readonly string sdkPath;
 
+        [ImportingConstructor]
         internal RoslynWorkspace(HostServices host, NuGetConfiguration nuGetConfiguration, CompositionHost compositionContext, string dotnetPath, string sdkPath)
             : base(host, WorkspaceKind.Host)
         {
@@ -134,6 +137,8 @@ namespace RoslynPad.Roslyn
 
                         var workspace = new RoslynWorkspace(host, null, compositionContext, DotNetCliService.Instance.Info.Executable, DotNetCliService.Instance.Info.BasePath);
 
+                        compositionContext.GetExport<ICodeFixService>();
+
                         workspace.RegisterWorkspace(solution);
 
                         workspace.InitialiseBuildNodesAsync(true).Wait();
@@ -202,9 +207,11 @@ namespace RoslynPad.Roslyn
                         .WithParts(partTypes)
                         .CreateContainer();
 
-                    var host = MefHostServices.Create(compositionContext);
+                    var host = MefHostServices.Create(compositionContext);                    
 
                     var workspace = new RoslynWorkspace(host, null, compositionContext, DotNetCliService.Instance.Info.Executable, DotNetCliService.Instance.Info.BasePath);
+
+                    compositionContext.GetExport<ICodeFixService>();                    
 
                     workspace.RegisterWorkspace(solution);
 

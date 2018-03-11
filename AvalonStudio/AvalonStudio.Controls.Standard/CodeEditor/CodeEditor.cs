@@ -828,7 +828,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 _contextActionsRenderer = new ContextActionsRenderer(this, _diagnosticMarkersRenderer);
                 //_contextActionsRenderer.Providers.Add(new RoslynContextActionProvider(_documentId, _roslynHost)); todo from language service.
-                _contextActionsRenderer.Providers.Add(new DummyContextActionProvider());
+
+                foreach (var contextActionProvider in LanguageService.GetContextActionProviders(DocumentAccessor))
+                {
+                    _contextActionsRenderer.Providers.Add(contextActionProvider);
+                }                
 
                 TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
                 TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);

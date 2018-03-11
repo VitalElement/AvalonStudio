@@ -19,7 +19,7 @@
                   BorderThickness="{TemplateBinding BorderThickness}">
             <Border.DataTemplates>
               <DataTemplate DataType="codeFixes:CodeFix">
-                <TextBlock Text="CodeFix Template" />
+                <TextBlock Text="{Binding Title}" />
               </DataTemplate>
             </Border.DataTemplates>
             

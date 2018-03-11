@@ -142,5 +142,10 @@ namespace AvalonStudio.Languages.Xaml
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -54,6 +54,8 @@ namespace AvalonStudio.Languages
 
         Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken);
 
+        IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor);
+
         Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName);
 
         Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset);
