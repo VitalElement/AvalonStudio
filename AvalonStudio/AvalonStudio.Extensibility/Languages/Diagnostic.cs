@@ -5,9 +5,9 @@ using Avalonia.Media;
 namespace AvalonStudio.Languages
 {
     public enum DiagnosticLevel
-    {
-        Ignored = 0,
-        Note = 1,
+    {                
+        Hidden = 0,
+        Info = 1,
         Warning = 2,
         Error = 3,
         Fatal = 4

@@ -116,7 +116,7 @@ namespace AvalonStudio.Extensibility.Editor
                         break;
 
                     default:
-                        markerColor = Color.FromRgb(0, 42, 74);
+                        markerColor = Color.FromRgb(0, 255, 74);
                         break;
                 }
 
