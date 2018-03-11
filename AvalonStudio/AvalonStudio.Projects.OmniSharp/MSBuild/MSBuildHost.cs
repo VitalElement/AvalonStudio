@@ -284,7 +284,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
 
             compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(specificDiagnosticOptions);
 
-            var parseOptions = new CSharpParseOptions();
+            var parseOptions = new CSharpParseOptions(LanguageVersion.Latest);
 
             foreach (var arg in args)
             {

@@ -56,7 +56,9 @@ namespace RoslynPad.Roslyn
 
             _buildNodes = new BlockingCollection<MSBuildHost>();
 
-            this.EnableDiagnostics(DiagnosticOptions.Semantic | DiagnosticOptions.Syntax);
+            DiagnosticProvider.Enable(this, DiagnosticProvider.Options.Semantic | DiagnosticProvider.Options.Syntax);
+
+            //this.EnableDiagnostics(DiagnosticOptions.Semantic | DiagnosticOptions.Syntax);
 
             GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;
         }
@@ -138,6 +140,7 @@ namespace RoslynPad.Roslyn
                         var workspace = new RoslynWorkspace(host, null, compositionContext, DotNetCliService.Instance.Info.Executable, DotNetCliService.Instance.Info.BasePath);
 
                         compositionContext.GetExport<ICodeFixService>();
+                        var diagnosticService = compositionContext.GetExport<IDiagnosticService>();
 
                         workspace.RegisterWorkspace(solution);
 

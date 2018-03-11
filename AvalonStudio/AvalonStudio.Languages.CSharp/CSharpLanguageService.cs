@@ -707,6 +707,12 @@ namespace AvalonStudio.Languages.CSharp
                 return result;
             }
 
+            var diagnosticService = IoC.Get<IDiagnosticService>();
+
+            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
+
+            //var diags = diagnosticService.GetDiagnostics(workspace, workspace.GetProjectId(editor.SourceFile.Project), workspace.GetDocumentId(editor.SourceFile), null, true, CancellationToken.None);
+
             // Example how to get file specific diagnostics.
             var model = await document.GetSemanticModelAsync();
 
@@ -925,10 +931,8 @@ namespace AvalonStudio.Languages.CSharp
         }
 
         public async Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken)
-        {            
-            var location = editor.Document.GetLocation(offset);
-            var line = editor.Document.GetLineByNumber(location.Line);
-            var textSpan = new TextSpan(line.Offset, line.Length);
+        {                        
+            var textSpan = new TextSpan(offset, length);
 
             var dataAssociation = GetAssociatedData(editor);
 
@@ -1027,16 +1031,7 @@ namespace AvalonStudio.Languages.CSharp
             var codeFix = action as CodeFix;
             if (codeFix == null || codeFix.Action.HasCodeActions()) return null;
             return new CodeActionCommand(this, codeFix.Action);
-        }
-
-        public async Task<IEnumerable<CodeFix>> GetActions(int offset, int length, CancellationToken cancellationToken)
-        {
-            return new List<CodeFix>
-            {
-                new CodeFix{ PrimaryDiagnostic = new Diagnostic{ Spelling = "Test Action 1" }, Action = new DummyCodeAction() },
-                new CodeFix{ PrimaryDiagnostic = new Diagnostic { Spelling = "Code Action 2"}, Action = new DummyCodeAction()},
-            };
-        }
+        }        
 
         public async Task ExecuteCodeActionAsync(ICodeAction codeAction)
         {
@@ -1264,6 +1259,14 @@ namespace AvalonStudio.Languages.CSharp
     public class RosynCodeAction : ICodeAction
     {
         public ImmutableArray<ICodeAction> NestedCodeActions => new ImmutableArray<ICodeAction>();
+
+        public bool IsInlinable => _inner.IsInlinable;
+
+        public string EquivalenceKey => _inner.EquivalenceKey;
+
+        public string Message => _inner.Message;
+
+        public string Title => _inner.Title;
 
         private CodeAction _inner;
 

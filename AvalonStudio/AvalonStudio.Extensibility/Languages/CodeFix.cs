@@ -8,15 +8,18 @@ using System.Windows.Input;
 namespace AvalonStudio.Languages
 {
     public interface IContextActionProvider
-    {
-        Task<IEnumerable<CodeFix>> GetActions(int offset, int length, CancellationToken cancellationToken);
-
+    {   
         ICommand GetActionCommand(object action);
     }
 
     public interface ICodeAction
     {
         ImmutableArray<ICodeAction> NestedCodeActions { get; }
+
+        bool IsInlinable { get; }
+        string EquivalenceKey { get; }
+        string Message { get; }
+        string Title { get; }
 
         Task<ImmutableArray<ICodeActionOperation>> GetOperationsAsync(CancellationToken cancellationToken);
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
 using System.Threading;
+using AvalonStudio.Extensibility;
 using Microsoft.CodeAnalysis;
 
 namespace RoslynPad.Roslyn.Diagnostics
@@ -17,6 +18,8 @@ namespace RoslynPad.Roslyn.Diagnostics
         {
             _inner = inner;
             inner.DiagnosticsUpdated += OnDiagnosticsUpdated;
+
+            IoC.RegisterConstant<IDiagnosticService>(this);
         }
 
         // ReSharper disable once UnusedParameter.Local
