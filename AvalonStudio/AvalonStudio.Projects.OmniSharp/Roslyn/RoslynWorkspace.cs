@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
+using Microsoft.CodeAnalysis.PickMembers;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 using RoslynPad.Editor.Windows;
@@ -141,6 +142,8 @@ namespace RoslynPad.Roslyn
 
                         compositionContext.GetExport<ICodeFixService>();
                         var diagnosticService = compositionContext.GetExport<IDiagnosticService>();
+                        
+                        // TODO implement IPickMemberService.
 
                         workspace.RegisterWorkspace(solution);
 

@@ -47,6 +47,10 @@ namespace AvalonStudio.Languages.Xaml
 
         public virtual string Identifier => "XML";
 
+        public IObservable<DiagnosticsUpdatedEventArgs> Diagnostics => throw new NotImplementedException();
+
+        public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
+
         public virtual bool CanHandle(IEditor editor)
         {
             var result = false;

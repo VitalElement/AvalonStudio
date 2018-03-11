@@ -134,6 +134,10 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
 
+        public IObservable<DiagnosticsUpdatedEventArgs> Diagnostics => throw new NotImplementedException();
+
+        public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
+
         private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
             switch (kind)

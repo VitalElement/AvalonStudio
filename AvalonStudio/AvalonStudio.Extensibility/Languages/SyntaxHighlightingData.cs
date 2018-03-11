@@ -21,10 +21,13 @@ namespace AvalonStudio.Languages
         PreProcessor,
         PreProcessorText,
         Operator,
+        Unnecessary
     }
 
     public class SyntaxHighlightDataList : List<OffsetSyntaxHighlightingData>
     {
+        public object Tag { get; set; }
+
         public new void Add(OffsetSyntaxHighlightingData item)
         {
             var index = BinarySearch(item);

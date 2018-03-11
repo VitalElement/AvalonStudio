@@ -5,6 +5,7 @@ using AvaloniaEdit.Rendering;
 using AvalonStudio.CodeEditor;
 using AvalonStudio.Extensibility.Editor;
 using System;
+using System.Linq;
 
 namespace AvalonStudio.Languages
 {
@@ -23,9 +24,11 @@ namespace AvalonStudio.Languages
 
         public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
 
+        public TextSegmentCollection<TextTransformation> OpacityTransformations { get; private set; }
+
         public ColorScheme ColorScheme { get; set; }
 
-        
+
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
             var transformsInLine = TextTransformations.FindOverlappingSegments(line);
@@ -41,6 +44,81 @@ namespace AvalonStudio.Languages
 
                 SetTextStyle(line, formattedOffset, transform.Length, transform.Foreground);
             }
+
+            if (OpacityTransformations != null)
+            {
+                transformsInLine = OpacityTransformations.FindOverlappingSegments(line);
+
+                foreach (var transform in transformsInLine)
+                {
+                    var formattedOffset = 0;
+
+                    if (transform.StartOffset > line.Offset)
+                    {
+                        formattedOffset = transform.StartOffset - line.Offset;
+                    }
+
+                    SetTextOpacity(line, formattedOffset, transform.Length, 0.5);
+                }
+            }
+        }
+
+        public void RemoveAll(Predicate<TextTransformation> predicate)
+        {
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+            if (TextTransformations != null)
+            {
+                foreach (var m in TextTransformations.ToArray())
+                {
+                    if (predicate(m))
+                        TextTransformations.Remove(m);
+                }
+            }
+        }
+
+        public void AddOpacityTransformations(SyntaxHighlightDataList highlightData)
+        {
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (OpacityTransformations == null)
+                {
+                    OpacityTransformations = new TextSegmentCollection<TextTransformation>(document);
+                }
+
+                RemoveAll(transform => Equals(transform.Tag, highlightData.Tag));
+
+                foreach (var transform in highlightData)
+                {
+                    if (transform.Type != HighlightType.None)
+                    {
+                        if (transform is LineColumnSyntaxHighlightingData)
+                        {
+                            var trans = transform as LineColumnSyntaxHighlightingData;
+
+                            OpacityTransformations.Add(new TextTransformation
+                            {
+                                Foreground = GetBrush(transform.Type),
+                                StartOffset = document.GetOffset(trans.StartLine, trans.StartColumn),
+                                EndOffset = document.GetOffset(trans.EndLine, trans.EndColumn),
+                                Tag = highlightData.Tag,
+                                Opacity = transform.Type == HighlightType.Unnecessary ? 0.5 : 1.0
+                            });
+                        }
+                        else
+                        {
+                            OpacityTransformations.Add(new TextTransformation
+                            {
+                                Foreground = GetBrush(transform.Type),
+                                StartOffset = transform.Start,
+                                EndOffset = transform.Start + transform.Length,
+                                Tag = highlightData.Tag,
+                                Opacity = transform.Type == HighlightType.Unnecessary ? 0.5 : 1.0
+                            });
+                        }
+                    }
+                }
+            });
         }
 
         public void SetTransformations(SyntaxHighlightDataList highlightData)
@@ -61,7 +139,8 @@ namespace AvalonStudio.Languages
                             {
                                 Foreground = GetBrush(transform.Type),
                                 StartOffset = document.GetOffset(trans.StartLine, trans.StartColumn),
-                                EndOffset = document.GetOffset(trans.EndLine, trans.EndColumn)
+                                EndOffset = document.GetOffset(trans.EndLine, trans.EndColumn),
+                                Tag = highlightData.Tag
                             });
                         }
                         else
@@ -70,7 +149,8 @@ namespace AvalonStudio.Languages
                             {
                                 Foreground = GetBrush(transform.Type),
                                 StartOffset = transform.Start,
-                                EndOffset = transform.Start + transform.Length
+                                EndOffset = transform.Start + transform.Length,
+                                Tag = highlightData.Tag
                             });
                         }
                     }
@@ -86,6 +166,10 @@ namespace AvalonStudio.Languages
 
             switch (type)
             {
+                case HighlightType.Unnecessary:
+                    result = null;
+                    break;
+
                 case HighlightType.DelegateName:
                     result = ColorScheme.DelegateName;
                     break;

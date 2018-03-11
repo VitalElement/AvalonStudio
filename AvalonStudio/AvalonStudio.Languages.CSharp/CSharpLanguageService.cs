@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -122,7 +123,9 @@ namespace AvalonStudio.Languages.CSharp
 
         public string Identifier => "C#";
 
-        //public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; } = new Subject<TextSegmentCollection<Diagnostic>>();
+        public IObservable<DiagnosticsUpdatedEventArgs> Diagnostics { get; } = new Subject<DiagnosticsUpdatedEventArgs>();
+
+        public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData { get; } = new Subject<SyntaxHighlightDataList>();
 
         public bool CanHandle(IEditor editor)
         {
@@ -525,14 +528,42 @@ namespace AvalonStudio.Languages.CSharp
                 {
                     var dataAssociation = GetAssociatedData(editor);
 
-                    //var results = new TextSegmentCollection<Diagnostic>();
+                    var results = new List<Diagnostic>();
 
-                    //foreach (var diagnostic in diagnostics.Diagnostics)
-                    //{
-                    //    results.Add(FromRoslynDiagnostic(diagnostic, editor.SourceFile.Location, editor.SourceFile.Project));
-                    //}
+                    var fadedCode = new SyntaxHighlightDataList { Tag = diagnostics.Id };
 
-                    //(Diagnostics as Subject<TextSegmentCollection<Diagnostic>>).OnNext(results);
+                    foreach (var diagnostic in diagnostics.Diagnostics)
+                    {
+                        if(diagnostic.CustomTags.Contains("Unnecessary"))
+                        {
+                            fadedCode.Add(new OffsetSyntaxHighlightingData
+                            {
+                                Start = diagnostic.TextSpan.Start,
+                                Length = diagnostic.TextSpan.Length,
+                                Type = HighlightType.Unnecessary
+                            });
+                        }
+                        else
+                        {
+                            results.Add(FromRoslynDiagnostic(diagnostic, editor.SourceFile.Location, editor.SourceFile.Project, diagnostics.Id));
+                        }
+                    }
+
+                    var args = new DiagnosticsUpdatedEventArgs
+                    {
+                        Diagnostics = results.ToImmutableArray(),
+                        Kind = (DiagnosticsUpdatedKind)diagnostics.Kind,
+                        Tag = diagnostics.Id
+                    };
+
+                    (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args);
+
+                    if (fadedCode.Count > 0)
+                    {
+                        (AdditionalHighlightingData as Subject<SyntaxHighlightDataList>).OnNext(fadedCode);
+                    }
+
+                    Console.WriteLine("Diagnostics updated");
                 });
 
                 association.TextInputHandler = (sender, e) =>
@@ -675,7 +706,7 @@ namespace AvalonStudio.Languages.CSharp
             return result;
         }
 
-        private Diagnostic FromRoslynDiagnostic(Microsoft.CodeAnalysis.Diagnostic diagnostic, string fileName, IProject project)
+        private Diagnostic FromRoslynDiagnostic(Microsoft.CodeAnalysis.Diagnostic diagnostic, string fileName, IProject project, object tag = null)
         {
             var result = new Diagnostic
             {
@@ -685,6 +716,23 @@ namespace AvalonStudio.Languages.CSharp
                 Length = diagnostic.Location.SourceSpan.Length,
                 File = fileName,
                 Project = project,
+                Tag = tag
+            };
+
+            return result;
+        }
+
+        private Diagnostic FromRoslynDiagnostic(DiagnosticData diagnostic, string fileName, IProject project, object tag = null)
+        {
+            var result = new Diagnostic
+            {
+                Spelling = diagnostic.Message,
+                Level = (DiagnosticLevel)diagnostic.Severity,
+                StartOffset = diagnostic.TextSpan.Start,
+                Length = diagnostic.TextSpan.Length,
+                File = fileName,
+                Project = project,
+                Tag = tag
             };
 
             return result;
@@ -707,28 +755,13 @@ namespace AvalonStudio.Languages.CSharp
                 return result;
             }
 
-            var diagnosticService = IoC.Get<IDiagnosticService>();
-
-            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
-
-            //var diags = diagnosticService.GetDiagnostics(workspace, workspace.GetProjectId(editor.SourceFile.Project), workspace.GetDocumentId(editor.SourceFile), null, true, CancellationToken.None);
-
-            // Example how to get file specific diagnostics.
-            var model = await document.GetSemanticModelAsync();
-
-            var diagnostics = model.GetDiagnostics();
-
-            foreach(var diagnostic in diagnostics)
-            {
-                result.Diagnostics.Add(FromRoslynDiagnostic(diagnostic, editor.SourceFile.Location, editor.SourceFile.Project));
-            }
-
             try
             {
-                var highlightData = await Classifier.GetClassifiedSpansAsync(document, new Microsoft.CodeAnalysis.Text.TextSpan(0, textLength));
+                var highlightData = await Classifier.GetClassifiedSpansAsync(document, new TextSpan(0, textLength));
+                var displayParts = await Classifier.GetClassifiedSymbolDisplayPartsAsync(document, new TextSpan(0, textLength));                
 
                 foreach (var span in highlightData)
-                {
+                {                   
                     result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
                 }
             }
@@ -736,7 +769,9 @@ namespace AvalonStudio.Languages.CSharp
             {
             }
 
-            result.IndexItems = await IndexBuilder.Compute(document);            
+            result.IndexItems = await IndexBuilder.Compute(document);
+
+            Console.WriteLine("Finished code analysis");
 
             return result;
         }
@@ -931,7 +966,7 @@ namespace AvalonStudio.Languages.CSharp
         }
 
         public async Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken)
-        {                        
+        {
             var textSpan = new TextSpan(offset, length);
 
             var dataAssociation = GetAssociatedData(editor);
@@ -939,25 +974,23 @@ namespace AvalonStudio.Languages.CSharp
             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
 
             var document = GetDocument(dataAssociation, editor.SourceFile, workspace);
-            
-            var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);                        
+
+            var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
 
             if (textSpan.End >= text.Length) return Array.Empty<CodeFix>();
 
-            var codeFixService = IoC.Get<ICodeFixService>();            
+            var codeFixService = IoC.Get<ICodeFixService>();
 
             var fixes = await codeFixService.GetFixesAsync(document, textSpan, true, cancellationToken);
 
             var result = new List<CodeFix>();
 
-            foreach(var fix in fixes)
-            {                
-                foreach(var fixinner in fix.Fixes)
+            foreach (var fix in fixes)
+            {
+                foreach (var fixinner in fix.Fixes)
                 {
                     result.Add(new CodeFix { PrimaryDiagnostic = new Diagnostic { Spelling = fixinner.PrimaryDiagnostic.GetMessage() }, Action = new RosynCodeAction(fixinner.Action) });
-
-                    Console.WriteLine("CodeFix->Fix :" + fixinner.Action.Title);                    
-                }                
+                }
             }
 
             var codeRefactorings = await workspace.GetService<ICodeRefactoringService>().GetRefactoringsAsync(
@@ -969,33 +1002,17 @@ namespace AvalonStudio.Languages.CSharp
                 foreach (var action in refactoring.Actions)
                 {
                     result.Add(new CodeFix { Action = new RosynCodeAction(action) });
-                    Console.WriteLine("Refactoring->Action: " + action.Title);
                 }
             }
 
-            var actions = new List<Microsoft.CodeAnalysis.CodeActions.CodeAction>();
+            var actions = new List<CodeAction>();
 
             var refactoringContext = new CodeRefactoringContext(document, textSpan, action => actions.Add(action), cancellationToken);
 
             foreach (var action in actions)
             {
-                Console.WriteLine("Actions: " + action.Title);
-
                 result.Add(new CodeFix { Action = new RosynCodeAction(action) });
             }
-
-            //if(codeRefactorings.Count() > 0 || actions.Count() > 0)
-            //{
-            //    foreach (var refactoring in codeRefactorings)
-            //    {                    
-            //        foreach (var action in refactoring.Actions)
-            //        {
-            //            Console.WriteLine("Refactoring->Action: " +action.Title);
-            //        }
-            //    }
-
-
-            //}
 
             return result;
         }
@@ -1031,7 +1048,7 @@ namespace AvalonStudio.Languages.CSharp
             var codeFix = action as CodeFix;
             if (codeFix == null || codeFix.Action.HasCodeActions()) return null;
             return new CodeActionCommand(this, codeFix.Action);
-        }        
+        }
 
         public async Task ExecuteCodeActionAsync(ICodeAction codeAction)
         {
@@ -1067,7 +1084,7 @@ namespace AvalonStudio.Languages.CSharp
         {
             await _provider.ExecuteCodeActionAsync(_codeAction).ConfigureAwait(true);
         }
-    }    
+    }
 
     public class RoslynCodeActionOperation : ICodeActionOperation
     {
@@ -1100,9 +1117,9 @@ namespace AvalonStudio.Languages.CSharp
 
         private CodeAction _inner;
 
-        public RosynCodeAction (CodeAction inner)
+        public RosynCodeAction(CodeAction inner)
         {
-            _inner = inner;            
+            _inner = inner;
         }
 
         //

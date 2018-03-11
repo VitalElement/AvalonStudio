@@ -104,6 +104,10 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public string Identifier => "TS";
 
+        public IObservable<DiagnosticsUpdatedEventArgs> Diagnostics => throw new NotImplementedException();
+
+        public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
+
         public bool CanHandle(IEditor editor)
         {
             var result = false;

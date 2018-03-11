@@ -4,11 +4,25 @@ using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages
 {
+    public enum DiagnosticsUpdatedKind
+    {
+        DiagnosticsRemoved,
+        DiagnosticsCreated
+    }
+
+    public class DiagnosticsUpdatedEventArgs : EventArgs
+    {
+        public object Tag { get; set; }
+        public DiagnosticsUpdatedKind Kind { get; set; }
+        public ImmutableArray<Diagnostic> Diagnostics { get; set; }
+    }
+
     public interface ILanguageService
     {
         IIndentationStrategy IndentationStrategy { get; }
@@ -44,7 +58,9 @@ namespace AvalonStudio.Languages
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
         IEnumerable<ICodeEditorInputHelper> InputHelpers { get; }
 
-        //IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; }
+        IObservable<DiagnosticsUpdatedEventArgs> Diagnostics { get; }
+
+        IObservable<SyntaxHighlightDataList> AdditionalHighlightingData { get; }
 
         bool IsValidIdentifierCharacter(char data);
 

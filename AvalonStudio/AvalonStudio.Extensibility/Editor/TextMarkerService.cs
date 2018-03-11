@@ -96,10 +96,22 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
-        public void SetDiagnostics(TextSegmentCollection<Diagnostic> diagnostics)
+        public void RemoveAll(Predicate<TextMarker> predicate)
         {
-            Clear();
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+            if (markers != null)
+            {
+                foreach (var m in markers.ToArray())
+                {
+                    if (predicate(m))
+                        markers.Remove(m);
+                }
+            }
+        }
 
+        public void SetDiagnostics(object tag, TextSegmentCollection<Diagnostic> diagnostics)
+        {            
             foreach (var diag in diagnostics)
             {
                 Color markerColor;
@@ -120,16 +132,17 @@ namespace AvalonStudio.Extensibility.Editor
                         break;
                 }
 
-                Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
+                Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor, tag);
             }
         }
         
-        private void Create(int offset, int length, string message, Color markerColor)
+        private void Create(int offset, int length, string message, Color markerColor, object tag)
         {
             var m = new TextMarker(offset, length);
             markers.Add(m);
             m.MarkerColor = markerColor;
             m.ToolTip = message;
+            m.Tag = tag;
         }
 
         public void Update()
@@ -153,6 +166,7 @@ namespace AvalonStudio.Extensibility.Editor
             public Color? BackgroundColor { get; set; }
             public Color MarkerColor { get; set; }
             public string ToolTip { get; set; }
+            public object Tag { get; set; }
         }
     }
 }

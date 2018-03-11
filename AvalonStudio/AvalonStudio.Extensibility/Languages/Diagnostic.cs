@@ -19,6 +19,7 @@ namespace AvalonStudio.Languages
         public static readonly Color WarningBrush = Color.FromRgb(255, 207, 40);
         public static readonly Color DefaultBrush = Color.FromRgb(0, 42, 74);
 
+        public object Tag { get; set; }
         public IProject Project { get; set; }
         public int Line { get; set; }
         public string File { get; set; }

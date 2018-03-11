@@ -769,26 +769,26 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     _textColorizer?.SetTransformations(result.SyntaxHighlightingData);
 
-                    TextSegmentCollection<Diagnostic> diagnostics = null;
+                    //TextSegmentCollection<Diagnostic> diagnostics = null;
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
-                        diagnostics = new TextSegmentCollection<Diagnostic>(Document);
+                      //  diagnostics = new TextSegmentCollection<Diagnostic>(Document);
                     });
 
-                    foreach (var diagnostic in result.Diagnostics)
+                    //foreach (var diagnostic in result.Diagnostics)
+                    //{
+                    //    diagnostics.Add(diagnostic);
+                    //}
+
+                    //_diagnosticMarkersRenderer?.SetDiagnostics(diagnostics);
+
+                    Dispatcher.UIThread.Post(() =>
                     {
-                        diagnostics.Add(diagnostic);
-                    }
+                    //    Diagnostics = diagnostics;
 
-                    _diagnosticMarkersRenderer?.SetDiagnostics(diagnostics);
-
-                    Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        Diagnostics = diagnostics;
-
-                        _shell.InvalidateErrors();
+                      //  _shell.InvalidateErrors();
 
                         TextArea.TextView.Redraw();
                     });
@@ -860,16 +860,35 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     TextArea.IndentationStrategy = new DefaultIndentationStrategy();
                 }
 
-                //LanguageService.Diagnostics?.ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
-                //{
-                //    _diagnosticMarkersRenderer?.SetDiagnostics(d);
+                LanguageService.Diagnostics?.ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
+                {
+                    var collection = new TextSegmentCollection<Diagnostic>(Document);
 
-                //    Diagnostics = d;
+                    foreach(var diagnostic in d.Diagnostics)
+                    {
+                        collection.Add(diagnostic);
+                    }
 
-                //    _shell.InvalidateErrors();
+                    _diagnosticMarkersRenderer?.RemoveAll(marker => Equals(marker.Tag, d.Tag));
 
-                //    TextArea.TextView.Redraw();
-                //});
+                    if (d.Kind == DiagnosticsUpdatedKind.DiagnosticsCreated)
+                    {
+                        _diagnosticMarkersRenderer?.SetDiagnostics(d.Tag, collection);
+
+                        Diagnostics = collection;
+                    }
+
+                    _shell.InvalidateErrors();
+
+                    TextArea.TextView.Redraw();                    
+                });
+
+                LanguageService.AdditionalHighlightingData.ObserveOn(AvaloniaScheduler.Instance).Subscribe(highlights =>
+                {
+                    _textColorizer.AddOpacityTransformations(highlights);
+
+                    TextArea.TextView.Redraw();
+                });
             }
             else
             {
