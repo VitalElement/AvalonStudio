@@ -568,7 +568,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 var matching = _diagnosticMarkersRenderer.GetMarkersAtOffset(offset).FirstOrDefault()?.Diagnostic;
 
-                if (matching != null)
+                if (matching != null && matching.Level != DiagnosticLevel.Hidden)
                 {
                     return new ErrorProbeViewModel(matching);
                 }
