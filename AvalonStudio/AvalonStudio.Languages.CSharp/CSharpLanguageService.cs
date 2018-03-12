@@ -534,7 +534,7 @@ namespace AvalonStudio.Languages.CSharp
 
                     foreach (var diagnostic in diagnostics.Diagnostics)
                     {
-                        if(diagnostic.CustomTags.Contains("Unnecessary"))
+                        if (diagnostic.CustomTags.Contains("Unnecessary"))
                         {
                             fadedCode.Add(new OffsetSyntaxHighlightingData
                             {
@@ -545,7 +545,7 @@ namespace AvalonStudio.Languages.CSharp
                         }
                         else
                         {
-                            results.Add(FromRoslynDiagnostic(diagnostic, editor.SourceFile.Location, editor.SourceFile.Project, diagnostics.Id));
+                            results.Add(FromRoslynDiagnostic(diagnostic, editor.SourceFile.Location, editor.SourceFile.Project));
                         }
                     }
 
@@ -557,7 +557,7 @@ namespace AvalonStudio.Languages.CSharp
                         DiagnosticHighlighting = fadedCode
                     };
 
-                    (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args);                                       
+                    (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args);
                 });
 
                 association.TextInputHandler = (sender, e) =>
@@ -703,12 +703,12 @@ namespace AvalonStudio.Languages.CSharp
         private Diagnostic FromRoslynDiagnostic(DiagnosticData diagnostic, string fileName, IProject project)
         {
             DiagnosticCategory category = DiagnosticCategory.Compiler;
-            
+
             if (diagnostic.Category == Microsoft.CodeAnalysis.Diagnostics.DiagnosticCategory.Style)
             {
                 category = DiagnosticCategory.Style;
             }
-            else if(diagnostic.Category == Microsoft.CodeAnalysis.Diagnostics.DiagnosticCategory.EditAndContinue)
+            else if (diagnostic.Category == Microsoft.CodeAnalysis.Diagnostics.DiagnosticCategory.EditAndContinue)
             {
                 category = DiagnosticCategory.EditAndContinue;
             }
@@ -746,10 +746,10 @@ namespace AvalonStudio.Languages.CSharp
             try
             {
                 var highlightData = await Classifier.GetClassifiedSpansAsync(document, new TextSpan(0, textLength));
-                var displayParts = await Classifier.GetClassifiedSymbolDisplayPartsAsync(document, new TextSpan(0, textLength));                
+                var displayParts = await Classifier.GetClassifiedSymbolDisplayPartsAsync(document, new TextSpan(0, textLength));
 
                 foreach (var span in highlightData)
-                {                   
+                {
                     result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
                 }
             }
@@ -757,7 +757,7 @@ namespace AvalonStudio.Languages.CSharp
             {
             }
 
-            result.IndexItems = await IndexBuilder.Compute(document);            
+            result.IndexItems = await IndexBuilder.Compute(document);
 
             return result;
         }
@@ -975,7 +975,7 @@ namespace AvalonStudio.Languages.CSharp
             {
                 foreach (var fixinner in fix.Fixes)
                 {
-                    result.Add(new CodeFix { PrimaryDiagnostic = new Diagnostic { Spelling = fixinner.PrimaryDiagnostic.GetMessage() }, Action = new RosynCodeAction(fixinner.Action) });
+                    result.Add(new CodeFix { Action = new RosynCodeAction(fixinner.Action) });
                 }
             }
 
@@ -1119,7 +1119,7 @@ namespace AvalonStudio.Languages.CSharp
         }
 
         public Task PerformActionAsync()
-        {            
+        {
             return Task.CompletedTask;
         }
     }
