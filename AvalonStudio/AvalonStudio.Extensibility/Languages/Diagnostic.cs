@@ -13,6 +13,13 @@ namespace AvalonStudio.Languages
         Fatal = 4
     }
 
+    public enum DiagnosticCategory
+    {
+        Style,
+        Compiler,
+        EditAndContinue
+    }
+
     public class Diagnostic : TextSegment
     {
         public static readonly Color ErrorBrush = Color.FromRgb(253, 45, 45);
@@ -25,5 +32,6 @@ namespace AvalonStudio.Languages
         public string File { get; set; }
         public string Spelling { get; set; }
         public DiagnosticLevel Level { get; set; }
+        public DiagnosticCategory Category { get; set; }
     }
 }

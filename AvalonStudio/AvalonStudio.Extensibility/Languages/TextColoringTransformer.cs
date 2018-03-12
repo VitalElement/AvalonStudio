@@ -75,6 +75,15 @@ namespace AvalonStudio.Languages
                         TextTransformations.Remove(m);
                 }
             }
+
+            if(OpacityTransformations != null)
+            {
+                foreach (var m in OpacityTransformations.ToArray())
+                {
+                    if (predicate(m))
+                        OpacityTransformations.Remove(m);
+                }
+            }
         }
 
         public void AddOpacityTransformations(SyntaxHighlightDataList highlightData)

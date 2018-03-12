@@ -126,7 +126,20 @@ namespace RoslynPad.Editor.Windows
 
             public override int Length => _sourceText.Length;
 
-            public override char this[int position] => _sourceText[position];
+            public override char this[int position]
+            {
+                get
+                {
+                    if (position >= 0 && position < _sourceText.Length)
+                    {
+                        return _sourceText[position];
+                    }
+                    else
+                    {
+                        return '\0';
+                    }
+                }
+            }
 
             public override SourceText GetSubText(TextSpan span) => new AvalonEditSourceText(_container, _sourceText.GetSubText(span));
 

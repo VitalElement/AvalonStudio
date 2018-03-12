@@ -21,6 +21,7 @@ namespace AvalonStudio.Languages
         public object Tag { get; set; }
         public DiagnosticsUpdatedKind Kind { get; set; }
         public ImmutableArray<Diagnostic> Diagnostics { get; set; }
+        public SyntaxHighlightDataList DiagnosticHighlighting { get; set; }
     }
 
     public interface ILanguageService
@@ -58,9 +59,7 @@ namespace AvalonStudio.Languages
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
         IEnumerable<ICodeEditorInputHelper> InputHelpers { get; }
 
-        IObservable<DiagnosticsUpdatedEventArgs> Diagnostics { get; }
-
-        IObservable<SyntaxHighlightDataList> AdditionalHighlightingData { get; }
+        IObservable<DiagnosticsUpdatedEventArgs> Diagnostics { get; }        
 
         bool IsValidIdentifierCharacter(char data);
 

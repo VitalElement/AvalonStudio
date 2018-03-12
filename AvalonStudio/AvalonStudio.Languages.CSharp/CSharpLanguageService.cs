@@ -553,15 +553,11 @@ namespace AvalonStudio.Languages.CSharp
                     {
                         Diagnostics = results.ToImmutableArray(),
                         Kind = (DiagnosticsUpdatedKind)diagnostics.Kind,
-                        Tag = diagnostics.Id
+                        Tag = diagnostics.Id,
+                        DiagnosticHighlighting = fadedCode
                     };
 
-                    (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args);
-
-                    if (fadedCode.Count > 0)
-                    {
-                        (AdditionalHighlightingData as Subject<SyntaxHighlightDataList>).OnNext(fadedCode);
-                    }
+                    (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args);                    
 
                     Console.WriteLine("Diagnostics updated");
                 });
@@ -706,22 +702,6 @@ namespace AvalonStudio.Languages.CSharp
             return result;
         }
 
-        private Diagnostic FromRoslynDiagnostic(Microsoft.CodeAnalysis.Diagnostic diagnostic, string fileName, IProject project, object tag = null)
-        {
-            var result = new Diagnostic
-            {
-                Spelling = diagnostic.GetMessage(),
-                Level = (DiagnosticLevel)diagnostic.Severity,
-                StartOffset = diagnostic.Location.SourceSpan.Start,
-                Length = diagnostic.Location.SourceSpan.Length,
-                File = fileName,
-                Project = project,
-                Tag = tag
-            };
-
-            return result;
-        }
-
         private Diagnostic FromRoslynDiagnostic(DiagnosticData diagnostic, string fileName, IProject project, object tag = null)
         {
             var result = new Diagnostic
@@ -734,6 +714,19 @@ namespace AvalonStudio.Languages.CSharp
                 Project = project,
                 Tag = tag
             };
+            
+            if(diagnostic.Category ==  Microsoft.CodeAnalysis.Diagnostics.DiagnosticCategory.Compiler)
+            {
+                result.Category = DiagnosticCategory.Compiler;
+            }
+            else if(diagnostic.Category == Microsoft.CodeAnalysis.Diagnostics.DiagnosticCategory.Style)
+            {
+                result.Category = DiagnosticCategory.Style;
+            }
+            else if(diagnostic.Category == Microsoft.CodeAnalysis.Diagnostics.DiagnosticCategory.EditAndContinue)
+            {
+                result.Category = DiagnosticCategory.EditAndContinue;
+            }
 
             return result;
         }

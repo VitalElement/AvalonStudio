@@ -23,7 +23,7 @@ namespace AvalonStudio.Extensibility.Editor
         public event EventHandler<EventArgs> DataChanged;
 
         public void Draw(TextView textView, DrawingContext drawingContext)
-        {
+        {   
             if (markers == null)
             {
                 return;
@@ -43,35 +43,46 @@ namespace AvalonStudio.Extensibility.Editor
 
             foreach (TextMarker marker in markers.FindOverlappingSegments(start, end - start))
             {
-                if (marker.EndOffset < textView.Document.TextLength)
+                if (marker.Diagnostic.Level != DiagnosticLevel.Hidden)
                 {
-                    foreach (var r in BackgroundGeometryBuilder.GetRectsForSegment(textView, marker))
+                    if (marker.EndOffset < textView.Document.TextLength)
                     {
-                        var startPoint = r.BottomLeft;
-                        var endPoint = r.BottomRight;
-
-                        var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
-
-                        const double offset = 2.5;
-
-                        var count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
-
-                        var geometry = new StreamGeometry();
-
-                        using (var ctx = geometry.Open())
+                        foreach (var r in BackgroundGeometryBuilder.GetRectsForSegment(textView, marker))
                         {
-                            ctx.BeginFigure(startPoint, false);
-
-                            foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
+                            if (marker.Diagnostic.Category == DiagnosticCategory.Style)
                             {
-                                ctx.LineTo(point);
+                                var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
+                                drawingContext.DrawLine(usedPen, r.BottomLeft, r.BottomLeft.WithX(r.BottomLeft.X + 15));
                             }
+                            else
+                            {
+                                var startPoint = r.BottomLeft;
+                                var endPoint = r.BottomRight;
 
-                            ctx.EndFigure(false);
+                                var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
+
+                                const double offset = 2.5;
+
+                                var count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
+
+                                var geometry = new StreamGeometry();
+
+                                using (var ctx = geometry.Open())
+                                {
+                                    ctx.BeginFigure(startPoint, false);
+
+                                    foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
+                                    {
+                                        ctx.LineTo(point);
+                                    }
+
+                                    ctx.EndFigure(false);
+                                }
+
+                                drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
+                                break;
+                            }
                         }
-
-                        drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
-                        break;
                     }
                 }
             }
@@ -83,23 +94,13 @@ namespace AvalonStudio.Extensibility.Editor
             {
                 yield return new Point(start.X + (i * offset), start.Y - ((i + 1) % 2 == 0 ? offset : 0));
             }
-        }
-
-        public void Clear()
-        {
-            var toRemove = new List<TextMarker>();
-
-            foreach (var marker in markers.ToList())
-            {
-                toRemove.Add(marker);
-                markers.Remove(marker);
-            }
-        }
+        }        
 
         public void RemoveAll(Predicate<TextMarker> predicate)
         {
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate));
+
             if (markers != null)
             {
                 foreach (var m in markers.ToArray())
@@ -127,21 +128,34 @@ namespace AvalonStudio.Extensibility.Editor
                         markerColor = Color.FromRgb(255, 207, 40);
                         break;
 
+                    case DiagnosticLevel.Info:
+                        if(diag.Category == DiagnosticCategory.Style)
+                        {
+                            markerColor = Color.FromRgb(0xD4, 0xD4, 0xD4);
+                        }
+                        else
+                        {
+                            markerColor = Color.FromRgb(0, 25, 255);
+                        }
+                        break;
+
                     default:
                         markerColor = Color.FromRgb(0, 255, 74);
                         break;
-                }
+                }                
 
-                Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor, tag);
+                Create(diag, markerColor, tag);
             }
         }
         
-        private void Create(int offset, int length, string message, Color markerColor, object tag)
+        private void Create(Diagnostic diagnostic, Color markerColor, object tag)
         {
-            var m = new TextMarker(offset, length);
+            var m = new TextMarker(diagnostic);
+
             markers.Add(m);
+            
             m.MarkerColor = markerColor;
-            m.ToolTip = message;
+            m.ToolTip = diagnostic.Spelling;                        
             m.Tag = tag;
         }
 
@@ -157,12 +171,14 @@ namespace AvalonStudio.Extensibility.Editor
 
         public sealed class TextMarker : TextSegment
         {
-            public TextMarker(int startOffset, int length)
+            public TextMarker(Diagnostic diagnostic)
             {
-                StartOffset = startOffset;
-                Length = length;
+                StartOffset = diagnostic.StartOffset;
+                Length = diagnostic.Length;
+                Diagnostic = diagnostic;
             }
 
+            public Diagnostic Diagnostic { get; set; }            
             public Color? BackgroundColor { get; set; }
             public Color MarkerColor { get; set; }
             public string ToolTip { get; set; }

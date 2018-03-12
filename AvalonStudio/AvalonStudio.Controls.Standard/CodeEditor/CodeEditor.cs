@@ -566,7 +566,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 var offset = Document.GetOffset(position.Value.Location);
 
-                var matching = Diagnostics?.FindSegmentsContaining(offset).FirstOrDefault();
+                var matching = _diagnosticMarkersRenderer.GetMarkersAtOffset(offset).FirstOrDefault()?.Diagnostic;
 
                 if (matching != null)
                 {
@@ -767,7 +767,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     var result = await LanguageService.RunCodeAnalysisAsync(editor, unsavedFiles, () => false);
 
-                    _textColorizer?.SetTransformations(result.SyntaxHighlightingData);
+                    _textColorizer?.SetTransformations(result.SyntaxHighlightingData);                    
 
                     //TextSegmentCollection<Diagnostic> diagnostics = null;
 
@@ -867,7 +867,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     foreach(var diagnostic in d.Diagnostics)
                     {
                         collection.Add(diagnostic);
-                    }
+                    }                    
 
                     _diagnosticMarkersRenderer?.RemoveAll(marker => Equals(marker.Tag, d.Tag));
 
@@ -875,19 +875,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     {
                         _diagnosticMarkersRenderer?.SetDiagnostics(d.Tag, collection);
 
-                        Diagnostics = collection;
+                        _textColorizer.AddOpacityTransformations(d.DiagnosticHighlighting);
+
+                        Diagnostics = collection; // TODO update diagnostics.
                     }
 
                     _shell.InvalidateErrors();
 
                     TextArea.TextView.Redraw();                    
-                });
-
-                LanguageService.AdditionalHighlightingData.ObserveOn(AvaloniaScheduler.Instance).Subscribe(highlights =>
-                {
-                    _textColorizer.AddOpacityTransformations(highlights);
-
-                    TextArea.TextView.Redraw();
                 });
             }
             else
