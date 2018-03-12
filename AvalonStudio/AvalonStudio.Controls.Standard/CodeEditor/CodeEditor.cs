@@ -848,14 +848,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 LanguageService.Diagnostics?.ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
                 {
+                    _diagnosticMarkersRenderer?.RemoveAll(marker => Equals(marker.Tag, d.Tag));
+
                     var collection = new TextSegmentCollection<Diagnostic>(Document);
 
                     foreach (var diagnostic in d.Diagnostics)
                     {
                         collection.Add(diagnostic);
-                    }
-
-                    _diagnosticMarkersRenderer?.RemoveAll(marker => Equals(marker.Tag, d.Tag));
+                    }                    
 
                     if (d.Kind == DiagnosticsUpdatedKind.DiagnosticsCreated)
                     {
