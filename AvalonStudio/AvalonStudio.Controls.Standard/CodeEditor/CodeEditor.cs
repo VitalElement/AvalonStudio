@@ -509,9 +509,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
         }
 
-        public void BeginSymbolRename (int offset)
+        public void BeginSymbolRename(int offset)
         {
-            if(LanguageService != null)
+            if (LanguageService != null)
             {
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
@@ -767,29 +767,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     var result = await LanguageService.RunCodeAnalysisAsync(editor, unsavedFiles, () => false);
 
-                    _textColorizer?.SetTransformations(result.SyntaxHighlightingData);                    
-
-                    //TextSegmentCollection<Diagnostic> diagnostics = null;
+                    _textColorizer?.SetTransformations(result.SyntaxHighlightingData);
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
-                      //  diagnostics = new TextSegmentCollection<Diagnostic>(Document);
+                        _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);                        
                     });
-
-                    //foreach (var diagnostic in result.Diagnostics)
-                    //{
-                    //    diagnostics.Add(diagnostic);
-                    //}
-
-                    //_diagnosticMarkersRenderer?.SetDiagnostics(diagnostics);
 
                     Dispatcher.UIThread.Post(() =>
                     {
-                    //    Diagnostics = diagnostics;
-
-                      //  _shell.InvalidateErrors();
-
                         TextArea.TextView.Redraw();
                     });
                 }
@@ -832,7 +818,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 foreach (var contextActionProvider in LanguageService.GetContextActionProviders(DocumentAccessor))
                 {
                     _contextActionsRenderer.Providers.Add(contextActionProvider);
-                }                
+                }
 
                 TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
                 TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
@@ -864,10 +850,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     var collection = new TextSegmentCollection<Diagnostic>(Document);
 
-                    foreach(var diagnostic in d.Diagnostics)
+                    foreach (var diagnostic in d.Diagnostics)
                     {
                         collection.Add(diagnostic);
-                    }                    
+                    }
 
                     _diagnosticMarkersRenderer?.RemoveAll(marker => Equals(marker.Tag, d.Tag));
 
@@ -875,14 +861,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     {
                         _diagnosticMarkersRenderer?.SetDiagnostics(d.Tag, collection);
 
-                        _textColorizer.AddOpacityTransformations(d.DiagnosticHighlighting);
-
-                        Diagnostics = collection; // TODO update diagnostics.
+                        if (d.DiagnosticHighlighting != null)
+                        {
+                            _textColorizer.AddOpacityTransformations(d.DiagnosticHighlighting);
+                        }
                     }
 
                     _shell.UpdateDiagnostics(d);
 
-                    TextArea.TextView.Redraw();                    
+                    TextArea.TextView.Redraw();
                 });
             }
             else
@@ -900,7 +887,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             TextArea.TextEntered += TextArea_TextEntered;
 
             DoCodeAnalysisAsync().GetAwaiter();
-        }        
+        }
 
         private void TextArea_TextEntered(object sender, TextInputEventArgs e)
         {
@@ -1169,16 +1156,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get => GetValue(ColorSchemeProperty);
             set => SetValue(ColorSchemeProperty, value);
-        }
-
-        public static readonly StyledProperty<TextSegmentCollection<Diagnostic>> DiagnosticsProperty =
-            AvaloniaProperty.Register<CodeEditor, TextSegmentCollection<Diagnostic>>(nameof(Diagnostics), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
-
-        public TextSegmentCollection<Diagnostic> Diagnostics
-        {
-            get { return GetValue(DiagnosticsProperty); }
-            set { SetValue(DiagnosticsProperty, value); }
-        }
+        }        
 
         public static readonly AvaloniaProperty<ISourceFile> SourceFileProperty =
             AvaloniaProperty.Register<CodeEditor, ISourceFile>(nameof(SourceFile), defaultBindingMode: BindingMode.TwoWay);
