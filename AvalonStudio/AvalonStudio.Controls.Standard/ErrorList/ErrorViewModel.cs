@@ -1,6 +1,7 @@
 using Avalonia.Media;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
+using AvalonStudio.Projects;
 using System;
 using System.IO;
 
@@ -8,13 +9,16 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 {
     public class ErrorViewModel : ViewModel<Diagnostic>, IComparable<ErrorViewModel>
     {
-        public ErrorViewModel(Diagnostic model, object tag) : base(model)
+        public ErrorViewModel(Diagnostic model, object tag, ISourceFile associatedFile) : base(model)
         {
             offset = model.StartOffset;
             Tag = tag;
+            AssociatedFile = associatedFile;
         }
 
         public object Tag { get; private set; }
+
+        public ISourceFile AssociatedFile { get; }
 
         public string File
         {

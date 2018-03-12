@@ -725,7 +725,7 @@ namespace AvalonStudio
 
         public void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics)
         {
-            var toRemove = ErrorList.Errors.Where(e => Equals(e.Tag, diagnostics.Tag)).ToList();
+            var toRemove = ErrorList.Errors.Where(e => Equals(e.Tag, diagnostics.Tag) && e.AssociatedFile == diagnostics.AssociatedSourceFile).ToList();
 
             foreach (var error in toRemove)
             {
@@ -736,7 +736,7 @@ namespace AvalonStudio
             {
                 if (diagnostic.Level != DiagnosticLevel.Hidden)
                 {
-                    ErrorList.Errors.InsertSorted(new ErrorViewModel(diagnostic, diagnostics.Tag));
+                    ErrorList.Errors.InsertSorted(new ErrorViewModel(diagnostic, diagnostics.Tag, diagnostics.AssociatedSourceFile));
                 }
             }
         }
