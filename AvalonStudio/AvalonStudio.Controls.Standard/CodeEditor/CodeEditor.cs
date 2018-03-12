@@ -880,7 +880,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         Diagnostics = collection; // TODO update diagnostics.
                     }
 
-                    _shell.InvalidateErrors();
+                    _shell.UpdateDiagnostics(d);
 
                     TextArea.TextView.Redraw();                    
                 });

@@ -1,11 +1,12 @@
 using Avalonia.Media;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
+using System;
 using System.IO;
 
 namespace AvalonStudio.Controls.Standard.ErrorList
 {
-    public class ErrorViewModel : ViewModel<Diagnostic>
+    public class ErrorViewModel : ViewModel<Diagnostic>, IComparable<ErrorViewModel>
     {
         public ErrorViewModel(Diagnostic model) : base(model)
         {
@@ -53,7 +54,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                         return Brush.Parse("#D78A04");
 
                     default:
-                        return Brush.Parse("#1C7CD2 ");
+                        return Brush.Parse("#1C7CD2");
                 }
             }
         }
@@ -80,6 +81,11 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             }
 
             return result;
+        }
+
+        public int CompareTo(ErrorViewModel other)
+        {
+            return Line.CompareTo(other.Line);
         }
     }
 }

@@ -73,7 +73,7 @@ namespace AvalonStudio.Shell
 
         void InvalidateCodeAnalysis();
 
-        void InvalidateErrors();
+        void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics);
 
         Task<bool> BuildAsync(IProject project);
 

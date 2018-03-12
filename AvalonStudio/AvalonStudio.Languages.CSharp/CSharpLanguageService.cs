@@ -710,6 +710,7 @@ namespace AvalonStudio.Languages.CSharp
                 Length = diagnostic.TextSpan.Length,
                 File = fileName,
                 Project = project,
+                Line = diagnostic.DataLocation.MappedStartLine,
                 Tag = tag
             };
             
