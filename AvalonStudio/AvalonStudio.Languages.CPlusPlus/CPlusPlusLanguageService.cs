@@ -13,8 +13,10 @@ using AvalonStudio.Utils;
 using NClang;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -79,12 +81,12 @@ namespace AvalonStudio.Languages.CPlusPlus
             });
 
             _snippetDynamicVars.Add("ClassName", (offset, line, column) => null);
-        }        
+        }
 
         public string Title
         {
             get { return "C/C++"; }
-        }        
+        }
 
         public IIndentationStrategy IndentationStrategy { get; private set; }
 
@@ -134,7 +136,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
 
-        public IObservable<DiagnosticsUpdatedEventArgs> Diagnostics => throw new NotImplementedException();
+        public IObservable<DiagnosticsUpdatedEventArgs> Diagnostics { get; } = new Subject<DiagnosticsUpdatedEventArgs>();
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
@@ -530,6 +532,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             clangUnsavedFiles.AddRange(unsavedFiles.Select(f => new ClangUnsavedFile(f.FileName, f.Contents)));
 
+            var diagnostics = new List<Diagnostic>();
+
             await clangAccessJobRunner.InvokeAsync(() =>
             {
                 try
@@ -545,13 +549,17 @@ namespace AvalonStudio.Languages.CPlusPlus
                             GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.IndexItems);
                         }
 
-                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, editor.SourceFile.Project, result.Diagnostics);
+                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, editor.SourceFile.Project, diagnostics);
                     }
                 }
                 catch (Exception e)
                 {
                 }
             });
+
+            var args = new DiagnosticsUpdatedEventArgs { Diagnostics = diagnostics.ToImmutableArray(), Kind = diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, Tag = this };
+
+            (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args);
 
             return result;
         }
@@ -1302,12 +1310,12 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(Enumerable.Empty<CodeFix>());
         }
 
         public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
         {
-            throw new NotImplementedException();
+            return Enumerable.Empty<IContextActionProvider>();
         }
     }
 }

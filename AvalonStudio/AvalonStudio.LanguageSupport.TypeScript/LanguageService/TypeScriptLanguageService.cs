@@ -9,8 +9,10 @@ using IridiumJS.Runtime;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -32,7 +34,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         private TypeScriptContext _typeScriptContext;
 
         private static readonly ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation> dataAssociations =
-            new ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation>();        
+            new ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation>();
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
 
@@ -104,7 +106,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public string Identifier => "TS";
 
-        public IObservable<DiagnosticsUpdatedEventArgs> Diagnostics => throw new NotImplementedException();
+        public IObservable<DiagnosticsUpdatedEventArgs> Diagnostics { get; } = new Subject<DiagnosticsUpdatedEventArgs>();
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
@@ -224,6 +226,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
+            var diagnostics = new List<Diagnostic>();
 
             var file = editor.SourceFile;
             var dataAssociation = GetAssociatedData(file);
@@ -446,7 +449,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return document.Take(offset).Count(x => x == '\n') + 1;
         }
 
-        public Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)            
+        public Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             //STUB!
             //return new SignatureHelp();
