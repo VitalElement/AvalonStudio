@@ -775,6 +775,8 @@ namespace AvalonStudio
 
         public async Task CloseSolutionAsync()
         {
+            ErrorList.Errors.Clear();
+
             var documentsToClose = DocumentTabs.Documents.ToList();
 
             foreach (var document in documentsToClose)
