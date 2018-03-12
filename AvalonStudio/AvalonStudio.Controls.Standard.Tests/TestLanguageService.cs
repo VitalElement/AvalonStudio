@@ -1,13 +1,12 @@
-﻿using AvalonStudio.Languages;
-using System;
-using AvalonStudio.Extensibility.Languages.CompletionAssistance;
-using AvalonStudio.Projects;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AvaloniaEdit.Document;
-using AvalonStudio.Editor;
+﻿using AvaloniaEdit.Indentation;
 using AvalonStudio.Documents;
-using AvaloniaEdit.Indentation;
+using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+using AvalonStudio.Languages;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.Tests
 {
@@ -35,6 +34,8 @@ namespace AvalonStudio.Controls.Standard.Tests
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => throw new NotImplementedException();
 
+        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
+
         public bool CanHandle(IEditor editor)
         {
             throw new NotImplementedException();
@@ -56,6 +57,16 @@ namespace AvalonStudio.Controls.Standard.Tests
         }
 
         public int Format(IEditor editor, uint offset, uint length, int cursor)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
         {
             throw new NotImplementedException();
         }
