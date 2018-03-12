@@ -8,10 +8,13 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 {
     public class ErrorViewModel : ViewModel<Diagnostic>, IComparable<ErrorViewModel>
     {
-        public ErrorViewModel(Diagnostic model) : base(model)
+        public ErrorViewModel(Diagnostic model, object tag) : base(model)
         {
             offset = model.StartOffset;
+            Tag = tag;
         }
+
+        public object Tag { get; private set; }
 
         public string File
         {
