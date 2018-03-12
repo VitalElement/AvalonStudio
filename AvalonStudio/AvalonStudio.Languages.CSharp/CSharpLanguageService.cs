@@ -557,9 +557,7 @@ namespace AvalonStudio.Languages.CSharp
                         DiagnosticHighlighting = fadedCode
                     };
 
-                    (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args);                    
-
-                    Console.WriteLine("Diagnostics updated");
+                    (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args);                                       
                 });
 
                 association.TextInputHandler = (sender, e) =>
@@ -762,9 +760,7 @@ namespace AvalonStudio.Languages.CSharp
             {
             }
 
-            result.IndexItems = await IndexBuilder.Compute(document);
-
-            Console.WriteLine("Finished code analysis");
+            result.IndexItems = await IndexBuilder.Compute(document);            
 
             return result;
         }
@@ -1126,8 +1122,7 @@ namespace AvalonStudio.Languages.CSharp
         }
 
         public Task PerformActionAsync()
-        {
-            IoC.Get<IConsole>().WriteLine("Running code action");
+        {            
             return Task.CompletedTask;
         }
     }
