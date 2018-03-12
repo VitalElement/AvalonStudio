@@ -700,32 +700,28 @@ namespace AvalonStudio.Languages.CSharp
             return result;
         }
 
-        private Diagnostic FromRoslynDiagnostic(DiagnosticData diagnostic, string fileName, IProject project, object tag = null)
+        private Diagnostic FromRoslynDiagnostic(DiagnosticData diagnostic, string fileName, IProject project)
         {
-            var result = new Diagnostic
-            {
-                Spelling = diagnostic.Message,
-                Level = (DiagnosticLevel)diagnostic.Severity,
-                StartOffset = diagnostic.TextSpan.Start,
-                Length = diagnostic.TextSpan.Length,
-                File = fileName,
-                Project = project,
-                Line = diagnostic.DataLocation.MappedStartLine,
-                Tag = tag
-            };
+            DiagnosticCategory category = DiagnosticCategory.Compiler;
             
-            if(diagnostic.Category ==  Microsoft.CodeAnalysis.Diagnostics.DiagnosticCategory.Compiler)
+            if (diagnostic.Category == Microsoft.CodeAnalysis.Diagnostics.DiagnosticCategory.Style)
             {
-                result.Category = DiagnosticCategory.Compiler;
-            }
-            else if(diagnostic.Category == Microsoft.CodeAnalysis.Diagnostics.DiagnosticCategory.Style)
-            {
-                result.Category = DiagnosticCategory.Style;
+                category = DiagnosticCategory.Style;
             }
             else if(diagnostic.Category == Microsoft.CodeAnalysis.Diagnostics.DiagnosticCategory.EditAndContinue)
             {
-                result.Category = DiagnosticCategory.EditAndContinue;
+                category = DiagnosticCategory.EditAndContinue;
             }
+
+            var result = new Diagnostic(
+                diagnostic.TextSpan.Start,
+                diagnostic.TextSpan.Length,
+                project,
+                fileName,
+                diagnostic.DataLocation.MappedStartLine,
+                diagnostic.Message,
+                (DiagnosticLevel)diagnostic.Severity,
+                category);
 
             return result;
         }

@@ -491,15 +491,15 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 if (diagnostic.Location.IsFromMainFile)
                 {
-                    var diag = new Diagnostic
-                    {
-                        Project = project,
-                        StartOffset = diagnostic.Location.FileLocation.Offset,
-                        Line = diagnostic.Location.FileLocation.Line,
-                        Spelling = diagnostic.Spelling,
-                        File = diagnostic.Location.FileLocation.File.FileName,
-                        Level = (DiagnosticLevel)diagnostic.Severity
-                    };
+                    var diag = new Diagnostic(
+                        diagnostic.Location.FileLocation.Offset,
+                        0,
+                        project,
+                        diagnostic.Location.FileLocation.File.FileName,
+                        diagnostic.Location.FileLocation.Line,
+                        diagnostic.Spelling,
+                        (DiagnosticLevel)diagnostic.Severity,
+                        DiagnosticCategory.Compiler);
 
                     var cursor = translationUnit.GetCursor(diagnostic.Location);
 

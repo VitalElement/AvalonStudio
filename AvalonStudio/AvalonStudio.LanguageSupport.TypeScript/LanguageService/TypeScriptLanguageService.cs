@@ -240,15 +240,18 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             }
             catch (JavaScriptException)
             {
-                result.Diagnostics.Add(new Diagnostic
-                {
-                    Project = editor.SourceFile.Project,
-                    Line = 1,
-                    Spelling = "Code analysis language service call failed.",
-                    StartOffset = 0,
-                    File = editor.SourceFile.Name,
-                    Level = DiagnosticLevel.Error,
-                });                
+                diagnostics.Add(new Diagnostic(
+                    0, 0,
+                    editor.SourceFile.Project,
+                    editor.SourceFile.Location,
+                    0,
+                    "Code analysis language service call failed.",
+                    DiagnosticLevel.Error,
+                    DiagnosticCategory.Compiler));
+
+                var args = new DiagnosticsUpdatedEventArgs { Diagnostics = diagnostics.ToImmutableArray(), Kind = diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, Tag = this };
+
+                (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args);
 
                 return new CodeAnalysisResults
                 {
@@ -307,28 +310,33 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             foreach (var diagnostic in syntaxTree.ParseDiagnostics)
             {
                 // Convert diagnostics
-                result.Diagnostics.Add(new Diagnostic
-                {
-                    Project = editor.SourceFile.Project,
-                    Line = GetLineNumber(currentFileConts, diagnostic.Start), // TODO
-                    StartOffset = diagnostic.Start,
-                    EndOffset = diagnostic.Start + diagnostic.Length,
-                    Spelling = diagnostic.MessageText,
-                    Level = diagnostic.Category == TSBridge.Ast.Diagnostics.Diagnostic.DiagnosticCategory.Error
+                diagnostics.Add(new Diagnostic(
+                    diagnostic.Start,
+                    diagnostic.Length,
+                    editor.SourceFile.Project,
+                    editor.SourceFile.Location,
+                    GetLineNumber(currentFileConts, diagnostic.Start),
+                    diagnostic.MessageText,
+                    diagnostic.Category == TSBridge.Ast.Diagnostics.Diagnostic.DiagnosticCategory.Error
                         ? DiagnosticLevel.Error
-                        : DiagnosticLevel.Warning
-                });
+                        : DiagnosticLevel.Warning,
+                     DiagnosticCategory.Compiler
+                    ));
             }
 
-            result.Diagnostics.Add(new Diagnostic
-            {
-                Project = editor.SourceFile.Project,
-                Line = 1,
-                Spelling = "Code analysis for TypeScript is experimental and unstable. Use with caution.",
-                StartOffset = 0,
-                File = editor.SourceFile.Name,
-                Level = DiagnosticLevel.Warning,
-            });
+            diagnostics.Add(new Diagnostic(
+                0, 
+                0, 
+                editor.SourceFile.Project, 
+                editor.SourceFile.Location, 
+                0, 
+                "Code analysis for TypeScript is experimental and unstable. Use with caution.", 
+                DiagnosticLevel.Warning, 
+                DiagnosticCategory.Compiler));            
+
+            var args1 = new DiagnosticsUpdatedEventArgs { Diagnostics = diagnostics.ToImmutableArray(), Kind = diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, Tag = this };
+
+            (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args1);
 
             return result;
         }
