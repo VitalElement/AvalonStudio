@@ -2,6 +2,7 @@ using AvaloniaEdit.Indentation;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+using AvalonStudio.Projects;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -18,10 +19,20 @@ namespace AvalonStudio.Languages
 
     public class DiagnosticsUpdatedEventArgs : EventArgs
     {
-        public object Tag { get; set; }
-        public DiagnosticsUpdatedKind Kind { get; set; }
-        public ImmutableArray<Diagnostic> Diagnostics { get; set; }
-        public SyntaxHighlightDataList DiagnosticHighlighting { get; set; }
+        public DiagnosticsUpdatedEventArgs(object tag, ISourceFile associatedFile, DiagnosticsUpdatedKind kind, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
+        {
+            Tag = tag;
+            AssociatedSourceFile = associatedFile;
+            Kind = kind;
+            Diagnostics = diagnostics;
+            DiagnosticHighlights = diagnosticHighlights;
+        }
+
+        public object Tag { get; }
+        public ISourceFile AssociatedSourceFile { get; }
+        public DiagnosticsUpdatedKind Kind { get; }
+        public ImmutableArray<Diagnostic> Diagnostics { get; }
+        public SyntaxHighlightDataList DiagnosticHighlights { get; }
     }
 
     public interface ILanguageService
@@ -59,7 +70,7 @@ namespace AvalonStudio.Languages
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
         IEnumerable<ICodeEditorInputHelper> InputHelpers { get; }
 
-        IObservable<DiagnosticsUpdatedEventArgs> Diagnostics { get; }        
+        event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;        
 
         bool IsValidIdentifierCharacter(char data);
 

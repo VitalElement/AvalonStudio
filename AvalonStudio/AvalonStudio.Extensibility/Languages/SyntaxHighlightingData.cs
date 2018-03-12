@@ -1,3 +1,4 @@
+using AvalonStudio.Projects;
 using System.Collections.Generic;
 
 namespace AvalonStudio.Languages
@@ -26,7 +27,15 @@ namespace AvalonStudio.Languages
 
     public class SyntaxHighlightDataList : List<OffsetSyntaxHighlightingData>
     {
-        public object Tag { get; set; }
+        public SyntaxHighlightDataList(object tag, ISourceFile associatedFile)
+        {
+            AssociatedFile = associatedFile;
+            Tag = tag;
+        }
+
+        public object Tag { get; }
+
+        public ISourceFile AssociatedFile { get; }
 
         public new void Add(OffsetSyntaxHighlightingData item)
         {

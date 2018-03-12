@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -80,6 +79,8 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 @"(//[\t|\s|\w|\d|\.]*[\r\n|\n])|([\s|\t]*/\*[\t|\s|\w|\W|\d|\.|\r|\n]*\*/)|(\<[!%][ \r\n\t]*(--([^\-]|[\r\n]|-[^\-])*--[ \r\n\t%]*)\>)",
                 RegexOptions.Compiled);
 
+        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
+
         public TypeScriptLanguageService()
         {
 #if DEBUG
@@ -105,8 +106,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         public string LanguageId => "ts";
 
         public string Identifier => "TS";
-
-        public IObservable<DiagnosticsUpdatedEventArgs> Diagnostics { get; } = new Subject<DiagnosticsUpdatedEventArgs>();
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
@@ -225,7 +224,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor,
             List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
-            var result = new CodeAnalysisResults();
+            var result = new CodeAnalysisResults(this, editor.SourceFile);
             var diagnostics = new List<Diagnostic>();
 
             var file = editor.SourceFile;
@@ -245,20 +244,16 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 diagnostics.Add(new Diagnostic(
                     0, 0,
-                    editor.SourceFile.Project,
+                    editor.SourceFile.Project,                    
                     editor.SourceFile.Location,
                     0,
                     "Code analysis language service call failed.",
                     DiagnosticLevel.Error,
                     DiagnosticCategory.Compiler));
 
-                var args = new DiagnosticsUpdatedEventArgs { Diagnostics = diagnostics.ToImmutableArray(), Kind = diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, Tag = this };
+                DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
 
-                (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args);
-
-                return new CodeAnalysisResults
-                {
-                };
+                return new CodeAnalysisResults(this, editor.SourceFile);
             }
             finally
             {
@@ -316,7 +311,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 diagnostics.Add(new Diagnostic(
                     diagnostic.Start,
                     diagnostic.Length,
-                    editor.SourceFile.Project,
+                    editor.SourceFile.Project,                    
                     editor.SourceFile.Location,
                     GetLineNumber(currentFileConts, diagnostic.Start),
                     diagnostic.MessageText,
@@ -328,18 +323,16 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             }
 
             diagnostics.Add(new Diagnostic(
-                0, 
-                0, 
-                editor.SourceFile.Project, 
-                editor.SourceFile.Location, 
-                0, 
-                "Code analysis for TypeScript is experimental and unstable. Use with caution.", 
-                DiagnosticLevel.Warning, 
-                DiagnosticCategory.Compiler));            
+                0,
+                0,
+                editor.SourceFile.Project,                
+                editor.SourceFile.Location,
+                0,
+                "Code analysis for TypeScript is experimental and unstable. Use with caution.",
+                DiagnosticLevel.Warning,
+                DiagnosticCategory.Compiler));
 
-            var args1 = new DiagnosticsUpdatedEventArgs { Diagnostics = diagnostics.ToImmutableArray(), Kind = diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, Tag = this };
-
-            (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args1);
+            DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
 
             return result;
         }

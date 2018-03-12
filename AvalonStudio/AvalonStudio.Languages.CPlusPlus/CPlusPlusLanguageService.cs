@@ -16,7 +16,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,6 +37,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
+
+        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
         public CPlusPlusLanguageService()
         {
@@ -135,8 +136,6 @@ namespace AvalonStudio.Languages.CPlusPlus
         public string Identifier => "C++";
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
-
-        public IObservable<DiagnosticsUpdatedEventArgs> Diagnostics { get; } = new Subject<DiagnosticsUpdatedEventArgs>();
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
@@ -487,7 +486,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }, IntPtr.Zero);
         }
 
-        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, List<Diagnostic> result)
+        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, ISourceFile file, List<Diagnostic> result)
         {
             foreach (var diagnostic in clangDiagnostics)
             {
@@ -496,7 +495,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     var diag = new Diagnostic(
                         diagnostic.Location.FileLocation.Offset,
                         0,
-                        project,
+                        file.Project,                        
                         diagnostic.Location.FileLocation.File.FileName,
                         diagnostic.Location.FileLocation.Line,
                         diagnostic.Spelling,
@@ -524,7 +523,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles,
             Func<bool> interruptRequested)
         {
-            var result = new CodeAnalysisResults();
+            var result = new CodeAnalysisResults(this, editor.SourceFile);
 
             var dataAssociation = GetAssociatedData(editor.SourceFile);
 
@@ -549,7 +548,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                             GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.IndexItems);
                         }
 
-                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, editor.SourceFile.Project, diagnostics);
+                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, editor.SourceFile, diagnostics);
                     }
                 }
                 catch (Exception e)
@@ -557,9 +556,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             });
 
-            var args = new DiagnosticsUpdatedEventArgs { Diagnostics = diagnostics.ToImmutableArray(), Kind = diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, Tag = this };
-
-            (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args);
+            DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs (this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
 
             return result;
         }

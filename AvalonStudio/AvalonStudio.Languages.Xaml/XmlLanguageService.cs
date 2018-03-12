@@ -23,6 +23,8 @@ namespace AvalonStudio.Languages.Xaml
             new InsertExtraNewLineBetweenAttributesOnEnterCodeInputHelper()
         };
 
+        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
+
         public IIndentationStrategy IndentationStrategy { get; } = new XamlIndentationStrategy();
 
         public virtual string Title => "XML";
@@ -45,9 +47,7 @@ namespace AvalonStudio.Languages.Xaml
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
-        public virtual string Identifier => "XML";
-
-        public IObservable<DiagnosticsUpdatedEventArgs> Diagnostics => throw new NotImplementedException();
+        public virtual string Identifier => "XML";        
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
@@ -119,7 +119,7 @@ namespace AvalonStudio.Languages.Xaml
 
         public Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
-            return Task.FromResult(new CodeAnalysisResults());
+            return Task.FromResult(new CodeAnalysisResults(this, editor.SourceFile));
         }
 
         public Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)

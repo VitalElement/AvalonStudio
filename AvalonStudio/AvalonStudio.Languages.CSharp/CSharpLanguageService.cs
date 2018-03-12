@@ -28,7 +28,6 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reactive.Subjects;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,6 +46,8 @@ namespace AvalonStudio.Languages.CSharp
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
         private MetadataHelper _metadataHelper;
+
+        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
         public CSharpLanguageService()
         {
@@ -122,8 +123,6 @@ namespace AvalonStudio.Languages.CSharp
         public string LanguageId => "cs";
 
         public string Identifier => "C#";
-
-        public IObservable<DiagnosticsUpdatedEventArgs> Diagnostics { get; } = new Subject<DiagnosticsUpdatedEventArgs>();
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData { get; } = new Subject<SyntaxHighlightDataList>();
 
@@ -530,7 +529,7 @@ namespace AvalonStudio.Languages.CSharp
 
                     var results = new List<Diagnostic>();
 
-                    var fadedCode = new SyntaxHighlightDataList { Tag = diagnostics.Id };
+                    var fadedCode = new SyntaxHighlightDataList(diagnostics.Id, editor.SourceFile);
 
                     foreach (var diagnostic in diagnostics.Diagnostics)
                     {
@@ -549,15 +548,7 @@ namespace AvalonStudio.Languages.CSharp
                         }
                     }
 
-                    var args = new DiagnosticsUpdatedEventArgs
-                    {
-                        Diagnostics = results.ToImmutableArray(),
-                        Kind = (DiagnosticsUpdatedKind)diagnostics.Kind,
-                        Tag = diagnostics.Id,
-                        DiagnosticHighlighting = fadedCode
-                    };
-
-                    (Diagnostics as Subject<DiagnosticsUpdatedEventArgs>).OnNext(args);
+                    DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(diagnostics.Id, editor.SourceFile, (DiagnosticsUpdatedKind)diagnostics.Kind, results.ToImmutableArray(), fadedCode));
                 });
 
                 association.TextInputHandler = (sender, e) =>
@@ -728,7 +719,7 @@ namespace AvalonStudio.Languages.CSharp
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
-            var result = new CodeAnalysisResults();
+            var result = new CodeAnalysisResults(this, editor.SourceFile);
 
             var textLength = 0;
 
