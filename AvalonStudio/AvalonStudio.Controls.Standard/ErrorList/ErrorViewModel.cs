@@ -11,8 +11,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
     public class ErrorViewModel : ViewModel<Diagnostic>, IComparable<ErrorViewModel>
     {
         public ErrorViewModel(Diagnostic model, object tag, ISourceFile associatedFile) : base(model)
-        {
-            offset = model.StartOffset;
+        {            
             Tag = tag;
             AssociatedFile = associatedFile;
         }
@@ -39,9 +38,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         public int Line
         {
             get { return Model.Line; }
-        }
-
-        private int offset { get; }
+        }        
 
         public DiagnosticLevel Level
         {
