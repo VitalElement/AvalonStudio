@@ -25,6 +25,8 @@ namespace AvalonStudio.Languages.CSharp
             _document = document;
         }
 
+        public string ContentType => "C#";
+
         public Document Document => _document;
 
         public string FilePath => _filePath;

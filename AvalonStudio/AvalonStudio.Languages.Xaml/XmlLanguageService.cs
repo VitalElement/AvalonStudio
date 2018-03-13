@@ -9,11 +9,9 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    [ExportLanguageService(ContentType)]
+    [ExportLanguageService(ContentCapabilities.Xml)]
     internal class XmlLanguageService : ILanguageService
     {
-        private const string ContentType = "XML";
-
         private static List<ICodeEditorInputHelper> s_InputHelpers = new List<ICodeEditorInputHelper>
         {
             new CompleteCloseTagCodeEditorHelper(),

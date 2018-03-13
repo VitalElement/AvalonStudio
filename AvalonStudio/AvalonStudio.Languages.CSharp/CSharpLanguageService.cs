@@ -26,11 +26,9 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.CSharp
 {
-    [ExportLanguageService(ContentType)]
+    [ExportLanguageService(ContentCapabilities.CSharp)]
     internal class CSharpLanguageService : ILanguageService
     {
-        private const string ContentType = "C#";
-
         private static readonly ConditionalWeakTable<IEditor, CSharpDataAssociation> dataAssociations =
             new ConditionalWeakTable<IEditor, CSharpDataAssociation>();
 

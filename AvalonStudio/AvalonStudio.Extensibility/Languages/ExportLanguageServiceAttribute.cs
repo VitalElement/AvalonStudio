@@ -1,18 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Composition;
 
 namespace AvalonStudio.Languages
 {
     [MetadataAttribute]
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class ExportLanguageServiceAttribute : ExportAttribute, ILanguageServiceMetadata
+    [AttributeUsage(AttributeTargets.Class)]
+    public class ExportLanguageServiceAttribute : ExportAttribute
     {
-        public string ContentType { get; }
+        public IEnumerable<string> TargetCapabilities { get; }
 
-        public ExportLanguageServiceAttribute(string contentType)
+        public ExportLanguageServiceAttribute(params string[] targetCapabilities)
             : base (typeof(ILanguageService))
         {
-            ContentType = contentType;
+            TargetCapabilities = targetCapabilities;
         }
     }
 }

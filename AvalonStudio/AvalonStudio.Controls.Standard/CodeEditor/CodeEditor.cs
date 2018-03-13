@@ -800,7 +800,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _snippetManager.InitialiseSnippetsForProject(sourceFile.Project);
             }
 
-            LanguageService = _shell.LanguageServices.FirstOrDefault(o => o.Value.CanHandle(DocumentAccessor))?.Value;
+            var contentTypeService = ContentTypeServiceInstance.Instance;
+
+            LanguageService = _shell.LanguageServices.FirstOrDefault(
+                o => o.Metadata.TargetCapabilities.Any(
+                    c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;
 
             if (LanguageService != null)
             {
