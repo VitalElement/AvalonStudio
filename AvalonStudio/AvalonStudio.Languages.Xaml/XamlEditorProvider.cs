@@ -1,11 +1,10 @@
 ﻿using AvalonStudio.Documents;
-using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Projects;
-using System.Composition;
+using AvalonStudio.Shell;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    [Export(typeof(IEditorProvider))]
+    [ExportEditorProvider]
     internal class XamlEditorProvider : IEditorProvider
     {
         public bool CanEdit(ISourceFile file)
