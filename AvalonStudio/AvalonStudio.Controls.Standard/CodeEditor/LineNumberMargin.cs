@@ -19,8 +19,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
     {
         private TextArea _textArea;
         private CodeEditor _editor;
-        private const int MinLineNumberWidth = 5;
-        private const int RightMarginChars = 2;
+        private const int MinLineNumberWidth = 3;
+        private const int RightMarginChars = 0;
         private double RightMarginSize = 0;
 
         public LineNumberMargin(CodeEditor editor)

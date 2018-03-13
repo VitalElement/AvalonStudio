@@ -1,4 +1,5 @@
-﻿// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
+﻿
+// Copyright (c) 2014 AlphaSierraPapa for the SharpDevelop Team
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this
 // software and associated documentation files (the "Software"), to deal in the Software
@@ -16,12 +17,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Markup;
 using Avalonia.Markup.Xaml.Data;
-using Avalonia.Markup.Xaml.Templates;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
@@ -35,7 +35,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
     internal sealed class ContextActionsBulbPopup : ExtendedPopup
     {
         private readonly MenuItem _mainItem;
-        private readonly Image _headerImage;
+        private readonly DrawingPresenter _headerImage;
         private bool _isOpen;
 
         public ContextActionsBulbPopup(Control parent) : base(parent)
@@ -44,14 +44,21 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 
             StaysOpen = true;
 
-            _headerImage = new Image();            
+            if (Application.Current.Styles.TryGetResource("Bulb", out object bulbIcon))
+            {
+                _headerImage = new DrawingPresenter
+                {
+                    Drawing = bulbIcon as Drawing,
+                    Height = 16,
+                    Width = 16
+                };
+            }
 
             _mainItem = new MenuItem
             {
                 Styles = { CreateItemContainerStyle() },
-                Header = new Grid { Height=20, Width=20, Background=Brushes.Gold },                                
-                //_headerImage
-            };            
+                Header = _headerImage
+            };
 
             _mainItem.SubmenuOpened += (sender, args) =>
             {
@@ -79,13 +86,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 Items = new[] { _mainItem }
             };
 
-            Child = menu;            
+            Child = menu;
         }
 
         public IBitmap Icon
         {
-            get => _headerImage.Source;
-            set => _headerImage.Source = value;
+            get; set;
+            // get => _headerImage.Source;
+            //set => _headerImage.Source = value;
         }
 
         public event EventHandler MenuOpened;
@@ -164,11 +172,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             var visualLine = editor.TextArea.TextView.GetVisualLine(line);
             var height = visualLine.Height - 1;
             _headerImage.Width = _headerImage.Height = height;
-            HorizontalOffset = 0;            
+            HorizontalOffset = 0;
             PlacementTarget = editor.TextArea.TextView;
             VerticalOffset = caretScreenPos.Y - height - 1 - PlacementTarget.Bounds.Height;
-            // TODO:
-            //Placement = PlacementMode.Relative;
         }
 
         private class ActionCommandConverter : IValueConverter
