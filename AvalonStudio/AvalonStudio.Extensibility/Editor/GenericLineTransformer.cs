@@ -13,7 +13,7 @@ namespace AvalonStudio.CodeEditor
 
         protected abstract void TransformLine(DocumentLine line, ITextRunConstructionContext context);
 
-        protected void SetTextOpacity (DocumentLine line, int startIndex , int length, double opacity)
+        public void SetTextOpacity (DocumentLine line, int startIndex , int length, double opacity)
         {
             if (startIndex >= 0 && length > 0)
             {
@@ -48,7 +48,7 @@ namespace AvalonStudio.CodeEditor
             }
         }
 
-        protected void SetTextStyle(DocumentLine line, int startIndex, int length, IBrush foreground)
+        public void SetTextStyle(DocumentLine line, int startIndex, int length, IBrush foreground)
         {
             if (startIndex >= 0 && length > 0)
             {

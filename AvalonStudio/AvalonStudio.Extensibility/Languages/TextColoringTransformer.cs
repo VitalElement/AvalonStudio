@@ -33,26 +33,12 @@ namespace AvalonStudio.Languages
 
             foreach (var transform in transformsInLine.OfType<ForegroundTextTransformation>())
             {
-                var formattedOffset = 0;
-
-                if (transform.StartOffset > line.Offset)
-                {
-                    formattedOffset = transform.StartOffset - line.Offset;
-                }
-
-                SetTextStyle(line, formattedOffset, transform.Length, transform.Foreground);
+                transform.Transform(this, line);
             }
 
             foreach (var transform in transformsInLine.OfType<OpacityTextTransformation>())
             {
-                var formattedOffset = 0;
-
-                if (transform.StartOffset > line.Offset)
-                {
-                    formattedOffset = transform.StartOffset - line.Offset;
-                }
-
-                SetTextOpacity(line, formattedOffset, transform.Length, transform.Opacity);
+                transform.Transform(this, line);
             }
         }
 
@@ -70,7 +56,49 @@ namespace AvalonStudio.Languages
                     TextTransformations.Remove(m);
                 }
             }
-        }        
+        }
+
+        private TextTransformation GetTextTransformation(object tag, OffsetSyntaxHighlightingData highlight)
+        {
+            if (highlight is LineColumnSyntaxHighlightingData lineColumnHighlight)
+            {
+                if (highlight.Type == HighlightType.Unnecessary)
+                {
+                    return new OpacityTextTransformation(
+                        tag,
+                        document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
+                        document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
+                        0.5);
+                }
+                else
+                {
+                    return new ForegroundTextTransformation(
+                        tag,
+                        document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
+                        document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
+                        GetBrush(highlight.Type));
+                }
+            }
+            else
+            {
+                if (highlight.Type == HighlightType.Unnecessary)
+                {
+                    return new OpacityTextTransformation(
+                    tag,
+                    highlight.Start,
+                    highlight.Start + highlight.Length,
+                    0.5);
+                }
+                else
+                {
+                    return new ForegroundTextTransformation(
+                    tag,
+                    highlight.Start,
+                    highlight.Start + highlight.Length,
+                    GetBrush(highlight.Type));
+                }
+            }
+        }
 
         public void SetTransformations(object tag, SyntaxHighlightDataList highlightData)
         {
@@ -78,52 +106,11 @@ namespace AvalonStudio.Languages
             {
                 RemoveAll(transform => Equals(transform.Tag, tag));
 
-                foreach (var transform in highlightData)
+                foreach (var highlight in highlightData)
                 {
-                    if (transform.Type != HighlightType.None)
+                    if (highlight.Type != HighlightType.None)
                     {
-                        if (transform is LineColumnSyntaxHighlightingData)
-                        {
-                            if (transform.Type == HighlightType.Unnecessary)
-                            {
-                                var trans = transform as LineColumnSyntaxHighlightingData;
-
-                                TextTransformations.Add(new OpacityTextTransformation(
-                                    tag,
-                                    document.GetOffset(trans.StartLine, trans.StartColumn),
-                                    document.GetOffset(trans.EndLine, trans.EndColumn),
-                                    0.5));
-                            }
-                            else
-                            {
-                                var trans = transform as LineColumnSyntaxHighlightingData;
-
-                                TextTransformations.Add(new ForegroundTextTransformation(
-                                    tag,
-                                    document.GetOffset(trans.StartLine, trans.StartColumn),
-                                    document.GetOffset(trans.EndLine, trans.EndColumn),
-                                    GetBrush(transform.Type)));
-                            }
-                        }
-                        else
-                        {
-                            if (transform.Type == HighlightType.Unnecessary)
-                            {
-                                TextTransformations.Add(new OpacityTextTransformation(
-                                tag,
-                                transform.Start,
-                                transform.Start + transform.Length,
-                                0.5));
-                            }
-                            else
-                            {
-                                TextTransformations.Add(new ForegroundTextTransformation(
-                                tag,
-                                transform.Start,
-                                transform.Start + transform.Length,
-                                GetBrush(transform.Type)));
-                            }
-                        }
+                        TextTransformations.Add(GetTextTransformation(tag, highlight));
                     }
                 }
             });
@@ -135,10 +122,6 @@ namespace AvalonStudio.Languages
 
             switch (type)
             {
-                case HighlightType.Unnecessary:
-                    result = null;
-                    break;
-
                 case HighlightType.DelegateName:
                     result = ColorScheme.DelegateName;
                     break;

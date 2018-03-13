@@ -2,6 +2,7 @@
 {
     using Avalonia.Media;
     using AvaloniaEdit.Document;
+    using AvalonStudio.CodeEditor;
 
     public abstract class TextTransformation : TextSegment
     {
@@ -11,6 +12,8 @@
             StartOffset = startOffset;
             EndOffset = endOffset;
         }
+
+        public abstract void Transform(GenericLineTransformer transformer, DocumentLine line);
 
         public object Tag { get; }
     }
@@ -23,6 +26,18 @@
         }
 
         public IBrush Foreground { get; }
+
+        public override void Transform(GenericLineTransformer transformer, DocumentLine line)
+        {
+            var formattedOffset = 0;
+
+            if (StartOffset > line.Offset)
+            {
+                formattedOffset = StartOffset - line.Offset;
+            }
+
+            transformer.SetTextStyle(line, formattedOffset, Length, Foreground);
+        }
     }
 
     public class OpacityTextTransformation : TextTransformation
@@ -33,5 +48,17 @@
         }
 
         public double Opacity { get; }
+
+        public override void Transform(GenericLineTransformer transformer, DocumentLine line)
+        {
+            var formattedOffset = 0;
+
+            if (StartOffset > line.Offset)
+            {
+                formattedOffset = StartOffset - line.Offset;
+            }
+
+            transformer.SetTextOpacity(line, formattedOffset, Length, Opacity);
+        }
     }
 }
