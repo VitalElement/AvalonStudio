@@ -119,7 +119,7 @@ namespace AvalonStudio.Languages.Xaml
 
         public Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
-            return Task.FromResult(new CodeAnalysisResults(this, editor.SourceFile));
+            return Task.FromResult(new CodeAnalysisResults());
         }
 
         public Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)

@@ -224,7 +224,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor,
             List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
-            var result = new CodeAnalysisResults(this, editor.SourceFile);
+            var result = new CodeAnalysisResults();
             var diagnostics = new List<Diagnostic>();
 
             var file = editor.SourceFile;
@@ -253,7 +253,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
                 DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
 
-                return new CodeAnalysisResults(this, editor.SourceFile);
+                return new CodeAnalysisResults();
             }
             finally
             {

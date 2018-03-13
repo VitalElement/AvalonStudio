@@ -27,16 +27,6 @@ namespace AvalonStudio.Languages
 
     public class SyntaxHighlightDataList : List<OffsetSyntaxHighlightingData>
     {
-        public SyntaxHighlightDataList(object tag, ISourceFile associatedFile)
-        {
-            AssociatedFile = associatedFile;
-            Tag = tag;
-        }
-
-        public object Tag { get; }
-
-        public ISourceFile AssociatedFile { get; }
-
         public new void Add(OffsetSyntaxHighlightingData item)
         {
             var index = BinarySearch(item);

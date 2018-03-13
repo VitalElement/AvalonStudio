@@ -523,7 +523,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles,
             Func<bool> interruptRequested)
         {
-            var result = new CodeAnalysisResults(this, editor.SourceFile);
+            var result = new CodeAnalysisResults();
 
             var dataAssociation = GetAssociatedData(editor.SourceFile);
 

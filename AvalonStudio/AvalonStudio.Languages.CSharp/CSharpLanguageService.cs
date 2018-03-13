@@ -529,7 +529,7 @@ namespace AvalonStudio.Languages.CSharp
 
                     var results = new List<Diagnostic>();
 
-                    var fadedCode = new SyntaxHighlightDataList(diagnostics.Id, editor.SourceFile);
+                    var fadedCode = new SyntaxHighlightDataList();
 
                     foreach (var diagnostic in diagnostics.Diagnostics)
                     {
@@ -719,7 +719,7 @@ namespace AvalonStudio.Languages.CSharp
 
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
-            var result = new CodeAnalysisResults(this, editor.SourceFile);
+            var result = new CodeAnalysisResults();
 
             var textLength = 0;
 
