@@ -26,7 +26,6 @@ namespace AvalonStudio.Languages
 
         public ColorScheme ColorScheme { get; set; }
 
-
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
             var transformsInLine = TextTransformations.FindOverlappingSegments(line);

@@ -15,15 +15,19 @@ namespace AvalonStudio.Extensibility.Editor
 
         public KnownLayer Layer => KnownLayer.Background;
 
+        public ColorScheme ColorScheme { get; set; }
+
         public TextMarkerService(TextDocument document)
         {
             markers = new TextSegmentCollection<TextMarker>(document);
+
+            ColorScheme = ColorScheme.Default;
         }
 
         public event EventHandler<EventArgs> DataChanged;
 
         public void Draw(TextView textView, DrawingContext drawingContext)
-        {   
+        {
             if (markers == null)
             {
                 return;
@@ -51,7 +55,7 @@ namespace AvalonStudio.Extensibility.Editor
                         {
                             if (marker.Diagnostic.Category == DiagnosticCategory.Style)
                             {
-                                var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
+                                var usedPen = new Pen(marker.Brush, 1);
                                 drawingContext.DrawLine(usedPen, r.BottomLeft, r.BottomLeft.WithX(r.BottomLeft.X + 15));
                             }
                             else
@@ -59,7 +63,7 @@ namespace AvalonStudio.Extensibility.Editor
                                 var startPoint = r.BottomLeft;
                                 var endPoint = r.BottomRight;
 
-                                var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
+                                var usedPen = new Pen(marker.Brush, 1);
 
                                 const double offset = 2.5;
 
@@ -94,7 +98,7 @@ namespace AvalonStudio.Extensibility.Editor
             {
                 yield return new Point(start.X + (i * offset), start.Y - ((i + 1) % 2 == 0 ? offset : 0));
             }
-        }        
+        }
 
         public void RemoveAll(Predicate<TextMarker> predicate)
         {
@@ -113,50 +117,50 @@ namespace AvalonStudio.Extensibility.Editor
         }
 
         public void SetDiagnostics(object tag, TextSegmentCollection<Diagnostic> diagnostics)
-        {            
+        {
             foreach (var diag in diagnostics)
             {
-                Color markerColor;
+                IBrush markerColor;
 
                 switch (diag.Level)
                 {
                     case DiagnosticLevel.Error:
                     case DiagnosticLevel.Fatal:
-                        markerColor = Color.FromRgb(253, 45, 45);
+                        markerColor = ColorScheme.ErrorDiagnostic;
                         break;
 
                     case DiagnosticLevel.Warning:
-                        markerColor = Color.FromRgb(255, 207, 40);
+                        markerColor = ColorScheme.WarningDiagnostic;
                         break;
 
                     case DiagnosticLevel.Info:
-                        if(diag.Category == DiagnosticCategory.Style)
+                        if (diag.Category == DiagnosticCategory.Style)
                         {
-                            markerColor = Color.FromRgb(0xD4, 0xD4, 0xD4);
+                            markerColor = ColorScheme.StyleDiagnostic;
                         }
                         else
                         {
-                            markerColor = Color.FromRgb(0, 25, 255);
+                            markerColor = ColorScheme.InfoDiagnostic;
                         }
                         break;
 
                     default:
-                        markerColor = Color.FromRgb(0, 255, 74);
+                        markerColor = Brushes.Green;
                         break;
-                }                
+                }
 
                 Create(diag, markerColor, tag);
             }
         }
-        
-        private void Create(Diagnostic diagnostic, Color markerColor, object tag)
+
+        private void Create(Diagnostic diagnostic, IBrush markerColor, object tag)
         {
             var m = new TextMarker(diagnostic);
 
             markers.Add(m);
-            
-            m.MarkerColor = markerColor;
-            m.ToolTip = diagnostic.Spelling;                        
+
+            m.Brush = markerColor;
+            m.ToolTip = diagnostic.Spelling;
             m.Tag = tag;
         }
 
@@ -180,8 +184,7 @@ namespace AvalonStudio.Extensibility.Editor
             }
 
             public Diagnostic Diagnostic { get; set; }            
-            public Color? BackgroundColor { get; set; }
-            public Color MarkerColor { get; set; }
+            public IBrush Brush { get; set; }
             public string ToolTip { get; set; }
             public object Tag { get; set; }
         }

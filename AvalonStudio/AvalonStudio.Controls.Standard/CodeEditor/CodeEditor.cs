@@ -291,9 +291,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Foreground = colorScheme.Text;
 
                     _lineNumberMargin.Background = colorScheme.BackgroundAccent;
+
                     if (_textColorizer != null)
                     {
                         _textColorizer.ColorScheme = colorScheme;
+                    }
+
+                    if(_diagnosticMarkersRenderer != null)
+                    {
+                        _diagnosticMarkersRenderer.ColorScheme = colorScheme;
                     }
 
                     TextArea.TextView.InvalidateLayer(KnownLayer.Background);
