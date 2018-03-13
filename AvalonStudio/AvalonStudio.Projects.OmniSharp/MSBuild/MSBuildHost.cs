@@ -61,9 +61,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                         var path = typeof(NextRequestType).Assembly.GetModules()[0].FullyQualifiedName;
                         path = Path.Combine(Path.GetDirectoryName(path), "host.csproj");
 
-                        string args = $"msbuild /p:AvaloniaIdePort={l.Port} {path}";
-
-                        Console.WriteLine(args);
+                        string args = $"msbuild /p:AvaloniaIdePort={l.Port} {path}";                        
 
                         hostProcess = PlatformSupport.LaunchShellCommand("dotnet", args,
                         (sender, e) =>

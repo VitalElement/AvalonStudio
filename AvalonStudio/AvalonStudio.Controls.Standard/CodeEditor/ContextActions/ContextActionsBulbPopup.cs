@@ -19,6 +19,7 @@
 
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Markup;
 using Avalonia.Markup.Xaml.Data;
@@ -37,9 +38,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
         private readonly MenuItem _mainItem;
         private readonly DrawingPresenter _headerImage;
         private bool _isOpen;
+        private Control _placementTarget;
+        private Menu _mainMenu;
 
-        public ContextActionsBulbPopup(Control parent) : base(parent)
+        public ContextActionsBulbPopup(Control parent, Control placementTarget) : base(parent)
         {
+            _placementTarget = placementTarget;
+
             UseLayoutRounding = true;
 
             StaysOpen = true;
@@ -57,7 +62,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             _mainItem = new MenuItem
             {
                 Styles = { CreateItemContainerStyle() },
-                Header = _headerImage
+                Header = _headerImage,
+                Margin = new Thickness(),
+                Padding = new Thickness()
+            };
+
+            _mainItem.SelectionChanged += (sender, args) =>
+            {
+                if (!_mainItem.IsSubMenuOpen)
+                {
+                    Close();
+                }
             };
 
             _mainItem.SubmenuOpened += (sender, args) =>
@@ -78,7 +93,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 }
             };
 
-            var menu = new Menu
+            _mainMenu = new Menu
             {
                 Background = Brushes.Transparent,
                 BorderBrush = _mainItem.BorderBrush,
@@ -86,7 +101,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 Items = new[] { _mainItem }
             };
 
-            Child = menu;
+            Child = _mainMenu;
+
+            TextBlock.SetFontFamily(this, "Segoi UI");
+            TextBlock.SetFontSize(this, 14);
+            TextBlock.SetForeground(this, Application.Current.Resources["ThemeForegroundBrush"] as IBrush);
         }
 
         public IBitmap Icon
@@ -130,13 +149,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 
         public new void Close()
         {
+            _mainMenu.Close();
             IsOpenIfFocused = false;
         }
 
         public bool IsMenuOpen
         {
             get => _mainItem.IsSubMenuOpen;
-            set => _mainItem.IsSubMenuOpen = value;
+            set
+            {
+                _mainItem.IsSubMenuOpen = value;
+            }
         }
 
         public Func<object, ICommand> CommandProvider { get; set; }
@@ -146,13 +169,19 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             _mainItem.Focus();
         }
 
-        public void OpenAtLineStart(AvaloniaEdit.TextEditor editor)
+        public void OpenAtLineStart(CodeEditor editor)
         {
             SetPosition(editor, editor.TextArea.Caret.Line, 1);
             IsOpenIfFocused = true;
         }
 
-        private void SetPosition(AvaloniaEdit.TextEditor editor, int line, int column, bool openAtWordStart = false)
+        public void OpenAtLine(CodeEditor editor, int line)
+        {
+            SetPosition(editor, line, 1);
+            IsOpenIfFocused = true;
+        }
+
+        private void SetPosition(CodeEditor editor, int line, int column, bool openAtWordStart = false)
         {
             var document = editor.Document;
 
@@ -173,8 +202,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             var height = visualLine.Height - 1;
             _headerImage.Width = _headerImage.Height = height;
             HorizontalOffset = 0;
-            PlacementTarget = editor.TextArea.TextView;
-            VerticalOffset = caretScreenPos.Y - height - 1 - PlacementTarget.Bounds.Height;
+            PlacementTarget = _placementTarget;
+            VerticalOffset = -_placementTarget.Bounds.Height + (caretScreenPos.Y - height - 1);
         }
 
         private class ActionCommandConverter : IValueConverter

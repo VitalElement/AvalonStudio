@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using System;
 
@@ -13,7 +14,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
         {
             _parent = parent ?? throw new ArgumentNullException(nameof(parent));
 
-            ((ISetLogicalParent)this).SetParent(parent);
+            ((ISetLogicalParent)this).SetParent(parent);            
         }
 
         public new bool IsOpen => base.IsOpen;
@@ -27,16 +28,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 if (_openIfFocused != value)
                 {
                     _openIfFocused = value;
-                    if (value)
-                    {
-                        _parent.GotFocus += Parent_IsFocusedChanged;
-                        _parent.LostFocus += Parent_IsFocusedChanged;
-                    }
-                    else
-                    {
-                        _parent.GotFocus -= Parent_IsFocusedChanged;
-                        _parent.LostFocus -= Parent_IsFocusedChanged;
-                    }
+                    //if (value)
+                    //{
+                    //    _parent.GotFocus += Parent_IsFocusedChanged;
+                    //    _parent.LostFocus += Parent_IsFocusedChanged;
+                    //}
+                    //else
+                    //{
+                    //    _parent.GotFocus -= Parent_IsFocusedChanged;
+                    //    _parent.LostFocus -= Parent_IsFocusedChanged;
+                    //}
                     OpenOrClose();
                 }
             }
@@ -56,7 +57,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             {
                 base.InvalidateArrange();
                 base.InvalidateMeasure();
-                base.Open();
+                base.Open();                
             }
         }
     }

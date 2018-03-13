@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -29,41 +30,81 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using AvaloniaEdit.Editing;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Languages;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 {
-    public sealed class ContextActionsRenderer : IDisposable
+    public sealed class ContextActionsRenderer : ContextActionsMargin, IDisposable
     {
         private const int DelayMoveMilliseconds = 500;
 
         private readonly ObservableCollection<IContextActionProvider> _providers;
         private readonly CodeEditor _editor;
         private readonly TextMarkerService _textMarkerService;
-        private readonly DispatcherTimer _delayMoveTimer;
+        //private readonly DispatcherTimer _delayMoveTimer;
 
         private ContextActionsBulbPopup _popup;
         private CancellationTokenSource _cancellationTokenSource;
         private IEnumerable<object> _actions;
 
-        public ContextActionsRenderer(CodeEditor editor, TextMarkerService textMarkerService)
+        public ContextActionsRenderer(CodeEditor editor, TextMarkerService textMarkerService) : base(editor)
         {
             _editor = editor ?? throw new ArgumentNullException(nameof(editor));
             _textMarkerService = textMarkerService;
-
-            editor.TextArea.Caret.PositionChanged += CaretPositionChanged;
 
             editor.KeyDown += ContextActionsRenderer_KeyDown;
             _providers = new ObservableCollection<IContextActionProvider>();
             _providers.CollectionChanged += providers_CollectionChanged;
 
             editor.TextArea.TextView.ScrollOffsetChanged += ScrollChanged;
-            _delayMoveTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(DelayMoveMilliseconds) };
-            _delayMoveTimer.Stop();
-            _delayMoveTimer.Tick += TimerMoveTick;
+            //_delayMoveTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(DelayMoveMilliseconds) };
+            //_delayMoveTimer.Stop();
+            //_delayMoveTimer.Tick += TimerMoveTick;
 
             editor.HookupLoadedUnloadedAction(HookupWindowMove);
+
+            Observable.FromEventPattern(editor.TextArea.Caret, nameof(editor.TextArea.Caret.PositionChanged))
+                .Throttle(TimeSpan.FromMilliseconds(100))
+                .ObserveOn(AvaloniaScheduler.Instance).Subscribe(async e =>
+                {
+                    await LoadActionsWithCancellationAsync();
+
+                    ClosePopup();
+
+                    // Don't show the context action popup when the caret is outside the editor boundaries
+                    var textView = _editor.TextArea.TextView;
+                    var editorRect = new Rect((Point)textView.ScrollOffset, textView.Bounds.Size);
+                    var caretRect = _editor.TextArea.Caret.CalculateCaretRectangle();
+                    if (!editorRect.Contains(caretRect))
+                        return;
+
+                    if (!await LoadActionsWithCancellationAsync().ConfigureAwait(true)) return;
+
+                    CreatePopup();
+                    _popup.ItemsSource = _actions;
+                    if (_popup.HasItems)
+                    {
+                        //_popup.OpenAtLineStart(_editor);
+                        SetBulb(_editor.Line);
+                    }
+                    else
+                    {
+                        ClearBulb();
+                    }
+                });
+        }
+
+        protected override void OnOpenPopup()
+        {
+            _popup.ItemsSource = _actions;
+            _popup.OpenAtLine(_editor, Line);
+        }
+
+        protected override void OnClosePopup()
+        {
+            ClosePopup();
         }
 
         public IBitmap IconImage { get; set; }
@@ -138,15 +179,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
         {
             if (_popup == null)
             {
-                _popup = new ContextActionsBulbPopup(_editor.TextArea) { CommandProvider = GetActionCommand, Icon = IconImage, Height=20, Width=20 };
+                _popup = new ContextActionsBulbPopup(_editor.TextArea, this) { CommandProvider = GetActionCommand, Icon = IconImage, Height = 20, Width = 20 };
                 // TODO: workaround to refresh menu with latest document
-                _popup.MenuOpened += async (sender, args) =>
-                {
-                    if (await LoadActionsWithCancellationAsync().ConfigureAwait(true))
-                    {
-                        _popup.ItemsSource = _actions;
-                    }
-                };
+                //_popup.MenuOpened += async (sender, args) =>
+                //{
+                //    if (await LoadActionsWithCancellationAsync().ConfigureAwait(true))
+                //    {
+                //        _popup.ItemsSource = _actions;
+                //    }
+                //};
                 _popup.MenuClosed += (sender, args) =>
                 {
                     Dispatcher.UIThread.InvokeAsync(() => _editor.Focus(), DispatcherPriority.Background);
@@ -200,28 +241,28 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             StartTimer();
         }
 
-        private async void TimerMoveTick(object sender, EventArgs e)
-        {
-            if (!_delayMoveTimer.IsEnabled)
-                return;
-            ClosePopup();
+        //private async void TimerMoveTick(object sender, EventArgs e)
+        //{
+        //    if (!_delayMoveTimer.IsEnabled)
+        //        return;
+        //    ClosePopup();
 
-            // Don't show the context action popup when the caret is outside the editor boundaries
-            var textView = _editor.TextArea.TextView;
-            var editorRect = new Rect((Point)textView.ScrollOffset, textView.Bounds.Size);
-            var caretRect = _editor.TextArea.Caret.CalculateCaretRectangle();
-            if (!editorRect.Contains(caretRect))
-                return;
+        //    // Don't show the context action popup when the caret is outside the editor boundaries
+        //    var textView = _editor.TextArea.TextView;
+        //    var editorRect = new Rect((Point)textView.ScrollOffset, textView.Bounds.Size);
+        //    var caretRect = _editor.TextArea.Caret.CalculateCaretRectangle();
+        //    if (!editorRect.Contains(caretRect))
+        //        return;
 
-            if (!await LoadActionsWithCancellationAsync().ConfigureAwait(true)) return;
+        //    if (!await LoadActionsWithCancellationAsync().ConfigureAwait(true)) return;
 
-            CreatePopup();
-            _popup.ItemsSource = _actions;
-            if (_popup.HasItems)
-            {
-                _popup.OpenAtLineStart(_editor);
-            }
-        }
+        //    CreatePopup();
+        //    _popup.ItemsSource = _actions;
+        //    if (_popup.HasItems)
+        //    {
+        //        _popup.OpenAtLineStart(_editor);
+        //    }
+        //}
 
         private void CaretPositionChanged(object sender, EventArgs e)
         {
@@ -233,7 +274,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             ClosePopup();
             if (_providers.Count == 0)
                 return;
-            _delayMoveTimer.Start();
+            //_delayMoveTimer.Start();
         }
 
         private void ClosePopup()
@@ -244,7 +285,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 _cancellationTokenSource = null;
             }
 
-            _delayMoveTimer.Stop();
+            //_delayMoveTimer.Stop();
             if (_popup != null)
             {
                 _popup.Close();

@@ -206,8 +206,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         }
                     }
                 }
-            };            
-            _disposables = new CompositeDisposable {                
+            };
+            _disposables = new CompositeDisposable {
 
             this.GetObservable(LineNumbersVisibleProperty).Subscribe(s =>
             {
@@ -450,7 +450,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             AddHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel),
             AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel)
         };
-            TextArea.LeftMargins.Add(new ContextActionsMargin());
 
             Options = new AvaloniaEdit.TextEditorOptions
             {
@@ -821,6 +820,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
 
                 _contextActionsRenderer = new ContextActionsRenderer(this, _diagnosticMarkersRenderer);
+                TextArea.LeftMargins.Add(_contextActionsRenderer);
                 //_contextActionsRenderer.Providers.Add(new RoslynContextActionProvider(_documentId, _roslynHost)); todo from language service.
 
                 foreach (var contextActionProvider in LanguageService.GetContextActionProviders(DocumentAccessor))
