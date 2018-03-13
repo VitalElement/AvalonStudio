@@ -103,10 +103,11 @@ namespace AvalonStudio.Extensibility.Editor
 
             if (markers != null)
             {
-                foreach (var m in markers.ToArray())
+                var toRemove = markers.Where(t => predicate(t)).ToArray();
+
+                foreach (var m in toRemove)
                 {
-                    if (predicate(m))
-                        markers.Remove(m);
+                    markers.Remove(m);
                 }
             }
         }

@@ -768,7 +768,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     var result = await LanguageService.RunCodeAnalysisAsync(editor, unsavedFiles, () => false);
 
-                    _textColorizer?.SetTransformations(result.SyntaxHighlightingData);
+                    _textColorizer?.SetTransformations(editor, result.SyntaxHighlightingData);
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
@@ -889,7 +889,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     if (e.DiagnosticHighlights != null)
                     {
-                        _textColorizer.AddOpacityTransformations(e.DiagnosticHighlights);
+                        _textColorizer.AddOpacityTransformations(e.Tag, e.DiagnosticHighlights);
                     }
                 }
             }
