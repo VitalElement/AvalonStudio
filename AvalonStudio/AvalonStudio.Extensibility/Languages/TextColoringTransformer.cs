@@ -70,40 +70,7 @@ namespace AvalonStudio.Languages
                     TextTransformations.Remove(m);
                 }
             }
-        }
-
-        public void AddOpacityTransformations(object tag, SyntaxHighlightDataList highlightData)
-        {
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                RemoveAll(transform => Equals(transform.Tag, tag));
-
-                foreach (var transform in highlightData)
-                {
-                    if (transform.Type != HighlightType.None)
-                    {
-                        if (transform is LineColumnSyntaxHighlightingData)
-                        {
-                            var trans = transform as LineColumnSyntaxHighlightingData;
-
-                            TextTransformations.Add(new OpacityTextTransformation(
-                                tag,
-                                document.GetOffset(trans.StartLine, trans.StartColumn),
-                                document.GetOffset(trans.EndLine, trans.EndColumn),
-                                0.5));
-                        }
-                        else
-                        {
-                            TextTransformations.Add(new OpacityTextTransformation(
-                                tag,
-                                transform.Start,
-                                transform.Start + transform.Length,
-                                0.5));
-                        }
-                    }
-                }
-            });
-        }
+        }        
 
         public void SetTransformations(object tag, SyntaxHighlightDataList highlightData)
         {
@@ -117,21 +84,45 @@ namespace AvalonStudio.Languages
                     {
                         if (transform is LineColumnSyntaxHighlightingData)
                         {
-                            var trans = transform as LineColumnSyntaxHighlightingData;
+                            if (transform.Type == HighlightType.Unnecessary)
+                            {
+                                var trans = transform as LineColumnSyntaxHighlightingData;
 
-                            TextTransformations.Add(new ForegroundTextTransformation(
-                                tag,
-                                document.GetOffset(trans.StartLine, trans.StartColumn),
-                                document.GetOffset(trans.EndLine, trans.EndColumn),
-                                GetBrush(transform.Type)));
+                                TextTransformations.Add(new OpacityTextTransformation(
+                                    tag,
+                                    document.GetOffset(trans.StartLine, trans.StartColumn),
+                                    document.GetOffset(trans.EndLine, trans.EndColumn),
+                                    0.5));
+                            }
+                            else
+                            {
+                                var trans = transform as LineColumnSyntaxHighlightingData;
+
+                                TextTransformations.Add(new ForegroundTextTransformation(
+                                    tag,
+                                    document.GetOffset(trans.StartLine, trans.StartColumn),
+                                    document.GetOffset(trans.EndLine, trans.EndColumn),
+                                    GetBrush(transform.Type)));
+                            }
                         }
                         else
                         {
-                            TextTransformations.Add(new ForegroundTextTransformation(
+                            if (transform.Type == HighlightType.Unnecessary)
+                            {
+                                TextTransformations.Add(new OpacityTextTransformation(
+                                tag,
+                                transform.Start,
+                                transform.Start + transform.Length,
+                                0.5));
+                            }
+                            else
+                            {
+                                TextTransformations.Add(new ForegroundTextTransformation(
                                 tag,
                                 transform.Start,
                                 transform.Start + transform.Length,
                                 GetBrush(transform.Type)));
+                            }
                         }
                     }
                 }

@@ -889,7 +889,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     if (e.DiagnosticHighlights != null)
                     {
-                        _textColorizer.AddOpacityTransformations(e.Tag, e.DiagnosticHighlights);
+                        _textColorizer.SetTransformations(e.Tag, e.DiagnosticHighlights);
                     }
                 }
             }
