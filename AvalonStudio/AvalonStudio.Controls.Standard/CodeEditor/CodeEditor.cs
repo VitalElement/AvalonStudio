@@ -567,7 +567,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 var offset = Document.GetOffset(position.Value.Location);
 
-                var matching = _diagnosticMarkersRenderer.GetMarkersAtOffset(offset).FirstOrDefault()?.Diagnostic;
+                var matching = _diagnosticMarkersRenderer?.GetMarkersAtOffset(offset).FirstOrDefault()?.Diagnostic;
 
                 if (matching != null && matching.Level != DiagnosticLevel.Hidden)
                 {
