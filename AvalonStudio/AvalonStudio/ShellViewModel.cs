@@ -722,50 +722,20 @@ namespace AvalonStudio
             Environment.Exit(1);
         }
 
-        public void InvalidateErrors()
+        public void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics)
         {
-            var allErrors = new List<ErrorViewModel>();
-            var toRemove = new List<ErrorViewModel>();
-
-            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
-            {
-                /*if (document.Diagnostics != null)
-                {
-                    foreach (var diagnostic in document.Diagnostics)
-                    {
-                        var error = new ErrorViewModel(diagnostic);
-                        var matching = allErrors.FirstOrDefault(err => err.IsEqual(error));
-
-                        if (matching == null)
-                        {
-                            allErrors.Add(error);
-                        }
-                    }
-                }*/
-            }
-
-            foreach (var error in ErrorList.Errors)
-            {
-                var matching = allErrors.SingleOrDefault(err => err.IsEqual(error));
-
-                if (matching == null)
-                {
-                    toRemove.Add(error);
-                }
-            }
+            var toRemove = ErrorList.Errors.Where(e => Equals(e.Tag, diagnostics.Tag) && e.AssociatedFile == diagnostics.AssociatedSourceFile).ToList();
 
             foreach (var error in toRemove)
             {
                 ErrorList.Errors.Remove(error);
             }
 
-            foreach (var error in allErrors)
+            foreach (var diagnostic in diagnostics.Diagnostics)
             {
-                var matching = ErrorList.Errors.SingleOrDefault(err => err.IsEqual(error));
-
-                if (matching == null)
+                if (diagnostic.Level != DiagnosticLevel.Hidden)
                 {
-                    ErrorList.Errors.Add(error);
+                    ErrorList.Errors.InsertSorted(new ErrorViewModel(diagnostic, diagnostics.Tag, diagnostics.AssociatedSourceFile));
                 }
             }
         }
@@ -804,6 +774,8 @@ namespace AvalonStudio
 
         public async Task CloseSolutionAsync()
         {
+            ErrorList.Errors.Clear();
+
             var documentsToClose = DocumentTabs.Documents.ToList();
 
             foreach (var document in documentsToClose)

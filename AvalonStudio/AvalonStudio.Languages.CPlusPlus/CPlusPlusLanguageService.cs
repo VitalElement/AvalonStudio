@@ -13,6 +13,7 @@ using AvalonStudio.Utils;
 using NClang;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -36,6 +37,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
+
+        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
         public CPlusPlusLanguageService()
         {
@@ -79,12 +82,12 @@ namespace AvalonStudio.Languages.CPlusPlus
             });
 
             _snippetDynamicVars.Add("ClassName", (offset, line, column) => null);
-        }        
+        }
 
         public string Title
         {
             get { return "C/C++"; }
-        }        
+        }
 
         public IIndentationStrategy IndentationStrategy { get; private set; }
 
@@ -133,6 +136,8 @@ namespace AvalonStudio.Languages.CPlusPlus
         public string Identifier => "C++";
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
+
+        public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
         private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
@@ -481,21 +486,21 @@ namespace AvalonStudio.Languages.CPlusPlus
             }, IntPtr.Zero);
         }
 
-        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, IProject project, List<Diagnostic> result)
+        private void GenerateDiagnostics(IEnumerable<ClangDiagnostic> clangDiagnostics, ClangTranslationUnit translationUnit, ISourceFile file, List<Diagnostic> result)
         {
             foreach (var diagnostic in clangDiagnostics)
             {
                 if (diagnostic.Location.IsFromMainFile)
                 {
-                    var diag = new Diagnostic
-                    {
-                        Project = project,
-                        StartOffset = diagnostic.Location.FileLocation.Offset,
-                        Line = diagnostic.Location.FileLocation.Line,
-                        Spelling = diagnostic.Spelling,
-                        File = diagnostic.Location.FileLocation.File.FileName,
-                        Level = (DiagnosticLevel)diagnostic.Severity
-                    };
+                    var diag = new Diagnostic(
+                        diagnostic.Location.FileLocation.Offset,
+                        0,
+                        file.Project,                        
+                        diagnostic.Location.FileLocation.File.FileName,
+                        diagnostic.Location.FileLocation.Line,
+                        diagnostic.Spelling,
+                        (DiagnosticLevel)diagnostic.Severity,
+                        DiagnosticCategory.Compiler);
 
                     var cursor = translationUnit.GetCursor(diagnostic.Location);
 
@@ -526,6 +531,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             clangUnsavedFiles.AddRange(unsavedFiles.Select(f => new ClangUnsavedFile(f.FileName, f.Contents)));
 
+            var diagnostics = new List<Diagnostic>();
+
             await clangAccessJobRunner.InvokeAsync(() =>
             {
                 try
@@ -541,13 +548,15 @@ namespace AvalonStudio.Languages.CPlusPlus
                             GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.IndexItems);
                         }
 
-                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, editor.SourceFile.Project, result.Diagnostics);
+                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, editor.SourceFile, diagnostics);
                     }
                 }
                 catch (Exception e)
                 {
                 }
             });
+
+            DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs (this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
 
             return result;
         }
@@ -1294,6 +1303,11 @@ namespace AvalonStudio.Languages.CPlusPlus
         public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo)
         {
             throw new NotImplementedException();
+        }
+
+        public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
+        {
+            return Enumerable.Empty<IContextActionProvider>();
         }
     }
 }

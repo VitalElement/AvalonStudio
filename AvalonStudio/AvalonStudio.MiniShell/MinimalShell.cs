@@ -246,12 +246,7 @@ namespace AvalonStudio.Shell
         public Task CloseSolutionAsync()
         {
             throw new NotImplementedException();
-        }
-
-        public void InvalidateErrors()
-        {
-            throw new NotImplementedException();
-        }
+        }        
 
         public void CloseDocument(ISourceFile file)
         {
@@ -284,6 +279,11 @@ namespace AvalonStudio.Shell
         }
 
         public IMenu BuildEditorContextMenu()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics)
         {
             throw new NotImplementedException();
         }

@@ -1,12 +1,43 @@
-﻿using AvalonStudio.Documents;
+﻿using Avalonia.Controls;
+using AvalonStudio.Documents;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public static class EditorExtensions
     {
+        public static T FindAncestorByType<T>(this IControl control)
+            where T : IControl
+        {
+            while (control != null && !(control is T))
+            {
+                control = control.Parent;
+            }
+
+            return (T)control;
+        }
+
+        public static void HookupLoadedUnloadedAction(this IControl element, Action<bool> action)
+        {
+            if (element.IsAttachedToVisualTree)
+            {
+                action(true);
+            }
+
+            element.AttachedToVisualTree += (o, e) => action(true);
+            element.DetachedFromVisualTree += (o, e) => action(false);
+        }
+
+        public static void AttachLocationChanged(this Window topLevel, EventHandler<PointEventArgs> handler)
+        {
+            topLevel.PositionChanged += handler;
+        }
+
+        public static void DetachLocationChanged(this Window topLevel, EventHandler<PointEventArgs> handler)
+        {
+            topLevel.PositionChanged -= handler;
+        }
+
         public static string GetPreviousWordAtIndex(this ITextDocument document, int index)
         {
             var lastWordIndex = TextUtilities.GetNextCaretPosition(document, index, LogicalDirection.Backward, CaretPositioningMode.WordBorder);

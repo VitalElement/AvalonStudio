@@ -6,7 +6,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     public abstract class SolutionItemViewModel<T> : SolutionItemViewModel where T : ISolutionItem
     {
         public SolutionItemViewModel(ISolutionParentViewModel parent, T model) : base(parent)
-        {
+        {            
             Model = model;
         }
 

@@ -1,7 +1,7 @@
 using System;
 using Microsoft.CodeAnalysis;
 
-namespace RoslynPad.Roslyn
+namespace AvalonStudio.Projects.OmniSharp.Roslyn
 {
     public enum DiagnosticOptions
     {

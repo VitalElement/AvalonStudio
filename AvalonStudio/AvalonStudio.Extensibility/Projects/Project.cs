@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects
 {
-    public class Project
+    public class ProjectUtils
     {
         public static Guid? GetProjectTypeGuidForProject(string fileName)
         {
