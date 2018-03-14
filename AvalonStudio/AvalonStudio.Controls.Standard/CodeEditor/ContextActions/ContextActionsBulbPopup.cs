@@ -221,7 +221,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             var visualLine = editor.TextArea.TextView.GetVisualLine(line);
             var height = visualLine.Height - 1;
             _headerImage.Width = _headerImage.Height = height;
-            HorizontalOffset = 0;
+            HorizontalOffset = 10;
             PlacementTarget = _placementTarget;
             VerticalOffset = -_placementTarget.Bounds.Height + (caretScreenPos.Y - height - 1);
         }

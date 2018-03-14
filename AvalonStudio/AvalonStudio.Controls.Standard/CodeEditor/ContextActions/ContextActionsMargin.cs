@@ -14,7 +14,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
     {
         private DrawingGroup _bulbIcon;
         private int _line;
-        private const int margin = 2;
+        private const int margin = 10;
         private CodeEditor _editor;
 
         protected int Line => _line;
@@ -70,16 +70,21 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             {
                 var textView = TextView;
 
-                var offset = _editor.GetOffsetFromPoint(e.GetPosition(this));
+                var position = e.GetPosition(this);
 
-                if (offset != -1)
+                if (position.X > margin && position.X < (Bounds.Width - margin))
                 {
-                    var currentLine = textView.Document.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.
+                    var offset = _editor.GetOffsetFromPoint(position);
 
-                    if (currentLine == _line)
+                    if (offset != -1)
                     {
-                        OnOpenPopup();
-                        return;
+                        var currentLine = textView.Document.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.
+
+                        if (currentLine == _line)
+                        {
+                            OnOpenPopup();
+                            return;
+                        }
                     }
                 }
 
