@@ -6,7 +6,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     public abstract class SolutionItemViewModel<T> : SolutionItemViewModel where T : ISolutionItem
     {
         public SolutionItemViewModel(ISolutionParentViewModel parent, T model) : base(parent)
-        {            
+        {
             Model = model;
         }
 
@@ -17,7 +17,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             get => Model.Name;
             set
             {
-                if(Model.CanRename && Title != value)
+                if (Model.CanRename && Title != value)
                 {
                     if (!string.IsNullOrEmpty(value))
                     {

@@ -11,7 +11,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
     public class ErrorViewModel : ViewModel<Diagnostic>, IComparable<ErrorViewModel>
     {
         public ErrorViewModel(Diagnostic model, object tag, ISourceFile associatedFile) : base(model)
-        {            
+        {
             Tag = tag;
             AssociatedFile = associatedFile;
         }
@@ -38,7 +38,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         public int Line
         {
             get { return Model.Line; }
-        }        
+        }
 
         public DiagnosticLevel Level
         {
@@ -62,7 +62,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                         return ColorTheme.CurrentTheme.ErrorListInfo;
                 }
             }
-        }        
+        }
 
         public int CompareTo(ErrorViewModel other)
         {
