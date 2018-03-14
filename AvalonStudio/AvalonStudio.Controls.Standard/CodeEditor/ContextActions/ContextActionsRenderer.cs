@@ -57,15 +57,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 
             editor.KeyDown += ContextActionsRenderer_KeyDown;
             _providers = new ObservableCollection<IContextActionProvider>();
-            _providers.CollectionChanged += providers_CollectionChanged;
+            _providers.CollectionChanged += Providers_CollectionChanged;
 
-            editor.TextArea.TextView.ScrollOffsetChanged += ScrollChanged;
+            editor.TextArea.TextView.ScrollOffsetChanged += TextView_ScrollOffsetChanged; ;
 
             editor.HookupLoadedUnloadedAction(HookupWindowMove);
 
             var positionChanged = Observable.FromEventPattern(editor.TextArea.Caret, nameof(editor.TextArea.Caret.PositionChanged)).Select(o => Unit.Default);
-            var textChanged = Observable.FromEventPattern(editor.Document, nameof(editor.Document.TextChanged)).Select(o=>Unit.Default);
-                
+            var textChanged = Observable.FromEventPattern(editor.Document, nameof(editor.Document.TextChanged)).Select(o => Unit.Default);
+
 
             _diagnosticsChanged = new Subject<Unit>();
 
@@ -74,6 +74,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 {
                     await QueryCodeActions();
                 });
+        }
+
+        private void TextView_ScrollOffsetChanged(object sender, EventArgs e)
+        {
+            _diagnosticsChanged.OnNext(Unit.Default);
         }
 
         public void OnDiagnosticsUpdated()
@@ -156,9 +161,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 
         public IList<IContextActionProvider> Providers => _providers;
 
-        private void providers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void Providers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            StartTimer();
+            _diagnosticsChanged.OnNext(Unit.Default);
         }
 
         private async void ContextActionsRenderer_KeyDown(object sender, KeyEventArgs e)
@@ -172,7 +177,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 await QueryCodeActions();
             }
 
-            if(Line <= 0)
+            if (Line <= 0)
             {
                 return;
             }
@@ -186,7 +191,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             else
             {
                 _popup.ItemsSource = _actions;
-                
+
                 if (_popup.HasItems)
                 {
                     _popup.OpenAtLine(_editor, Line);
@@ -200,14 +205,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             if (_popup == null)
             {
                 _popup = new ContextActionsBulbPopup(_editor.TextArea, this) { CommandProvider = GetActionCommand, Icon = IconImage, Height = 20, Width = 20 };
-                // TODO: workaround to refresh menu with latest document
-                //_popup.MenuOpened += async (sender, args) =>
-                //{
-                //    if (await LoadActionsWithCancellationAsync().ConfigureAwait(true))
-                //    {
-                //        _popup.ItemsSource = _actions;
-                //    }
-                //};
+
                 _popup.MenuClosed += (sender, args) =>
                 {
                     Dispatcher.UIThread.InvokeAsync(() =>
@@ -260,47 +258,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             return allActions;
         }
 
-        private void ScrollChanged(object sender, EventArgs e)
-        {
-            StartTimer();
-        }
-
-        //private async void TimerMoveTick(object sender, EventArgs e)
-        //{
-        //    if (!_delayMoveTimer.IsEnabled)
-        //        return;
-        //    ClosePopup();
-
-        //    // Don't show the context action popup when the caret is outside the editor boundaries
-        //    var textView = _editor.TextArea.TextView;
-        //    var editorRect = new Rect((Point)textView.ScrollOffset, textView.Bounds.Size);
-        //    var caretRect = _editor.TextArea.Caret.CalculateCaretRectangle();
-        //    if (!editorRect.Contains(caretRect))
-        //        return;
-
-        //    if (!await LoadActionsWithCancellationAsync().ConfigureAwait(true)) return;
-
-        //    CreatePopup();
-        //    _popup.ItemsSource = _actions;
-        //    if (_popup.HasItems)
-        //    {
-        //        _popup.OpenAtLineStart(_editor);
-        //    }
-        //}
-
-        private void CaretPositionChanged(object sender, EventArgs e)
-        {
-            StartTimer();
-        }
-
-        private void StartTimer()
-        {
-            ClosePopup();
-            if (_providers.Count == 0)
-                return;
-            //_delayMoveTimer.Start();
-        }
-
         private void ClosePopup()
         {
             if (_cancellationTokenSource != null)
@@ -309,7 +266,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 _cancellationTokenSource = null;
             }
 
-            //_delayMoveTimer.Stop();
             if (_popup != null)
             {
                 _popup.Close();
