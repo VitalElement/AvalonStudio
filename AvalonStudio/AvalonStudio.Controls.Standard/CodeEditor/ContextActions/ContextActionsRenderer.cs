@@ -186,7 +186,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             else
             {
                 _popup.ItemsSource = _actions;
-
+                
                 if (_popup.HasItems)
                 {
                     _popup.OpenAtLine(_editor, Line);
