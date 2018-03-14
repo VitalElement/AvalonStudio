@@ -174,7 +174,7 @@ namespace AvalonStudio.Extensibility.Editor
             return markers == null ? Enumerable.Empty<TextMarker>() : markers.FindSegmentsContaining(offset);
         }
 
-        public IEnumerable<TextMarker> FindOverlappingMarkers (ISegment segment)
+        public IEnumerable<TextMarker> FindOverlappingMarkers(ISegment segment)
         {
             return markers == null ? Enumerable.Empty<TextMarker>() : markers.FindOverlappingSegments(segment);
         }
@@ -188,7 +188,7 @@ namespace AvalonStudio.Extensibility.Editor
                 Diagnostic = diagnostic;
             }
 
-            public Diagnostic Diagnostic { get; set; }            
+            public Diagnostic Diagnostic { get; set; }
             public IBrush Brush { get; set; }
             public string ToolTip { get; set; }
             public object Tag { get; set; }
