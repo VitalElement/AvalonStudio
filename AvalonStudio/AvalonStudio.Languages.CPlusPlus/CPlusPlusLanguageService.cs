@@ -23,11 +23,9 @@ using System.Xml.Linq;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
-    [ExportLanguageService(ContentType)]
+    [ExportLanguageService(ContentCapabilities.C, ContentCapabilities.CPP)]
     internal class CPlusPlusLanguageService : ILanguageService
     {
-        private const string ContentType = "C/C++";
-
         private static readonly ClangIndex index = ClangService.CreateIndex();
 
         private static readonly ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations =

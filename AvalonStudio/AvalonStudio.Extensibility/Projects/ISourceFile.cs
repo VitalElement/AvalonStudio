@@ -5,6 +5,8 @@ namespace AvalonStudio.Projects
 {
     public interface ISourceFile : IProjectItem, IComparable<ISourceFile>, IComparable<string>
     {
+        string ContentType { get; }
+
         string FilePath { get; }
         string Extension { get; }
         string CurrentDirectory { get; }

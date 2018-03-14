@@ -9,11 +9,9 @@ using Avalonia.Threading;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    [ExportLanguageService(ContentType)]
+    [ExportLanguageService(ContentCapabilities.Xaml)]
     internal class XamlLanguageService : XmlLanguageService
     {
-        private const string ContentType = "XAML";
-
         public override string Title => "XAML";
 
         public override string LanguageId => "xaml";

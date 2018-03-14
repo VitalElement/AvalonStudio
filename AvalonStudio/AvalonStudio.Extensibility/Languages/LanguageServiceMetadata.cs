@@ -1,7 +1,9 @@
-﻿namespace AvalonStudio.Languages
+﻿using System.Collections.Generic;
+
+namespace AvalonStudio.Languages
 {
-    public class LanguageServiceMetadata : ILanguageServiceMetadata
+    public class LanguageServiceMetadata
     {
-        public string ContentType { get; set; }
+        public IEnumerable<string> TargetCapabilities { get; set; }
     }
 }

@@ -83,6 +83,7 @@ namespace AvalonStudio
         [ImportingConstructor]
         public ShellViewModel(
             Lazy<StatusBarViewModel> statusBar,
+            IContentTypeService contentTypeService,
             [ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
             [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
