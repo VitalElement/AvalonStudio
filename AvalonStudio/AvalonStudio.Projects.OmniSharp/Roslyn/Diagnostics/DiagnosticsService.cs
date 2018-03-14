@@ -6,7 +6,7 @@ using System.Threading;
 using AvalonStudio.Extensibility;
 using Microsoft.CodeAnalysis;
 
-namespace RoslynPad.Roslyn.Diagnostics
+namespace AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics
 {
     [Export(typeof(IDiagnosticService)), Shared]
     internal sealed class DiagnosticsService : IDiagnosticService

@@ -1,21 +1,16 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
-
-using AvalonStudio.Extensibility.Projects;
+﻿using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Platforms;
-using AvalonStudio.Projects.OmniSharp;
 using AvalonStudio.Projects.OmniSharp.MSBuild;
-using AvalonStudio.Projects.OmniSharp.Roslyn;
+using AvalonStudio.Projects.OmniSharp.Roslyn.Common;
+using AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics;
+using AvalonStudio.Projects.OmniSharp.Roslyn.Editor;
 using AvalonStudio.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
-using Microsoft.CodeAnalysis.PickMembers;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
-using RoslynPad.Editor.Windows;
-using RoslynPad.Roslyn.CodeFixes;
-using RoslynPad.Roslyn.Diagnostics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -30,11 +25,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RoslynPad.Roslyn
+namespace AvalonStudio.Projects.OmniSharp.Roslyn
 {
     public sealed class RoslynWorkspace : Workspace
     {
-        private static Dictionary<AvalonStudio.Projects.ISolution, RoslynWorkspace> s_solutionWorkspaces = new Dictionary<AvalonStudio.Projects.ISolution, RoslynWorkspace>();
+        private static Dictionary<ISolution, RoslynWorkspace> s_solutionWorkspaces = new Dictionary<ISolution, RoslynWorkspace>();
 
         private CompositionHost _compositionContext;
         private readonly NuGetConfiguration _nuGetConfiguration;
@@ -100,7 +95,7 @@ namespace RoslynPad.Roslyn
             }
         }
 
-        public static Task<RoslynWorkspace> CreateWorkspaceAsync(AvalonStudio.Projects.ISolution solution)
+        public static Task<RoslynWorkspace> CreateWorkspaceAsync(ISolution solution)
         {
             return Task.Run(() =>
             {
@@ -112,9 +107,9 @@ namespace RoslynPad.Roslyn
 
                         //var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
 
-                        var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
+                        var currentDir = Platforms.Platform.ExecutionPath;
 
-                        var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+                        var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
                         var assemblies = new[]
                         {
@@ -157,7 +152,7 @@ namespace RoslynPad.Roslyn
             });
         }
 
-        public static void DisposeWorkspace(AvalonStudio.Projects.ISolution solution)
+        public static void DisposeWorkspace(ISolution solution)
         {
             lock (s_solutionWorkspaces)
             {
@@ -174,7 +169,7 @@ namespace RoslynPad.Roslyn
             }
         }
 
-        public static RoslynWorkspace GetWorkspace(AvalonStudio.Projects.ISolution solution, bool create = true)
+        public static RoslynWorkspace GetWorkspace(ISolution solution, bool create = true)
         {
             lock (s_solutionWorkspaces)
             {
@@ -189,9 +184,9 @@ namespace RoslynPad.Roslyn
 
                     //var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
 
-                    var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
+                    var currentDir = Platforms.Platform.ExecutionPath;
 
-                    var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+                    var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
                     var assemblies = new[]
                     {
@@ -230,7 +225,7 @@ namespace RoslynPad.Roslyn
             }
         }
 
-        internal RoslynWorkspace RegisterWorkspace(AvalonStudio.Projects.ISolution solution) => s_solutionWorkspaces[solution] = this;
+        internal RoslynWorkspace RegisterWorkspace(ISolution solution) => s_solutionWorkspaces[solution] = this;
 
         private void OnDiagnosticsUpdated(object sender, DiagnosticsUpdatedArgs diagnosticsUpdatedArgs)
         {
@@ -268,7 +263,7 @@ namespace RoslynPad.Roslyn
             }
         }
 
-        public async Task ReevaluateProject(AvalonStudio.Projects.IProject project)
+        public async Task ReevaluateProject(IProject project)
         {
             var proj = project as OmniSharpProject;
 
@@ -279,7 +274,7 @@ namespace RoslynPad.Roslyn
             _buildNodes.Add(buildHost);
         }
 
-        public ProjectId GetProjectId(AvalonStudio.Projects.IProject project)
+        public ProjectId GetProjectId(IProject project)
         {
             var projects = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(Path.Combine(project.Location)) == 0);
 
@@ -291,7 +286,7 @@ namespace RoslynPad.Roslyn
             return projects.First().Id;
         }
 
-        public Project GetProject(AvalonStudio.Projects.IProject project)
+        public Project GetProject(IProject project)
         {
             var projects = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(Path.Combine(project.Location)) == 0);
 

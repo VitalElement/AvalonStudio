@@ -20,7 +20,7 @@ using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
 using Microsoft.CodeAnalysis.PooledObjects;
 
-namespace RoslynPad.Roslyn.CodeFixes
+namespace AvalonStudio.Projects.OmniSharp.Roslyn
 {
     public interface ICodeFixService
     {

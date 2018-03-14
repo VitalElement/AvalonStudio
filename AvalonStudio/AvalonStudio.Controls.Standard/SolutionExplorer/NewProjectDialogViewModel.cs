@@ -28,7 +28,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private ITemplate selectedTemplate;
         private ISolutionFolder _solutionFolder;
-        
+
         private IShell _shell;
         private TemplateManager _templateManager;
 
@@ -115,11 +115,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                     foreach (var projectFile in projectFiles)
                     {
-                        var projectTypeGuid = Project.GetProjectTypeGuidForProject(projectFile);
+                        var projectTypeGuid = ProjectUtils.GetProjectTypeGuidForProject(projectFile);
 
                         if (projectTypeGuid.HasValue)
                         {
-                            var project = await Project.LoadProjectFileAsync(
+                            var project = await ProjectUtils.LoadProjectFileAsync(
                                 _solutionFolder.Solution, projectTypeGuid.Value, projectFile);
 
                             if (project != null)

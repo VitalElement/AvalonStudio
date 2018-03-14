@@ -1,11 +1,9 @@
 ﻿using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
-using Microsoft.CodeAnalysis.CodeActions;
+using AvalonStudio.Projects.OmniSharp.Roslyn;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Text;
-using RoslynPad.Roslyn;
-using RoslynPad.Roslyn.CodeFixes;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;

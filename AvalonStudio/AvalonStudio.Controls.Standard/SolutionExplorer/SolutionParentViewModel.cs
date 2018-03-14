@@ -46,7 +46,7 @@
 
                     dlg.Filters.Add(new FileDialogFilter() { Name = projectTypeMetadata.Description, Extensions = extensions });
                 }
-                
+
                 dlg.InitialDirectory = Model.Solution.CurrentDirectory;
 
                 dlg.AllowMultiple = false;
@@ -55,11 +55,11 @@
 
                 if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {
-                    var projectTypeGuid = Project.GetProjectTypeGuidForProject(result[0]);
+                    var projectTypeGuid = ProjectUtils.GetProjectTypeGuidForProject(result[0]);
 
                     if (projectTypeGuid.HasValue)
                     {
-                        var proj = await Project.LoadProjectFileAsync(Model.Solution, projectTypeGuid.Value, result[0]);
+                        var proj = await ProjectUtils.LoadProjectFileAsync(Model.Solution, projectTypeGuid.Value, result[0]);
 
                         if (proj != null)
                         {

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace RoslynPad.Roslyn
+namespace AvalonStudio.Projects.OmniSharp.Roslyn.Common
 {
     internal static class NuGetConfigurationExtensions
     {

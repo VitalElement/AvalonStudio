@@ -7,7 +7,7 @@ using AvalonStudio.Documents;
 using Microsoft.CodeAnalysis.Text;
 using TextChangeEventArgs = Microsoft.CodeAnalysis.Text.TextChangeEventArgs;
 
-namespace RoslynPad.Editor.Windows
+namespace AvalonStudio.Projects.OmniSharp.Roslyn.Editor
 {
     public sealed class AvalonEditTextContainer : SourceTextContainer, IDisposable
     {
