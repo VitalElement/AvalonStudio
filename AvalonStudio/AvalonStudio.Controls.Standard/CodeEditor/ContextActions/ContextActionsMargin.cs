@@ -2,6 +2,7 @@
 using Avalonia.Input;
 using Avalonia.Media;
 using AvaloniaEdit.Editing;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Theme;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 
         public override void Render(DrawingContext context)
         {
-            context.FillRectangle(ColorTheme.CurrentTheme.EditorBackground, new Rect(Bounds.Size));
+            context.FillRectangle(ColorScheme.CurrentColorScheme.Background, new Rect(Bounds.Size));
 
             if (_line > 0)
             {

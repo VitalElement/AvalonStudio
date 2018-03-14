@@ -29,6 +29,11 @@
 
         public override void Transform(GenericLineTransformer transformer, DocumentLine line)
         {
+            if (Length == 0)
+            {
+                return;
+            }
+
             var formattedOffset = 0;
 
             if (StartOffset > line.Offset)
@@ -51,6 +56,11 @@
 
         public override void Transform(GenericLineTransformer transformer, DocumentLine line)
         {
+            if(Length == 0)
+            {
+                return;
+            }
+
             var formattedOffset = 0;
 
             if (StartOffset > line.Offset)

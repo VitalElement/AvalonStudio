@@ -110,9 +110,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        public override Location DefaultLocation
+        public override MVVM.Location DefaultLocation
         {
-            get { return Location.Right; }
+            get { return MVVM.Location.Right; }
         }
 
         public void BeforeActivation()

@@ -174,6 +174,11 @@ namespace AvalonStudio.Extensibility.Editor
             return markers == null ? Enumerable.Empty<TextMarker>() : markers.FindSegmentsContaining(offset);
         }
 
+        public IEnumerable<TextMarker> FindOverlappingMarkers (ISegment segment)
+        {
+            return markers == null ? Enumerable.Empty<TextMarker>() : markers.FindOverlappingSegments(segment);
+        }
+
         public sealed class TextMarker : TextSegment
         {
             public TextMarker(Diagnostic diagnostic)

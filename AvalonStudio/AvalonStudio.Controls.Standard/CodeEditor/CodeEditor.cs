@@ -899,6 +899,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         _textColorizer.SetTransformations(e.Tag, e.DiagnosticHighlights);
                     }
                 }
+
+                _contextActionsRenderer.OnDiagnosticsUpdated();
             }
 
             _shell.UpdateDiagnostics(e);

@@ -33,7 +33,7 @@ using System.Windows.Input;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 {
-    internal sealed class ContextActionsBulbPopup : ExtendedPopup
+    internal sealed class ContextActionsBulbPopup : Popup
     {
         private readonly MenuItem _mainItem;
         private readonly DrawingPresenter _headerImage;
@@ -41,8 +41,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
         private Control _placementTarget;
         private Menu _mainMenu;
 
-        public ContextActionsBulbPopup(Control parent, Control placementTarget) : base(parent)
+        public ContextActionsBulbPopup(Control parent, Control placementTarget)
         {
+            ((ISetLogicalParent)this).SetParent(parent);
+
             _placementTarget = placementTarget;
 
             UseLayoutRounding = true;
@@ -144,13 +146,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
         {
             base.OnKeyDown(e);
             if (e.Key == Key.Escape)
-                IsOpenIfFocused = false;
+            {
+                _mainMenu.Close();
+                IsOpen = false;
+            }
         }
 
         public new void Close()
         {
             _mainMenu.Close();
-            IsOpenIfFocused = false;
+            IsOpen = false;
         }
 
         public bool IsMenuOpen
@@ -159,6 +164,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             set
             {
                 _mainItem.IsSubMenuOpen = value;
+                
+                if(value)
+                {
+                    var _firstItem = _mainItem.ItemContainerGenerator.Containers.Select(c => c.ContainerControl).OfType<MenuItem>().FirstOrDefault();
+
+                    if(_firstItem != null)
+                    {
+                        _firstItem.IsSelected = true;
+                        _firstItem.Focus();
+                    }
+                }
             }
         }
 
@@ -172,13 +188,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
         public void OpenAtLineStart(CodeEditor editor)
         {
             SetPosition(editor, editor.TextArea.Caret.Line, 1);
-            IsOpenIfFocused = true;
+            IsOpen = true;
+            base.InvalidateArrange();
+            base.InvalidateMeasure();
         }
 
         public void OpenAtLine(CodeEditor editor, int line)
         {
             SetPosition(editor, line, 1);
-            IsOpenIfFocused = true;
+            IsOpen = true;
+            base.InvalidateArrange();
+            base.InvalidateMeasure();
         }
 
         private void SetPosition(CodeEditor editor, int line, int column, bool openAtWordStart = false)

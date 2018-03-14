@@ -77,7 +77,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         /// <inheritdoc/>
         public override void Render(DrawingContext drawingContext)
         {
-            drawingContext.FillRectangle(Background, Bounds);
+            drawingContext.FillRectangle(Background, new Rect(Bounds.Size));
 
             var textView = TextView;
             var renderSize = Bounds.Size;

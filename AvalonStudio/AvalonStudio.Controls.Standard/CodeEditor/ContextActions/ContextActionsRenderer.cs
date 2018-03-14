@@ -16,23 +16,24 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Reactive.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
-using AvaloniaEdit.Editing;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Languages;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 {
@@ -43,11 +44,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
         private readonly ObservableCollection<IContextActionProvider> _providers;
         private readonly CodeEditor _editor;
         private readonly TextMarkerService _textMarkerService;
-        //private readonly DispatcherTimer _delayMoveTimer;
 
         private ContextActionsBulbPopup _popup;
         private CancellationTokenSource _cancellationTokenSource;
         private IEnumerable<object> _actions;
+        private Subject<Unit> _diagnosticsChanged;
 
         public ContextActionsRenderer(CodeEditor editor, TextMarkerService textMarkerService) : base(editor)
         {
@@ -59,41 +60,52 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             _providers.CollectionChanged += providers_CollectionChanged;
 
             editor.TextArea.TextView.ScrollOffsetChanged += ScrollChanged;
-            //_delayMoveTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(DelayMoveMilliseconds) };
-            //_delayMoveTimer.Stop();
-            //_delayMoveTimer.Tick += TimerMoveTick;
 
             editor.HookupLoadedUnloadedAction(HookupWindowMove);
 
-            Observable.FromEventPattern(editor.TextArea.Caret, nameof(editor.TextArea.Caret.PositionChanged))
-                .Throttle(TimeSpan.FromMilliseconds(100))
+            var positionChanged = Observable.FromEventPattern(editor.TextArea.Caret, nameof(editor.TextArea.Caret.PositionChanged)).Select(o => Unit.Default);
+            var textChanged = Observable.FromEventPattern(editor.Document, nameof(editor.Document.TextChanged)).Select(o=>Unit.Default);
+                
+
+            _diagnosticsChanged = new Subject<Unit>();
+
+            _diagnosticsChanged.Merge(positionChanged).Merge(textChanged).Throttle(TimeSpan.FromMilliseconds(100))
                 .ObserveOn(AvaloniaScheduler.Instance).Subscribe(async e =>
                 {
-                    await LoadActionsWithCancellationAsync();
-
-                    ClosePopup();
-
-                    // Don't show the context action popup when the caret is outside the editor boundaries
-                    var textView = _editor.TextArea.TextView;
-                    var editorRect = new Rect((Point)textView.ScrollOffset, textView.Bounds.Size);
-                    var caretRect = _editor.TextArea.Caret.CalculateCaretRectangle();
-                    if (!editorRect.Contains(caretRect))
-                        return;
-
-                    if (!await LoadActionsWithCancellationAsync().ConfigureAwait(true)) return;
-
-                    CreatePopup();
-                    _popup.ItemsSource = _actions;
-                    if (_popup.HasItems)
-                    {
-                        //_popup.OpenAtLineStart(_editor);
-                        SetBulb(_editor.Line);
-                    }
-                    else
-                    {
-                        ClearBulb();
-                    }
+                    await QueryCodeActions();
                 });
+        }
+
+        public void OnDiagnosticsUpdated()
+        {
+            _diagnosticsChanged.OnNext(Unit.Default);
+        }
+
+        private async Task QueryCodeActions()
+        {
+            await LoadActionsWithCancellationAsync();
+
+            ClosePopup();
+
+            // Don't show the context action popup when the caret is outside the editor boundaries
+            var textView = _editor.TextArea.TextView;
+            var editorRect = new Rect((Point)textView.ScrollOffset, textView.Bounds.Size);
+            var caretRect = _editor.TextArea.Caret.CalculateCaretRectangle();
+            if (!editorRect.Contains(caretRect))
+                return;
+
+            if (!await LoadActionsWithCancellationAsync().ConfigureAwait(true)) return;
+
+            CreatePopup();
+            _popup.ItemsSource = _actions;
+            if (_popup.HasItems)
+            {
+                SetBulb(_editor.Line);
+            }
+            else
+            {
+                ClearBulb();
+            }
         }
 
         protected override void OnOpenPopup()
@@ -155,6 +167,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 e.Modifiers != InputModifiers.Control
                 ) return;
 
+            if (Line <= 0)
+            {
+                await QueryCodeActions();
+            }
+
             CreatePopup();
             if (_popup.IsOpen && _popup.ItemsSource != null)
             {
@@ -163,14 +180,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             }
             else
             {
-                ClosePopup();
-                if (!await LoadActionsWithCancellationAsync().ConfigureAwait(true)) return;
                 _popup.ItemsSource = _actions;
+
                 if (_popup.HasItems)
                 {
+                    _popup.OpenAtLine(_editor, Line);
                     _popup.IsMenuOpen = true;
-                    _popup.OpenAtLineStart(_editor);
-                    _popup.Focus();
                 }
             }
         }
@@ -190,7 +205,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 //};
                 _popup.MenuClosed += (sender, args) =>
                 {
-                    Dispatcher.UIThread.InvokeAsync(() => _editor.Focus(), DispatcherPriority.Background);
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        ClearBulb();
+                        _editor.Focus();
+                        _diagnosticsChanged.OnNext(Unit.Default);
+                    }, DispatcherPriority.Background);
                 };
             }
         }
@@ -223,13 +243,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             foreach (var provider in _providers)
             {
                 var offset = _editor.TextArea.Caret.Offset;
-                var length = 1;
-                var marker = _textMarkerService.GetMarkersAtOffset(offset).FirstOrDefault();
-                if (marker != null)
-                {
-                    offset = marker.StartOffset;
-                    length = marker.Length;
-                }
+
+                var line = _editor.Document.GetLineByOffset(offset);
+
+                offset = line.Offset;
+                var length = line.Length;
+
                 var actions = await _editor.LanguageService.GetCodeFixes(_editor.DocumentAccessor, offset, length, cancellationToken).ConfigureAwait(true);
                 allActions.AddRange(actions);
             }
