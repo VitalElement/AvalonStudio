@@ -47,7 +47,7 @@ namespace AvalonStudio.Extensibility.Editor
 
             foreach (TextMarker marker in markers.FindOverlappingSegments(start, end - start))
             {
-                if (marker.Diagnostic.Level != DiagnosticLevel.Hidden)
+                if (marker.Diagnostic.Level != DiagnosticLevel.Hidden && marker.Length > 0)
                 {
                     if (marker.EndOffset < textView.Document.TextLength)
                     {
