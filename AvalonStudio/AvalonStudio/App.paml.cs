@@ -10,6 +10,12 @@ using System.Composition;
 
 namespace AvalonStudio
 {
+    class ProtoA
+    {
+        public void MethodB(string s) { }
+    }
+
+
     internal class App : Application
     {
         static void Print(Exception ex)

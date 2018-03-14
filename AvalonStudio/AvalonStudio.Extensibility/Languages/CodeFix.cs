@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Projects;
+﻿using AvalonStudio.Documents;
+using AvalonStudio.Projects;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
@@ -10,6 +11,8 @@ namespace AvalonStudio.Languages
     public interface IContextActionProvider
     {   
         ICommand GetActionCommand(object action);
+
+        Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken);
     }
 
     public interface ICodeAction

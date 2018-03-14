@@ -2,25 +2,21 @@
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvalonStudio.CodeEditor;
-using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
-using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Projects;
 using AvalonStudio.Utils;
 using Microsoft.CodeAnalysis.Classification;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.ExtractInterface;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Rename;
 using Microsoft.CodeAnalysis.Text;
 using RoslynPad.Editor.Windows;
 using RoslynPad.Roslyn;
-using RoslynPad.Roslyn.CodeFixes;
 using RoslynPad.Roslyn.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -31,7 +27,6 @@ using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace AvalonStudio.Languages.CSharp
 {
@@ -942,58 +937,6 @@ namespace AvalonStudio.Languages.CSharp
             return null;
         }
 
-        public async Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken)
-        {
-            var textSpan = new TextSpan(offset, length);
-
-            var dataAssociation = GetAssociatedData(editor);
-
-            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
-
-            var document = GetDocument(dataAssociation, editor.SourceFile, workspace);
-
-            var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-
-            if (textSpan.End >= text.Length) return Array.Empty<CodeFix>();
-
-            var codeFixService = IoC.Get<ICodeFixService>();
-
-            var fixes = await codeFixService.GetFixesAsync(document, textSpan, true, cancellationToken);
-
-            var result = new List<CodeFix>();
-
-            foreach (var fix in fixes)
-            {
-                foreach (var fixinner in fix.Fixes)
-                {
-                    result.Add(new CodeFix { Action = new RosynCodeAction(fixinner.Action) });
-                }
-            }
-
-            var codeRefactorings = await workspace.GetService<ICodeRefactoringService>().GetRefactoringsAsync(
-                document,
-                textSpan, cancellationToken).ConfigureAwait(false);
-
-            foreach (var refactoring in codeRefactorings)
-            {
-                foreach (var action in refactoring.Actions)
-                {
-                    result.Add(new CodeFix { Action = new RosynCodeAction(action) });
-                }
-            }
-
-            var actions = new List<CodeAction>();
-
-            var refactoringContext = new CodeRefactoringContext(document, textSpan, action => actions.Add(action), cancellationToken);
-
-            foreach (var action in actions)
-            {
-                result.Add(new CodeFix { Action = new RosynCodeAction(action) });
-            }
-
-            return result;
-        }
-
         public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
         {
             var dataAssociation = GetAssociatedData(editor);
@@ -1006,113 +949,4 @@ namespace AvalonStudio.Languages.CSharp
             };
         }
     }
-
-    class RoslynContextActionProvider : IContextActionProvider
-    {
-        private Microsoft.CodeAnalysis.Workspace _workspace;
-
-        public RoslynContextActionProvider(Microsoft.CodeAnalysis.Workspace workspace)
-        {
-            _workspace = workspace;
-        }
-
-        public ICommand GetActionCommand(object action)
-        {
-            //if (action is CodeAction codeAction)
-            //{
-            //    return new CodeActionCommand(this, codeAction);
-            //}
-            var codeFix = action as CodeFix;
-            if (codeFix == null || codeFix.Action.HasCodeActions()) return null;
-            return new CodeActionCommand(this, codeFix.Action);
-        }
-
-        public async Task ExecuteCodeActionAsync(ICodeAction codeAction)
-        {
-            var operations = await codeAction.GetOperationsAsync(CancellationToken.None).ConfigureAwait(true);
-            foreach (var operation in operations)
-            {
-                operation.Apply(_workspace,
-                    CancellationToken.None);
-            }
-        }
-    }
-
-    class CodeActionCommand : ICommand
-    {
-        RoslynContextActionProvider _provider;
-        ICodeAction _codeAction;
-
-        public CodeActionCommand(RoslynContextActionProvider provider, ICodeAction codeAction)
-        {
-            _provider = provider;
-            _codeAction = codeAction;
-        }
-
-        public event EventHandler CanExecuteChanged
-        {
-            add { }
-            remove { }
-        }
-
-        public bool CanExecute(object parameter) => true;
-
-        public async void Execute(object parameter)
-        {
-            await _provider.ExecuteCodeActionAsync(_codeAction).ConfigureAwait(true);
-        }
-    }
-
-    public class RoslynCodeActionOperation : ICodeActionOperation
-    {
-        private CodeActionOperation _inner;
-
-        public RoslynCodeActionOperation(CodeActionOperation inner)
-        {
-            _inner = inner;
-        }
-
-        public string Title => _inner.Title;
-
-        public void Apply(object workspace, CancellationToken cancellationToken)
-        {
-            _inner.Apply(workspace as Microsoft.CodeAnalysis.Workspace, cancellationToken);
-        }
-    }
-
-    public class RosynCodeAction : ICodeAction
-    {
-        public ImmutableArray<ICodeAction> NestedCodeActions => new ImmutableArray<ICodeAction>();
-
-        public bool IsInlinable => _inner.IsInlinable;
-
-        public string EquivalenceKey => _inner.EquivalenceKey;
-
-        public string Message => _inner.Message;
-
-        public string Title => _inner.Title;
-
-        private CodeAction _inner;
-
-        public RosynCodeAction(CodeAction inner)
-        {
-            _inner = inner;
-        }
-
-        //
-        // Summary:
-        //     The sequence of operations that define the code action.
-        public async Task<ImmutableArray<ICodeActionOperation>> GetOperationsAsync(CancellationToken cancellationToken)
-        {
-            var operations = await _inner.GetOperationsAsync(cancellationToken);
-
-            return operations.Select(op => new RoslynCodeActionOperation(op)).Cast<ICodeActionOperation>().ToImmutableArray();
-        }
-
-        public Task PerformActionAsync()
-        {
-            return Task.CompletedTask;
-        }
-    }
-
 }

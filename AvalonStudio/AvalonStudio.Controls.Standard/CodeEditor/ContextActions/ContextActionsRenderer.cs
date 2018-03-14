@@ -172,6 +172,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 await QueryCodeActions();
             }
 
+            if(Line <= 0)
+            {
+                return;
+            }
+
             CreatePopup();
             if (_popup.IsOpen && _popup.ItemsSource != null)
             {
@@ -249,7 +254,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 offset = line.Offset;
                 var length = line.Length;
 
-                var actions = await _editor.LanguageService.GetCodeFixes(_editor.DocumentAccessor, offset, length, cancellationToken).ConfigureAwait(true);
+                var actions = await provider.GetCodeFixes(_editor.DocumentAccessor, offset, length, cancellationToken).ConfigureAwait(true);
                 allActions.AddRange(actions);
             }
             return allActions;

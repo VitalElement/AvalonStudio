@@ -22,9 +22,11 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Composition.Hosting;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -142,7 +144,7 @@ namespace RoslynPad.Roslyn
 
                         compositionContext.GetExport<ICodeFixService>();
                         var diagnosticService = compositionContext.GetExport<IDiagnosticService>();
-                        
+
                         // TODO implement IPickMemberService.
 
                         workspace.RegisterWorkspace(solution);
@@ -213,11 +215,11 @@ namespace RoslynPad.Roslyn
                         .WithParts(partTypes)
                         .CreateContainer();
 
-                    var host = MefHostServices.Create(compositionContext);                    
+                    var host = MefHostServices.Create(compositionContext);
 
                     var workspace = new RoslynWorkspace(host, null, compositionContext, DotNetCliService.Instance.Info.Executable, DotNetCliService.Instance.Info.BasePath);
 
-                    compositionContext.GetExport<ICodeFixService>();                    
+                    compositionContext.GetExport<ICodeFixService>();
 
                     workspace.RegisterWorkspace(solution);
 
@@ -444,16 +446,83 @@ namespace RoslynPad.Roslyn
 
             GetService<IDiagnosticService>().DiagnosticsUpdated -= OnDiagnosticsUpdated;
 
-            this.DisableDiagnostics();                        
+            this.DisableDiagnostics();
         }
 
-        protected override void ApplyDocumentTextChanged(DocumentId document, SourceText newText)
+        protected override void ApplyDocumentTextChanged(DocumentId documentId, SourceText text)
         {
-            _openDocumentTextLoaders[document].UpdateText(newText);
+            if (_openDocumentTextLoaders.ContainsKey(documentId))
+            {
+                _openDocumentTextLoaders[documentId].UpdateText(text);
+            }
+            else
+            {
+                var document = this.CurrentSolution.GetDocument(documentId);
+                if (document != null)
+                {
+                    Encoding encoding = DetermineEncoding(text, document);
 
-            ApplyingTextChange?.Invoke(document, newText);
+                    SaveDocumentText(documentId, document.FilePath, text, encoding ?? new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+                    OnDocumentTextChanged(documentId, text, PreservationMode.PreserveValue);
+                }
+            }
 
-            OnDocumentTextChanged(document, newText, PreservationMode.PreserveIdentity);
+            ApplyingTextChange?.Invoke(documentId, text);
+
+            OnDocumentTextChanged(documentId, text, PreservationMode.PreserveIdentity);
+        }
+
+        private static Encoding DetermineEncoding(SourceText text, Document document)
+        {
+            if (text.Encoding != null)
+            {
+                return text.Encoding;
+            }
+
+            try
+            {
+                using (ExceptionHelpers.SuppressFailFast())
+                {
+                    using (var stream = new FileStream(document.FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        var onDiskText = EncodedStringText.Create(stream);
+                        return onDiskText.Encoding;
+                    }
+                }
+            }
+            catch (IOException)
+            {
+            }
+            catch (InvalidDataException)
+            {
+            }
+
+            return null;
+        }
+
+        private void SaveDocumentText(DocumentId id, string fullPath, SourceText newText, Encoding encoding)
+        {
+            try
+            {
+                using (ExceptionHelpers.SuppressFailFast())
+                {
+                    var dir = Path.GetDirectoryName(fullPath);
+                    if (!Directory.Exists(dir))
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
+
+                    Debug.Assert(encoding != null);
+                    using (var writer = new StreamWriter(fullPath, append: false, encoding: encoding))
+                    {
+                        newText.Write(writer);
+                    }
+                }
+            }
+            catch (IOException exception)
+            {
+                this.OnWorkspaceFailed(new DocumentDiagnostic(WorkspaceDiagnosticKind.Failure, exception.Message, id));
+            }
         }
 
         public new void ClearSolution()

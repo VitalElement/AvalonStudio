@@ -1305,11 +1305,6 @@ namespace AvalonStudio.Languages.CPlusPlus
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(Enumerable.Empty<CodeFix>());
-        }
-
         public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
         {
             return Enumerable.Empty<IContextActionProvider>();

@@ -20,7 +20,8 @@
 
   <ItemGroup>
     <PackageReference Include="IgnoresAccessChecksToGenerator" Version="0.4.0" PrivateAssets="all" />    
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="2.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="2.7.0" />    
+    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="2.7.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -820,8 +820,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
 
                 _contextActionsRenderer = new ContextActionsRenderer(this, _diagnosticMarkersRenderer);
-                TextArea.LeftMargins.Add(_contextActionsRenderer);
-                //_contextActionsRenderer.Providers.Add(new RoslynContextActionProvider(_documentId, _roslynHost)); todo from language service.
+                TextArea.LeftMargins.Add(_contextActionsRenderer);                
 
                 foreach (var contextActionProvider in LanguageService.GetContextActionProviders(DocumentAccessor))
                 {

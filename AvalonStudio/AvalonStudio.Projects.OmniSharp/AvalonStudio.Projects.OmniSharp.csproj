@@ -25,6 +25,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis" Version="2.7.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="2.7.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="2.7.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="2.7.0" />
     <PackageReference Include="RestSharp.NetCore" Version="105.2.4-rc4-24214-01" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.0" />

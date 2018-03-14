@@ -5,6 +5,7 @@ using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -142,14 +143,9 @@ namespace AvalonStudio.Languages.Xaml
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
         public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
         {
-            throw new NotImplementedException();
+            return Enumerable.Empty<IContextActionProvider>();
         }
     }
 }
