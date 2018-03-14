@@ -104,7 +104,6 @@ namespace AvalonStudio
 
             _testFrameworks = testFrameworks;
 
-            _debugger2s = new List<IDebugger>();
             _toolChains = new List<IToolChain>();
             _menuBarDefinitions = new List<MenuBarDefinition>();
             _menuDefinitions = new List<MenuDefinition>();
