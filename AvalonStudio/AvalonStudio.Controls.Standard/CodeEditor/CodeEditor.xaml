@@ -20,25 +20,12 @@
             <Border.DataTemplates>
               <TreeDataTemplate DataType="codeFixes:CodeFix" ItemsSource="{Binding Action, Mode=OneTime}">
                 <ContentPresenter Content="{Binding Action, Mode=OneTime}" />
-              </TreeDataTemplate>
-
-              <!--
-              <HierarchicalDataTemplate DataType="{x:Type codeFixes:CodeFix}"
-                                      ItemsSource="{Binding Action, Mode=OneTime, Converter={formatting:CodeActionsConverter}}">
-                <ContentPresenter Content="{Binding Action, Mode=OneTime}" />
-              </HierarchicalDataTemplate>-->            
+              </TreeDataTemplate>              
 
               <DataTemplate DataType="codeFixes:ICodeAction">
                 <TextBlock Text="{Binding Title, Mode=OneTime}"/>
               </DataTemplate>
-
-              <!--
-              <DataTemplate DataType="{x:Type codeActions:CodeAction}">
-                <DockPanel>
-                  <Image Source="{Binding Mode=OneTime, Converter={formatting:CodeActionToGlyphConverter}}" />
-                  <TextBlock Text="{Binding Title, Mode=OneTime}" />
-                </DockPanel>
-              </DataTemplate>-->
+              
             </Border.DataTemplates>
             
               <ScrollViewer Focusable="False"
