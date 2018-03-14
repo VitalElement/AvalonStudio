@@ -59,12 +59,7 @@ namespace AvalonStudio.Controls.Standard.Tests
         public int Format(IEditor editor, uint offset, uint length, int cursor)
         {
             throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+        }        
 
         public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
         {
