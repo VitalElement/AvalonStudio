@@ -40,19 +40,9 @@ namespace AvalonStudio.Languages
         IIndentationStrategy IndentationStrategy { get; }
 
         /// <summary>
-        ///     A description of the language supported by the service, i.e. C/C++
-        /// </summary>
-        string Title { get; }
-
-        /// <summary>
         /// A file path compatible name for the language, i.e. cs, cpp, ts, css, go, vb, fsharp
         /// </summary>
         string LanguageId { get; }
-
-        /// <summary>
-        /// An identifier compatible with Dot CLI language identifiers i.e. C#, F#, VB, etc
-        /// </summary>
-        string Identifier { get; }
 
         /// <summary>
         /// Dictionary of functions for transforming snippet variables. Key is function name, the arugment is the string to transform.

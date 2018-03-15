@@ -5,7 +5,6 @@ using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Languages;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.Tests
@@ -23,10 +22,6 @@ namespace AvalonStudio.Controls.Standard.Tests
         public string LanguageId => "cpp";
 
         public IIndentationStrategy IndentationStrategy => throw new NotImplementedException();
-
-        public string Title => throw new NotImplementedException();
-
-        public string Identifier => throw new NotImplementedException();
 
         public IEnumerable<char> IntellisenseSearchCharacters => throw new NotImplementedException();
 
