@@ -9,6 +9,7 @@ build_script:
 - ps: $url1='https://img.shields.io/badge/version-v0.4.4' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
 - ps: .\download.ps1 $url1 "latest-version-badge.svg"
 - cmd: dir "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\"
+- cmd: dir "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\"
 - ps: .\build.ps1
 
 test: off
