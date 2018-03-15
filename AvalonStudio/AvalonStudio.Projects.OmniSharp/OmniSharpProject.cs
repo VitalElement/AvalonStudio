@@ -5,13 +5,12 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Platforms;
-using AvalonStudio.Projects.OmniSharp.ProjectTypes;
+using AvalonStudio.Projects.OmniSharp.Roslyn;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
-using RoslynPad.Roslyn;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -393,7 +392,5 @@ namespace AvalonStudio.Projects.OmniSharp
         }
 
         public override List<string> ExcludedFiles { get; set; }
-
-        public override Guid ProjectTypeId => DotNetCoreCSharpProjectType.DotNetCoreCSharpTypeId;
     }
 }

@@ -1,11 +1,8 @@
 using Avalonia.Controls;
-using Avalonia.Controls.Templates;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Dialogs;
-using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.Templating;
-using AvalonStudio.Languages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
@@ -15,7 +12,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -25,13 +21,16 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private string name;
 
-        private ObservableCollection<ITemplate> projectTemplates;
+        private Lazy<IDictionary<string, IEnumerable<ITemplate>>> _allProjectTemplates;
+        private IEnumerable<ITemplate> _projectTemplates;
 
-        private ILanguageService selectedLanguage;
+        private string _selectedLanguage;
 
         private ITemplate selectedTemplate;
-        private readonly IShell shell;
         private ISolutionFolder _solutionFolder;
+
+        private IShell _shell;
+        private TemplateManager _templateManager;
 
         private string solutionName;
 
@@ -39,7 +38,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             var files = Directory.EnumerateFiles(path);
 
-            var ptExtensions = shell.ProjectTypes.SelectMany(pt => pt.Extensions);
+            var ptExtensions = _shell.ProjectTypes.Select(pt => pt.Metadata.DefaultExtension);
 
             var result = files.Where(f => ptExtensions.Contains(Path.GetExtension(f).Replace(".", "")));
 
@@ -58,11 +57,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             _solutionFolder = solutionFolder;
         }
 
-        public NewProjectDialogViewModel() : base("New Project", true, true)
+        public NewProjectDialogViewModel()
+            : base("New Project", true, true)
         {
-            shell = IoC.Get<IShell>();
-            projectTemplates = new ObservableCollection<ITemplate>();
-            Languages = new List<ILanguageService>(shell.LanguageServices);
+            _shell = IoC.Get<IShell>();
+            _templateManager = IoC.Get<TemplateManager>();
+
+            _allProjectTemplates = new Lazy<IDictionary<string, IEnumerable<ITemplate>>>(_templateManager.GetProjectTemplates);
 
             location = Platform.ProjectDirectory;
             SelectedLanguage = Languages.FirstOrDefault();
@@ -114,30 +115,45 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                     foreach (var projectFile in projectFiles)
                     {
-                        var project = await Project.LoadProjectFileAsync(_solutionFolder.Solution, projectFile);
-                        _solutionFolder.Solution.AddItem(project, _solutionFolder);
+                        var projectTypeGuid = ProjectUtils.GetProjectTypeGuidForProject(projectFile);
 
-                        if (!defaultSet)
+                        if (projectTypeGuid.HasValue)
                         {
-                            defaultSet = true;
-                            _solutionFolder.Solution.StartupProject = project;
+                            var project = await ProjectUtils.LoadProjectFileAsync(
+                                _solutionFolder.Solution, projectTypeGuid.Value, projectFile);
+
+                            if (project != null)
+                            {
+                                _solutionFolder.Solution.AddItem(project, projectTypeGuid, _solutionFolder);
+                            }
+
+                            if (!defaultSet)
+                            {
+                                defaultSet = true;
+                                _solutionFolder.Solution.StartupProject = project;
+                            }
+
+                            if (!loadNewSolution)
+                            {
+                                await project.LoadFilesAsync();
+
+                                await project.ResolveReferencesAsync();
+                            }
                         }
-
-                        if(!loadNewSolution)
-                        {                            
-                            await project.LoadFilesAsync();
-
-                            await project.ResolveReferencesAsync();
-                        }                        
+                        else
+                        {
+                            IoC.Get<Utils.IConsole>().WriteLine(
+                                $"The project '{projectFile}' isn't supported by any installed project type!");
+                        }
                     }
                 }
 
-                _solutionFolder.Solution.Save();                
+                _solutionFolder.Solution.Save();
 
                 if (loadNewSolution)
                 {
-                    await shell.OpenSolutionAsync(_solutionFolder.Solution.Location);
-                }         
+                    await _shell.OpenSolutionAsync(_solutionFolder.Solution.Location);
+                }
                 else
                 {
                     await _solutionFolder.Solution.RestoreSolutionAsync();
@@ -203,26 +219,27 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        public ObservableCollection<ITemplate> ProjectTemplates
+        public IEnumerable<ITemplate> ProjectTemplates
         {
-            get { return projectTemplates; }
-            set { this.RaiseAndSetIfChanged(ref projectTemplates, value); }
+            get { return _projectTemplates; }
+            set { this.RaiseAndSetIfChanged(ref _projectTemplates, value); }
         }
 
-        public List<ILanguageService> Languages { get; set; }
+        public IEnumerable<string> Languages => _allProjectTemplates.Value.Keys;
 
-        public ILanguageService SelectedLanguage
+        public string SelectedLanguage
         {
             get
             {
-                return selectedLanguage;
+                return _selectedLanguage;
             }
             set
             {
-                this.RaiseAndSetIfChanged(ref selectedLanguage, value);
-                if (value != null)
+                this.RaiseAndSetIfChanged(ref _selectedLanguage, value);
+
+                if (value != null && _allProjectTemplates.Value.TryGetValue(value, out var templates))
                 {
-                    GetTemplates(value);
+                    ProjectTemplates = templates;
                 }
             }
         }
@@ -230,10 +247,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand BrowseLocationCommand { get; }
         public override ReactiveCommand OKCommand { get; protected set; }
 
-        private void GetTemplates(ILanguageService languageService)
+        private void GetTemplates(string language)
         {
             var templateManager = IoC.Get<TemplateManager>();
-            ProjectTemplates = new ObservableCollection<ITemplate>(templateManager.ListProjectTemplates(languageService.Identifier));
+            ProjectTemplates = new ObservableCollection<ITemplate>(
+                templateManager.ListProjectTemplates(language));
         }
     }
 }

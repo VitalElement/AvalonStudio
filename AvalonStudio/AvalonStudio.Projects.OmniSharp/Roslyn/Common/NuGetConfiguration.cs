@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RoslynPad.Roslyn
+namespace AvalonStudio.Projects.OmniSharp.Roslyn.Common
 {
     [Serializable]
     public class NuGetConfiguration

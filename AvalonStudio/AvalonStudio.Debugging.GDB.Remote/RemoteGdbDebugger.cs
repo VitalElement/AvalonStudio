@@ -1,28 +1,18 @@
-﻿using AvalonStudio.Extensibility;
-using AvalonStudio.Platforms;
+﻿using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Toolchains.GCC;
+using AvalonStudio.Utils;
 using Mono.Debugging.Client;
 using System;
 using System.IO;
-using AvalonStudio.Utils;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging.GDB.Remote
 {
-    class RemoteGdbDebugger : IDebugger2
+    [ExportDebugger]
+    internal class RemoteGdbDebugger : IDebugger2
     {
         public string BinDirectory => null;
-
-        public void Activation()
-        {
-            
-        }
-
-        public void BeforeActivation()
-        {
-            IoC.RegisterConstant<RemoteGdbDebugger>(this);
-        }
 
         public DebuggerSession CreateSession(IProject project)
         {

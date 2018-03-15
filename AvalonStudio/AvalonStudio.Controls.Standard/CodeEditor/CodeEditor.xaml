@@ -1,6 +1,7 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
         xmlns:AvalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        xmlns:codeFixes="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility"
         xmlns:Editing="clr-namespace:AvaloniaEdit.Editing;assembly=AvaloniaEdit">
 
   <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.Intellisense.xaml?assembly=AvalonStudio.Controls.Standard" />
@@ -16,6 +17,16 @@
           <local:Intellisense Name="PART_Intellisense" />
           <Border BorderBrush="{TemplateBinding BorderBrush}"
                   BorderThickness="{TemplateBinding BorderThickness}">
+            <Border.DataTemplates>
+              <TreeDataTemplate DataType="codeFixes:CodeFix" ItemsSource="{Binding Action, Mode=OneTime}">
+                <ContentPresenter Content="{Binding Action, Mode=OneTime}" />
+              </TreeDataTemplate>              
+
+              <DataTemplate DataType="codeFixes:ICodeAction">
+                <TextBlock Text="{Binding Title, Mode=OneTime}"/>
+              </DataTemplate>
+              
+            </Border.DataTemplates>
             
               <ScrollViewer Focusable="False"
                           Name="PART_ScrollViewer"

@@ -19,8 +19,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
     {
         private TextArea _textArea;
         private CodeEditor _editor;
-        private const int MinLineNumberWidth = 5;
-        private const int RightMarginChars = 2;
+        private const int MinLineNumberWidth = 3;
+        private const int RightMarginChars = 0;
         private double RightMarginSize = 0;
 
         public LineNumberMargin(CodeEditor editor)
@@ -77,7 +77,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         /// <inheritdoc/>
         public override void Render(DrawingContext drawingContext)
         {
-            drawingContext.FillRectangle(Background, Bounds);
+            drawingContext.FillRectangle(Background, new Rect(Bounds.Size));
 
             var textView = TextView;
             var renderSize = Bounds.Size;

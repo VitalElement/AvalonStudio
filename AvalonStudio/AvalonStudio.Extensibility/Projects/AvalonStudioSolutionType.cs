@@ -1,21 +1,11 @@
-﻿namespace AvalonStudio.Projects
-{
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
+namespace AvalonStudio.Projects
+{
+    [ExportSolutionType("asln")]
     public class AvalonStudioSolutionType : ISolutionType
     {
         public string Description => "AvalonStudio Solution";
-
-        public List<string> Extensions { get; } = new List<string> { "asln" };
-
-        public void Activation()
-        {
-        }
-
-        public void BeforeActivation()
-        {
-        }
 
         public async Task<ISolution> LoadAsync(string path)
         {

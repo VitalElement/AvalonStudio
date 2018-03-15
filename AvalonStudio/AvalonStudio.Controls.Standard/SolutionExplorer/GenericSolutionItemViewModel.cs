@@ -17,7 +17,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             get => Model.Name;
             set
             {
-                if(Model.CanRename && Title != value)
+                if (Model.CanRename && Title != value)
                 {
                     if (!string.IsNullOrEmpty(value))
                     {

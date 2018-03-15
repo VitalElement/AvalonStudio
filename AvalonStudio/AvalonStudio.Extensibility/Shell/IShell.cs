@@ -45,13 +45,9 @@ namespace AvalonStudio.Shell
 
         ColorScheme CurrentColorScheme { get; set; }
 
-        IEnumerable<IEditorProvider> EditorProviders { get; }
+        IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
 
-        IEnumerable<ISolutionType> SolutionTypes { get; }
-
-        IEnumerable<IProjectType> ProjectTypes { get; }
-
-        IEnumerable<ILanguageService> LanguageServices { get; }
+        IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
 
         IEnumerable<IToolChain> ToolChains { get; }
 
@@ -77,7 +73,7 @@ namespace AvalonStudio.Shell
 
         void InvalidateCodeAnalysis();
 
-        void InvalidateErrors();
+        void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics);
 
         Task<bool> BuildAsync(IProject project);
 

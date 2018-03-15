@@ -1,7 +1,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace RoslynPad.Roslyn.Diagnostics
+namespace AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics
 {
     public sealed class DiagnosticDataLocation
     {

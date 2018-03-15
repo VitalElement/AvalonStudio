@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Projects;
+﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using Microsoft.DotNet.Cli.Sln.Internal;
@@ -14,7 +15,7 @@ using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility.Threading;
 
-namespace AvalonStudio.Extensibility.Projects
+namespace AvalonStudio.Projects
 {
     public class VisualStudioSolution : ISolution
     {
@@ -86,9 +87,9 @@ namespace AvalonStudio.Extensibility.Projects
             });
         }
 
-        public async Task RestoreSolutionAsync ()
+        public async Task RestoreSolutionAsync()
         {
-            if(!string.IsNullOrEmpty(DotNetCliService.Instance.DotNetPath))
+            if (!string.IsNullOrEmpty(DotNetCliService.Instance.DotNetPath))
             {
                 await Restore(null, IoC.Get<IStatusBar>());
             }
@@ -259,7 +260,7 @@ namespace AvalonStudio.Extensibility.Projects
                     statusBar.SetText($"Loading Project: {loadInfo.path}");
                 });
 
-                var task = Project.LoadProjectFileAsync(this, Guid.Parse(loadInfo.projectInfo.TypeGuid), loadInfo.path);
+                var task = ProjectUtils.LoadProjectFileAsync(this, Guid.Parse(loadInfo.projectInfo.TypeGuid), loadInfo.path);
 
                 var result = task.GetAwaiter().GetResult();
 
@@ -462,7 +463,7 @@ namespace AvalonStudio.Extensibility.Projects
             }
         }
 
-        public T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem
+        public T AddItem<T>(T item, Guid? itemGuid = null, ISolutionFolder parent = null) where T : ISolutionItem
         {
             item.Id = Guid.NewGuid();
             item.Solution = this;
@@ -480,7 +481,7 @@ namespace AvalonStudio.Extensibility.Projects
                     _solutionModel.Projects.Add(new SlnProject
                     {
                         Id = project.Id.GetGuidString(),
-                        TypeGuid = project.ProjectTypeId.GetGuidString(),
+                        TypeGuid = itemGuid?.GetGuidString(),
                         Name = project.Name,
                         FilePath = CurrentDirectory.MakeRelativePath(project.Location)
                     });
@@ -659,10 +660,10 @@ namespace AvalonStudio.Extensibility.Projects
         public async Task UnloadProjectsAsync()
         {
             // TODO parallelise this on a job runner.
-            foreach(var project in Projects)
+            foreach (var project in Projects)
             {
                 await project.UnloadAsync();
             }
-        }        
+        }
     }
 }

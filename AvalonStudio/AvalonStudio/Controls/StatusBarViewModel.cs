@@ -1,12 +1,13 @@
-using Avalonia.Threading;
-using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using System.Composition;
 
 namespace AvalonStudio.Controls
 {
+    [Export]
+    [Export(typeof(IStatusBar))]
+    [Shared]
     public class StatusBarViewModel : ReactiveObject, IStatusBar
     {
         public StatusBarViewModel()

@@ -15,8 +15,6 @@ namespace AvalonStudio.Projects
         /// </summary>
         ObservableCollection<IProject> References { get; }
 
-        Guid ProjectTypeId { get; }
-
         IToolChain ToolChain { get; set; }
         IDebugger Debugger2 { get; set; }
 

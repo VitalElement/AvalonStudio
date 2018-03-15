@@ -1,14 +1,8 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" 
              xmlns:lang="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility"
-             xmlns:proj="clr-namespace:AvalonStudio.Extensibility.Templating;assembly=AvalonStudio.Extensibility"
              Background="{DynamicResource ThemeBackgroundBrush}">
     <Grid RowDefinitions="*,180" ColumnDefinitions="150,*,400">
       <TreeView Background="{DynamicResource ThemeControlDarkBrush}" BorderThickness="0" Margin="1" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}">
-        <TreeView.DataTemplates>
-          <DataTemplate DataType="lang:ILanguageService">
-            <TextBlock Text="{Binding Title}" />
-          </DataTemplate>
-        </TreeView.DataTemplates>
         <TreeView.Styles>
           <Style Selector="TreeViewItem:selected /template/ Border#header">
             <Setter Property="Background" Value="#5500557d" />
@@ -18,17 +12,17 @@
       </TreeView>
           
       <ListBox Grid.Column="1" Background="{DynamicResource ThemeControlDarkBrush}" BorderThickness="0" Margin="1" Items="{Binding ProjectTemplates}" SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}">
-        <ListBox.DataTemplates>
-          <DataTemplate DataType="proj:ITemplate">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
             <Grid Height="45">
               <StackPanel Orientation="Horizontal">
                 <Rectangle Fill="#aa0055cc" Height="40" Width="40" Margin="5 0" />
                 <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="5 0" />
               </StackPanel>
-              <TextBlock Text="C/C++" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 0" />
+              <TextBlock Text="{Binding Language}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="10 0" />
             </Grid>
           </DataTemplate>
-        </ListBox.DataTemplates>
+        </ListBox.ItemTemplate>
       </ListBox>
             
       <Grid Grid.Column="2" Background="{DynamicResource ThemeControlDarkBrush}" Margin="1">

@@ -1,29 +1,12 @@
-﻿namespace AvalonStudio.Projects.CPlusPlus
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
+namespace AvalonStudio.Projects.CPlusPlus
+{
+    [ExportProjectType("acproj", Description, ProjectTypeGuid)]
     internal class CPlusPlusProjectType : IProjectType
     {
-        public static readonly Guid TypeId = Guid.Parse("{DA891B1A-E1A3-4A1A-83CD-252F07B636ED}");
-
-        public List<string> Extensions { get; } = new List<string>
-        {
-            "acproj"
-        };
-
-        public string Description => "Avalon Studio C/C++ Projects";
-
-        public Guid ProjectTypeId { get; } = TypeId;
-
-        public void Activation()
-        {
-        }
-
-        public void BeforeActivation()
-        {
-        }
+        private const string ProjectTypeGuid = "da891b1a-e1a3-4a1a-83cd-252f07b636ed";
+        private const string Description = "Avalon Studio C/C++ Project";
 
         public Task<IProject> LoadAsync(ISolution solution, string filePath)
         {

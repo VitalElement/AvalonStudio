@@ -4,14 +4,13 @@ using AvalonStudio.Extensibility.Utils;
 using System.Collections.Generic;
 using System.Composition.Convention;
 using System.Composition.Hosting;
-using System.Linq;
 using System.Reflection;
 
 namespace AvalonStudio
 {
     internal static class CompositionRoot
     {
-        public static CompositionHost CreateContainer(IEnumerable<IExtensionManifest> extensions)
+        public static CompositionHost CreateContainer(ExtensionManager extensionManager)
         {
             var conventions = new ConventionBuilder();
             conventions.ForTypesDerivedFrom<IExtension>().Export<IExtension>();
@@ -19,25 +18,36 @@ namespace AvalonStudio
             // TODO AppDomain here is a custom appdomain from namespace AvalonStudio.Extensibility.Utils. It is able
             // to load any assembly in the bin directory (so not really appdomain) we need to get rid of this
             // once all our default extensions are published with a manifest and copied to extensions dir.
-            IEnumerable<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            var extensionAssemblies = LoadMefComponents(extensionManager);
 
-            foreach (var extension in extensions)
+            var configuration = new ContainerConfiguration()
+                .WithAssemblies(assemblies, conventions)
+                .WithAssemblies(extensionAssemblies);
+            return configuration.CreateContainer();
+        }
+
+        private static IEnumerable<Assembly> LoadMefComponents(ExtensionManager extensionManager)
+        {
+            var assemblies = new List<Assembly>();
+
+            foreach (var extension in extensionManager.GetInstalledExtensions())
             {
-                foreach (var assembly in extension.GetMefComponents())
+                foreach (var mefComponent in extension.GetMefComponents())
                 {
                     try
                     {
-                        assemblies = assemblies.Append(Assembly.LoadFrom(assembly));
+                        assemblies.Add(Assembly.LoadFrom(mefComponent));
                     }
                     catch (System.Exception e)
                     {
-                        // todo: log exception
+                        System.Console.WriteLine($"Failed to load MEF component from extension: '{mefComponent}'");
+                        System.Console.WriteLine(e.ToString());
                     }
                 }
             }
 
-            var configuration = new ContainerConfiguration().WithAssemblies(assemblies, conventions);
-            return configuration.CreateContainer();
+            return assemblies;
         }
     }
 }

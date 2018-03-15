@@ -13,16 +13,12 @@ namespace AvalonStudio.Extensibility.Tests
 {
     public class TestProject : IProject
     {
-        public static readonly Guid TypeId = Guid.Parse("{42C950AB-82C7-447B-9B4A-31E8C85F8083}");
-
         public TestProject(string location)
         {
             Location = location;
         }
 
         public ObservableCollection<IProject> References => throw new NotImplementedException();
-
-        public Guid ProjectTypeId => TypeId;
 
         public IToolChain ToolChain { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public IDebugger Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

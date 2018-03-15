@@ -1,33 +1,36 @@
-﻿namespace AvalonStudio.Languages.CSharp
-{
-    using Avalonia.Threading;
-    using AvaloniaEdit.Indentation;
-    using AvaloniaEdit.Indentation.CSharp;
-    using AvalonStudio.CodeEditor;
-    using AvalonStudio.Documents;
-    using AvalonStudio.Editor;
-    using AvalonStudio.Extensibility.Languages.CompletionAssistance;
-    using AvalonStudio.Languages;
-    using AvalonStudio.Projects;
-    using AvalonStudio.Utils;
-    using Microsoft.CodeAnalysis.Classification;
-    using Microsoft.CodeAnalysis.Completion;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.FindSymbols;
-    using Microsoft.CodeAnalysis.Formatting;
-    using Microsoft.CodeAnalysis.Rename;
-    using RoslynPad.Editor.Windows;
-    using RoslynPad.Roslyn;
-    using RoslynPad.Roslyn.Diagnostics;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.CompilerServices;
-    using System.Threading;
-    using System.Threading.Tasks;
+﻿using Avalonia.Threading;
+using AvaloniaEdit.Indentation;
+using AvaloniaEdit.Indentation.CSharp;
+using AvalonStudio.CodeEditor;
+using AvalonStudio.Documents;
+using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+using AvalonStudio.Projects;
+using AvalonStudio.Projects.OmniSharp.Roslyn;
+using AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics;
+using AvalonStudio.Projects.OmniSharp.Roslyn.Editor;
+using AvalonStudio.Utils;
+using Microsoft.CodeAnalysis.Classification;
+using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.FindSymbols;
+using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Rename;
+using Microsoft.CodeAnalysis.Text;
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
+using System.Linq;
+using System.Reactive.Subjects;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 
-    public class CSharpLanguageService : ILanguageService
+namespace AvalonStudio.Languages.CSharp
+{
+    [ExportLanguageService(ContentCapabilities.CSharp)]
+    internal class CSharpLanguageService : ILanguageService
     {
         private static readonly ConditionalWeakTable<IEditor, CSharpDataAssociation> dataAssociations =
             new ConditionalWeakTable<IEditor, CSharpDataAssociation>();
@@ -35,6 +38,8 @@
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
         private MetadataHelper _metadataHelper;
+
+        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
         public CSharpLanguageService()
         {
@@ -111,7 +116,7 @@
 
         public string Identifier => "C#";
 
-        //public IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; } = new Subject<TextSegmentCollection<Diagnostic>>();
+        public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData { get; } = new Subject<SyntaxHighlightDataList>();
 
         public bool CanHandle(IEditor editor)
         {
@@ -514,14 +519,28 @@
                 {
                     var dataAssociation = GetAssociatedData(editor);
 
-                    //var results = new TextSegmentCollection<Diagnostic>();
+                    var results = new List<Diagnostic>();
 
-                    //foreach (var diagnostic in diagnostics.Diagnostics)
-                    //{
-                    //    results.Add(FromRoslynDiagnostic(diagnostic, editor.SourceFile.Location, editor.SourceFile.Project));
-                    //}
+                    var fadedCode = new SyntaxHighlightDataList();
 
-                    //(Diagnostics as Subject<TextSegmentCollection<Diagnostic>>).OnNext(results);
+                    foreach (var diagnostic in diagnostics.Diagnostics)
+                    {
+                        if (diagnostic.CustomTags.Contains("Unnecessary"))
+                        {
+                            fadedCode.Add(new OffsetSyntaxHighlightingData
+                            {
+                                Start = diagnostic.TextSpan.Start,
+                                Length = diagnostic.TextSpan.Length,
+                                Type = HighlightType.Unnecessary
+                            });
+                        }
+                        else
+                        {
+                            results.Add(FromRoslynDiagnostic(diagnostic, editor.SourceFile.Location, editor.SourceFile.Project));
+                        }
+                    }
+
+                    DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(diagnostics.Id, editor.SourceFile, (DiagnosticsUpdatedKind)diagnostics.Kind, results.ToImmutableArray(), fadedCode));
                 });
 
                 association.TextInputHandler = (sender, e) =>
@@ -666,15 +685,26 @@
 
         private Diagnostic FromRoslynDiagnostic(DiagnosticData diagnostic, string fileName, IProject project)
         {
-            var result = new Diagnostic
+            DiagnosticCategory category = DiagnosticCategory.Compiler;
+
+            if (diagnostic.Category == Microsoft.CodeAnalysis.Diagnostics.DiagnosticCategory.Style)
             {
-                Spelling = diagnostic.Message,
-                Level = (DiagnosticLevel)diagnostic.Severity,
-                StartOffset = diagnostic.TextSpan.Start,
-                Length = diagnostic.TextSpan.Length,
-                File = fileName,
-                Project = project,
-            };
+                category = DiagnosticCategory.Style;
+            }
+            else if (diagnostic.Category == Microsoft.CodeAnalysis.Diagnostics.DiagnosticCategory.EditAndContinue)
+            {
+                category = DiagnosticCategory.EditAndContinue;
+            }
+
+            var result = new Diagnostic(
+                diagnostic.TextSpan.Start,
+                diagnostic.TextSpan.Length,
+                project,
+                fileName,
+                diagnostic.DataLocation.MappedStartLine,
+                diagnostic.Message,
+                (DiagnosticLevel)diagnostic.Severity,
+                category);
 
             return result;
         }
@@ -696,14 +726,10 @@
                 return result;
             }
 
-            // Example how to get file specific diagnostics.
-            /*var model = await document.GetSemanticModelAsync();
-
-            var diagnostics = model.GetDiagnostics();*/
-
             try
             {
-                var highlightData = await Classifier.GetClassifiedSpansAsync(document, new Microsoft.CodeAnalysis.Text.TextSpan(0, textLength));
+                var highlightData = await Classifier.GetClassifiedSpansAsync(document, new TextSpan(0, textLength));
+                var displayParts = await Classifier.GetClassifiedSymbolDisplayPartsAsync(document, new TextSpan(0, textLength));
 
                 foreach (var span in highlightData)
                 {
@@ -840,14 +866,6 @@
             return null;
         }
 
-        public void BeforeActivation()
-        {
-        }
-
-        public void Activation()
-        {
-        }
-
         public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo = "")
         {
             if (editor.SourceFile is MetaDataFile)
@@ -870,7 +888,7 @@
 
                 if (symbol != null)
                 {
-                    if(renameTo == string.Empty)
+                    if (renameTo == string.Empty)
                     {
                         renameTo = "Test" + symbol.Name + "1";
                     }
@@ -886,7 +904,7 @@
                 }
 
                 var changes = new Dictionary<string, SymbolRenameInfo>();
-                var solutionChanges = solution.GetChanges(workspace.CurrentSolution);                
+                var solutionChanges = solution.GetChanges(workspace.CurrentSolution);
 
                 foreach (var projectChange in solutionChanges.GetProjectChanges())
                 {
@@ -899,7 +917,7 @@
                             modifiedFileResponse = new SymbolRenameInfo(changedDocument.FilePath);
                             changes[changedDocument.FilePath] = modifiedFileResponse;
                         }
-                        
+
                         var originalDocument = workspace.CurrentSolution.GetDocument(changedDocumentId);
                         var linePositionSpanTextChanges = await TextChanges.GetAsync(changedDocument, originalDocument);
 
@@ -914,6 +932,18 @@
             }
 
             return null;
+        }
+
+        public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
+        {
+            var dataAssociation = GetAssociatedData(editor);
+
+            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
+
+            return new List<IContextActionProvider>
+            {
+                new RoslynContextActionProvider(workspace)
+            };
         }
     }
 }

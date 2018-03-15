@@ -4,13 +4,13 @@ using Avalonia.Ide.CompletionEngine.SrmMetadataProvider;
 using AvalonStudio.Documents;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    class XamlLanguageService : XmlLanguageService
+    [ExportLanguageService(ContentCapabilities.Xaml)]
+    internal class XamlLanguageService : XmlLanguageService
     {
         public override string Title => "XAML";
 

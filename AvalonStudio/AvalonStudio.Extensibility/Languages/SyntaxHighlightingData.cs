@@ -1,3 +1,4 @@
+using AvalonStudio.Projects;
 using System.Collections.Generic;
 
 namespace AvalonStudio.Languages
@@ -21,6 +22,7 @@ namespace AvalonStudio.Languages
         PreProcessor,
         PreProcessorText,
         Operator,
+        Unnecessary
     }
 
     public class SyntaxHighlightDataList : List<OffsetSyntaxHighlightingData>
