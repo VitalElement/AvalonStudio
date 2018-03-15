@@ -100,21 +100,11 @@ namespace AvalonStudio.Languages.CSharp
             get; private set;
         }
 
-        public string Title
-        {
-            get
-            {
-                return "C#";
-            }
-        }
-
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => _snippetCodeGenerators;
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => _snippetDynamicVars;
 
         public string LanguageId => "cs";
-
-        public string Identifier => "C#";
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData { get; } = new Subject<SyntaxHighlightDataList>();
 

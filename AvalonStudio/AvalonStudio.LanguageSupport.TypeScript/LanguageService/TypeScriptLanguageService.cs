@@ -97,15 +97,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public IIndentationStrategy IndentationStrategy { get; }
 
-        public string Title => "TypeScript";
-
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => null;
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => null;
 
         public string LanguageId => "ts";
-
-        public string Identifier => "TS";
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 

@@ -82,11 +82,6 @@ namespace AvalonStudio.Languages.CPlusPlus
             _snippetDynamicVars.Add("ClassName", (offset, line, column) => null);
         }
 
-        public string Title
-        {
-            get { return "C/C++"; }
-        }
-
         public IIndentationStrategy IndentationStrategy { get; private set; }
 
         public bool CanTriggerIntellisense(char currentChar, char previousChar)
@@ -130,8 +125,6 @@ namespace AvalonStudio.Languages.CPlusPlus
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => _snippetDynamicVars;
 
         public string LanguageId => "cpp";
-
-        public string Identifier => "C++";
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
 

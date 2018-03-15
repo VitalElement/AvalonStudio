@@ -815,8 +815,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(LanguageService.LanguageId.ToUpper());
 
-                LanguageServiceName = LanguageService.Title;
-
                 LanguageService.RegisterSourceFile(DocumentAccessor);
 
                 _diagnosticMarkersRenderer = new TextMarkerService(Document);
@@ -862,11 +860,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Observable.FromEventPattern<DiagnosticsUpdatedEventArgs>(LanguageService, nameof(LanguageService.DiagnosticsUpdated)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(args =>
                     LanguageService_DiagnosticsUpdated(args.Sender, args.EventArgs))
                 };
-            }
-            else
-            {
-                LanguageService = null;
-                LanguageServiceName = "Plain Text";
             }
 
             StartBackgroundWorkers();
@@ -1144,16 +1137,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             get { return GetValue(ColumnProperty); }
             set { SetValue(ColumnProperty, value); }
         }
-
-        public static readonly StyledProperty<string> LanguageServiceNameProperty =
-            AvaloniaProperty.Register<CodeEditor, string>(nameof(LanguageServiceName), defaultBindingMode: BindingMode.TwoWay);
-
-        public string LanguageServiceName
-        {
-            get { return GetValue(LanguageServiceNameProperty); }
-            set { SetValue(LanguageServiceNameProperty, value); }
-        }
-
 
         public static readonly StyledProperty<ObservableCollection<IVisualLineTransformer>> DocumentLineTransformersProperty =
             AvaloniaProperty.Register<CodeEditor, ObservableCollection<IVisualLineTransformer>>(nameof(DocumentLineTransformers), new ObservableCollection<IVisualLineTransformer>());

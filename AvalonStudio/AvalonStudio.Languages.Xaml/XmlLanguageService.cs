@@ -26,8 +26,6 @@ namespace AvalonStudio.Languages.Xaml
 
         public IIndentationStrategy IndentationStrategy { get; } = new XamlIndentationStrategy();
 
-        public virtual string Title => "XML";
-
         public virtual string LanguageId => "xml";
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => s_InputHelpers;
@@ -45,8 +43,6 @@ namespace AvalonStudio.Languages.Xaml
         {
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
-
-        public virtual string Identifier => "XML";        
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
