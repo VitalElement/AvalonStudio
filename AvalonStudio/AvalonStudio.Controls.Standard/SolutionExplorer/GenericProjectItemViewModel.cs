@@ -36,7 +36,7 @@
             set { base.Model = value; }
         }
 
-        public virtual string Title
+        public override string Title
         {
             get { return Model.Name; }
             set
