@@ -287,5 +287,10 @@ namespace AvalonStudio.Shell
         {
             throw new NotImplementedException();
         }
+
+        public void RemoveDocument(ISourceFile document)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
