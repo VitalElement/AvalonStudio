@@ -308,9 +308,7 @@ namespace AvalonStudio.Extensibility.Templating
 
         private static void FirstRun(IEngineEnvironmentSettings environmentSettings, IInstaller installer)
         {
-            var packages = new List<string> { "VitalElement.AvalonStudio.Templates" };
-
-            installer.InstallPackages(packages);
+            UpdatePackages(installer);
         }
 
         public void BeforeActivation()
@@ -321,6 +319,18 @@ namespace AvalonStudio.Extensibility.Templating
         public void Activation()
         {
 
+        }
+
+        public void UpdateDefaultTemplates()
+        {
+            UpdatePackages(Installer);
+        }
+
+        private static void UpdatePackages (IInstaller installer)
+        {
+            var packages = new List<string> { "VitalElement.AvalonStudio.Templates" };
+
+            installer.InstallPackages(packages);
         }
 
         public IDictionary<string, IEnumerable<ITemplate>> GetProjectTemplates() => GetTemplates(TemplateKind.Project);

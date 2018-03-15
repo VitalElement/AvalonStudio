@@ -1,18 +1,22 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
   <Grid>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition/>
-      <ColumnDefinition/>
-    </Grid.ColumnDefinitions>
-    
-    <ListBox Items="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}">
-      <ListBox.DataTemplates>
-        <DataTemplate >
-          <TextBlock Text="{Binding Name}"/>
-        </DataTemplate>
-      </ListBox.DataTemplates>
-    </ListBox>
-    
-    <Controls:ViewModelViewHost Grid.Column="1" Margin="20" DataContext="{Binding SelectedTemplate}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+    <StackPanel Orientation="Horizontal" Gap="20">      
+      
+      <DockPanel LastChildFill="True">
+        <Button Content="Check for Updates" Command="{Binding UpdateTemplatesCommand}" DockPanel.Dock="Bottom" />
+        <ListBox Items="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}">
+          <ListBox.DataTemplates>
+            <DataTemplate >
+              <StackPanel>
+                <TextBlock Text="{Binding Name}"/>
+                <TextBlock Text="{Binding Description}"/>
+              </StackPanel>              
+            </DataTemplate>
+          </ListBox.DataTemplates>
+        </ListBox>        
+      </DockPanel>      
+      
+      <Controls:ViewModelViewHost DataContext="{Binding SelectedTemplate}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+    </StackPanel>           
   </Grid>
 </UserControl>

@@ -7,6 +7,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using AvalonStudio.Extensibility.Templating;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -41,6 +42,14 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 Close();
             });
+
+            UpdateTemplatesCommand = ReactiveCommand.Create(() =>
+            {
+                Task.Run(() =>
+                {
+                    templateManager.UpdateDefaultTemplates();
+                });
+            });
         }
 
         public TemplateViewModel SelectedTemplate
@@ -62,5 +71,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         }
 
         public override ReactiveCommand OKCommand { get; protected set; }
+
+        public ReactiveCommand UpdateTemplatesCommand { get; }
     }
 }

@@ -1,8 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.SolutionExplorer;assembly=AvalonStudio.Controls.Standard">
-  <StackPanel>
-    <TextBlock Text="{Binding Name}" />
+  <StackPanel>    
     <ItemsControl Items="{Binding Parameters}">
       <ItemsControl.DataTemplates>
         <DataTemplate>
