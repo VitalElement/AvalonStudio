@@ -12,9 +12,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public TemplateViewModel(ITemplate template)
         {
             _inner = template;
+
+            Parameters = _inner.Parameters.Select(p => new TemplateParameterViewModel(_inner, p)).ToList();
         }
 
-        public IEnumerable<TemplateParameterViewModel> TemplateParameters => _inner.Parameters.Select(p => new TemplateParameterViewModel(p));
+        public IEnumerable<TemplateParameterViewModel> Parameters { get; }
 
         public string Name => _inner.Name;
 

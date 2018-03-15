@@ -13,6 +13,6 @@
       </ListBox.DataTemplates>
     </ListBox>
     
-    <Controls:ViewModelViewHost Grid.Column="1" Margin="20" DataContext="{Binding SelectedTemplate.TemplateForm}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+    <Controls:ViewModelViewHost Grid.Column="1" Margin="20" DataContext="{Binding SelectedTemplate}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
   </Grid>
 </UserControl>

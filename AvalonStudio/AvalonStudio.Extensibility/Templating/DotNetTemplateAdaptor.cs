@@ -47,7 +47,9 @@ namespace AvalonStudio.Extensibility.Templating
 
         internal ITemplateInfo DotnetTemplate => _inner;
 
-        public IEnumerable<ITemplateParameter> Parameters => _inner.Parameters.Select(p => new DotnetTemplateParameterAdaptor(p));
+        public IEnumerable<ITemplateParameter> Parameters => _inner.Parameters
+            .Where(p=>p.Name != "language" && p.Name != "type" && p.Name != "namespace")
+            .Select(p => new DotnetTemplateParameterAdaptor(p));
 
         internal DotNetTemplateAdaptor(ITemplateInfo template)
         {

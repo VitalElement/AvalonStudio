@@ -23,7 +23,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             var shell = IoC.Get<IShell>();
             var templateManager = IoC.Get<TemplateManager>();            
 
-            templates = new ObservableCollection<TemplateViewModel>(templateManager.ListItemTemplates("").Select(t=>new TemplateViewModel(t)));
+            templates = new ObservableCollection<TemplateViewModel>(templateManager.ListItemTemplates("").Select(t=>new TemplateViewModel(t)).ToList());
 
             SelectedTemplate = templates.FirstOrDefault();
 
@@ -31,7 +31,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             OKCommand = ReactiveCommand.Create(async () =>
             {
-                await templateManager.CreateTemplate(SelectedTemplate.Template, folder.LocationDirectory);                
+                await templateManager.CreateTemplate(
+                    SelectedTemplate.Template, 
+                    folder.LocationDirectory, 
+                    SelectedTemplate.Parameters
+                    .Where(p=>!string.IsNullOrEmpty(p.Value.Trim()))
+                    .Select(p=>(p.Name.ToLower(), p.Value))
+                    .ToArray());                
 
                 Close();
             });

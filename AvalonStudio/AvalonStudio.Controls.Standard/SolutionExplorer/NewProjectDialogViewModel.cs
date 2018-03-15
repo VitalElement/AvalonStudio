@@ -107,7 +107,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 var templateDestination = Path.Combine(_solutionFolder.Solution.CurrentDirectory, name);
 
-                if (await templateManager.CreateTemplate(selectedTemplate, templateDestination, name) == CreationResult.Success)
+                if (await templateManager.CreateTemplate(selectedTemplate, templateDestination, ("name", name)) == CreationResult.Success)
                 {
                     var projectFiles = GetProjectFiles(templateDestination);
 
