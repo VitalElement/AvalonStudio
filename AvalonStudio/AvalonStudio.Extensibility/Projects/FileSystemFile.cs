@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Languages;
+using AvalonStudio.Languages;
 using AvalonStudio.Platforms;
 using System;
 using System.IO;
@@ -73,7 +73,6 @@ namespace AvalonStudio.Projects
         public int CompareTo(IProjectItem other)
         {
             return this.CompareProjectItems(other);
-            throw new NotImplementedException();
         }
 
         public void RaiseFileModifiedEvent()
@@ -84,6 +83,11 @@ namespace AvalonStudio.Projects
         public Stream OpenText()
         {
             return new FileStream(Location, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete, bufferSize: 4096, useAsync: false);
+        }
+
+        public void Delete()
+        {
+            File.Delete(Location);
         }
     }
 }

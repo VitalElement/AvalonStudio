@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
+namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
@@ -27,6 +27,11 @@
                 {
                     Platform.OpenFolderInExplorer((model as IProjectItem).Parent.Location);
                 }
+            });
+
+            DeleteCommand = ReactiveCommand.Create(() =>
+            {
+                model.Delete();
             });
         }
 
@@ -57,7 +62,9 @@
             get { return Path.GetFileNameWithoutExtension(Title); }
         }
 
-        public ReactiveCommand RemoveItemCommand { get; }        
-        public ReactiveCommand OpenInExplorerCommand { get; protected set; }        
+        public ReactiveCommand RemoveItemCommand { get; }
+        public ReactiveCommand OpenInExplorerCommand { get; protected set; }
+        public ReactiveCommand DeleteCommand { get; protected set; }
+
     }
 }

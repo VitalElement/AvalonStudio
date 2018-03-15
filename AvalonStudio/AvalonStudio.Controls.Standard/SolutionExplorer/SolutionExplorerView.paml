@@ -111,6 +111,7 @@
                   <Separator />
                   <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
                   <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
+                  <MenuItem Header="Delete" Command="{Binding DeleteCommand}" />
                 </ContextMenu>
               </StackPanel.ContextMenu>
               <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />

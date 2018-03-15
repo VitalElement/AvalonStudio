@@ -6,6 +6,7 @@ namespace AvalonStudio.Projects
     {
         IProject Project { get; set; }
         IProjectFolder Parent { get; set; }
+        void Delete();
     }
 
     public static class IProjectItemExtensions
