@@ -58,8 +58,12 @@ namespace AvalonStudio.Languages.CSharp
 
         public int CompareTo(IProjectItem other)
         {
-            return this.CompareProjectItems(other);
-            throw new NotImplementedException();
+            return this.CompareProjectItems(other);            
+        }
+
+        public void Delete()
+        {
+            
         }
 
         public Stream OpenText()

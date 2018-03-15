@@ -16,6 +16,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             RemoveCommand = ReactiveCommand.Create(() => model.Project.ExcludeFile(model));
 
+            DeleteCommand = ReactiveCommand.Create(() =>
+            {
+                model.Delete();
+            });
+
             _icon = model.Extension.Replace(".", "").ToFileIcon();
 
             if (_icon == null)
@@ -26,7 +31,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public new ReactiveCommand OpenInExplorerCommand { get; }
         public ReactiveCommand RemoveCommand { get; }
-
+        
         public override DrawingGroup Icon => _icon;
     }
 }

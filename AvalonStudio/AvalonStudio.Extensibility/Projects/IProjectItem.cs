@@ -5,7 +5,11 @@ namespace AvalonStudio.Projects
     public interface IProjectItem : IItem, IComparable<IProjectItem>
     {
         IProject Project { get; set; }
-        IProjectFolder Parent { get; set; }
+        IProjectFolder Parent { get; set; }        
+    }
+
+    public interface IDeleteable
+    {
         void Delete();
     }
 

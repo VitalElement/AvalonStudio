@@ -28,7 +28,7 @@
         <TreeView.Styles>
           <Style Selector="TreeViewItem">
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-          </Style>
+          </Style>          
           <Style Selector="ContextMenu">
             <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
           </Style>
@@ -104,14 +104,14 @@
           </TreeDataTemplate>
 
           <TreeDataTemplate DataType="ViewModels:SourceFileViewModel">
-            <StackPanel Orientation="Horizontal" Gap="4">
+            <StackPanel Orientation="Horizontal" Gap="4">              
               <StackPanel.ContextMenu>
                 <ContextMenu>
                   <MenuItem Header="Rename" />
                   <Separator />
                   <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
                   <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
-                  <MenuItem Header="Delete" Command="{Binding DeleteCommand}" />
+                  <MenuItem Header="Delete" Command="{Binding DeleteCommand}" HotKey="Delete" />
                 </ContextMenu>
               </StackPanel.ContextMenu>
               <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />

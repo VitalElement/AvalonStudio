@@ -66,11 +66,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public static int GetIntellisenseStartPosition(this ITextDocument textSource, int offset, Predicate<char> isValidChar)
         {
-            while (true)
+            while (offset > 0)
             {
                 var currentChar = textSource.GetCharAt(offset - 1);
 
-                if (!isValidChar(currentChar) || offset < 0)
+                if (!isValidChar(currentChar))
                 {
                     break;
                 }

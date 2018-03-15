@@ -8,7 +8,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
     public abstract class ProjectItemViewModel<T> : ProjectItemViewModel where T : IProjectItem
     {
-
         public ProjectItemViewModel(T model)
         {
             Model = model;
@@ -27,12 +26,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 {
                     Platform.OpenFolderInExplorer((model as IProjectItem).Parent.Location);
                 }
-            });
-
-            DeleteCommand = ReactiveCommand.Create(() =>
-            {
-                model.Delete();
-            });
+            });            
         }
 
         private new T Model
