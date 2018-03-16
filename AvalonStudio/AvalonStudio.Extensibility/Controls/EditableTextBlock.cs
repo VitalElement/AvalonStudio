@@ -22,6 +22,14 @@ namespace AvalonStudio.Controls
             {
                 EditText = t;
             });
+
+            this.GetObservable(InEditModeProperty).Subscribe(mode =>
+            {
+                if (mode && _textBox != null)
+                {
+                    EnterEditMode();
+                }
+            });
         }
 
         public static readonly DirectProperty<EditableTextBlock, string> TextProperty = TextBlock.TextProperty.AddOwner<EditableTextBlock>(
@@ -66,7 +74,12 @@ namespace AvalonStudio.Controls
             base.OnTemplateApplied(e);
 
             _textBox = e.NameScope.Find<TextBox>("PART_TextBox");
-        }        
+
+            if (InEditMode)
+            {
+                EnterEditMode();
+            }
+        }
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
@@ -84,6 +97,8 @@ namespace AvalonStudio.Controls
             InEditMode = true;
             (VisualRoot as IInputRoot).MouseDevice.Capture(_textBox);
             _textBox.CaretIndex = Text.Length;
+            _textBox.SelectionStart = 0;
+            _textBox.SelectionEnd = Text.Length;
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {

@@ -16,9 +16,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             references.BindCollections(folder.References, p => { return new ReferenceViewModel(p); }, (rvm, p) => rvm.Model == p);
         }
 
-        public string Title
+        public override string Title
         {
             get { return "References"; }
+            set { }
         }
 
         public ObservableCollection<ReferenceViewModel> References
