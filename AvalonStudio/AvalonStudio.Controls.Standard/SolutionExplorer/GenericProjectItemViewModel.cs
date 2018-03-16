@@ -59,6 +59,5 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand RemoveItemCommand { get; }
         public ReactiveCommand OpenInExplorerCommand { get; protected set; }
         public ReactiveCommand DeleteCommand { get; protected set; }
-
     }
 }

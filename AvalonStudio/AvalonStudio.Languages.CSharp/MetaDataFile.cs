@@ -11,7 +11,7 @@ namespace AvalonStudio.Languages.CSharp
         private string _filePath;
         private string _extension;
         private string _currentDirectory;
-        private string _location;        
+        private string _location;
         private Document _document;
 
         public MetaDataFile(IProject parentProject, Document document, string metaDataPath, string name)
@@ -19,7 +19,7 @@ namespace AvalonStudio.Languages.CSharp
             _filePath = metaDataPath;
             _extension = Path.GetExtension(metaDataPath);
             _currentDirectory = Path.GetDirectoryName(metaDataPath);
-            _location = _filePath;            
+            _location = _filePath;
             Project = parentProject;
             Name = $"{name} [metadata]";
             _document = document;
@@ -58,17 +58,16 @@ namespace AvalonStudio.Languages.CSharp
 
         public int CompareTo(IProjectItem other)
         {
-            return this.CompareProjectItems(other);            
+            return this.CompareProjectItems(other);
         }
 
         public void Delete()
         {
-            
         }
 
         public Stream OpenText()
         {
-            var source = _document.GetTextAsync().GetAwaiter().GetResult().ToString();            
+            var source = _document.GetTextAsync().GetAwaiter().GetResult().ToString();
 
             MemoryStream stream = new MemoryStream();
             StreamWriter writer = new StreamWriter(stream);

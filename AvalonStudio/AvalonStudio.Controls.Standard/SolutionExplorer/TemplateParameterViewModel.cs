@@ -14,23 +14,22 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             _inner = parameter;
 
-            if(parameter.Name == "name" && string.IsNullOrEmpty(parameter.DefaultValue))
+            if (parameter.Name == "name" && string.IsNullOrEmpty(parameter.DefaultValue))
             {
-                _value = parent.DefaultName;                
+                _value = parent.DefaultName;
             }
             else
             {
                 _value = parameter.DefaultValue;
-            }            
+            }
         }
 
-        public string Name => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(_inner.Name);        
+        public string Name => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(_inner.Name);
 
         public string Value
         {
             get { return _value; }
             set { this.RaiseAndSetIfChanged(ref _value, value); }
         }
-
     }
 }
