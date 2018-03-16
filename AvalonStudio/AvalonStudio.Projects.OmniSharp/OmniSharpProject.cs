@@ -121,6 +121,16 @@ namespace AvalonStudio.Projects.OmniSharp
                         break;
                 }
             };
+
+            FileRemoved += (sender, e) =>
+            {
+                switch (e.Extension)
+                {
+                    case ".cs":
+                        RoslynWorkspace.GetWorkspace(Solution).RemoveDocument(RoslynProject, e);
+                        break;
+                }
+            };
         }
 
         public async Task<bool> Restore(IConsole console, IStatusBar statusBar = null)

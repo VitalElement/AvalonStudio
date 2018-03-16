@@ -5,7 +5,7 @@ namespace AvalonStudio.Projects
     using System.Collections.ObjectModel;
     using System.IO;
 
-    public class FileSystemFolder : IProjectFolder
+    public class FileSystemFolder : IProjectFolder, IDeleteable
     {
         private string _name;
 
@@ -66,6 +66,11 @@ namespace AvalonStudio.Projects
         public int CompareTo(IProjectItem other)
         {
             return this.CompareProjectItems(other);
+        }
+
+        public void Delete()
+        {
+            Directory.Delete(Location, true);
         }
     }
 }

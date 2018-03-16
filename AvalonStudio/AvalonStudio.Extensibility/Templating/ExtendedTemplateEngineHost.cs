@@ -45,7 +45,7 @@ namespace AvalonStudio.Extensibility.Templating
             return _baseHost.OnNonCriticalError(code, message, currentFile, currentPosition);
         }
 
-        public virtual bool OnParameterError(ITemplateParameter parameter, string receivedValue, string message, out string newValue)
+        public virtual bool OnParameterError(Microsoft.TemplateEngine.Abstractions.ITemplateParameter parameter, string receivedValue, string message, out string newValue)
         {
             return _baseHost.OnParameterError(parameter, receivedValue, message, out newValue);
         }

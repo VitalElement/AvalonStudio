@@ -3,7 +3,7 @@ using System.IO;
 
 namespace AvalonStudio.Projects
 {
-    public interface ISourceFile : IProjectItem, IComparable<ISourceFile>, IComparable<string>
+    public interface ISourceFile : IProjectItem, IComparable<ISourceFile>, IDeleteable, IComparable<string>
     {
         string ContentType { get; }
 

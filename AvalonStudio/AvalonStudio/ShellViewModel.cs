@@ -398,6 +398,16 @@ namespace AvalonStudio
             DocumentTabs.OpenDocument(document, temporary);
         }
 
+        public void RemoveDocument (ISourceFile file)
+        {
+            var document = DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(d => d.SourceFile == file);
+
+            if(document != null)
+            {
+                RemoveDocument(document);
+            }            
+        }
+
         public void RemoveDocument(IDocumentTabViewModel document)
         {
             if (document == null)
@@ -407,7 +417,7 @@ namespace AvalonStudio
 
             if (document is EditorViewModel doc)
             {
-                doc.Editor.Save();
+                doc.Editor?.Save();
             }
 
             DocumentTabs.CloseDocument(document);

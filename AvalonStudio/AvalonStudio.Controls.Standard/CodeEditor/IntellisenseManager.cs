@@ -641,7 +641,7 @@
 
         public void OnKeyDown(KeyEventArgs e, int caretIndex, int line, int column)
         {
-            capturedOnKeyDown = e.Key;
+            capturedOnKeyDown = e.Key;            
 
             if (!_hidden)
             {
