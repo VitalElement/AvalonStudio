@@ -15,6 +15,10 @@
           <TextBlock Text="Version:" />
           <TextBlock Text="{Binding Version}" />
         </StackPanel>
+	<StackPanel Orientation="Horizontal" Gap="4">
+	  <TextBlock Text="Descriptive Version:" />
+          <TextBlock Text="{Binding DescriptiveVersion}" />
+	</StackPanel>
         <StackPanel Orientation="Horizontal" Gap="4">
           <TextBlock Text="Platform:" />
           <TextBlock Text="{Binding PlatformString}" />
