@@ -71,6 +71,8 @@ namespace AvalonStudio.Shell
 
         void RemoveDocument(IDocumentTabViewModel document);
 
+        void RemoveDocument(ISourceFile document);
+
         void InvalidateCodeAnalysis();
 
         void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics);

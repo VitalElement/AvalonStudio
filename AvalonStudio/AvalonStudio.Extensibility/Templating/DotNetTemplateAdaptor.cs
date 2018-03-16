@@ -1,30 +1,35 @@
-﻿using Microsoft.TemplateEngine.Abstractions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.TemplateEngine.Abstractions;
 
 namespace AvalonStudio.Extensibility.Templating
 {
-    public class DotNetTemplateAdaptor : ITemplate
+    class DotNetTemplateAdaptor : ITemplate
     {
+        private ITemplateInfo _inner;
+
         public string Language { get; }
 
-        public string Name { get; }
-        public string ShortName { get; }
-        public string Description { get; }
-        public string Author { get; }
+        public string Name => _inner.Name;
+        public string ShortName => _inner.ShortName;
+        public string Description => _inner.Description;
+        public string Author => _inner.Author;
 
         public string DefaultName { get; }
 
         public TemplateKind Kind { get; }
 
-        internal ITemplateInfo DotnetTemplate { get; }
+        internal ITemplateInfo DotnetTemplate => _inner;
+
+        public IEnumerable<ITemplateParameter> Parameters => _inner.Parameters
+            .Where(p=>p.Name != "language" && p.Name != "type" && p.Name != "namespace")
+            .Select(p => new DotnetTemplateParameterAdaptor(p));
 
         internal DotNetTemplateAdaptor(ITemplateInfo template)
         {
-            Language = template.GetLanguage();
+            _inner = template;
 
-            Name = template.Name;
-            ShortName = template.ShortName;
-            Description = template.Description;
-            Author = template.Author;
+            Language = template.GetLanguage();
 
             if (!string.IsNullOrEmpty(template.DefaultName))
             {
@@ -36,8 +41,6 @@ namespace AvalonStudio.Extensibility.Templating
             }
 
             Kind = template.GetTemplateKind();
-
-            DotnetTemplate = template;
         }
     }
 }

@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Projects;
@@ -72,6 +73,17 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 this.RaisePropertyChanged();
                 this.RaisePropertyChanged(nameof(Projects));
+            }
+        }
+
+        internal void OnKeyDown (Key key, InputModifiers modifiers)
+        {
+            if(key == Key.Delete && modifiers == InputModifiers.None)
+            {
+                if(SelectedItem.Model is IDeleteable deletable)
+                {
+                    deletable.Delete();
+                }
             }
         }
 

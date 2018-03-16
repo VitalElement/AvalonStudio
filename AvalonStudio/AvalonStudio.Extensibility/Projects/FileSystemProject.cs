@@ -4,6 +4,7 @@
     using AvalonStudio.Debugging;
     using AvalonStudio.Extensibility;
     using AvalonStudio.Platforms;
+    using AvalonStudio.Shell;
     using AvalonStudio.TestFrameworks;
     using AvalonStudio.Toolchains;
     using AvalonStudio.Utils;
@@ -23,6 +24,7 @@
         private Dispatcher uiDispatcher;
 
         public event EventHandler<ISourceFile> FileAdded;
+        public event EventHandler<ISourceFile> FileRemoved;
 
         public FileSystemProject(bool useDispatcher)
         {
@@ -343,6 +345,10 @@
         {
             file.Parent?.Items.Remove(file);
             SourceFiles.Remove(file);
+
+            IoC.Get<IShell>().RemoveDocument(file);
+
+            FileRemoved?.Invoke(this, file);
         }
 
         public void RemoveFolder(IProjectFolder folder)
@@ -357,15 +363,15 @@
         {
             foreach (var item in folder.Items)
             {
-                if (item is IProjectFolder)
+                if (item is IProjectFolder subfolder)
                 {
-                    RemoveFiles(project, item as IProjectFolder);
-                    project.Folders.Remove(item as IProjectFolder);
+                    RemoveFiles(project, subfolder);                    
+                    project.Folders.Remove(subfolder);
                 }
 
-                if (item is ISourceFile)
+                if (item is ISourceFile file)
                 {
-                    project.SourceFiles.Remove(item as ISourceFile);
+                    project.RemoveFile(file);                    
                 }
             }
         }

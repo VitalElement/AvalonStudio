@@ -1,6 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
+using System.Reactive.Linq;
 
 namespace AvalonStudio.MVVM
 {
@@ -9,6 +11,13 @@ namespace AvalonStudio.MVVM
     /// </summary>
     public static class ObservableCollectionExtensions
     {
+        public static IObservable<T> ObserveNewItems<T>(this ObservableCollection<T> myself)
+        {
+            return Observable.FromEventPattern<NotifyCollectionChangedEventArgs>(myself, nameof(myself.CollectionChanged))
+                .Select(o => o.EventArgs).Where(e => e.NewItems != null && e.NewItems.Count > 0)
+                .Select(e => Enumerable.Cast<T>(e.NewItems)).SelectMany(o => o);
+        }
+
         #region Public methods
 
         /// <summary>

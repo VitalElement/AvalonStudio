@@ -1,6 +1,10 @@
 using Avalonia.Media;
+using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
 using ReactiveUI;
+using System.IO;
+using System.Reactive.Linq;
+using System;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -17,7 +21,24 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 IsExpanded = true;
             }
+
+            NewFileCommand = ReactiveCommand.Create(async () =>
+            {
+                var observable = Items.ObserveNewItems().OfType<SourceFileViewModel>().FirstOrDefaultAsync();
+
+                using (var subscription = observable.Subscribe(item =>
+                {
+                    item.InEditMode = true;
+                }))
+                {
+                    File.CreateText(Path.Combine(model.CurrentDirectory, "NewFile1"));
+
+                    await observable;
+                }
+            });
         }
+
+        public ReactiveCommand NewFileCommand { get; }
 
         public ReactiveCommand SetDefaultProjectCommand { get; private set; }
 

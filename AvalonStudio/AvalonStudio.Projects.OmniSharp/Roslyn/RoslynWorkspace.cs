@@ -343,7 +343,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
             }
         }
 
-        public DocumentId AddDocument(Project project, AvalonStudio.Projects.ISourceFile file)
+        public DocumentId AddDocument(Project project, ISourceFile file)
         {
             var id = DocumentId.CreateNewId(project.Id);
             OnDocumentAdded(DocumentInfo.Create(id, file.Name, filePath: file.FilePath, loader: new FileTextLoader(file, System.Text.Encoding.UTF8)));
@@ -351,7 +351,13 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
             return id;
         }
 
-        public DocumentId GetDocumentId(AvalonStudio.Projects.ISourceFile file)
+        public void RemoveDocument (Project project, ISourceFile file)
+        {
+            var id = GetDocumentId(file);
+            OnDocumentRemoved(id);
+        }
+
+        public DocumentId GetDocumentId(ISourceFile file)
         {
             var ids = CurrentSolution.GetDocumentIdsWithFilePath(file.Location);
 
@@ -363,14 +369,14 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
             return ids.First();
         }
 
-        public Document GetDocument(AvalonStudio.Projects.ISourceFile file)
+        public Document GetDocument(ISourceFile file)
         {
             var documentId = GetDocumentId(file);
 
             return CurrentSolution.GetDocument(documentId);
         }
 
-        public void OpenDocument(AvalonStudio.Projects.ISourceFile file, AvalonEditTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated, Action<SourceText> onTextUpdated = null)
+        public void OpenDocument(ISourceFile file, AvalonEditTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated, Action<SourceText> onTextUpdated = null)
         {
             var documentId = GetDocumentId(file);
 
