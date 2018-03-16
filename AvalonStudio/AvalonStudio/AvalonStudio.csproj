@@ -24,6 +24,7 @@
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.57.1.4" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.6.1" />
     <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="0.6.1" />
+    <PackageReference Include="GitInfo" Version="2.0.10" />
     <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build110-alpha" />
     <PackageReference Include="reactiveui" Version="8.0.0-alpha0089" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
