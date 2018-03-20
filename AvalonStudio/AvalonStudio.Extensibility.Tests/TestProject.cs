@@ -13,16 +13,12 @@ namespace AvalonStudio.Extensibility.Tests
 {
     public class TestProject : IProject
     {
-        public static readonly Guid TypeId = Guid.Parse("{42C950AB-82C7-447B-9B4A-31E8C85F8083}");
-
         public TestProject(string location)
         {
             Location = location;
         }
 
         public ObservableCollection<IProject> References => throw new NotImplementedException();
-
-        public Guid ProjectTypeId => TypeId;
 
         public IToolChain ToolChain { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public IDebugger Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -128,16 +124,23 @@ namespace AvalonStudio.Extensibility.Tests
             throw new NotImplementedException();
         }
 
-        public void RemoveReference(IProject project)
+        public bool RemoveReference(IProject project)
         {
+            return false;
         }
 
-        public void ResolveReferences()
+        public Task ResolveReferencesAsync()
         {
+            return Task.CompletedTask;
         }
 
         public void Save()
         {
+        }
+
+        public Task UnloadAsync()
+        {
+            return Task.CompletedTask;
         }
     }
 }

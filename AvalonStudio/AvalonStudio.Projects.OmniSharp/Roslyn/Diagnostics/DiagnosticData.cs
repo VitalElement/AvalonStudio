@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace RoslynPad.Roslyn.Diagnostics
+namespace AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics
 {
     public sealed class DiagnosticData
     {
@@ -32,7 +32,7 @@ namespace RoslynPad.Roslyn.Diagnostics
         public DiagnosticDataLocation DataLocation { get; }
         public IReadOnlyCollection<DiagnosticDataLocation> AdditionalLocations { get; }
 
-        internal DiagnosticData(Microsoft.CodeAnalysis.Diagnostics.DiagnosticData inner)
+        public DiagnosticData(Microsoft.CodeAnalysis.Diagnostics.DiagnosticData inner)
         {
             _inner = inner;
             DataLocation = new DiagnosticDataLocation(inner.DataLocation);

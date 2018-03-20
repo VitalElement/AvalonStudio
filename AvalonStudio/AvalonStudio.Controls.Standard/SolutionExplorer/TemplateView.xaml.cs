@@ -1,13 +1,14 @@
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace AvalonStudio.Projects.OmniSharp
+namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    public class ToolchainSettingsFormView : UserControl
+    public class TemplateView : UserControl
     {
-        public ToolchainSettingsFormView()
+        public TemplateView()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         private void InitializeComponent()

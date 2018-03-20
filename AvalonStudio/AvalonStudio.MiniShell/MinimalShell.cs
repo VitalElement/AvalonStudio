@@ -1,6 +1,5 @@
 namespace AvalonStudio.Shell
 {
-    using AvalonStudio.Controls;
     using AvalonStudio.Debugging;
     using AvalonStudio.Documents;
     using AvalonStudio.Extensibility;
@@ -19,17 +18,22 @@ namespace AvalonStudio.Shell
     using AvalonStudio.Extensibility.MainMenu;
 
     [Export]
+    [Export(typeof(IShell))]
+    [Shared]
     public class MinimalShell : IShell
     {
         public static IShell Instance { get; set; }
 
-        private List<ILanguageService> _languageServices;
-        private List<ISolutionType> _solutionTypes;
-        private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
-        private List<IDebugger> _debugger2s;
-        private List<ITestFramework> _testFrameworks;
-        private List<IEditorProvider> _editorProviders;
+
+        private IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> _languageServices;
+
+        private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
+        private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
+
+        private IEnumerable<IDebugger> _debugger2s;
+
+        private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
 
         public event EventHandler<FileOpenedEventArgs> FileOpened;
         public event EventHandler<FileOpenedEventArgs> FileClosed;
@@ -37,12 +41,23 @@ namespace AvalonStudio.Shell
         public event EventHandler<BuildEventArgs> BuildCompleted;
 
         [ImportingConstructor]
-        public MinimalShell([ImportMany] IEnumerable<IExtension> extensions)
+        public MinimalShell(
+            [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
+            [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
+            [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
+            [ImportMany] IEnumerable<IDebugger> debugger2s,
+            [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
+            [ImportMany] IEnumerable<IExtension> extensions)
         {
-            _languageServices = new List<ILanguageService>();
-            _projectTypes = new List<IProjectType>();
-            _solutionTypes = new List<ISolutionType>();
-            _testFrameworks = new List<ITestFramework>();
+            _languageServices = languageServices;
+
+            _solutionTypes = solutionTypes;
+            _projectTypes = projectTypes;
+
+            _debugger2s = debugger2s;
+
+            _testFrameworks = testFrameworks;
+
             _toolChains = new List<IToolChain>();
 
             IoC.RegisterConstant(this, typeof(IShell));
@@ -56,13 +71,7 @@ namespace AvalonStudio.Shell
             {
                 extension.Activation();
 
-                _languageServices.ConsumeExtension(extension);
                 _toolChains.ConsumeExtension(extension);
-                _debugger2s.ConsumeExtension(extension);
-                _solutionTypes.ConsumeExtension(extension);
-                _projectTypes.ConsumeExtension(extension);
-                _testFrameworks.ConsumeExtension(extension);
-                _editorProviders.ConsumeExtension(extension);
             }
 
             IoC.RegisterConstant(this);
@@ -89,17 +98,24 @@ namespace AvalonStudio.Shell
 
         public bool DebugMode { get; set; }
 
-        public IEnumerable<ISolutionType> SolutionTypes => _solutionTypes;
+        public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes => _projectTypes;
 
-        public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
-
-        public IEnumerable<ILanguageService> LanguageServices => _languageServices;
+        public IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices => _languageServices;
 
         public IEnumerable<IToolChain> ToolChains => _toolChains;
 
         public IEnumerable<IDebugger> Debugger2s => _debugger2s;
 
-        public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
+        public IEnumerable<ITestFramework> TestFrameworks
+        {
+            get
+            {
+                foreach (var testFramework in _testFrameworks)
+                {
+                    yield return testFramework.Value;
+                }
+            }
+        }
 
         public ISolution CurrentSolution
         {
@@ -146,8 +162,6 @@ namespace AvalonStudio.Shell
 
         public ColorScheme CurrentColorScheme { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public IEnumerable<IEditorProvider> EditorProviders => _editorProviders;
-
         public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false,
             bool selectLine = false, bool focus = true)
         {
@@ -159,7 +173,7 @@ namespace AvalonStudio.Shell
             throw new NotImplementedException();
         }
 
-        public void Build(IProject project)
+        public Task<bool> BuildAsync(IProject project)
         {
             throw new NotImplementedException();
         }
@@ -232,12 +246,7 @@ namespace AvalonStudio.Shell
         public Task CloseSolutionAsync()
         {
             throw new NotImplementedException();
-        }
-
-        public void InvalidateErrors()
-        {
-            throw new NotImplementedException();
-        }
+        }        
 
         public void CloseDocument(ISourceFile file)
         {
@@ -270,6 +279,16 @@ namespace AvalonStudio.Shell
         }
 
         public IMenu BuildEditorContextMenu()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveDocument(ISourceFile document)
         {
             throw new NotImplementedException();
         }

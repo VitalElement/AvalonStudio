@@ -1,16 +1,16 @@
-﻿using AvalonStudio.Extensibility;
+﻿using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Toolchains.GCC;
+using AvalonStudio.Utils;
 using Mono.Debugging.Client;
 using System;
 using System.IO;
-using AvalonStudio.Utils;
 using System.Threading.Tasks;
-using AvalonStudio.Packages;
 
 namespace AvalonStudio.Debugging.GDB.JLink
 {
+    [ExportDebugger]
     internal class JLinkDebugger : IDebugger2
     {
         public static string BaseDirectory
@@ -29,16 +29,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
         }
 
         public string BinDirectory => BaseDirectory;
-
-        public void Activation()
-        {
-        }
-
-        public void BeforeActivation()
-        {
-            IoC.RegisterConstant<JLinkDebugger>(this);
-        }
-
+        
         public DebuggerSession CreateSession(IProject project)
         {
             if (project.ToolChain is GCCToolchain)
@@ -66,7 +57,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
             {
                 Command = Path.Combine(project.CurrentDirectory, project.Executable).ToPlatformPath(),
                 Arguments = "",
-                WorkingDirectory = System.IO.Path.GetDirectoryName(Path.Combine(project.CurrentDirectory, project.Executable)),
+                WorkingDirectory = Path.GetDirectoryName(Path.Combine(project.CurrentDirectory, project.Executable)),
                 UseExternalConsole = false,
                 CloseExternalConsoleOnExit = true
             };
@@ -83,12 +74,19 @@ namespace AvalonStudio.Debugging.GDB.JLink
             return new JLinkSettingsFormViewModel(project);
         }
 
-        public async Task InstallAsync(IConsole console)
+        public async Task<bool> InstallAsync(IConsole console, IProject project)
         {
             if (Platform.PlatformIdentifier != Platforms.PlatformID.Unix)
             {
-                await PackageManager.EnsurePackage("AvalonStudio.Debuggers.JLink", console);
+                switch(await PackageManager.EnsurePackage("AvalonStudio.Debuggers.JLink", console))
+                {
+                    case PackageEnsureStatus.NotFound:
+                    case PackageEnsureStatus.Unknown:
+                        return false;
+                }
             }
+
+            return true;
         }
     }
 }

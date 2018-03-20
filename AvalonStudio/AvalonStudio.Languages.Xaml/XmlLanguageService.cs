@@ -5,11 +5,14 @@ using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    class XmlLanguageService : ILanguageService
+    [ExportLanguageService(ContentCapabilities.Xml)]
+    internal class XmlLanguageService : ILanguageService
     {
         private static List<ICodeEditorInputHelper> s_InputHelpers = new List<ICodeEditorInputHelper>
         {
@@ -19,9 +22,9 @@ namespace AvalonStudio.Languages.Xaml
             new InsertExtraNewLineBetweenAttributesOnEnterCodeInputHelper()
         };
 
-        public IIndentationStrategy IndentationStrategy { get; } = new XamlIndentationStrategy();
+        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
-        public virtual string Title => "XML";
+        public IIndentationStrategy IndentationStrategy { get; } = new XamlIndentationStrategy();
 
         public virtual string LanguageId => "xml";
 
@@ -41,15 +44,7 @@ namespace AvalonStudio.Languages.Xaml
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
-        public virtual string Identifier => "XML";
-
-        public void Activation()
-        {
-        }
-
-        public void BeforeActivation()
-        {
-        }
+        public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
         public virtual bool CanHandle(IEditor editor)
         {
@@ -140,6 +135,11 @@ namespace AvalonStudio.Languages.Xaml
         public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo)
         {
             throw new NotImplementedException();
+        }
+
+        public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
+        {
+            return Enumerable.Empty<IContextActionProvider>();
         }
     }
 }

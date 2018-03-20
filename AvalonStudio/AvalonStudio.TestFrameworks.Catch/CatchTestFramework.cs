@@ -9,16 +9,9 @@ using System.Xml.Linq;
 
 namespace AvalonStudio.TestFrameworks.Catch
 {
+    [ExportTestFramework]
     public class CatchTestFramework : ITestFramework
     {
-        public void Activation()
-        {
-        }
-
-        public void BeforeActivation()
-        {
-        }
-
         public async Task<IEnumerable<Test>> EnumerateTestsAsync(IProject project)
         {
             var result = new List<Test>();

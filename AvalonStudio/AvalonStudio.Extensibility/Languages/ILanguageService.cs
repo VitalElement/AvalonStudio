@@ -2,31 +2,47 @@ using AvaloniaEdit.Indentation;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
-using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Projects;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages
 {
-    public interface ILanguageService : IExtension
+    public enum DiagnosticsUpdatedKind
+    {
+        DiagnosticsRemoved,
+        DiagnosticsCreated
+    }
+
+    public class DiagnosticsUpdatedEventArgs : EventArgs
+    {
+        public DiagnosticsUpdatedEventArgs(object tag, ISourceFile associatedFile, DiagnosticsUpdatedKind kind, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
+        {
+            Tag = tag;
+            AssociatedSourceFile = associatedFile;
+            Kind = kind;
+            Diagnostics = diagnostics;
+            DiagnosticHighlights = diagnosticHighlights;
+        }
+
+        public object Tag { get; }
+        public ISourceFile AssociatedSourceFile { get; }
+        public DiagnosticsUpdatedKind Kind { get; }
+        public ImmutableArray<Diagnostic> Diagnostics { get; }
+        public SyntaxHighlightDataList DiagnosticHighlights { get; }
+    }
+
+    public interface ILanguageService
     {
         IIndentationStrategy IndentationStrategy { get; }
-
-        /// <summary>
-        ///     A description of the language supported by the service, i.e. C/C++
-        /// </summary>
-        string Title { get; }
 
         /// <summary>
         /// A file path compatible name for the language, i.e. cs, cpp, ts, css, go, vb, fsharp
         /// </summary>
         string LanguageId { get; }
-
-        /// <summary>
-        /// An identifier compatible with Dot CLI language identifiers i.e. C#, F#, VB, etc
-        /// </summary>
-        string Identifier { get; }
 
         /// <summary>
         /// Dictionary of functions for transforming snippet variables. Key is function name, the arugment is the string to transform.
@@ -44,13 +60,15 @@ namespace AvalonStudio.Languages
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
         IEnumerable<ICodeEditorInputHelper> InputHelpers { get; }
 
-        //IObservable<TextSegmentCollection<Diagnostic>> Diagnostics { get; }
+        event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;        
 
         bool IsValidIdentifierCharacter(char data);
 
         Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "");
 
-        Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
+        Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);        
+
+        IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor);
 
         Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName);
 

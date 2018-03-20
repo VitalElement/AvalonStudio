@@ -2,7 +2,9 @@
 {
     using Avalonia.Threading;
     using AvalonStudio.Debugging;
+    using AvalonStudio.Extensibility;
     using AvalonStudio.Platforms;
+    using AvalonStudio.Shell;
     using AvalonStudio.TestFrameworks;
     using AvalonStudio.Toolchains;
     using AvalonStudio.Utils;
@@ -22,6 +24,7 @@
         private Dispatcher uiDispatcher;
 
         public event EventHandler<ISourceFile> FileAdded;
+        public event EventHandler<ISourceFile> FileRemoved;
 
         public FileSystemProject(bool useDispatcher)
         {
@@ -131,22 +134,34 @@
                 file.Project = this;
             }
 
-            folderSystemWatcher = new FileSystemWatcher(CurrentDirectory);
-            folderSystemWatcher.Created += FolderSystemWatcher_Created;
-            folderSystemWatcher.Renamed += FolderSystemWatcher_Renamed;
-            folderSystemWatcher.Deleted += FolderSystemWatcher_Deleted;
-            folderSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
-            folderSystemWatcher.IncludeSubdirectories = true;
-            folderSystemWatcher.EnableRaisingEvents = true;
+            try
+            {
+                folderSystemWatcher = new FileSystemWatcher(CurrentDirectory);
+                folderSystemWatcher.Created += FolderSystemWatcher_Created;
+                folderSystemWatcher.Renamed += FolderSystemWatcher_Renamed;
+                folderSystemWatcher.Deleted += FolderSystemWatcher_Deleted;
+                folderSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
+                folderSystemWatcher.IncludeSubdirectories = true;
+                folderSystemWatcher.EnableRaisingEvents = true;
 
-            fileSystemWatcher = new FileSystemWatcher(CurrentDirectory);
-            fileSystemWatcher.Changed += FileSystemWatcher_Changed;
-            fileSystemWatcher.Created += FileSystemWatcher_Created;
-            fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
-            fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
-            fileSystemWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
-            fileSystemWatcher.IncludeSubdirectories = true;
-            fileSystemWatcher.EnableRaisingEvents = true;
+                fileSystemWatcher = new FileSystemWatcher(CurrentDirectory);
+                fileSystemWatcher.Changed += FileSystemWatcher_Changed;
+                fileSystemWatcher.Created += FileSystemWatcher_Created;
+                fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
+                fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
+                fileSystemWatcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
+                fileSystemWatcher.IncludeSubdirectories = true;
+                fileSystemWatcher.EnableRaisingEvents = true;
+            }
+            catch(System.IO.IOException e)
+            {
+                var console = IoC.Get<IConsole>();
+
+                console.WriteLine("Reached Max INotify Limit, to use AvalonStudio on Unix increase the INotify Limit");
+                console.WriteLine("often it is set here: '/proc/sys/fs/inotify/max_user_watches'");
+                
+                console.WriteLine(e.Message);
+            }
         }
 
         private void FileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
@@ -330,6 +345,10 @@
         {
             file.Parent?.Items.Remove(file);
             SourceFiles.Remove(file);
+
+            IoC.Get<IShell>().RemoveDocument(file);
+
+            FileRemoved?.Invoke(this, file);
         }
 
         public void RemoveFolder(IProjectFolder folder)
@@ -344,15 +363,15 @@
         {
             foreach (var item in folder.Items)
             {
-                if (item is IProjectFolder)
+                if (item is IProjectFolder subfolder)
                 {
-                    RemoveFiles(project, item as IProjectFolder);
-                    project.Folders.Remove(item as IProjectFolder);
+                    RemoveFiles(project, subfolder);                    
+                    project.Folders.Remove(subfolder);
                 }
 
-                if (item is ISourceFile)
+                if (item is ISourceFile file)
                 {
-                    project.SourceFiles.Remove(item as ISourceFile);
+                    project.RemoveFile(file);                    
                 }
             }
         }
@@ -429,8 +448,6 @@
         public abstract dynamic ToolchainSettings { get; set; }
         ISolutionFolder ISolutionItem.Parent { get; set; }
 
-        public abstract Guid ProjectTypeId { get; }        
-
         IReadOnlyList<ISourceFile> IProject.SourceFiles => SourceFiles.AsReadOnly();
 
         public abstract void AddReference(IProject project);
@@ -449,7 +466,7 @@
 
         public abstract bool RemoveReference(IProject project);
 
-        public abstract void ResolveReferences();
+        public abstract Task ResolveReferencesAsync();
 
         public abstract void Save();
 
@@ -478,6 +495,14 @@
         public int CompareTo(ISolutionItem other)
         {
             return this.DefaultCompareTo(other);
+        }
+
+        public virtual Task UnloadAsync()
+        {
+            fileSystemWatcher?.Dispose();
+            folderSystemWatcher?.Dispose();
+
+            return Task.CompletedTask;
         }
     }
 }

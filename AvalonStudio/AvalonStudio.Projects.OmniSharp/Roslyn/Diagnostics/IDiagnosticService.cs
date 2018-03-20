@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 
-namespace RoslynPad.Roslyn.Diagnostics
+namespace AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics
 {
     public interface IDiagnosticService
     {

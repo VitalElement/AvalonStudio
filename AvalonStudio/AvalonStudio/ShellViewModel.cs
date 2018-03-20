@@ -1,9 +1,7 @@
 using Avalonia.Input;
 using Avalonia.Threading;
 using AvalonStudio.Controls;
-using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Controls.Standard.ErrorList;
-using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
@@ -14,12 +12,12 @@ using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.MainToolBar;
 using AvalonStudio.Extensibility.Menus;
 using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Extensibility.ToolBars.Models;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
-using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
@@ -38,20 +36,16 @@ using System.Threading.Tasks;
 namespace AvalonStudio
 {
     [Export]
-    public class ShellViewModel : ViewModel, IShell
+    [Export(typeof(IShell))]
+    [Shared]
+    internal class ShellViewModel : ViewModel, IShell
     {
         public static ShellViewModel Instance { get; internal set; }
         private IToolBar _toolBar;
         private WorkspaceTaskRunner _taskRunner;
         private ToolBarDefinition _toolBarDefinition;
         private double _globalZoomLevel;
-        private List<ILanguageService> _languageServices;
-        private List<ISolutionType> _solutionTypes;
-        private List<IEditorProvider> _editorProviders;
-        private List<IProjectType> _projectTypes;
         private List<IToolChain> _toolChains;
-        private List<IDebugger> _debugger2s;
-        private List<ITestFramework> _testFrameworks;
         private List<MenuBarDefinition> _menuBarDefinitions;
         private List<MenuDefinition> _menuDefinitions;
         private List<MenuItemGroupDefinition> _menuItemGroupDefinitions;
@@ -61,6 +55,18 @@ namespace AvalonStudio
         private List<ToolBarDefinition> _toolBarDefinitions;
         private List<ToolBarItemGroupDefinition> _toolBarItemGroupDefinitions;
         private List<ToolBarItemDefinition> _toolBarItemDefinitions;
+
+        private Lazy<StatusBarViewModel> _statusBar;
+
+        private IEnumerable<Lazy<IEditorProvider>> _editorProviders;
+        private IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> _languageServices;
+
+        private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
+        private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
+
+        private IEnumerable<IDebugger> _debugger2s;
+
+        private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
 
         private Perspective currentPerspective;
 
@@ -75,14 +81,30 @@ namespace AvalonStudio
         private ObservableCollection<object> tools;
 
         [ImportingConstructor]
-        public ShellViewModel([ImportMany] IEnumerable<IExtension> extensions)
+        public ShellViewModel(
+            Lazy<StatusBarViewModel> statusBar,
+            IContentTypeService contentTypeService,
+            [ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
+            [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
+            [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
+            [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
+            [ImportMany] IEnumerable<IDebugger> debugger2s,
+            [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
+            [ImportMany] IEnumerable<IExtension> extensions)
         {
-            _languageServices = new List<ILanguageService>();
-            _debugger2s = new List<IDebugger>();
-            _projectTypes = new List<IProjectType>();
-            _editorProviders = new List<IEditorProvider>();
-            _solutionTypes = new List<ISolutionType>();
-            _testFrameworks = new List<ITestFramework>();
+            _statusBar = statusBar;
+            IoC.RegisterConstant<IStatusBar>(_statusBar.Value);
+
+            _editorProviders = editorProviders;
+            _languageServices = languageServices;
+
+            _solutionTypes = solutionTypes;
+            _projectTypes = projectTypes;
+
+            _debugger2s = debugger2s;
+
+            _testFrameworks = testFrameworks;
+
             _toolChains = new List<IToolChain>();
             _menuBarDefinitions = new List<MenuBarDefinition>();
             _menuDefinitions = new List<MenuDefinition>();
@@ -104,7 +126,6 @@ namespace AvalonStudio
 
             CurrentPerspective = Perspective.Editor;
 
-            StatusBar = new StatusBarViewModel();
             DocumentTabs = new DocumentTabControlViewModel();
 
             Console = IoC.Get<IConsole>();
@@ -133,14 +154,7 @@ namespace AvalonStudio
             {
                 extension.Activation();
 
-                _languageServices.ConsumeExtension(extension);
                 _toolChains.ConsumeExtension(extension);
-                //_projectTemplates.ConsumeExtension(extension);
-                _debugger2s.ConsumeExtension(extension);
-                _solutionTypes.ConsumeExtension(extension);
-                _projectTypes.ConsumeExtension(extension);
-                _testFrameworks.ConsumeExtension(extension);
-                _editorProviders.ConsumeExtension(extension);
 
                 _commandDefinitions.ConsumeExtension(extension);
             }
@@ -241,9 +255,7 @@ namespace AvalonStudio
             RightBottomTabs.SelectedTool = RightBottomTabs.Tools.FirstOrDefault();
             MiddleTopTabs.SelectedTool = MiddleTopTabs.Tools.FirstOrDefault();
 
-            StatusBar.LineNumber = 1;
-            StatusBar.Column = 1;
-            StatusBar.PlatformString = Platform.OSDescription + " " + Platform.AvalonRID;
+            IoC.Get<IStatusBar>().ClearText();
 
             ProcessCancellationToken = new CancellationTokenSource();
 
@@ -252,8 +264,6 @@ namespace AvalonStudio
             var editorSettings = Settings.GetSettings<EditorSettings>();
 
             _globalZoomLevel = editorSettings.GlobalZoomLevel;
-
-            IoC.RegisterConstant(this);
 
             this.WhenAnyValue(x => x.GlobalZoomLevel).Subscribe(zoomLevel =>
             {
@@ -278,7 +288,7 @@ namespace AvalonStudio
             });
         }
 
-        public IMenu BuildEditorContextMenu ()
+        public IMenu BuildEditorContextMenu()
         {
             var menuBuilder = new MenuBuilder(_menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
 
@@ -360,27 +370,42 @@ namespace AvalonStudio
 
         public IErrorList ErrorList { get; }
 
-        public StatusBarViewModel StatusBar { get; }
+        public StatusBarViewModel StatusBar => _statusBar.Value;
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
-        public IEnumerable<IEditorProvider> EditorProviders => _editorProviders;
+        public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes => _projectTypes;
 
-        public IEnumerable<ISolutionType> SolutionTypes => _solutionTypes;
-
-        public IEnumerable<IProjectType> ProjectTypes => _projectTypes;
-
-        public IEnumerable<ILanguageService> LanguageServices => _languageServices;
+        public IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices => _languageServices;
 
         public IEnumerable<IToolChain> ToolChains => _toolChains;
 
         public IEnumerable<IDebugger> Debugger2s => _debugger2s;
 
-        public IEnumerable<ITestFramework> TestFrameworks => _testFrameworks;
+        public IEnumerable<ITestFramework> TestFrameworks
+        {
+            get
+            {
+                foreach (var testFramework in _testFrameworks)
+                {
+                    yield return testFramework.Value;
+                }
+            }
+        }
 
         public void AddDocument(IDocumentTabViewModel document, bool temporary = false)
         {
             DocumentTabs.OpenDocument(document, temporary);
+        }
+
+        public void RemoveDocument (ISourceFile file)
+        {
+            var document = DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(d => d.SourceFile == file);
+
+            if(document != null)
+            {
+                RemoveDocument(document);
+            }            
         }
 
         public void RemoveDocument(IDocumentTabViewModel document)
@@ -392,7 +417,7 @@ namespace AvalonStudio
 
             if (document is EditorViewModel doc)
             {
-                doc.Editor.Save();
+                doc.Editor?.Save();
             }
 
             DocumentTabs.CloseDocument(document);
@@ -404,7 +429,7 @@ namespace AvalonStudio
 
             if (currentTab == null)
             {
-                var provider = EditorProviders.FirstOrDefault(p => p.CanEdit(file));
+                var provider = _editorProviders.FirstOrDefault(p => p.Value.CanEdit(file))?.Value;
 
                 if (provider != null)
                 {
@@ -498,7 +523,7 @@ namespace AvalonStudio
 
             if (project != null)
             {
-                Build(project);
+                BuildAsync(project).GetAwaiter();
             }
         }
 
@@ -526,8 +551,10 @@ namespace AvalonStudio
             }
         }
 
-        public void Build(IProject project)
+        public async Task<bool> BuildAsync(IProject project)
         {
+            bool result = false;
+
             SaveAll();
 
             Console.Clear();
@@ -536,9 +563,9 @@ namespace AvalonStudio
             {
                 BuildStarting?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
 
-                TaskRunner.RunTask(() =>
+                await TaskRunner.RunTask(() =>
                 {
-                    project.ToolChain.Build(Console, project).Wait();
+                    result = project.ToolChain.Build(Console, project).GetAwaiter().GetResult();
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
@@ -550,6 +577,8 @@ namespace AvalonStudio
             {
                 Console.WriteLine($"No toolchain selected for {project.Name}");
             }
+
+            return result;
         }
 
         public void ShowQuickCommander()
@@ -704,50 +733,20 @@ namespace AvalonStudio
             Environment.Exit(1);
         }
 
-        public void InvalidateErrors()
+        public void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics)
         {
-            var allErrors = new List<ErrorViewModel>();
-            var toRemove = new List<ErrorViewModel>();
-
-            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
-            {
-                /*if (document.Diagnostics != null)
-                {
-                    foreach (var diagnostic in document.Diagnostics)
-                    {
-                        var error = new ErrorViewModel(diagnostic);
-                        var matching = allErrors.FirstOrDefault(err => err.IsEqual(error));
-
-                        if (matching == null)
-                        {
-                            allErrors.Add(error);
-                        }
-                    }
-                }*/
-            }
-
-            foreach (var error in ErrorList.Errors)
-            {
-                var matching = allErrors.SingleOrDefault(err => err.IsEqual(error));
-
-                if (matching == null)
-                {
-                    toRemove.Add(error);
-                }
-            }
+            var toRemove = ErrorList.Errors.Where(e => Equals(e.Tag, diagnostics.Tag) && e.AssociatedFile == diagnostics.AssociatedSourceFile).ToList();
 
             foreach (var error in toRemove)
             {
                 ErrorList.Errors.Remove(error);
             }
 
-            foreach (var error in allErrors)
+            foreach (var diagnostic in diagnostics.Diagnostics)
             {
-                var matching = ErrorList.Errors.SingleOrDefault(err => err.IsEqual(error));
-
-                if (matching == null)
+                if (diagnostic.Level != DiagnosticLevel.Hidden)
                 {
-                    ErrorList.Errors.Add(error);
+                    ErrorList.Errors.InsertSorted(new ErrorViewModel(diagnostic, diagnostics.Tag, diagnostics.AssociatedSourceFile));
                 }
             }
         }
@@ -756,18 +755,26 @@ namespace AvalonStudio
         {
             if (CurrentSolution != null)
             {
-                CloseSolution();
+                await CloseSolutionAsync();
             }
 
             if (System.IO.File.Exists(path))
             {
-                var solutionType = SolutionTypes.FirstOrDefault(st => st.Extensions.Contains(System.IO.Path.GetExtension(path).Substring(1)));
+                var extension = System.IO.Path.GetExtension(path);
+                var solutionType = _solutionTypes.FirstOrDefault(
+                    s => s.Metadata.SupportedExtensions.Any(e => extension.EndsWith(e)));
 
                 if (solutionType != null)
                 {
-                    var solution = await solutionType.LoadAsync(path);
+                    StatusBar.SetText($"Loading Solution: {path}");
+
+                    var solution = await solutionType.Value.LoadAsync(path);
 
                     await solution.LoadSolutionAsync();
+
+                    await solution.RestoreSolutionAsync();
+
+                    StatusBar.ClearText();
 
                     CurrentSolution = solution;
 
@@ -776,8 +783,10 @@ namespace AvalonStudio
             }
         }
 
-        public void CloseSolution()
+        public async Task CloseSolutionAsync()
         {
+            ErrorList.Errors.Clear();
+
             var documentsToClose = DocumentTabs.Documents.ToList();
 
             foreach (var document in documentsToClose)
@@ -787,6 +796,10 @@ namespace AvalonStudio
                     DocumentTabs.CloseDocument(evm);
                 }
             }
+
+            await CurrentSolution.UnloadProjectsAsync();
+
+            await CurrentSolution.UnloadSolutionAsync();
 
             CurrentSolution = null;
         }

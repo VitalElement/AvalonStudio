@@ -1,34 +1,21 @@
-﻿namespace AvalonStudio.Debugging.DotNetCore
+﻿using AvalonStudio.Extensibility.Projects;
+using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
+using AvalonStudio.Utils;
+using Mono.Debugging.Client;
+using Mono.Debugging.Win32;
+using System.IO;
+using System.Threading.Tasks;
+
+namespace AvalonStudio.Debugging.DotNetCore
 {
-    using AvalonStudio.CommandLineTools;
-    using AvalonStudio.Extensibility;
-    using AvalonStudio.GlobalSettings;
-    using AvalonStudio.Platforms;
-    using AvalonStudio.Projects;
-    using AvalonStudio.Projects.OmniSharp;
-    using Mono.Debugging.Client;
-    using Mono.Debugging.Win32;
-    using System.IO;
-    using AvalonStudio.Utils;
-    using System;
-    using System.Threading.Tasks;
-    using AvalonStudio.Projects.OmniSharp.DotnetCli;
-
-    public class DotNetCoreDebugger : IDebugger2
+    [ExportDebugger]
+    internal class DotNetCoreDebugger : IDebugger2
     {
-        public string BinDirectory => Path.GetDirectoryName(Settings.GetSettings<DotNetToolchainSettings>().DotNetPath);
-
-        public void Activation()
-        {
-        }
-
-        public void BeforeActivation()
-        {
-            IoC.RegisterConstant<DotNetCoreDebugger>(this);
-        }
+        public string BinDirectory => DotNetCliService.Instance.DotNetPath;
 
         public DebuggerSession CreateSession(IProject project)
-        {            
+        {
             string dbgShimName = "dbgshim";
 
             if (Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
@@ -76,9 +63,9 @@
             return null;
         }
 
-        public Task InstallAsync(IConsole console)
+        public Task<bool> InstallAsync(IConsole console, IProject project)
         {
-            return Task.FromResult(0);
+            return Task.FromResult(true);
         }
     }
 }

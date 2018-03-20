@@ -45,13 +45,9 @@ namespace AvalonStudio.Shell
 
         ColorScheme CurrentColorScheme { get; set; }
 
-        IEnumerable<IEditorProvider> EditorProviders { get; }
+        IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
 
-        IEnumerable<ISolutionType> SolutionTypes { get; }
-
-        IEnumerable<IProjectType> ProjectTypes { get; }
-
-        IEnumerable<ILanguageService> LanguageServices { get; }
+        IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
 
         IEnumerable<IToolChain> ToolChains { get; }
 
@@ -69,17 +65,19 @@ namespace AvalonStudio.Shell
 
         Task OpenSolutionAsync(string path);
 
-        void CloseSolution();
+        Task CloseSolutionAsync();
 
         void AddDocument(IDocumentTabViewModel document, bool temporary = true);
 
         void RemoveDocument(IDocumentTabViewModel document);
 
+        void RemoveDocument(ISourceFile document);
+
         void InvalidateCodeAnalysis();
 
-        void InvalidateErrors();
+        void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics);
 
-        void Build(IProject project);
+        Task<bool> BuildAsync(IProject project);
 
         void Clean(IProject project);
 

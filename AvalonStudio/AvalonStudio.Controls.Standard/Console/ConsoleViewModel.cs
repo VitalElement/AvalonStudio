@@ -112,7 +112,7 @@ namespace AvalonStudio.Controls.Standard.Console
 
         public void BeforeActivation()
         {
-            IoC.RegisterConstant(this, typeof(IConsole));
+            IoC.RegisterConstant<IConsole>(this);
         }
 
         public void Activation()

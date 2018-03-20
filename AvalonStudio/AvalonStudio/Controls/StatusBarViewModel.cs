@@ -1,10 +1,21 @@
+using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using System.Composition;
 
 namespace AvalonStudio.Controls
 {
-    public class StatusBarViewModel : ReactiveObject
+    [Export]
+    [Export(typeof(IStatusBar))]
+    [Shared]
+    public class StatusBarViewModel : ReactiveObject, IStatusBar
     {
+        public StatusBarViewModel()
+        {
+            LineNumber = 1;
+            Column = 1;
+        }
+
         private int column;
 
         private bool debugMode;
@@ -15,7 +26,7 @@ namespace AvalonStudio.Controls
 
         private int offset;
 
-        private string platformString;
+        private string _text;
 
         public bool DebugMode
         {
@@ -30,16 +41,15 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public string PlatformString
+        public string Text
         {
             get
             {
-                return platformString;
+                return _text;
             }
             set
             {
-                platformString = value;
-                this.RaisePropertyChanged();
+                this.RaiseAndSetIfChanged(ref _text, value);
             }
         }
 
@@ -127,6 +137,18 @@ namespace AvalonStudio.Controls
 
                 return string.Format("Col {0}", Column);
             }
+        }
+
+        public bool SetText(string text)
+        {
+            Text = text;
+
+            return true;
+        }
+
+        public void ClearText ()
+        {
+            Text = "Ready";
         }
     }
 }

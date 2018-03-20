@@ -170,8 +170,6 @@ Program.main();
         [JsonConverter(typeof(ExpandoObjectConverter))]
         public override dynamic ToolchainSettings { get; set; }
 
-        public override Guid ProjectTypeId => throw new NotImplementedException();
-
         public override void AddReference(IProject project)
         {
             throw new NotImplementedException();
@@ -212,9 +210,9 @@ Program.main();
             return false;
         }
 
-        public override void ResolveReferences()
+        public override Task ResolveReferencesAsync()
         {
-            //throw new NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public override void Save()

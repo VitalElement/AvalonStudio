@@ -16,7 +16,8 @@ namespace AvalonStudio.Projects
 
         public static IProjectType GetProjectType(this Guid projectTypeId)
         {
-            return IoC.Get<IShell>().ProjectTypes.FirstOrDefault(type => type.ProjectTypeId == projectTypeId);
+            return IoC.Get<IShell>().ProjectTypes.FirstOrDefault(
+                type => type.Metadata.ProjectTypeGuid == projectTypeId)?.Value;
         }
 
         internal static void SetParentInternal(this ISolutionItem item, ISolutionFolder parent)

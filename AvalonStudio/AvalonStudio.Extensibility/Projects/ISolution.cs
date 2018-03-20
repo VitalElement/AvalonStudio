@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects
@@ -16,7 +16,7 @@ namespace AvalonStudio.Projects
 
         void UpdateItem(ISolutionItem item);
 
-        T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem;
+        T AddItem<T>(T item, Guid? itemGuid = null, ISolutionFolder parent = null) where T : ISolutionItem;
 
         void RemoveItem(ISolutionItem item);
 
@@ -24,9 +24,17 @@ namespace AvalonStudio.Projects
 
         IProject FindProject(string name);
 
+        IProject FindProjectByPath(string path);
+
+        Task RestoreSolutionAsync();
+
         Task LoadSolutionAsync();
 
         Task LoadProjectsAsync();
+
+        Task UnloadSolutionAsync();
+
+        Task UnloadProjectsAsync();
 
         void Save();
     }

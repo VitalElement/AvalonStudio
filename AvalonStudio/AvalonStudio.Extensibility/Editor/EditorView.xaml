@@ -8,17 +8,17 @@
              xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
              xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.Models;assembly=AvalonStudio.Extensibility"
              Name="Editor">
-    <UserControl.KeyBindings>
-        <KeyBinding Command="{Binding RenameSymbolCommand}" Gesture="F2" />
-    </UserControl.KeyBindings>
-    <Grid>
-        <DockPanel>
-            <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
-                <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
-            </Grid>
-            <Grid>
-                <Grid.ContextMenu>
-                    <!--<ContextMenu Items="{Binding ContextMenu}">
+  <UserControl.KeyBindings>
+    <KeyBinding Command="{Binding RenameSymbolCommand}" Gesture="F2" />
+  </UserControl.KeyBindings>
+  <Grid>
+    <DockPanel>
+      <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
+        <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
+      </Grid>
+      <Grid>
+        <Grid.ContextMenu>
+          <!--<ContextMenu Items="{Binding ContextMenu}">
                         <ContextMenu.Styles>
                             <Style Selector="MenuItem">
                                 <Setter Property="Command" Value="{Binding Command}" />
@@ -39,25 +39,25 @@
                             </DataTemplate>
                         </ContextMenu.DataTemplates>
                     </ContextMenu>-->
-                    <ContextMenu>
-                        <MenuItem Header="Goto Definition" Command="{Binding GotoDefinitionCommand}" />
-                    </ContextMenu>
-                </Grid.ContextMenu>
-                <editor:CodeEditor Name="editor"
-                                   BorderThickness="0" Margin="0"
-                                   VerticalAlignment="Stretch"
-                                   Background="{DynamicResource ThemeEditorBackground}"                                   
-                                   FontFamily="{Binding FontFamily}" 
-                                   FontSize="{Binding VisualFontSize}"                                  
-                                   SourceFile="{Binding SourceFile}" 
-                                   IsDirty="{Binding IsDirty}"
-                                   IsReadOnly="{Binding IsReadOnly}"
-                                   SourceText="{Binding SourceText}"
-                                   HighlightSelectedWord="False"
-                                   ColorScheme="{Binding ColorScheme}"
-                                   DocumentAccessor="{Binding DocumentAccessor}">
-                </editor:CodeEditor>
-            </Grid>
-        </DockPanel>
-    </Grid>
+          <ContextMenu>
+            <MenuItem Header="Goto Definition" Command="{Binding GotoDefinitionCommand}" />
+          </ContextMenu>
+        </Grid.ContextMenu>
+        <editor:CodeEditor Name="editor"
+                           BorderThickness="0" Margin="0"
+                           VerticalAlignment="Stretch"
+                           FontFamily="{Binding FontFamily}"
+                           FontSize="{Binding VisualFontSize}"
+                           SourceFile="{Binding SourceFile}"
+                           IsDirty="{Binding IsDirty}"
+                           IsReadOnly="{Binding IsReadOnly}"
+                           SourceText="{Binding SourceText}"
+                           HighlightSelectedWord="False"
+                           ColorScheme="{Binding ColorScheme}"
+                           
+                           DocumentAccessor="{Binding DocumentAccessor}">
+        </editor:CodeEditor>
+      </Grid>
+    </DockPanel>
+  </Grid>
 </UserControl>

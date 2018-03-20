@@ -50,7 +50,10 @@ namespace AvalonStudio.Extensibility.Theme
             EditorBackground = Brush.Parse("#FFFFFFFF"),
             Accent = Brush.Parse("#FF007ACC"),
             AccentLight = Brush.Parse("#FF1C97EA"),
-            AccentForeground = Brush.Parse("#FFF0F0F0")
+            AccentForeground = Brush.Parse("#FFF0F0F0"),
+            ErrorListError = Brush.Parse("#E34937"),
+            ErrorListWarning = Brush.Parse("#D78A04"),
+            ErrorListInfo = Brush.Parse("#1C7CD2")
         };
 
         public static readonly ColorTheme VisualStudioDark = new ColorTheme
@@ -70,7 +73,10 @@ namespace AvalonStudio.Extensibility.Theme
             EditorBackground = Brush.Parse("#FF1E1E1E"),
             Accent = Brush.Parse("#FF007ACC"),
             AccentLight = Brush.Parse("#FF1C97EA"),
-            AccentForeground = Brush.Parse("#FFF0F0F0")
+            AccentForeground = Brush.Parse("#FFF0F0F0"),
+            ErrorListError = Brush.Parse("#E34937"),
+            ErrorListWarning = Brush.Parse("#D78A04"),
+            ErrorListInfo = Brush.Parse("#1C7CD2")
         };
 
         public static ColorTheme LoadTheme (string name)
@@ -91,19 +97,25 @@ namespace AvalonStudio.Extensibility.Theme
 
         public static void LoadTheme(ColorTheme theme)
         {
-            Application.Current.Resources["ThemeBackgroundBrush"] = theme.Background;
-            Application.Current.Resources["ThemeControlBackgroundBrush"] = theme.ControlBackground;
-            Application.Current.Resources["ThemeControlDarkBrush"] = theme.ControlDark;
-            Application.Current.Resources["ThemeControlMidBrush"] = theme.ControlMid;
-            Application.Current.Resources["ThemeControlLightBrush"] = theme.ControlLight;
-            Application.Current.Resources["ThemeForegroundBrush"] = theme.Foreground;
-            Application.Current.Resources["ThemeBorderDarkBrush"] = theme.BorderDark;
-            Application.Current.Resources["ThemeEditorBackground"] = theme.EditorBackground;
-            Application.Current.Resources["ApplicationAccentBrush"] = theme.Accent;
-            Application.Current.Resources["ApplicationAccentBrushLight"] = theme.AccentLight;
-            Application.Current.Resources["ApplicationAccentForegroundBrush"] = theme.AccentForeground;
+            if (CurrentTheme != theme)
+            {
+                Application.Current.Resources["ThemeBackgroundBrush"] = theme.Background;
+                Application.Current.Resources["ThemeControlBackgroundBrush"] = theme.ControlBackground;
+                Application.Current.Resources["ThemeControlDarkBrush"] = theme.ControlDark;
+                Application.Current.Resources["ThemeControlMidBrush"] = theme.ControlMid;
+                Application.Current.Resources["ThemeControlLightBrush"] = theme.ControlLight;
+                Application.Current.Resources["ThemeForegroundBrush"] = theme.Foreground;
+                Application.Current.Resources["ThemeBorderDarkBrush"] = theme.BorderDark;
+                Application.Current.Resources["ThemeEditorBackground"] = theme.EditorBackground;
+                Application.Current.Resources["ApplicationAccentBrush"] = theme.Accent;
+                Application.Current.Resources["ApplicationAccentBrushLight"] = theme.AccentLight;
+                Application.Current.Resources["ApplicationAccentForegroundBrush"] = theme.AccentForeground;
+                Application.Current.Resources["ErrorListError"] = theme.ErrorListError;
+                Application.Current.Resources["ErrorListWarning"] = theme.ErrorListWarning;
+                Application.Current.Resources["ErrorListInfo"] = theme.ErrorListInfo;
 
-            CurrentTheme = theme;
+                CurrentTheme = theme;
+            }
         }
 
         public static ColorTheme CurrentTheme { get; private set; }
@@ -139,5 +151,11 @@ namespace AvalonStudio.Extensibility.Theme
         public IBrush ControlBackground { get; set; }
 
         public IBrush EditorBackground { get; set; }
+
+        public IBrush ErrorListError { get; set; }
+
+        public IBrush ErrorListWarning { get; set; }
+
+        public IBrush ErrorListInfo { get; set; }
     }
 }

@@ -3,14 +3,10 @@ using System.IO;
 
 namespace AvalonStudio.Projects
 {
-    public enum Language
+    public interface ISourceFile : IProjectItem, IComparable<ISourceFile>, IDeleteable, IComparable<string>
     {
-        C,
-        Cpp
-    }
+        string ContentType { get; }
 
-    public interface ISourceFile : IProjectItem, IComparable<ISourceFile>, IComparable<string>
-    {
         string FilePath { get; }
         string Extension { get; }
         string CurrentDirectory { get; }

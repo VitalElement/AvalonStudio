@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.Standard.SolutionExplorer;assembly=AvalonStudio.Controls.Standard">
   <Controls:ToolControl Title="Solution Explorer">
@@ -28,6 +28,9 @@
         <TreeView.Styles>
           <Style Selector="TreeViewItem">
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+          </Style>          
+          <Style Selector="ContextMenu">
+            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
           </Style>
         </TreeView.Styles>
         <TreeView.DataTemplates>
@@ -62,6 +65,7 @@
                   <MenuItem Header="Open Developer Console" Command="{Binding DevConsoleCommand}" />
                   <Separator />
                   <MenuItem Header="Add">
+                    <MenuItem Header="New File" Command="{Binding NewFileCommand}" />
                     <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
                     <MenuItem Header="Exisiting Item..." />
                     <MenuItem Header="New Folder..." />
@@ -100,17 +104,18 @@
           </TreeDataTemplate>
 
           <TreeDataTemplate DataType="ViewModels:SourceFileViewModel">
-            <StackPanel Orientation="Horizontal" Gap="4">
+            <StackPanel Orientation="Horizontal" Gap="4">              
               <StackPanel.ContextMenu>
                 <ContextMenu>
                   <MenuItem Header="Rename" />
                   <Separator />
                   <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
                   <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
+                  <MenuItem Header="Delete" Command="{Binding DeleteCommand}" HotKey="Delete" />
                 </ContextMenu>
               </StackPanel.ContextMenu>
               <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-              <Controls:EditableTextBlock Text="{Binding Title}" Height="15" />
+              <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" />
             </StackPanel>
           </TreeDataTemplate>
 
@@ -124,6 +129,7 @@
                   <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
                   <Separator />
                   <MenuItem Header="Add">
+                    <MenuItem Header="New File" Command="{Binding NewFileCommand}" />
                     <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
                     <MenuItem Header="Exisiting Item..." />
                     <MenuItem Header="New Folder..." />
