@@ -14,5 +14,6 @@
     <StyleInclude Source="resm:AvalonStudio.Debugging.Icons.Icons.xaml?assembly=AvalonStudio.Debugging" />
     <StyleInclude Source="resm:AvalonStudio.Controls.Standard.SolutionExplorer.Icons.Icons.xaml?assembly=AvalonStudio.Controls.Standard" />
     <StyleInclude Source="resm:AvalonStudio.Languages.Xaml.AvaloniaPreviewer.xaml?assembly=AvalonStudio.Languages.Xaml" />
+    <StyleInclude Source="resm:VtNetCore.Avalonia.VirtualTerminalControl.xaml?assembly=VtNetCore.Avalonia" />
   </Application.Styles>
 </Application>
