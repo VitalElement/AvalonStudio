@@ -15,6 +15,7 @@
     <None Remove="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
     <None Remove="SolutionExplorer\TemplateView.xaml" />
     <None Remove="SolutionExplorer\TextTemplateParameter.xaml" />
+    <None Remove="Terminal\TerminalView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AboutScreen\Assets\logo-256.png" />
@@ -37,6 +38,9 @@
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="SolutionExplorer\TextTemplateParameter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Terminal\TerminalView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
   </ItemGroup>
