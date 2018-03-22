@@ -158,6 +158,11 @@
         {
             return Task.CompletedTask;
         }
+
+        public bool IsItemSupported(string languageName)
+        {
+            return false;
+        }
     }
 
     public class NotFoundProject : PlaceHolderProject

@@ -68,5 +68,7 @@ namespace AvalonStudio.Projects
         Task UnloadAsync();
 
         void Save();
+
+        bool IsItemSupported(string languageName);
     }
 }

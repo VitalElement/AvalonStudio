@@ -24,7 +24,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             var shell = IoC.Get<IShell>();
             var templateManager = IoC.Get<TemplateManager>();            
 
-            templates = new ObservableCollection<TemplateViewModel>(templateManager.ListItemTemplates("").Select(t=>new TemplateViewModel(t)).ToList());
+            templates = new ObservableCollection<TemplateViewModel>(templateManager.ListItemTemplates("")
+                .Where(t=> folder.Project.IsItemSupported(t.Language))
+                .Select(t=>new TemplateViewModel(t))
+                .ToList());
 
             SelectedTemplate = templates.FirstOrDefault();
 
