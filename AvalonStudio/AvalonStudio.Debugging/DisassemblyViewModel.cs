@@ -42,11 +42,9 @@ namespace AvalonStudio.Debugging
 
         private ulong selectedIndex;
 
-        public DisassemblyViewModel()
+        public DisassemblyViewModel() : base("Disassembly")
         {
-            Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
-
-            Title = "Disassembly";
+            Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });            
 
             document = new TextDocument();
             runModeDocument = new TextDocument

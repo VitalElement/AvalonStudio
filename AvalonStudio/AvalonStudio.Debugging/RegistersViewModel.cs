@@ -23,7 +23,7 @@ namespace AvalonStudio.Debugging
 
         private readonly List<RegisterViewModel> lastChangedRegisters;
 
-        public RegistersViewModel() : base(new ObservableCollection<RegisterViewModel>())
+        public RegistersViewModel() : base("Registers", new ObservableCollection<RegisterViewModel>())
         {
             Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
 

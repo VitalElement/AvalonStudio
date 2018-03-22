@@ -21,11 +21,10 @@ namespace AvalonStudio.Debugging
         private ObservableCollection<ObjectValueViewModel> children;
         public List<ObjectValueViewModel> LastChangedRegisters { get; set; }
 
-        public WatchListViewModel()
+        public WatchListViewModel() : base("Watch List")
         {
             Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
-            watches = new List<ObjectValue>();
-            Title = "Watch List";
+            watches = new List<ObjectValue>();            
             Children = new ObservableCollection<ObjectValueViewModel>();
             LastChangedRegisters = new List<ObjectValueViewModel>();
 

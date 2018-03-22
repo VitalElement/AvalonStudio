@@ -7,15 +7,16 @@ namespace AvalonStudio.MVVM
     public abstract class ToolViewModel : ViewModel
     {
         private bool _isVisible;
-
-        // TODO This should use ToolControl
+        
         private string _title;
 
-        protected ToolViewModel()
+        protected ToolViewModel(string title)
         {
             _isVisible = true;
 
             IsVisibleObservable = this.ObservableForProperty(x => x.IsVisible).Select(x => x.Value);
+
+            _title = title;
         }
 
         public IObservable<bool> IsVisibleObservable { get; }

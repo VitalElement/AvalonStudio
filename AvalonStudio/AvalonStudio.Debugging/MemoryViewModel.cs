@@ -14,7 +14,7 @@
         public const string ToolId = "CIDMEM001";
         private const int Columns = 32;
 
-        public MemoryViewModel()
+        public MemoryViewModel() : base("Memory Viewer")
         {
             Address = "0";
             IsVisible = false;

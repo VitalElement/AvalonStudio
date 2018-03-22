@@ -16,9 +16,8 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         private ErrorViewModel selectedError;
         private IShell shell;
 
-        public ErrorListViewModel()
+        public ErrorListViewModel() : base("Error List")
         {
-            Title = "Error List";
             errors = new ObservableCollection<ErrorViewModel>();
         }
 

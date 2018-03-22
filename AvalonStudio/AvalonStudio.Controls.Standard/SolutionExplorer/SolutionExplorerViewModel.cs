@@ -32,11 +32,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         [ImportingConstructor]
         public SolutionExplorerViewModel(
-            [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes)
+            [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes) : base("Solution Explorer")
         {
             _solutionTypes = solutionTypes;
-
-            Title = "Solution Explorer";
         }
 
         public new ISolution Model

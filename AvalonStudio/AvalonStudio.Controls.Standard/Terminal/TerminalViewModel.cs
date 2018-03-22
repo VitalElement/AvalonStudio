@@ -4,8 +4,12 @@ using System;
 
 namespace AvalonStudio.Controls.Standard.Terminal
 {
-    class TerminalViewModel : ToolViewModel, IExtension
+    public class TerminalViewModel : ToolViewModel, IExtension
     {
+        public TerminalViewModel() : base("Terminal")
+        {            
+        }
+
         public override Location DefaultLocation => Location.BottomRight;
 
         public void Activation()
