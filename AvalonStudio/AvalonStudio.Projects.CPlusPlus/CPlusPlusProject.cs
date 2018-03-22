@@ -690,5 +690,17 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             return Name.CompareTo(other.Name);
         }
+
+        public override bool IsItemSupported(string languageName)
+        {
+            switch(languageName)
+            {
+                case "C++":
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
     }
 }

@@ -504,5 +504,7 @@
 
             return Task.CompletedTask;
         }
+
+        public abstract bool IsItemSupported(string languageName);
     }
 }
