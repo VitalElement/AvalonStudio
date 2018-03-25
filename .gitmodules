@@ -10,6 +10,6 @@
 [submodule "templating"]
 	path = templating
 	url = https://github.com/VitalElement/templating.git
-[submodule "VtNetCore.UWP"]
-	path = VtNetCore.UWP
-	url = https://github.com/VitalElement/VtNetCore.UWP.git
+[submodule "VtNetCore.Avalonia"]
+	path = VtNetCore.Avalonia
+	url = https://github.com/VitalElement/VtNetCore.Avalonia.git
