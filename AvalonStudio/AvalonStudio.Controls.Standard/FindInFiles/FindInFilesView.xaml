@@ -2,6 +2,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
   <cont:ToolControl Title="Find In Files">
-
+    <DockPanel LastChildFill="True">
+      <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Gap="4">
+        <TextBox Text="{Binding SearchTerm}" />
+        <Button Content="Find" Command="{Binding FindCommand}" />
+      </StackPanel>
+      <ListBox Items="{Binding Results}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal" Gap="4">
+              <TextBlock Text="{Binding FilePath}" />
+              <TextBlock Text="{Binding LineNumber}" />
+              <TextBlock Text="{Binding LineText}" />
+            </StackPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
   </cont:ToolControl>
 </UserControl>
