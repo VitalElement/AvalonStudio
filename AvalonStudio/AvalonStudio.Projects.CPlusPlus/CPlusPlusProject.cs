@@ -80,12 +80,6 @@ namespace AvalonStudio.Projects.CPlusPlus
         public override List<string> ExcludedFiles { get; set; }
 
         [JsonIgnore]
-        public IList<IMenuItem> ProjectMenuItems
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        [JsonIgnore]
         public bool IsBuilding { get; set; }
 
         [JsonIgnore]
