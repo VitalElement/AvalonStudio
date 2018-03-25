@@ -30,9 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
-    <ProjectReference Include="..\..\VtNetCore.UWP\VtNetCore.Avalonia\VtNetCore.Avalonia.csproj">
-      <Private>true</Private>
-    </ProjectReference>
+    <ProjectReference Include="..\..\VtNetCore.Avalonia\VtNetCore.Avalonia\VtNetCore.Avalonia.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
   </ItemGroup>
