@@ -311,7 +311,14 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
         public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
         {
-            return base.GetToolchainIncludes(file).Concat(_gccConfig.SystemIncludePaths);
+            var result = base.GetToolchainIncludes(file);
+
+            if (_gccConfig != null && _gccConfig.SystemIncludePaths != null)
+            {
+                result = result.Concat(_gccConfig.SystemIncludePaths);
+            }
+
+            return result;
         }
 
         public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
