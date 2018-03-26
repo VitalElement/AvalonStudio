@@ -32,9 +32,9 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
                 var results = service.Find(_searchTerm, CaseSensitive, WholeWords, Regex, FileMask?.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
 
-                Results = await Task.Run(()=>new ObservableCollection<FindResultViewModel>(results.Select(r=>new FindResultViewModel(r))));
+                Results = await Task.Run(() => new ObservableCollection<FindResultViewModel>(results.Select(r => new FindResultViewModel(r))));
 
-                SearchStats = $"{Results.Count}+ matches in {Results.GroupBy(r=>r.FilePath).Count()}+ files";
+                SearchStats = $"{Results.Count} matches in {Results.GroupBy(r => r.FilePath).Count()} files";
             });
         }
 
@@ -46,7 +46,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
         public void BeforeActivation()
         {
-        }        
+        }
 
         public ObservableCollection<FindResultViewModel> Results
         {
@@ -62,31 +62,47 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
                 this.RaiseAndSetIfChanged(ref _searchTerm, value);
                 SearchStats = null;
             }
-        }        
+        }
 
         public bool CaseSensitive
         {
             get { return _caseSensitive; }
-            set { this.RaiseAndSetIfChanged(ref _caseSensitive, value); }
-        }        
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _caseSensitive, value);
+                SearchStats = null;
+            }
+        }
 
         public bool WholeWords
         {
             get { return _wholeWords; }
-            set { this.RaiseAndSetIfChanged(ref _wholeWords, value); }
-        }        
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _wholeWords, value);
+                SearchStats = null;
+            }
+        }
 
         public bool Regex
         {
             get { return _regex; }
-            set { this.RaiseAndSetIfChanged(ref _regex, value); }
-        }        
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _regex, value);
+                SearchStats = null;
+            }
+        }
 
         public string FileMask
         {
             get { return _fileMask; }
-            set { this.RaiseAndSetIfChanged(ref _fileMask, value); }
-        }        
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _fileMask, value);
+                SearchStats = null;
+            }
+        }
 
         public string SearchStats
         {
