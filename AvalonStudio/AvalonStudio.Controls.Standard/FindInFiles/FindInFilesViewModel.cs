@@ -2,7 +2,6 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using ReactiveUI;
-using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -11,6 +10,10 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
     class FindInFilesViewModel : ToolViewModel, IExtension
     {
         private string _searchTerm;
+        private ObservableCollection<FindResultViewModel> _results;
+        private bool _caseSensitive;
+        private bool _wholeWords;
+        private bool _regex;
 
         public FindInFilesViewModel()
         {
@@ -20,7 +23,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
             {
                 var service = IoC.Get<IFindInFilesService>();
 
-                var results = service.Find(_searchTerm);
+                var results = service.Find(_searchTerm, CaseSensitive, WholeWords, Regex);
 
                 Results = new ObservableCollection<FindResultViewModel>(results.Select(r=>new FindResultViewModel(r)));
             });
@@ -34,9 +37,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
         public void BeforeActivation()
         {
-        }
-
-        private ObservableCollection<FindResultViewModel> _results;
+        }        
 
         public ObservableCollection<FindResultViewModel> Results
         {
@@ -44,11 +45,28 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
             set { this.RaiseAndSetIfChanged(ref _results, value); }
         }
 
-
         public string SearchTerm
         {
             get { return _searchTerm; }
             set { this.RaiseAndSetIfChanged(ref _searchTerm, value); }
+        }        
+
+        public bool CaseSensitive
+        {
+            get { return _caseSensitive; }
+            set { this.RaiseAndSetIfChanged(ref _caseSensitive, value); }
+        }        
+
+        public bool WholeWords
+        {
+            get { return _wholeWords; }
+            set { this.RaiseAndSetIfChanged(ref _wholeWords, value); }
+        }        
+
+        public bool Regex
+        {
+            get { return _regex; }
+            set { this.RaiseAndSetIfChanged(ref _regex, value); }
         }
 
         public ReactiveCommand FindCommand { get; }

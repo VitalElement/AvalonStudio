@@ -1,8 +1,8 @@
-﻿using AvalonStudio.MVVM;
-using System;
-using System.Collections.Generic;
+﻿using AvalonStudio.Extensibility;
+using AvalonStudio.MVVM;
+using AvalonStudio.Shell;
+using ReactiveUI;
 using System.IO;
-using System.Text;
 
 namespace AvalonStudio.Controls.Standard.FindInFiles
 {
@@ -11,6 +11,13 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
         public FindResultViewModel(FindResult model) : base(model)
         {
             File = Path.GetFileName(FilePath);
+
+            OpenCommand = ReactiveCommand.Create(() =>
+            {
+                var shell =IoC.Get<IShell>();
+
+                shell.OpenDocumentAsync(Model.File, Model.LineNumber, focus: true, selectLine: true);
+            });
         }
 
         public string File { get; private set; }
@@ -20,5 +27,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
         public int LineNumber => Model.LineNumber;
 
         public string LineText => Model.LineText;
+
+        public ReactiveCommand OpenCommand { get; }
     }
 }

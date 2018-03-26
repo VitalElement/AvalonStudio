@@ -3,9 +3,9 @@ using System.Reactive.Disposables;
 
 namespace AvalonStudio.Utils.Behaviors
 {
-    public class CommandOnEnterBehavior : CommandBasedBehavior<TextBox>
+    public class CommandOnDoubleClickBehavior : CommandBasedBehavior<Control>
     {
-        private CompositeDisposable _disposables;        
+        private CompositeDisposable _disposables;
 
         protected override void OnAttached()
         {
@@ -13,14 +13,13 @@ namespace AvalonStudio.Utils.Behaviors
 
             base.OnAttached();
 
-            _disposables.Add(AssociatedObject.AddHandler(TextBox.KeyDownEvent, (sender, e) => 
+            _disposables.Add(AssociatedObject.AddHandler(Control.PointerPressedEvent, (sender, e) =>
             {
-                if(e.Key == Avalonia.Input.Key.Enter)
+                if(e.ClickCount == 2)
                 {
-                    e.Handled = ExecuteCommand();                    
+                    e.Handled = ExecuteCommand();
                 }
             }));
-
         }
 
         protected override void OnDetaching()

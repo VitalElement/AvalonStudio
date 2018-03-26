@@ -45,7 +45,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
                     var results = strategy.FindAll(document, 0, document.TextLength);
 
-                    foreach (var result in results)
+                    foreach (var result in results.GroupBy(sr=> document.GetLineByOffset(sr.Offset).LineNumber).Select(group=>group.First()))
                     {
                         var line = document.GetLineByOffset(result.Offset);
 
@@ -55,11 +55,11 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
             }
         }
 
-        public IEnumerable<FindResult> Find(string searchString)
+        public IEnumerable<FindResult> Find(string searchString, bool caseSensitive, bool wholeWords, bool regex)
         {
             var shell = IoC.Get<IShell>();
 
-            var searchStrategy = SearchStrategyFactory.Create(searchString, true, false, SearchMode.Normal);
+            var searchStrategy = SearchStrategyFactory.Create(searchString, !caseSensitive, wholeWords, regex? SearchMode.RegEx : SearchMode.Normal);
 
             return shell.CurrentSolution.Projects.SelectMany(p => p.SourceFiles).SelectMany(f => GetResults(searchStrategy, f));
         }
