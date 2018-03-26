@@ -2,6 +2,7 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using ReactiveUI;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
         private bool _caseSensitive;
         private bool _wholeWords;
         private bool _regex;
+        private string _fileMask;
 
         public FindInFilesViewModel()
         {
@@ -26,7 +28,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
                 var service = IoC.Get<IFindInFilesService>();
 
-                var results = service.Find(_searchTerm, CaseSensitive, WholeWords, Regex);
+                var results = service.Find(_searchTerm, CaseSensitive, WholeWords, Regex, FileMask?.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
 
                 Results = await Task.Run(()=>new ObservableCollection<FindResultViewModel>(results.Select(r=>new FindResultViewModel(r))));
             });
@@ -70,6 +72,12 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
         {
             get { return _regex; }
             set { this.RaiseAndSetIfChanged(ref _regex, value); }
+        }        
+
+        public string FileMask
+        {
+            get { return _fileMask; }
+            set { this.RaiseAndSetIfChanged(ref _fileMask, value); }
         }
 
         public ReactiveCommand FindCommand { get; }

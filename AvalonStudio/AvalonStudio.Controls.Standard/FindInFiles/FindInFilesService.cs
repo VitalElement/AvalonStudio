@@ -7,6 +7,7 @@ using AvalonStudio.Shell;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace AvalonStudio.Controls.Standard.FindInFiles
 {
@@ -45,7 +46,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
                     var results = strategy.FindAll(document, 0, document.TextLength);
 
-                    foreach (var result in results.GroupBy(sr=> document.GetLineByOffset(sr.Offset).LineNumber).Select(group=>group.First()))
+                    foreach (var result in results.GroupBy(sr => document.GetLineByOffset(sr.Offset).LineNumber).Select(group => group.First()))
                     {
                         var line = document.GetLineByOffset(result.Offset);
 
@@ -55,13 +56,27 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
             }
         }
 
-        public IEnumerable<FindResult> Find(string searchString, bool caseSensitive, bool wholeWords, bool regex)
+        public IEnumerable<FindResult> Find(string searchString, bool caseSensitive, bool wholeWords, bool regex, string[] fileMasks)
         {
             var shell = IoC.Get<IShell>();
 
-            var searchStrategy = SearchStrategyFactory.Create(searchString, !caseSensitive, wholeWords, regex? SearchMode.RegEx : SearchMode.Normal);
+            var searchStrategy = SearchStrategyFactory.Create(searchString, !caseSensitive, wholeWords, regex ? SearchMode.RegEx : SearchMode.Normal);
 
-            return shell.CurrentSolution.Projects.SelectMany(p => p.SourceFiles).SelectMany(f => GetResults(searchStrategy, f));
+            var files = shell.CurrentSolution.Projects.SelectMany(p => p.SourceFiles);
+
+            if (fileMasks != null && fileMasks.Count() > 0)
+            {
+                // Construct corresponding regular expression. Note Regex.Escape!
+                var options = RegexOptions.Singleline | RegexOptions.Compiled | RegexOptions.IgnoreCase;
+
+                var patterns = fileMasks
+                .Select(f => new Regex("^" + Regex.Escape(f).Replace("\\*", ".*") + "$", options))
+                .ToArray();                
+
+                files = files.Where(f => patterns.Any(p=>p.IsMatch(f.FilePath)));
+            }
+
+            return files.SelectMany(f => GetResults(searchStrategy, f));
         }
 
         public void BeforeActivation()

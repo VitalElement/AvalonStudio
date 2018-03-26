@@ -6,19 +6,23 @@
   <cont:ToolControl Title="Find In Files">
     <DockPanel LastChildFill="True" Margin="6">
       <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="0 0 0 6">
-        <StackPanel Orientation="Horizontal" Gap="4" HorizontalAlignment="Right" DockPanel.Dock="Right">
+        <StackPanel Orientation="Horizontal" Gap="12" HorizontalAlignment="Right" DockPanel.Dock="Right">
           <CheckBox Content="Case Sensitive" IsChecked="{Binding CaseSensitive}" />
           <CheckBox Content="Whole Words" IsChecked="{Binding WholeWords}" />
           <CheckBox Content="Regex" IsChecked="{Binding Regex} "/>
-          <!--<CheckBox Name="PART_FileMaskCheckBox" Content="File Mask:" />
-          <TextBox IsEnabled="{Binding #PART_FileMaskCheckBox.IsChecked}" MinWidth="150" />-->
+          <TextBlock Text="File Mask:" VerticalAlignment="Center" />
+          <TextBox Text="{Binding FileMask}" MinWidth="150">
+            <i:Interaction.Behaviors>
+              <beh:CommandOnEnterBehavior Command="{Binding FindCommand}" />
+            </i:Interaction.Behaviors>
+          </TextBox>
         </StackPanel>
-          
+
         <TextBox Text="{Binding SearchTerm}" Watermark="Find ..." Margin="0 0 6 0">
           <i:Interaction.Behaviors>
             <beh:CommandOnEnterBehavior Command="{Binding FindCommand}" />
           </i:Interaction.Behaviors>
-        </TextBox>        
+        </TextBox>
       </DockPanel>
       <ListBox Items="{Binding Results}" BorderThickness="0">
         <ListBox.ItemTemplate>
