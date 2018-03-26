@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
-using Avalonia.LogicalTree;
+using Avalonia.Interactivity;
 using Avalonia.Metadata;
 using Avalonia.Threading;
 using System;
@@ -15,9 +15,27 @@ namespace AvalonStudio.Controls
         private string _text;
         private string _editText;
         private TextBox _textBox;
+        private bool _focusedOnClick1 = false;
+        private DispatcherTimer _editClickTimer;
+
 
         public EditableTextBlock()
         {
+            _editClickTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(500),                
+            };
+
+            _editClickTimer.Tick += (sender, e) =>
+             {
+                 _editClickTimer.Stop();
+
+                 if(IsFocused && !InEditMode)
+                 {
+                     EnterEditMode();
+                 }
+             };
+
             this.GetObservable(TextProperty).Subscribe(t =>
             {
                 EditText = t;
@@ -30,6 +48,31 @@ namespace AvalonStudio.Controls
                     EnterEditMode();
                 }
             });
+
+            AddHandler(PointerPressedEvent, (sender, e)=>
+            {
+                _editClickTimer.Stop();
+
+                if (!InEditMode)
+                {                    
+                    if (e.ClickCount == 1)
+                    {
+                        if(IsFocused)
+                        {
+                            _editClickTimer.Start();
+                        }
+                    }                    
+                }
+                else
+                {
+                    var hit = this.InputHitTest(e.GetPosition(this));
+
+                    if (hit == null)
+                    {
+                        ExitEditMode();
+                    }
+                }
+            }, RoutingStrategies.Tunnel);
         }
 
         public static readonly DirectProperty<EditableTextBlock, string> TextProperty = TextBlock.TextProperty.AddOwner<EditableTextBlock>(
@@ -86,7 +129,7 @@ namespace AvalonStudio.Controls
             if (e.Key == Key.Enter || e.Key == Key.Escape)
             {
                 ExitEditMode();
-            }
+            }            
 
             base.OnKeyUp(e);
         }
@@ -112,32 +155,6 @@ namespace AvalonStudio.Controls
 
             InEditMode = false;
             (VisualRoot as IInputRoot).MouseDevice.Capture(null);
-        }
-
-        protected override void OnPointerPressed(PointerPressedEventArgs e)
-        {
-            base.OnPointerPressed(e);
-
-            if (!InEditMode)
-            {
-                if (e.MouseButton == MouseButton.Middle)
-                {
-                    EnterEditMode();
-                }
-                else if (e.ClickCount == 2)
-                {
-                    EnterEditMode();
-                }
-            }
-            else
-            {
-                var hit = this.InputHitTest(e.GetPosition(this));
-
-                if (hit == null)
-                {
-                    ExitEditMode();
-                }
-            }
-        }
+        }        
     }
 }
