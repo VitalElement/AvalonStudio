@@ -20,7 +20,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
             LineOffset = lineOffset;
             LineNumber = lineNumber;
 
-            LineText = lineText;
+            LineText = lineText.Trim();
         }
 
         public ISourceFile File { get; }

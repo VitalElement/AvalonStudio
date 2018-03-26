@@ -31,6 +31,7 @@
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Utils\AvalonStudio.Utils.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="SolutionExplorer\TemplateView.xaml">

@@ -1,20 +1,34 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
+             xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity">
   <cont:ToolControl Title="Find In Files">
-    <DockPanel LastChildFill="True">
-      <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Gap="4">
-        <TextBox Text="{Binding SearchTerm}" />
-        <Button Content="Find" Command="{Binding FindCommand}" />
+    <DockPanel LastChildFill="True" Margin="6">
+      <StackPanel DockPanel.Dock="Top" Gap="4">
+        <StackPanel Orientation="Horizontal" Gap="4" HorizontalAlignment="Right">
+          <CheckBox Content="Case Sensitive" />
+          <CheckBox Content="Whole Words" />
+          <CheckBox Content="Regex" />
+          <CheckBox Name="PART_FileMaskCheckBox" Content="File Mask:" />
+          <TextBox IsEnabled="{Binding #PART_FileMaskCheckBox.IsChecked}" MinWidth="150" />
+        </StackPanel>
+        <TextBox Text="{Binding SearchTerm}">
+          <i:Interaction.Behaviors>
+            <beh:CommandOnEnterBehavior Command="{Binding FindCommand}" />
+          </i:Interaction.Behaviors>
+        </TextBox>
       </StackPanel>
-      <ListBox Items="{Binding Results}">
+      <ListBox Items="{Binding Results}" BorderThickness="0">
         <ListBox.ItemTemplate>
           <DataTemplate>
-            <StackPanel Orientation="Horizontal" Gap="4">
-              <TextBlock Text="{Binding FilePath}" />
-              <TextBlock Text="{Binding LineNumber}" />
+            <DockPanel LastChildFill="True">
+              <StackPanel Orientation="Horizontal" Gap="4" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                <TextBlock Text="{Binding File}" />
+                <TextBlock Text="{Binding LineNumber}" MinWidth="40" TextAlignment="Right" />
+              </StackPanel>
               <TextBlock Text="{Binding LineText}" />
-            </StackPanel>
+            </DockPanel>
           </DataTemplate>
         </ListBox.ItemTemplate>
       </ListBox>
