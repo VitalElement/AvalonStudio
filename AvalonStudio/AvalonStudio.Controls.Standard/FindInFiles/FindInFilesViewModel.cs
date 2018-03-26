@@ -4,6 +4,7 @@ using AvalonStudio.MVVM;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.FindInFiles
 {
@@ -19,13 +20,15 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
         {
             Title = "Find Results";
 
-            FindCommand = ReactiveCommand.Create(() =>
+            FindCommand = ReactiveCommand.Create(async () =>
             {
+                Results = null;
+
                 var service = IoC.Get<IFindInFilesService>();
 
                 var results = service.Find(_searchTerm, CaseSensitive, WholeWords, Regex);
 
-                Results = new ObservableCollection<FindResultViewModel>(results.Select(r=>new FindResultViewModel(r)));
+                Results = await Task.Run(()=>new ObservableCollection<FindResultViewModel>(results.Select(r=>new FindResultViewModel(r))));
             });
         }
 
