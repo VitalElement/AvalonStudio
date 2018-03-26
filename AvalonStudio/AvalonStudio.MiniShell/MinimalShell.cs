@@ -129,13 +129,6 @@ namespace AvalonStudio.Shell
             get { throw new NotImplementedException(); }
         }
 
-        public object BottomSelectedTool
-        {
-            get { throw new NotImplementedException(); }
-
-            set { throw new NotImplementedException(); }
-        }
-
         public ModalDialogViewModelBase ModalDialog
         {
             get { throw new NotImplementedException(); }
