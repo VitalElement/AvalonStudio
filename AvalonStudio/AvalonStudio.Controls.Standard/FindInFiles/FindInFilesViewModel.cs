@@ -17,6 +17,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
         private bool _wholeWords;
         private bool _regex;
         private string _fileMask;
+        private string _searchStats;
 
         public FindInFilesViewModel()
         {
@@ -25,12 +26,15 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
             FindCommand = ReactiveCommand.Create(async () =>
             {
                 Results = null;
+                SearchStats = null;
 
                 var service = IoC.Get<IFindInFilesService>();
 
                 var results = service.Find(_searchTerm, CaseSensitive, WholeWords, Regex, FileMask?.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries));
 
                 Results = await Task.Run(()=>new ObservableCollection<FindResultViewModel>(results.Select(r=>new FindResultViewModel(r))));
+
+                SearchStats = $"{Results.Count}+ matches in {Results.GroupBy(r=>r.FilePath).Count()}+ files";
             });
         }
 
@@ -53,7 +57,11 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
         public string SearchTerm
         {
             get { return _searchTerm; }
-            set { this.RaiseAndSetIfChanged(ref _searchTerm, value); }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _searchTerm, value);
+                SearchStats = null;
+            }
         }        
 
         public bool CaseSensitive
@@ -78,6 +86,12 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
         {
             get { return _fileMask; }
             set { this.RaiseAndSetIfChanged(ref _fileMask, value); }
+        }        
+
+        public string SearchStats
+        {
+            get { return _searchStats; }
+            set { this.RaiseAndSetIfChanged(ref _searchStats, value); }
         }
 
         public ReactiveCommand FindCommand { get; }
