@@ -401,6 +401,18 @@ namespace AvalonStudio.Projects.OmniSharp
             }
         }
 
+        public override bool IsItemSupported(string languageName)
+        {
+            switch(languageName)
+            {
+                case "C#":
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
         public override List<string> ExcludedFiles { get; set; }
     }
 }

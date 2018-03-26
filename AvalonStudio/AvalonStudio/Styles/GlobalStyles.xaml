@@ -10,6 +10,18 @@
     <Setter Property="Foreground" Value="#007ACC" />
   </Style>
 
+  <Style Selector="TextBox">
+    <Setter Property="BorderThickness" Value="1" />
+  </Style>
+
+  <Style Selector="CheckBox">
+    <Setter Property="BorderThickness" Value="1" />
+  </Style>
+
+  <Style Selector="ListBox">
+    <Setter Property="BorderThickness" Value="1" />
+  </Style>
+  
   <Style Selector="Button:pointerover.hyperlink">
     <Setter Property="Foreground" Value="#67CCFE" />
   </Style>

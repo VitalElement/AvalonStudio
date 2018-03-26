@@ -309,6 +309,11 @@ namespace AvalonStudio.Toolchains.PublishedGCC
             return Path.Combine(project.CurrentDirectory, "link.ld");
         }
 
+        public override IEnumerable<string> GetToolchainIncludes(ISourceFile file)
+        {
+            return base.GetToolchainIncludes(file).Concat(_gccConfig.SystemIncludePaths);
+        }
+
         public override string GetLinkerArguments(IStandardProject superProject, IStandardProject project)
         {
             var settings = project.GetToolchainSettings<GccToolchainSettings>();

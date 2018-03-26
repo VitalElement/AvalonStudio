@@ -161,7 +161,7 @@ namespace AvalonStudio.Extensibility.Templating
         {
             var templateList = TemplateListResolver.GetTemplateResolutionResult(_settingsLoader.UserTemplateCache.TemplateInfo, _hostDataLoader, _commandInput, _defaultLanguage);
 
-            if (templateList.TryGetUnambiguousTemplateGroupToUse(out IReadOnlyList<ITemplateMatchInfo> unambiguousTemplateGroupForDetailDisplay))
+            if (templateList.TryGetUnambiguousTemplateGroupToUse(out IReadOnlyList<ITemplateMatchInfo> unambiguousTemplateGroupForDetailDisplay, true))
             {
                 return unambiguousTemplateGroupForDetailDisplay.Where(t => t.IsMatch).Select(ti => new DotNetTemplateAdaptor(ti.Info)).ToList().AsReadOnly();
             }

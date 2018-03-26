@@ -814,19 +814,19 @@ namespace AvalonStudio.Languages.CSharp
             // Walk up until we find a node that we're interested in.
             while (node != null)
             {
-                if (node is InvocationExpressionSyntax invocation && invocation.ArgumentList.Span.Contains(position))
+                if (node is InvocationExpressionSyntax invocation && invocation.ArgumentList != null && invocation.ArgumentList.Span.Contains(position))
                 {
                     var semanticModel = await document.GetSemanticModelAsync();
                     return new InvocationContext(semanticModel, position, invocation.Expression, invocation.ArgumentList, invocation.IsInStaticContext());
                 }
 
-                if (node is ObjectCreationExpressionSyntax objectCreation && objectCreation.ArgumentList.Span.Contains(position))
+                if (node is ObjectCreationExpressionSyntax objectCreation && objectCreation.ArgumentList != null && objectCreation.ArgumentList.Span.Contains(position))
                 {
                     var semanticModel = await document.GetSemanticModelAsync();
                     return new InvocationContext(semanticModel, position, objectCreation, objectCreation.ArgumentList, objectCreation.IsInStaticContext());
                 }
 
-                if (node is AttributeSyntax attributeSyntax && attributeSyntax.ArgumentList.Span.Contains(position))
+                if (node is AttributeSyntax attributeSyntax && attributeSyntax.ArgumentList != null && attributeSyntax.ArgumentList.Span.Contains(position))
                 {
                     var semanticModel = await document.GetSemanticModelAsync();
                     return new InvocationContext(semanticModel, position, attributeSyntax, attributeSyntax.ArgumentList, attributeSyntax.IsInStaticContext());

@@ -58,7 +58,7 @@ namespace AvalonStudio.Controls.Standard.Console
             {
                 Document = new TextDocument();
 
-                shell.BottomSelectedTool = this;
+                IsSelected = true;
             });
         }
 

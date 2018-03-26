@@ -24,7 +24,7 @@
     <EmbeddedResource Include="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.2-build4628-beta" />
+    <PackageReference Include="Avalonia" Version="0.6.2-build4732-beta" />
     <PackageReference Include="GitInfo" Version="2.0.10" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
   </ItemGroup>
@@ -33,6 +33,7 @@
     <ProjectReference Include="..\..\VtNetCore.Avalonia\VtNetCore.Avalonia\VtNetCore.Avalonia.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Utils\AvalonStudio.Utils.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="SolutionExplorer\TemplateView.xaml">
