@@ -6,6 +6,11 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 {
     class MenuDefinitions : IExtension
     {
+        static MenuDefinitions()
+        {
+            // Do Nothing
+        }
+
         public void Activation()
         {
         }
