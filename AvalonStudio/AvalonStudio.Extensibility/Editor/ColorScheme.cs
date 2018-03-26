@@ -103,7 +103,7 @@ namespace AvalonStudio.Extensibility.Editor
             Name = "Dark",
             Background = Brush.Parse("#1e1e1e"),
             BackgroundAccent = Brush.Parse("#1e1e1e"),
-            Text = Brush.Parse("#DCDCDC"),
+            Text = Brush.Parse("#C8C8C8"),
             ErrorDiagnostic = Brush.Parse("#FD2D2D"),
             WarningDiagnostic = Brush.Parse("#FFCF28"),
             InfoDiagnostic = Brush.Parse("#0019FF"),
