@@ -48,9 +48,9 @@ namespace AvalonStudio.Packages
         private static List<Lazy<INuGetResourceProvider>> s_providers = new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3());            
 
         private static readonly IEnumerable<SourceRepository> s_sourceRepositories = new List<SourceRepository> {
+                    new SourceRepository(new PackageSource("https://nuget.vitalelement.co.uk/repository/AvalonStudio/"), s_providers),
                     new SourceRepository(new PackageSource("http://nuget1.vitalelement.co.uk/repository/AvalonStudio/"), s_providers),
-                    new SourceRepository(new PackageSource("http://nuget2.vitalelement.co.uk/repository/AvalonStudio/"), s_providers),
-                    new SourceRepository(new PackageSource("https://nuget.vitalelement.co.uk/repository/AvalonStudio/"), s_providers)
+                    new SourceRepository(new PackageSource("http://nuget2.vitalelement.co.uk/repository/AvalonStudio/"), s_providers)
             };
 
         public static NuGetFramework GetFramework()

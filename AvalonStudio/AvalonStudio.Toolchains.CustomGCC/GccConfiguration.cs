@@ -28,6 +28,8 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public string Gdb { get; set; }
 
+        public List<string> SystemIncludePaths { get; set; }
+
         public async Task<GccConfiguration> ToConfigAsync(bool autoInstall = true)
         {
             var result = new GccConfiguration(this);
@@ -111,12 +113,8 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
     public class GccConfiguration : IComparable<GccConfiguration>
     {
-        private string _cc;
-        private string _cpp;
-        private string _ar;
-        private string _ld;
-        private string _gdb;
-        private string _size;
+        private List<string> _systemIncludePaths;
+
         private Version _version;
         private string _id;
         private GccToolchainDescription _description;
@@ -137,6 +135,8 @@ namespace AvalonStudio.Toolchains.CustomGCC
             {
                 _isResolved = true;
 
+                _systemIncludePaths = new List<string>();
+
                 try
                 {
                     CC = await ResolvePackage(_description.CC);
@@ -145,6 +145,14 @@ namespace AvalonStudio.Toolchains.CustomGCC
                     LD = await ResolvePackage(_description.LD);
                     Size = await ResolvePackage(_description.Size);
                     Gdb = await ResolvePackage(_description.Gdb);
+
+                    if(_description.SystemIncludePaths != null)
+                    {
+                        foreach(var unresolvedPath in _description.SystemIncludePaths)
+                        {
+                            _systemIncludePaths.Add(await ResolvePackage(unresolvedPath, false));
+                        }
+                    }
                 }
                 catch (Exception)
                 {
@@ -155,7 +163,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
             return _isResolved;
         }
 
-        private async Task<string> ResolvePackage(string url)
+        private async Task<string> ResolvePackage(string url, bool appendExecutableExtension = true)
         {
             string result = "";
 
@@ -183,7 +191,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
                 _resolvedPackages.Add(fullPackageId, packageLocation);
             }
 
-            result = (Path.Combine(packageLocation, packageInfo.location) + Platform.ExecutableExtension).ToPlatformPath();
+            result = (Path.Combine(packageLocation, packageInfo.location) + (appendExecutableExtension ?  Platform.ExecutableExtension : "")).ToPlatformPath();
 
             return result;
         }
@@ -248,40 +256,22 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public string Version => _version.ToString(4);
 
-        public string CC
+        public List<string> SystemIncludePaths
         {
-            get { return _cc; }
-            private set { _cc = value; }
+            get => _systemIncludePaths;
+            private set => _systemIncludePaths = value;
         }
 
-        public string Cpp
-        {
-            get { return _cpp; }
-            private set { _cpp = value; }
-        }
+        public string CC { get; private set; }
 
-        public string AR
-        {
-            get { return _ar; }
-            private set { _ar = value; }
-        }
+        public string Cpp { get; private set; }
 
-        public string LD
-        {
-            get { return _ld; }
-            private set { _ld = value; }
-        }
+        public string AR { get; private set; }
 
-        public string Gdb
-        {
-            get { return _gdb; }
-            set { _gdb = value; }
-        }
+        public string LD { get; private set; }
 
-        public string Size
-        {
-            get { return _size; }
-            set { _size = value; }
-        }
+        public string Gdb { get; set; }
+
+        public string Size { get; set; }
     }
 }
