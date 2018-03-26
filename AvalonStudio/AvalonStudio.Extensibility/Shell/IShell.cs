@@ -41,7 +41,6 @@ namespace AvalonStudio.Shell
         IDocumentTabViewModel SelectedDocument { get; set; }
         ObservableCollection<object> Tools { get; }
         ModalDialogViewModelBase ModalDialog { get; set; }
-        object BottomSelectedTool { get; set; }
 
         ColorScheme CurrentColorScheme { get; set; }
 

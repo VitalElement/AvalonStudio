@@ -10,16 +10,16 @@
 
     public class TabControlViewModel : ViewModel
     {
-        private object selectedTool;
+        private ToolViewModel selectedTool;
         private bool _tabStripVisible;
 
-        private ObservableCollection<object> tools;
+        private ObservableCollection<ToolViewModel> tools;
 
         private Dictionary<ToolViewModel, IDisposable> disposableVisibleObservers;
 
         public TabControlViewModel()
         {
-            tools = new ObservableCollection<object>();
+            tools = new ObservableCollection<ToolViewModel>();
             disposableVisibleObservers = new Dictionary<ToolViewModel, IDisposable>();
 
             tools.CollectionChanged += (sender, e) =>
@@ -29,13 +29,21 @@
                     case NotifyCollectionChangedAction.Add:
                         foreach (var item in e.NewItems)
                         {
-                            if (item is ToolViewModel)
+                            if (item is ToolViewModel tvm)
                             {
-                                var tvm = item as ToolViewModel;
-
                                 var disposable = tvm.IsVisibleObservable.Subscribe(_ => InvalidateIsVisible());
 
                                 disposableVisibleObservers.Add(tvm, disposable);
+
+                                tvm.OnSelect = () =>
+                                {
+                                    if(SelectedTool != null)
+                                    {
+                                        SelectedTool.IsSelected = false;
+                                    }
+
+                                    SelectedTool = tvm;
+                                };
                             }
                         }
 
@@ -45,16 +53,16 @@
                     case NotifyCollectionChangedAction.Remove:
                         foreach (var item in e.OldItems)
                         {
-                            if (item is ToolViewModel)
+                            if (item is ToolViewModel tvm)
                             {
                                 IDisposable disposable;
-
-                                var tvm = item as ToolViewModel;
 
                                 if (disposableVisibleObservers.TryGetValue(tvm, out disposable))
                                 {
                                     disposable.Dispose();
                                 }
+
+                                tvm.OnSelect = null;
                             }
                         }
                         break;
@@ -87,16 +95,19 @@
         }
 
 
-        public ObservableCollection<object> Tools
+        public ObservableCollection<ToolViewModel> Tools
         {
             get { return tools; }
             set { this.RaiseAndSetIfChanged(ref tools, value); }
         }
 
-        public object SelectedTool
+        public ToolViewModel SelectedTool
         {
             get { return selectedTool; }
-            set { this.RaiseAndSetIfChanged(ref selectedTool, value); }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref selectedTool, value);
+            }
         }
 
         private bool isVisible;

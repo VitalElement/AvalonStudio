@@ -14,7 +14,7 @@
             <TextBlock Text="File Mask:" VerticalAlignment="Center" />
             <TextBox Text="{Binding FileMask}" MinWidth="150">
               <i:Interaction.Behaviors>
-                <beh:CommandOnEnterBehavior Command="{Binding FindCommand}" />
+                <beh:CommandOnEnterBehavior Command="{Binding FindCommand}" />                
               </i:Interaction.Behaviors>
             </TextBox>
           </StackPanel>
@@ -24,6 +24,7 @@
           <TextBox Text="{Binding SearchTerm}" Watermark="Find ...">
             <i:Interaction.Behaviors>
               <beh:CommandOnEnterBehavior Command="{Binding FindCommand}" />
+              <beh:BindFocusedBehavior IsFocused="{Binding IsSelected}" />
             </i:Interaction.Behaviors>
           </TextBox>
          <TextBlock Text="{Binding SearchStats}" Opacity="0.6" TextAlignment="Right" VerticalAlignment="Center" Margin="0 0 8 0" />

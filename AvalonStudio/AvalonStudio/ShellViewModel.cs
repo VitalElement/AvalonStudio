@@ -246,14 +246,14 @@ namespace AvalonStudio
                 }
             }
 
-            LeftTabs.SelectedTool = LeftTabs.Tools.FirstOrDefault();
-            RightTabs.SelectedTool = RightTabs.Tools.FirstOrDefault();
-            BottomTabs.SelectedTool = BottomTabs.Tools.FirstOrDefault();
-            BottomRightTabs.SelectedTool = BottomRightTabs.Tools.FirstOrDefault();
-            RightTopTabs.SelectedTool = RightTopTabs.Tools.FirstOrDefault();
-            RightMiddleTabs.SelectedTool = RightMiddleTabs.Tools.FirstOrDefault();
-            RightBottomTabs.SelectedTool = RightBottomTabs.Tools.FirstOrDefault();
-            MiddleTopTabs.SelectedTool = MiddleTopTabs.Tools.FirstOrDefault();
+            LeftTabs.SelectedTool = LeftTabs.Tools.Where(t=>t.IsVisible).FirstOrDefault();
+            RightTabs.SelectedTool = RightTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            BottomTabs.SelectedTool = BottomTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            BottomRightTabs.SelectedTool = BottomRightTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            RightTopTabs.SelectedTool = RightTopTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            RightMiddleTabs.SelectedTool = RightMiddleTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            RightBottomTabs.SelectedTool = RightBottomTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            MiddleTopTabs.SelectedTool = MiddleTopTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
 
             IoC.Get<IStatusBar>().ClearText();
 
@@ -684,13 +684,6 @@ namespace AvalonStudio
                     DocumentTabs.SelectedDocument = value;
                 }
             }
-        }
-
-        public object BottomSelectedTool
-        {
-            get { return BottomTabs.SelectedTool; }
-
-            set { BottomTabs.SelectedTool = value; }
         }
 
         public IProject GetDefaultProject()
