@@ -62,6 +62,11 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
             var searchStrategy = SearchStrategyFactory.Create(searchString, !caseSensitive, wholeWords, regex ? SearchMode.RegEx : SearchMode.Normal);
 
+            if (shell.CurrentSolution == null)
+            {
+                return Enumerable.Empty<FindResult>();
+            }
+
             var files = shell.CurrentSolution.Projects.SelectMany(p => p.SourceFiles);
 
             if (fileMasks != null && fileMasks.Count() > 0)
