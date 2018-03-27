@@ -81,7 +81,7 @@ namespace AvalonStudio.Platforms
 
         private void ErrorThread()
         {
-            var data = new byte[1];
+            var data = new byte[128];
 
             while (!IsRunning())
             {
@@ -90,16 +90,25 @@ namespace AvalonStudio.Platforms
 
             while (true)
             {
-                var bytesReceived = _process.StandardOutput.BaseStream.Read(data, 0, data.Length);
+                var bytesReceived = _process.StandardError.BaseStream.Read(data, 0, data.Length);
 
-                _stdOutData.OnNext(data);
+                if (bytesReceived > 0)
+                {
+                    var result = new byte[bytesReceived];
+                    Buffer.BlockCopy(data, 0, result, 0, bytesReceived);
+                    _stdErrorData.OnNext(result);
+                }
+                else
+                {
+                    Thread.Sleep(10);
+                }
             }
 
         }
 
         private void OutputThread()
         {
-            var data = new byte[1];
+            var data = new byte[128];
 
             while (!IsRunning())
             {
@@ -110,7 +119,17 @@ namespace AvalonStudio.Platforms
             {
                 var bytesReceived = _process.StandardOutput.BaseStream.Read(data, 0, data.Length);
 
-                _stdOutData.OnNext(data);
+                if (bytesReceived > 0)
+                {
+                    var result = new byte[bytesReceived];
+                    Buffer.BlockCopy(data, 0, result, 0, bytesReceived);
+
+                    _stdOutData.OnNext(result);
+                }
+                else
+                {
+                    Thread.Sleep(10);
+                }
             }
         }
 

@@ -38,7 +38,7 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
         public void SendData(byte[] data)
         {
-            _runner.InputWrite(data);
+           _runner.InputWrite(data);
         }
 
         public void SetTerminalWindowSize(int columns, int rows, int width, int height)
