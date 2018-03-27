@@ -1,6 +1,9 @@
 ﻿using AvaloniaEdit.Document;
+using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Languages;
+using ReactiveUI;
 using System;
+using System.Collections;
 
 namespace AvalonStudio.Extensibility.Languages
 {
@@ -50,4 +53,46 @@ namespace AvalonStudio.Extensibility.Languages
             }
         }
     }
+
+    public class IndexTree
+    {
+        private TreeNode<IndexEntry> _root;
+        private TreeNode<IndexEntry> _navigationTree;        
+
+        public IndexTree()
+        {
+            _root = new TreeNode<IndexEntry>(new IndexEntry("", 0, int.MaxValue, CursorKind.TranslationUnit));
+            _navigationTree = new TreeNode<IndexEntry>(new IndexEntry("", 0, int.MaxValue, CursorKind.TranslationUnit));
+        }
+
+        public void Add(IndexEntry newEntry)
+        {
+            var node = _root.FindLowestTreeNode(entry => entry.Data.Contains(newEntry));
+
+            node.AddChild(newEntry);
+
+            switch(newEntry.Kind)
+            {
+                case CursorKind.Namespace:
+                    node = _navigationTree;
+                    break;
+                
+                case CursorKind.ClassDeclaration:
+                    node = _navigationTree.FindLowestTreeNode(entry => entry.Data.Contains(newEntry) && (entry.Data.Kind == CursorKind.Namespace || entry.Data.Kind == CursorKind.TranslationUnit));
+                    break;
+
+                default:
+                    node = _navigationTree.FindTreeNode(entry => entry.Data.Contains(newEntry) && (entry.Data.Kind != CursorKind.TranslationUnit && entry.Data.Kind != CursorKind.Namespace));
+                    break;
+            }            
+
+            node.AddChild(newEntry);
+        }
+
+        public TreeNode<IndexEntry> FullTree => _root;
+
+        public TreeNode<IndexEntry> NavigationTree => _navigationTree;
+    }
+        
+
 }

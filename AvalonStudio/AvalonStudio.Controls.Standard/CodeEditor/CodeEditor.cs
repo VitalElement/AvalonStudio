@@ -314,7 +314,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (Document?.TextLength > s)
                 {
-                    CaretOffset = s;
+                    CaretOffset = s;                    
                 }
             }),
 
@@ -1206,10 +1206,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             set { SetValue(IsDirtyProperty, value); }
         }
 
-        public static readonly StyledProperty<TreeNode<IndexEntry>> CodeIndexProperty =
-            AvaloniaProperty.Register<CodeEditor, TreeNode<IndexEntry>>(nameof(CodeIndex), defaultBindingMode: BindingMode.TwoWay);
+        public static readonly StyledProperty<IndexTree> CodeIndexProperty =
+            AvaloniaProperty.Register<CodeEditor, IndexTree>(nameof(CodeIndex), defaultBindingMode: BindingMode.TwoWay);
 
-        public TreeNode<IndexEntry> CodeIndex
+        public IndexTree CodeIndex
         {
             get => GetValue(CodeIndexProperty);
             set => SetValue(CodeIndexProperty, value);

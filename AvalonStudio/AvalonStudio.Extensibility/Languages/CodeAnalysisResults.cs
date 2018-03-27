@@ -10,10 +10,11 @@ namespace AvalonStudio.Languages
         {
             SyntaxHighlightingData = new SyntaxHighlightDataList();
             FoldingInfo = new List<IndexEntry>();
+            IndexTree = new IndexTree();
         }
 
         public SyntaxHighlightDataList SyntaxHighlightingData { get; set; }
-        public TreeNode<IndexEntry> IndexTree { get; set; }
+        public IndexTree IndexTree { get; set; }
         public List<IndexEntry> FoldingInfo { get; set; }
     }
 }

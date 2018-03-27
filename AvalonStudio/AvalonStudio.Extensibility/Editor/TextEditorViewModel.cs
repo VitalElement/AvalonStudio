@@ -17,6 +17,45 @@ using AvalonStudio.Extensibility.Utils;
 
 namespace AvalonStudio.Extensibility.Editor
 {
+    public class IndexEntryViewModel : ReactiveObject
+    {
+        private TreeNode<IndexEntry> _model;
+
+        public IndexEntryViewModel(TreeNode<IndexEntry> model, IndexEntryViewModel parent)
+        {
+            Parent = parent;
+
+            _model = model;
+
+            Children = new List<IndexEntryViewModel>(_model.Children.Select(c => new IndexEntryViewModel(c, this)));
+
+            SelectedChild = Children.FirstOrDefault();
+        }
+
+        private bool _isSelected;
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { this.RaiseAndSetIfChanged(ref _isSelected, value); }
+        }
+
+        public IndexEntryViewModel Parent { get; }
+
+        private IndexEntryViewModel _selectedChild;
+
+        public IndexEntryViewModel SelectedChild
+        {
+            get { return _selectedChild; }
+            set { this.RaiseAndSetIfChanged(ref _selectedChild, value); }
+        }
+
+
+        public string Title => _model.Data.Spelling;
+
+        public List<IndexEntryViewModel> Children { get; }
+    }
+
     public class TextEditorViewModel : EditorViewModel
     {
         private string _zoomLevelText;
@@ -28,6 +67,11 @@ namespace AvalonStudio.Extensibility.Editor
         private IEditor _documentAccessor;
         private CompositeDisposable _disposables;
         private bool _isReadOnly;
+        private IndexEntry _selectedIndexEntry;
+        private IndexTree _codeIndex;
+        private IEnumerable<IndexEntry> _flatIndex;
+        private int _caretIndex;
+        private bool _caretSettingIndex;
 
         public TextEditorViewModel(ISourceFile file) : base(file)
         {
@@ -59,13 +103,15 @@ namespace AvalonStudio.Extensibility.Editor
 
             this.ObservableForProperty(p => p.CaretIndex).Throttle(TimeSpan.FromMilliseconds(400)).Subscribe(index =>
             {
-                if(CodeIndex != null)
+                if (CodeIndex != null)
                 {
-                    SelectedIndexEntry = CodeIndex.FindLowestTreeNode(entry => entry.Data.Contains(index.Value, 0))?.Data;
+                    _caretSettingIndex = true;
+                    //SelectedIndexEntry = CodeIndex.FindLowestTreeNode(entry => entry.Data.Contains(index.Value, 0))?.Data;
+                    _caretSettingIndex = false;
                 }
             });
             //ZoomLevel = _shell.GlobalZoomLevel;
-        }        
+        }
 
         public bool IsReadOnly
         {
@@ -177,17 +223,21 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _documentAccessor, value); }
         }
 
-        private IndexEntry _selectedIndexEntry;
-
         public IndexEntry SelectedIndexEntry
         {
             get { return _selectedIndexEntry; }
-            set { this.RaiseAndSetIfChanged(ref _selectedIndexEntry, value); }
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedIndexEntry, value);
+
+                if (!_caretSettingIndex && _selectedIndexEntry != null)
+                {
+                    CaretIndex = _selectedIndexEntry.StartOffset;
+                }
+            }
         }
 
-        private TreeNode<IndexEntry> _codeIndex;
-
-        public TreeNode<IndexEntry> CodeIndex
+        public IndexTree CodeIndex
         {
             get { return _codeIndex; }
             set
@@ -195,13 +245,25 @@ namespace AvalonStudio.Extensibility.Editor
                 if (_codeIndex != value)
                 {
                     _codeIndex = value;
-                    FlatIndex = value?.Select(node => node.Data).ToList();
+                    //FlatIndex = value?.Select(node => node.Data).ToList();
                     this.RaisePropertyChanged();
+
+                    if (value != null)
+                    {
+                        Index = new IndexEntryViewModel(value.NavigationTree, null);                        
+                    }
                 }
+
             }
         }
 
-        private IEnumerable<IndexEntry> _flatIndex;
+        private IndexEntryViewModel _index;
+
+        public IndexEntryViewModel Index
+        {
+            get => _index;
+            set => this.RaiseAndSetIfChanged(ref _index, value);
+        }
 
         public IEnumerable<IndexEntry> FlatIndex
         {
@@ -209,17 +271,11 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _flatIndex, value); }
         }
 
-
-        private int _caretIndex;
-
         public int CaretIndex
         {
             get { return _caretIndex; }
             set { this.RaiseAndSetIfChanged(ref _caretIndex, value); }
         }
-
-
-
 
         public override IEditor Editor => _documentAccessor;
     }

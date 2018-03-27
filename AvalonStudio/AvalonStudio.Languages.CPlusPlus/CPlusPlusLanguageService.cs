@@ -1,3 +1,4 @@
+using Avalonia.Threading;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvalonStudio.CodeEditor;
@@ -512,24 +513,10 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        private void AddNode (ref TreeNode<IndexEntry> root, IndexEntry newEntry)
-        {
-            if (root == null)
-            {
-                root = new TreeNode<IndexEntry>(newEntry);
-            }
-            else
-            {
-                var node = root.FindTreeNode(entry => entry.Data.Contains(newEntry));
-
-                node.AddChild(newEntry);
-            }
-        }
-
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles,
             Func<bool> interruptRequested)
         {
-            var result = new CodeAnalysisResults();
+            var result = new CodeAnalysisResults();            
 
             var dataAssociation = GetAssociatedData(editor.SourceFile);
 
@@ -576,12 +563,9 @@ namespace AvalonStudio.Languages.CPlusPlus
                                     case NClang.CursorKind.ClassTemplate:
                                     case NClang.CursorKind.EnumDeclaration:
                                     case NClang.CursorKind.UnionDeclaration:
-                                        var indexTree = result.IndexTree;
-
-                                        AddNode(ref indexTree, new IndexEntry(e.Cursor.Spelling, e.Cursor.CursorExtent.Start.FileLocation.Offset,
+                                    case NClang.CursorKind.Namespace:
+                                        result.IndexTree.Add(new IndexEntry(e.Cursor.Spelling, e.Cursor.CursorExtent.Start.FileLocation.Offset,
                                             e.Cursor.CursorExtent.End.FileLocation.Offset, (CursorKind)e.Cursor.Kind));
-
-                                        result.IndexTree = indexTree;
                                         break;
                                 }
                             }

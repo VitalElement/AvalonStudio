@@ -14,13 +14,32 @@
   <Grid>
     <DockPanel>
       <Grid DockPanel.Dock="Top">
-        <DropDown Items="{Binding FlatIndex}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10">
-          <DropDown.DataTemplates>
-            <DataTemplate>
-              <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />
-            </DataTemplate>
-          </DropDown.DataTemplates>
-        </DropDown>
+        <ItemsControl Items="{Binding Index.SelectedChild.Children}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Horizontal" Gap="1" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+
+          <ItemsControl.ItemTemplate>
+            <TreeDataTemplate ItemsSource="{Binding Parent.SelectedChild.Children}">
+              <DropDown Items="{Binding Children}" SelectedItem="{Binding SelectedChild}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10">
+                <DropDown.DataTemplates>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding Title}" TextAlignment="Left" />
+                  </DataTemplate>
+                </DropDown.DataTemplates>
+              </DropDown>
+            </TreeDataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <!--<TreeView BorderThickness="0" Items="{Binding Index.Children}">
+          <TreeView.ItemTemplate>
+            <TreeDataTemplate ItemsSource="{Binding Parent.SelectedChild.Children}">
+              <TextBlock Text="{Binding Title}" />
+            </TreeDataTemplate>
+          </TreeView.ItemTemplate>
+        </TreeView>-->
       </Grid>
       <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
         <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
