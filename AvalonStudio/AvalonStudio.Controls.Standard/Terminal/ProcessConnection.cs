@@ -15,11 +15,18 @@ namespace AvalonStudio.Controls.Standard.Terminal
             _runner.StdErrorData.Subscribe(data =>
             {
                 DataReceived?.Invoke(this, new DataReceivedEventArgs { Data = data });
+
+                var dataString = Encoding.UTF8.GetString(data);
+
+                System.Console.WriteLine(dataString);
+            
             });
 
             _runner.StdOutData.Subscribe(data =>
             {
                 DataReceived?.Invoke(this, new DataReceivedEventArgs { Data = data });
+
+                System.Console.Write(Encoding.UTF8.GetString(data));
             });
         }
         public bool IsConnected => _runner.Started && !_runner.Process.HasExited;
