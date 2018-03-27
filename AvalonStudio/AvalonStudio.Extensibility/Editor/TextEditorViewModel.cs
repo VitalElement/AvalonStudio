@@ -1,14 +1,19 @@
 ﻿using Avalonia.Input;
 using AvalonStudio.Controls;
 using AvalonStudio.Documents;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using AvalonStudio.Utils;
 using System.Threading.Tasks;
+using AvalonStudio.Extensibility.Utils;
 
 namespace AvalonStudio.Extensibility.Editor
 {
@@ -49,6 +54,14 @@ namespace AvalonStudio.Extensibility.Editor
 
                         })
                     };
+                }
+            });
+
+            this.ObservableForProperty(p => p.CaretIndex).Throttle(TimeSpan.FromMilliseconds(400)).Subscribe(index =>
+            {
+                if(CodeIndex != null)
+                {
+                    SelectedIndexEntry = CodeIndex.FindLowestTreeNode(entry => entry.Data.Contains(index.Value, 0))?.Data;
                 }
             });
             //ZoomLevel = _shell.GlobalZoomLevel;
@@ -163,6 +176,50 @@ namespace AvalonStudio.Extensibility.Editor
             get { return _documentAccessor; }
             set { this.RaiseAndSetIfChanged(ref _documentAccessor, value); }
         }
+
+        private IndexEntry _selectedIndexEntry;
+
+        public IndexEntry SelectedIndexEntry
+        {
+            get { return _selectedIndexEntry; }
+            set { this.RaiseAndSetIfChanged(ref _selectedIndexEntry, value); }
+        }
+
+        private TreeNode<IndexEntry> _codeIndex;
+
+        public TreeNode<IndexEntry> CodeIndex
+        {
+            get { return _codeIndex; }
+            set
+            {
+                if (_codeIndex != value)
+                {
+                    _codeIndex = value;
+                    FlatIndex = value?.Select(node => node.Data).ToList();
+                    this.RaisePropertyChanged();
+                }
+            }
+        }
+
+        private IEnumerable<IndexEntry> _flatIndex;
+
+        public IEnumerable<IndexEntry> FlatIndex
+        {
+            get { return _flatIndex; }
+            set { this.RaiseAndSetIfChanged(ref _flatIndex, value); }
+        }
+
+
+        private int _caretIndex;
+
+        public int CaretIndex
+        {
+            get { return _caretIndex; }
+            set { this.RaiseAndSetIfChanged(ref _caretIndex, value); }
+        }
+
+
+
 
         public override IEditor Editor => _documentAccessor;
     }

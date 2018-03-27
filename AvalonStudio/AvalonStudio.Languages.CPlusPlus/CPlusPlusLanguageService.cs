@@ -6,6 +6,7 @@ using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
+using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -460,7 +461,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         case NClang.CursorKind.CompoundStatement:
                         case NClang.CursorKind.ClassDeclaration:
                         case NClang.CursorKind.Namespace:
-                            result.Add(new IndexEntry(current.Spelling, current.CursorExtent.Start.FileLocation.Offset,
+                            result.InsertSorted(new IndexEntry(current.Spelling, current.CursorExtent.Start.FileLocation.Offset,
                             current.CursorExtent.End.FileLocation.Offset, (CursorKind)current.Kind));
                             break;
                     }
@@ -486,7 +487,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     var diag = new Diagnostic(
                         diagnostic.Location.FileLocation.Offset,
                         0,
-                        file.Project,                        
+                        file.Project,
                         diagnostic.Location.FileLocation.File.FileName,
                         diagnostic.Location.FileLocation.Line,
                         diagnostic.Spelling,
@@ -508,6 +509,20 @@ namespace AvalonStudio.Languages.CPlusPlus
                     result.Add(diag);
                     tokens.Dispose();
                 }
+            }
+        }
+
+        private void AddNode (ref TreeNode<IndexEntry> root, IndexEntry newEntry)
+        {
+            if (root == null)
+            {
+                root = new TreeNode<IndexEntry>(newEntry);
+            }
+            else
+            {
+                var node = root.FindTreeNode(entry => entry.Data.Contains(newEntry));
+
+                node.AddChild(newEntry);
             }
         }
 
@@ -536,10 +551,47 @@ namespace AvalonStudio.Languages.CPlusPlus
                         {
                             ScanTokens(translationUnit, result.SyntaxHighlightingData);
 
-                            GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.IndexItems);
+                            GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.FoldingInfo);
                         }
 
                         GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, editor.SourceFile, diagnostics);
+
+                        var callbacks = new ClangIndexerCallbacks();
+
+                        callbacks.IndexDeclaration += (handle, e) =>
+                        {
+                            if (e.Cursor.Spelling != null && e.Location.SourceLocation.IsFromMainFile)
+                            {
+                                switch (e.Cursor.Kind)
+                                {
+                                    case NClang.CursorKind.FunctionDeclaration:
+                                    case NClang.CursorKind.CXXMethod:
+                                    case NClang.CursorKind.Constructor:
+                                    case NClang.CursorKind.Destructor:
+                                    case NClang.CursorKind.VarDeclaration:
+                                    case NClang.CursorKind.ParmDeclaration:
+                                    case NClang.CursorKind.StructDeclaration:
+                                    case NClang.CursorKind.ClassDeclaration:
+                                    case NClang.CursorKind.TypedefDeclaration:
+                                    case NClang.CursorKind.ClassTemplate:
+                                    case NClang.CursorKind.EnumDeclaration:
+                                    case NClang.CursorKind.UnionDeclaration:
+                                        var indexTree = result.IndexTree;
+
+                                        AddNode(ref indexTree, new IndexEntry(e.Cursor.Spelling, e.Cursor.CursorExtent.Start.FileLocation.Offset,
+                                            e.Cursor.CursorExtent.End.FileLocation.Offset, (CursorKind)e.Cursor.Kind));
+
+                                        result.IndexTree = indexTree;
+                                        break;
+                                }
+                            }
+                        };
+
+
+                        var indexAction = index.CreateIndexAction();
+                        indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.SkipParsedBodiesInSession,
+                            translationUnit);
+                        indexAction.Dispose();
                     }
                 }
                 catch (Exception e)
@@ -547,7 +599,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             });
 
-            DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs (this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
+            DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
 
             return result;
         }

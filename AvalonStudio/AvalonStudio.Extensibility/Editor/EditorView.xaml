@@ -13,6 +13,15 @@
   </UserControl.KeyBindings>
   <Grid>
     <DockPanel>
+      <Grid DockPanel.Dock="Top">
+        <DropDown Items="{Binding FlatIndex}" SelectedItem="{Binding SelectedIndexEntry}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10">
+          <DropDown.DataTemplates>
+            <DataTemplate>
+              <TextBlock Text="{Binding Spelling}" TextAlignment="Left" />
+            </DataTemplate>
+          </DropDown.DataTemplates>
+        </DropDown>
+      </Grid>
       <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
         <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
       </Grid>
@@ -54,7 +63,8 @@
                            SourceText="{Binding SourceText}"
                            HighlightSelectedWord="False"
                            ColorScheme="{Binding ColorScheme}"
-                           
+                           CodeIndex="{Binding CodeIndex}"
+                           EditorCaretOffset="{Binding CaretIndex}"
                            DocumentAccessor="{Binding DocumentAccessor}">
         </editor:CodeEditor>
       </Grid>
