@@ -11,8 +11,7 @@ namespace AvalonStudio.Controls.Standard.Terminal
     {
         public TerminalViewModel() : base("Terminal")
         {
-            Connection = new ProcessConnection(new ProcessRunner("/bin/sh", ""));
-            Connection.Connect();
+            Connection = new ProcessConnection(new ProcessRunner(@"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe", ""));            
         }
 
         public override Location DefaultLocation => Location.BottomRight;

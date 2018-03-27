@@ -14,12 +14,12 @@ namespace AvalonStudio.Controls.Standard.Terminal
             _runner = runner;
             _runner.StdErrorData.Subscribe(data =>
             {
-                DataReceived(this, new DataReceivedEventArgs { Data = data });
+                DataReceived?.Invoke(this, new DataReceivedEventArgs { Data = data });
             });
 
             _runner.StdOutData.Subscribe(data =>
             {
-                DataReceived(this, new DataReceivedEventArgs { Data = data });
+                DataReceived?.Invoke(this, new DataReceivedEventArgs { Data = data });
             });
         }
         public bool IsConnected => _runner.Started && !_runner.Process.HasExited;

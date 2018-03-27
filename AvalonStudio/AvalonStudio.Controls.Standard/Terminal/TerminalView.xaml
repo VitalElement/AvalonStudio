@@ -3,6 +3,6 @@
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:vt100="clr-namespace:VtNetCore.Avalonia;assembly=VtNetCore.Avalonia">
   <cont:ToolControl Title="Terminal">
-    <vt100:VirtualTerminalControl Connection="{Binding Connection}" />
+    <vt100:VirtualTerminalControl ActiveConnection="{Binding Connection}" />
   </cont:ToolControl>
 </UserControl>

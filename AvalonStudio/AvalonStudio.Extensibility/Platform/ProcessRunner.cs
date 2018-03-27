@@ -117,6 +117,7 @@ namespace AvalonStudio.Platforms
         public void InputWrite(byte[] data)
         {
             _process.StandardInput.BaseStream.Write(data, 0, data.Length);
+            _process.StandardInput.BaseStream.Flush();
         }
 
         public Process Process => _process;
