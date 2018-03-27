@@ -1,8 +1,8 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:vt100="clr-namespace:VtNetCore.Avalonia;assembly=VtNetCore.Avalonia">
   <cont:ToolControl Title="Terminal">
-    <vt100:VirtualTerminalControl />
+    <vt100:VirtualTerminalControl Connection="{Binding Connection}" />
   </cont:ToolControl>
 </UserControl>
