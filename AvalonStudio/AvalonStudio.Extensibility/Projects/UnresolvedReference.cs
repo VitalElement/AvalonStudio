@@ -1,6 +1,7 @@
 ﻿namespace AvalonStudio.Projects
 {
     using AvalonStudio.Debugging;
+    using AvalonStudio.Platforms;
     using AvalonStudio.TestFrameworks;
     using AvalonStudio.Toolchains;
     using System;
@@ -18,7 +19,8 @@
 
         public PlaceHolderProject(ISolution solution, string location)
         {
-            Location = location;
+            Location = Path.Combine(solution.CurrentDirectory, location).NormalizePath();
+            CurrentDirectory = Path.GetDirectoryName(Location);
         }
 
         public IProjectFolder Parent { get; set; }
@@ -32,7 +34,7 @@
         public ITestFramework TestFramework { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool Hidden { get; set; }
 
-        public string CurrentDirectory => throw new NotImplementedException();
+        public string CurrentDirectory { get; }
 
         public IList<object> ConfigurationPages => throw new NotImplementedException();
 
