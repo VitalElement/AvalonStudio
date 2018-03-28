@@ -7,7 +7,6 @@ using ReactiveUI;
 using System.Reactive.Linq;
 using VtNetCore.Avalonia;
 using System;
-using System.Diagnostics;
 using AvalonStudio.Platforms;
 using AvalonStudio.CommandLineTools;
 
@@ -76,7 +75,7 @@ namespace AvalonStudio.Controls.Standard.Terminal
                         workingDirectoy = solution.CurrentDirectory;
                     }
 
-                    CreateConnection(workingDirectoy);                                        
+                    CreateConnection(workingDirectoy);
                 }
             });
         }
