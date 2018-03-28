@@ -137,7 +137,7 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             return await Task.Factory.StartNew(() =>
             {
-                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"restore {Path.GetFileName(Location)}", (s, e) =>
+                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"restore /m {Path.GetFileName(Location)}", (s, e) =>
                 {
                     if (statusBar != null)
                     {
