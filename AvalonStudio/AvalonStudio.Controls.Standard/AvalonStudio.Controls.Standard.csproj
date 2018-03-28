@@ -30,7 +30,6 @@
     <PackageReference Include="Avalonia" Version="0.6.2-build4732-beta" />
     <PackageReference Include="GitInfo" Version="2.0.10" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
-    <PackageReference Include="winpty.NET" Version="0.4.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />

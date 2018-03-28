@@ -1,8 +1,8 @@
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
-using AvalonStudio.Platforms;
+using AvalonStudio.Platforms.Terminals;
 using ReactiveUI;
-using System;
 using VtNetCore.Avalonia;
 
 namespace AvalonStudio.Controls.Standard.Terminal
@@ -11,13 +11,17 @@ namespace AvalonStudio.Controls.Standard.Terminal
     {
         public TerminalViewModel() : base("Terminal")
         {
-            Connection = new PtyConnection();            
         }
 
         public override Location DefaultLocation => Location.BottomRight;
 
         public void Activation()
         {
+            var provider = IoC.Get<IPsuedoTerminalProvider>();
+
+            var terminal = provider.Create(80, 32, "c:\\", null, @"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe");
+
+            Connection = new PsuedoTerminalConnection(terminal);
         }
 
         public void BeforeActivation()
