@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using static winpty.WinPty;
@@ -13,9 +14,12 @@ namespace AvalonStudio.Platforms.Terminals.Win32
         private IntPtr _spawnCfg = IntPtr.Zero;
         private Stream _stdin = null;
         private Stream _stdout = null;
+        private Process _process;
 
-        public Win32PsuedoTerminal(IntPtr handle, IntPtr cfg, IntPtr spawnCfg, IntPtr err, Stream stdin, Stream stdout)
+        public Win32PsuedoTerminal(Process process, IntPtr handle, IntPtr cfg, IntPtr spawnCfg, IntPtr err, Stream stdin, Stream stdout)
         {
+            _process = process;
+
             _handle = handle;
             _stdin = stdin;
             _stdout = stdout;
@@ -57,5 +61,7 @@ namespace AvalonStudio.Platforms.Terminals.Win32
                 winpty_set_size(_handle, columns, rows, out _err);
             }
         }
+
+        public Process Process => _process;
     }
 }

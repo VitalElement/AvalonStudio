@@ -24,6 +24,8 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
         public event EventHandler<DataReceivedEventArgs> DataReceived;
 
+        public event EventHandler<EventArgs> Closed;
+
         public bool Connect()
         {
             _cancellationSource = new CancellationTokenSource();
@@ -54,7 +56,17 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
             _isConnected = true;
 
+            _terminal.Process.EnableRaisingEvents = true;
+            _terminal.Process.Exited += Process_Exited;
+
             return _isConnected;
+        }
+
+        private void Process_Exited(object sender, EventArgs e)
+        {
+            _terminal.Process.Exited -= Process_Exited;
+
+            Closed?.Invoke(this, EventArgs.Empty);            
         }
 
         public void Disconnect()

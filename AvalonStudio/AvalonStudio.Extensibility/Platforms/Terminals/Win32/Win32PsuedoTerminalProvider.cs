@@ -1,8 +1,11 @@
 ﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
+using System.Linq;
+using System.Runtime.InteropServices;
 using static winpty.WinPty;
 
 namespace AvalonStudio.Platforms.Terminals.Win32
@@ -19,6 +22,22 @@ namespace AvalonStudio.Platforms.Terminals.Win32
             {
                 IoC.RegisterConstant<IPsuedoTerminalProvider>(this);
             }
+        }
+
+        private static IntPtr TryGetHandle(Process p)
+        {
+            var result = IntPtr.Zero;
+
+            try
+            {
+                result = p.Handle;
+            }
+            catch (Exception e)
+            {
+
+            }
+
+            return result;
         }
 
         public IPsuedoTerminal Create(int columns, int rows, string initialDirectory, string environment, string command, params string[] arguments)
@@ -54,8 +73,15 @@ namespace AvalonStudio.Platforms.Terminals.Win32
                 return null;
             }
 
-            return new Win32PsuedoTerminal(handle, cfg, spawnCfg, err, stdin, stdout);
+            var id = GetProcessId(process);
+
+            var terminalProcess = Process.GetProcessById(id);                      
+
+            return new Win32PsuedoTerminal(terminalProcess, handle, cfg, spawnCfg, err, stdin, stdout);
         }
+
+        [DllImport("kernel32.dll")]
+        static extern int GetProcessId(IntPtr handle);
 
         private Stream CreatePipe(string pipeName, PipeDirection direction)
         {

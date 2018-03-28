@@ -10,7 +10,7 @@ namespace AvalonStudio.Controls.Standard.Terminal
     public class TerminalViewModel : ToolViewModel, IExtension
     {
         private IConnection _connection;
-        private bool _terminalVisible;
+        private bool _terminalVisible;        
 
         public TerminalViewModel() : base("Terminal")
         {
@@ -29,7 +29,15 @@ namespace AvalonStudio.Controls.Standard.Terminal
                 Connection = new PsuedoTerminalConnection(terminal);
 
                 TerminalVisible = true;
+
+                Connection.Closed += Connection_Closed;
             }
+        }
+
+        private void Connection_Closed(object sender, System.EventArgs e)
+        {
+            Connection.Closed -= Connection_Closed;
+            TerminalVisible = false;
         }
 
         public void BeforeActivation()

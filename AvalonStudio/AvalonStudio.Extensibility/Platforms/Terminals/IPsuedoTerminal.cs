@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Platforms.Terminals
@@ -10,5 +11,7 @@ namespace AvalonStudio.Platforms.Terminals
         Task WriteAsync(byte[] buffer, int offset, int count);
 
         Task<int> ReadAsync(byte[] buffer, int offset, int count);
+
+        Process Process { get; }
     }
 }
