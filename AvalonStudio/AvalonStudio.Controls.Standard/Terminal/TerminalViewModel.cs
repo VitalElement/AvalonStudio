@@ -8,6 +8,8 @@ using System.Reactive.Linq;
 using VtNetCore.Avalonia;
 using System;
 using System.Diagnostics;
+using AvalonStudio.Platforms;
+using AvalonStudio.CommandLineTools;
 
 namespace AvalonStudio.Controls.Standard.Terminal
 {
@@ -36,13 +38,18 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
             if (provider != null)
             {
-                var terminal = provider.Create(80, 32, workingDirectory, null, @"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe");
+                var shellExecutable = PlatformSupport.ResolveFullExecutablePath("powershell" + Platform.ExecutableExtension);
 
-                Connection = new PsuedoTerminalConnection(terminal);
+                if (shellExecutable != null)
+                {
+                    var terminal = provider.Create(80, 32, workingDirectory, null, shellExecutable);
 
-                TerminalVisible = true;
+                    Connection = new PsuedoTerminalConnection(terminal);
 
-                Connection.Closed += Connection_Closed;
+                    TerminalVisible = true;
+
+                    Connection.Closed += Connection_Closed;
+                }
             }
         }
 
