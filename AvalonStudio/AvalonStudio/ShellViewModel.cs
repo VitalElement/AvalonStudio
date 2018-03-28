@@ -665,9 +665,7 @@ namespace AvalonStudio
             {
                 var oldValue = CurrentSolution;
 
-                this.RaiseAndSetIfChanged(ref currentSolution, value);
-
-                SolutionChanged?.Invoke(this, new SolutionChangedEventArgs() { OldValue = oldValue, NewValue = currentSolution });
+                this.RaiseAndSetIfChanged(ref currentSolution, value);                
             }
         }
 
@@ -749,6 +747,12 @@ namespace AvalonStudio
             if (CurrentSolution != null)
             {
                 await CloseSolutionAsync();
+
+                var oldValue = CurrentSolution;
+
+                CurrentSolution = null;
+
+                SolutionChanged?.Invoke(this, new SolutionChangedEventArgs() { OldValue = oldValue, NewValue = currentSolution });
             }
 
             if (System.IO.File.Exists(path))
@@ -769,9 +773,13 @@ namespace AvalonStudio
 
                     StatusBar.ClearText();
 
+                    var oldValue = CurrentSolution;
+
                     CurrentSolution = solution;
 
                     await CurrentSolution.LoadProjectsAsync();
+
+                    SolutionChanged?.Invoke(this, new SolutionChangedEventArgs() { OldValue = oldValue, NewValue = currentSolution });
                 }
             }
         }
