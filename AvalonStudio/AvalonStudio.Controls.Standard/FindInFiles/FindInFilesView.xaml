@@ -12,16 +12,16 @@
           <CheckBox Content="Regex" IsChecked="{Binding Regex} "/>
           <StackPanel Orientation="Horizontal" Gap="2">
             <TextBlock Text="File Mask:" VerticalAlignment="Center" />
-            <TextBox Text="{Binding FileMask}" MinWidth="150">
+            <TextBox Text="{Binding FileMask}" MinWidth="50">
               <i:Interaction.Behaviors>
-                <beh:CommandOnEnterBehavior Command="{Binding FindCommand}" />                
+                <beh:CommandOnEnterBehavior Command="{Binding FindCommand}" />
               </i:Interaction.Behaviors>
             </TextBox>
           </StackPanel>
         </StackPanel>
 
         <Grid Margin="0 0 16 0">
-          <TextBox Text="{Binding SearchTerm}" Watermark="Find ...">
+          <TextBox Text="{Binding SearchTerm}" Watermark="Find ..." MinWidth="250">
             <i:Interaction.Behaviors>
               <beh:CommandOnEnterBehavior Command="{Binding FindCommand}" />
               <beh:BindFocusedBehavior IsFocused="{Binding IsSelected}" />
