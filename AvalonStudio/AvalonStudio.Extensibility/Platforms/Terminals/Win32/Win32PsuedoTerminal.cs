@@ -15,6 +15,7 @@ namespace AvalonStudio.Platforms.Terminals.Win32
         private Stream _stdin = null;
         private Stream _stdout = null;
         private Process _process;
+        private bool _isDisposed = false;
 
         public Win32PsuedoTerminal(Process process, IntPtr handle, IntPtr cfg, IntPtr spawnCfg, IntPtr err, Stream stdin, Stream stdout)
         {
@@ -31,12 +32,16 @@ namespace AvalonStudio.Platforms.Terminals.Win32
 
         public void Dispose()
         {
-            _stdin?.Dispose();
-            _stdout?.Dispose();
-            winpty_config_free(_cfg);
-            winpty_spawn_config_free(_spawnCfg);
-            winpty_error_free(_err);
-            winpty_free(_handle);
+            if (!_isDisposed)
+            {
+                _isDisposed = true;
+                _stdin?.Dispose();
+                _stdout?.Dispose();
+                winpty_config_free(_cfg);
+                winpty_spawn_config_free(_spawnCfg);
+                winpty_error_free(_err);
+                winpty_free(_handle);
+            }
         }
 
         public async Task<int> ReadAsync(byte[] buffer, int offset, int count)
