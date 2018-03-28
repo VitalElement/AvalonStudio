@@ -9,6 +9,9 @@ namespace AvalonStudio.Controls.Standard.Terminal
 {
     public class TerminalViewModel : ToolViewModel, IExtension
     {
+        private IConnection _connection;
+        private bool _terminalVisible;
+
         public TerminalViewModel() : base("Terminal")
         {
         }
@@ -19,22 +22,30 @@ namespace AvalonStudio.Controls.Standard.Terminal
         {
             var provider = IoC.Get<IPsuedoTerminalProvider>();
 
-            var terminal = provider.Create(80, 32, "c:\\", null, @"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe");
+            if (provider != null)
+            {
+                var terminal = provider.Create(80, 32, "c:\\", null, @"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe");
 
-            Connection = new PsuedoTerminalConnection(terminal);
+                Connection = new PsuedoTerminalConnection(terminal);
+
+                TerminalVisible = true;
+            }
         }
 
         public void BeforeActivation()
         {
-        }
-
-        private IConnection _connection;
+        }        
 
         public IConnection Connection
         {
             get { return _connection; }
             set { this.RaiseAndSetIfChanged(ref _connection, value); }
-        }
+        }        
 
+        public bool TerminalVisible
+        {
+            get { return _terminalVisible; }
+            set { this.RaiseAndSetIfChanged(ref _terminalVisible, value); }
+        }
     }
 }
