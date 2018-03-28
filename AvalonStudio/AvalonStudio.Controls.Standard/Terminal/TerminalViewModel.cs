@@ -11,7 +11,7 @@ namespace AvalonStudio.Controls.Standard.Terminal
     {
         public TerminalViewModel() : base("Terminal")
         {
-            Connection = new ProcessConnection(new ProcessRunner("bash", ""));            
+            Connection = new PtyConnection();            
         }
 
         public override Location DefaultLocation => Location.BottomRight;
