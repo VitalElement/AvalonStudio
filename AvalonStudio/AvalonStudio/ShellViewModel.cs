@@ -665,8 +665,13 @@ namespace AvalonStudio
             {
                 var oldValue = CurrentSolution;
 
-                this.RaiseAndSetIfChanged(ref currentSolution, value);                
-            }
+                this.RaiseAndSetIfChanged(ref currentSolution, value);
+
+                if (oldValue != value)
+                {
+                    SolutionChanged?.Invoke(this, new SolutionChangedEventArgs() { OldValue = oldValue, NewValue = currentSolution });
+                }
+            }            
         }
 
         public IDocumentTabViewModel SelectedDocument
@@ -748,11 +753,7 @@ namespace AvalonStudio
             {
                 await CloseSolutionAsync();
 
-                var oldValue = CurrentSolution;
-
                 CurrentSolution = null;
-
-                SolutionChanged?.Invoke(this, new SolutionChangedEventArgs() { OldValue = oldValue, NewValue = currentSolution });
             }
 
             if (System.IO.File.Exists(path))
@@ -763,23 +764,19 @@ namespace AvalonStudio
 
                 if (solutionType != null)
                 {
-                    StatusBar.SetText($"Loading Solution: {path}");
+                    StatusBar.SetText($"Loading Solution: {path}");                    
 
-                    var solution = await solutionType.Value.LoadAsync(path);
+                    var solution = await solutionType.Value.LoadAsync(path);                    
 
                     await solution.LoadSolutionAsync();
 
-                    await solution.RestoreSolutionAsync();
-
-                    StatusBar.ClearText();
-
-                    var oldValue = CurrentSolution;
-
                     CurrentSolution = solution;
 
-                    await CurrentSolution.LoadProjectsAsync();
+                    StatusBar.ClearText();                    
 
-                    SolutionChanged?.Invoke(this, new SolutionChangedEventArgs() { OldValue = oldValue, NewValue = currentSolution });
+                    await solution.RestoreSolutionAsync();                    
+
+                    await CurrentSolution.LoadProjectsAsync();                    
                 }
             }
         }
