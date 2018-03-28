@@ -34,7 +34,7 @@ namespace AvalonStudio.Controls.Standard.Terminal
             {
                 var data = new byte[4096];
 
-                while (true)
+                while (!_cancellationSource.IsCancellationRequested)
                 {
                     var bytesReceived = await _terminal.ReadAsync(data, 0, data.Length);
 
@@ -71,6 +71,7 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
         public void Disconnect()
         {
+            _cancellationSource.Cancel();
             _terminal.Dispose();
         }
 
