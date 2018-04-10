@@ -10,6 +10,12 @@ using System.Composition;
 
 namespace AvalonStudio
 {
+    class ProtoA
+    {
+        public void MethodB(string s) { }
+    }
+
+
     internal class App : Application
     {
         static void Print(Exception ex)
@@ -34,11 +40,11 @@ namespace AvalonStudio
 
                 var builder = BuildAvaloniaApp().AfterSetup(async _ =>
                 {
-                    var extensionManager = new ExtensionManager();
-                    var container = CompositionRoot.CreateContainer(extensionManager);
-
                     Platform.Initialise();
                     PackageSources.InitialisePackageSources();
+
+                    var extensionManager = new ExtensionManager();
+                    var container = CompositionRoot.CreateContainer(extensionManager);
 
                     var shellExportFactory = container.GetExport<ExportFactory<ShellViewModel>>();
                     ShellViewModel.Instance = shellExportFactory.CreateExport().Value;

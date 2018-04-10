@@ -87,9 +87,9 @@ namespace AvalonStudio.Projects
             });
         }
 
-        public async Task RestoreSolutionAsync ()
+        public async Task RestoreSolutionAsync()
         {
-            if(!string.IsNullOrEmpty(DotNetCliService.Instance.DotNetPath))
+            if (!string.IsNullOrEmpty(DotNetCliService.Instance.DotNetPath))
             {
                 await Restore(null, IoC.Get<IStatusBar>());
             }
@@ -188,7 +188,7 @@ namespace AvalonStudio.Projects
                 {
                     statusBar.SetText($"Restoring Packages for solution: {Name}");
 
-                    var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.DotNetPath, $"restore {Path.GetFileName(Location)}", (s, e) =>
+                    var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.DotNetPath, $"restore /m {Path.GetFileName(Location)}", (s, e) =>
                     {
                         if (statusBar != null)
                         {
@@ -260,7 +260,7 @@ namespace AvalonStudio.Projects
                     statusBar.SetText($"Loading Project: {loadInfo.path}");
                 });
 
-                var task = Project.LoadProjectFileAsync(this, Guid.Parse(loadInfo.projectInfo.TypeGuid), loadInfo.path);
+                var task = ProjectUtils.LoadProjectFileAsync(this, Guid.Parse(loadInfo.projectInfo.TypeGuid), loadInfo.path);
 
                 var result = task.GetAwaiter().GetResult();
 
@@ -660,10 +660,10 @@ namespace AvalonStudio.Projects
         public async Task UnloadProjectsAsync()
         {
             // TODO parallelise this on a job runner.
-            foreach(var project in Projects)
+            foreach (var project in Projects)
             {
                 await project.UnloadAsync();
             }
-        }        
+        }
     }
 }

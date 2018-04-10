@@ -1,11 +1,11 @@
 ﻿using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Projects;
-using System.Composition;
+using AvalonStudio.Shell;
 
 namespace AvalonStudio.Languages.CSharp
 {
-    [Export(typeof(IEditorProvider))]
+    [ExportEditorProvider]
     internal class MetaDataEditorProvider : IEditorProvider
     {
         public bool CanEdit(ISourceFile file)

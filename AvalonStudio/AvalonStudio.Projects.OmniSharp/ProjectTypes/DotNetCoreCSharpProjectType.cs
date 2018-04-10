@@ -1,4 +1,4 @@
-﻿using RoslynPad.Roslyn;
+﻿using AvalonStudio.Projects.OmniSharp.Roslyn;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects.OmniSharp.ProjectTypes

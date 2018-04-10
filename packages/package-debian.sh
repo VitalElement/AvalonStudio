@@ -9,7 +9,7 @@ TARG_DIR=$PACK_DIR/avalon-studio_$BUILD_VERSION/opt/vitalelement/avalonstudio/bi
 rm -rf $TARG_DIR
 rm -rf $BUILD_DIR/bin/Release/netcoreapp2.0/debian.8-x64/publish
 pushd $BUILD_DIR
-dotnet restore -c Release -r debian.80x64 -f netcoreapp2.0
+dotnet restore 
 dotnet publish -c Release -r debian.8-x64 -f netcoreapp2.0
 popd
 mkdir -p $TARG_DIR

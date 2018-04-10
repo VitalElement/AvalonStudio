@@ -13,6 +13,8 @@
     <None Remove="AboutScreen\Assets\logo-65.png" />
     <None Remove="AboutScreen\Assets\logo.png" />
     <None Remove="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
+    <None Remove="SolutionExplorer\TemplateView.xaml" />
+    <None Remove="SolutionExplorer\TextTemplateParameter.xaml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AboutScreen\Assets\logo-256.png" />
@@ -21,12 +23,22 @@
     <EmbeddedResource Include="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.1" />
+    <PackageReference Include="Avalonia" Version="0.6.2-build4732-beta" />
+    <PackageReference Include="GitInfo" Version="2.0.10" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Utils\AvalonStudio.Utils.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="SolutionExplorer\TemplateView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SolutionExplorer\TextTemplateParameter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

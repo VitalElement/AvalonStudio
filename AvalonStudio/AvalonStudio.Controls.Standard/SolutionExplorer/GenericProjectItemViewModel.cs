@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
+namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
@@ -8,7 +8,6 @@
 
     public abstract class ProjectItemViewModel<T> : ProjectItemViewModel where T : IProjectItem
     {
-
         public ProjectItemViewModel(T model)
         {
             Model = model;
@@ -27,7 +26,7 @@
                 {
                     Platform.OpenFolderInExplorer((model as IProjectItem).Parent.Location);
                 }
-            });
+            });            
         }
 
         private new T Model
@@ -36,7 +35,7 @@
             set { base.Model = value; }
         }
 
-        public virtual string Title
+        public override string Title
         {
             get { return Model.Name; }
             set
@@ -57,7 +56,8 @@
             get { return Path.GetFileNameWithoutExtension(Title); }
         }
 
-        public ReactiveCommand RemoveItemCommand { get; }        
-        public ReactiveCommand OpenInExplorerCommand { get; protected set; }        
+        public ReactiveCommand RemoveItemCommand { get; }
+        public ReactiveCommand OpenInExplorerCommand { get; protected set; }
+        public ReactiveCommand DeleteCommand { get; protected set; }
     }
 }

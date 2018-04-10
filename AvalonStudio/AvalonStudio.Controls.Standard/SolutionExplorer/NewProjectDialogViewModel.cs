@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -28,7 +29,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private ITemplate selectedTemplate;
         private ISolutionFolder _solutionFolder;
-        
+
         private IShell _shell;
         private TemplateManager _templateManager;
 
@@ -107,7 +108,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 var templateDestination = Path.Combine(_solutionFolder.Solution.CurrentDirectory, name);
 
-                if (await templateManager.CreateTemplate(selectedTemplate, templateDestination, name) == CreationResult.Success)
+                if (await templateManager.CreateTemplate(selectedTemplate, templateDestination, ("name", name)) == CreationResult.Success)
                 {
                     var projectFiles = GetProjectFiles(templateDestination);
 
@@ -115,11 +116,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                     foreach (var projectFile in projectFiles)
                     {
-                        var projectTypeGuid = Project.GetProjectTypeGuidForProject(projectFile);
+                        var projectTypeGuid = ProjectUtils.GetProjectTypeGuidForProject(projectFile);
 
                         if (projectTypeGuid.HasValue)
                         {
-                            var project = await Project.LoadProjectFileAsync(
+                            var project = await ProjectUtils.LoadProjectFileAsync(
                                 _solutionFolder.Solution, projectTypeGuid.Value, projectFile);
 
                             if (project != null)
@@ -164,6 +165,20 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 IoC.Get<IStatusBar>().ClearText();
             },
             this.WhenAny(x => x.Location, x => x.SolutionName, (location, solution) => solution.Value != null && !Directory.Exists(Path.Combine(location.Value, solution.Value))));
+
+            UpdateTemplatesCommand = ReactiveCommand.Create(async () =>
+            {
+                var templateManager = IoC.Get<TemplateManager>();
+
+                await Task.Run(() =>
+                {                    
+                    templateManager.UpdateDefaultTemplates();
+
+                    _allProjectTemplates = new Lazy<IDictionary<string, IEnumerable<ITemplate>>>(_templateManager.GetProjectTemplates);
+
+                    SelectedLanguage = SelectedLanguage;
+                });
+            });
         }
 
         public string Name
@@ -246,12 +261,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public ReactiveCommand BrowseLocationCommand { get; }
         public override ReactiveCommand OKCommand { get; protected set; }
-
-        private void GetTemplates(string language)
-        {
-            var templateManager = IoC.Get<TemplateManager>();
-            ProjectTemplates = new ObservableCollection<ITemplate>(
-                templateManager.ListProjectTemplates(language));
-        }
+        public ReactiveCommand UpdateTemplatesCommand { get; }
     }
 }

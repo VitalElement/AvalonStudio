@@ -15,9 +15,13 @@ namespace AvalonStudio.Extensibility.Editor
 
         public KnownLayer Layer => KnownLayer.Background;
 
+        public ColorScheme ColorScheme { get; set; }
+
         public TextMarkerService(TextDocument document)
         {
             markers = new TextSegmentCollection<TextMarker>(document);
+
+            ColorScheme = ColorScheme.Default;
         }
 
         public event EventHandler<EventArgs> DataChanged;
@@ -43,35 +47,46 @@ namespace AvalonStudio.Extensibility.Editor
 
             foreach (TextMarker marker in markers.FindOverlappingSegments(start, end - start))
             {
-                if (marker.EndOffset < textView.Document.TextLength)
+                if (marker.Diagnostic.Level != DiagnosticLevel.Hidden && marker.Length > 0)
                 {
-                    foreach (var r in BackgroundGeometryBuilder.GetRectsForSegment(textView, marker))
+                    if (marker.EndOffset < textView.Document.TextLength)
                     {
-                        var startPoint = r.BottomLeft;
-                        var endPoint = r.BottomRight;
-
-                        var usedPen = new Pen(new SolidColorBrush(marker.MarkerColor), 1);
-
-                        const double offset = 2.5;
-
-                        var count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
-
-                        var geometry = new StreamGeometry();
-
-                        using (var ctx = geometry.Open())
+                        foreach (var r in BackgroundGeometryBuilder.GetRectsForSegment(textView, marker))
                         {
-                            ctx.BeginFigure(startPoint, false);
-
-                            foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
+                            if (marker.Diagnostic.Category == DiagnosticCategory.Style)
                             {
-                                ctx.LineTo(point);
+                                var usedPen = new Pen(marker.Brush, 1);
+                                drawingContext.DrawLine(usedPen, r.BottomLeft, r.BottomLeft.WithX(r.BottomLeft.X + 15));
                             }
+                            else
+                            {
+                                var startPoint = r.BottomLeft;
+                                var endPoint = r.BottomRight;
 
-                            ctx.EndFigure(false);
+                                var usedPen = new Pen(marker.Brush, 1);
+
+                                const double offset = 2.5;
+
+                                var count = Math.Max((int)((endPoint.X - startPoint.X) / offset) + 1, 4);
+
+                                var geometry = new StreamGeometry();
+
+                                using (var ctx = geometry.Open())
+                                {
+                                    ctx.BeginFigure(startPoint, false);
+
+                                    foreach (var point in CreatePoints(startPoint, endPoint, offset, count))
+                                    {
+                                        ctx.LineTo(point);
+                                    }
+
+                                    ctx.EndFigure(false);
+                                }
+
+                                drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
+                                break;
+                            }
                         }
-
-                        drawingContext.DrawGeometry(Brushes.Transparent, usedPen, geometry);
-                        break;
                     }
                 }
             }
@@ -85,51 +100,68 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
-        public void Clear()
+        public void RemoveAll(Predicate<TextMarker> predicate)
         {
-            var toRemove = new List<TextMarker>();
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
 
-            foreach (var marker in markers.ToList())
+            if (markers != null)
             {
-                toRemove.Add(marker);
-                markers.Remove(marker);
+                var toRemove = markers.Where(t => predicate(t)).ToArray();
+
+                foreach (var m in toRemove)
+                {
+                    markers.Remove(m);
+                }
             }
         }
 
-        public void SetDiagnostics(TextSegmentCollection<Diagnostic> diagnostics)
+        public void SetDiagnostics(object tag, TextSegmentCollection<Diagnostic> diagnostics)
         {
-            Clear();
-
             foreach (var diag in diagnostics)
             {
-                Color markerColor;
+                IBrush markerColor;
 
                 switch (diag.Level)
                 {
                     case DiagnosticLevel.Error:
                     case DiagnosticLevel.Fatal:
-                        markerColor = Color.FromRgb(253, 45, 45);
+                        markerColor = ColorScheme.ErrorDiagnostic;
                         break;
 
                     case DiagnosticLevel.Warning:
-                        markerColor = Color.FromRgb(255, 207, 40);
+                        markerColor = ColorScheme.WarningDiagnostic;
+                        break;
+
+                    case DiagnosticLevel.Info:
+                        if (diag.Category == DiagnosticCategory.Style)
+                        {
+                            markerColor = ColorScheme.StyleDiagnostic;
+                        }
+                        else
+                        {
+                            markerColor = ColorScheme.InfoDiagnostic;
+                        }
                         break;
 
                     default:
-                        markerColor = Color.FromRgb(0, 42, 74);
+                        markerColor = Brushes.Green;
                         break;
                 }
 
-                Create(diag.StartOffset, diag.Length, diag.Spelling, markerColor);
+                Create(diag, markerColor, tag);
             }
         }
-        
-        private void Create(int offset, int length, string message, Color markerColor)
+
+        private void Create(Diagnostic diagnostic, IBrush markerColor, object tag)
         {
-            var m = new TextMarker(offset, length);
+            var m = new TextMarker(diagnostic);
+
             markers.Add(m);
-            m.MarkerColor = markerColor;
-            m.ToolTip = message;
+
+            m.Brush = markerColor;
+            m.ToolTip = diagnostic.Spelling;
+            m.Tag = tag;
         }
 
         public void Update()
@@ -142,17 +174,24 @@ namespace AvalonStudio.Extensibility.Editor
             return markers == null ? Enumerable.Empty<TextMarker>() : markers.FindSegmentsContaining(offset);
         }
 
+        public IEnumerable<TextMarker> FindOverlappingMarkers(ISegment segment)
+        {
+            return markers == null ? Enumerable.Empty<TextMarker>() : markers.FindOverlappingSegments(segment);
+        }
+
         public sealed class TextMarker : TextSegment
         {
-            public TextMarker(int startOffset, int length)
+            public TextMarker(Diagnostic diagnostic)
             {
-                StartOffset = startOffset;
-                Length = length;
+                StartOffset = diagnostic.StartOffset;
+                Length = diagnostic.Length;
+                Diagnostic = diagnostic;
             }
 
-            public Color? BackgroundColor { get; set; }
-            public Color MarkerColor { get; set; }
+            public Diagnostic Diagnostic { get; set; }
+            public IBrush Brush { get; set; }
             public string ToolTip { get; set; }
+            public object Tag { get; set; }
         }
     }
 }

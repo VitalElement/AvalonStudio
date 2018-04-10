@@ -119,6 +119,11 @@ namespace AvalonStudio.Extensibility.Tests
             return null;
         }
 
+        public bool IsItemSupported(string languageName)
+        {
+            return false;
+        }
+
         public Task LoadFilesAsync()
         {
             throw new NotImplementedException();

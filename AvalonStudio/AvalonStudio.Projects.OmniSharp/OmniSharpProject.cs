@@ -5,13 +5,12 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Platforms;
-using AvalonStudio.Projects.OmniSharp.ProjectTypes;
+using AvalonStudio.Projects.OmniSharp.Roslyn;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
-using RoslynPad.Roslyn;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -122,13 +121,23 @@ namespace AvalonStudio.Projects.OmniSharp
                         break;
                 }
             };
+
+            FileRemoved += (sender, e) =>
+            {
+                switch (e.Extension)
+                {
+                    case ".cs":
+                        RoslynWorkspace.GetWorkspace(Solution).RemoveDocument(RoslynProject, e);
+                        break;
+                }
+            };
         }
 
         public async Task<bool> Restore(IConsole console, IStatusBar statusBar = null)
         {
             return await Task.Factory.StartNew(() =>
             {
-                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"restore {Path.GetFileName(Location)}", (s, e) =>
+                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"restore /m {Path.GetFileName(Location)}", (s, e) =>
                 {
                     if (statusBar != null)
                     {
@@ -389,6 +398,18 @@ namespace AvalonStudio.Projects.OmniSharp
                 {
                     RoslynWorkspace.DisposeWorkspace(Solution);
                 }
+            }
+        }
+
+        public override bool IsItemSupported(string languageName)
+        {
+            switch(languageName)
+            {
+                case "C#":
+                    return true;
+
+                default:
+                    return false;
             }
         }
 

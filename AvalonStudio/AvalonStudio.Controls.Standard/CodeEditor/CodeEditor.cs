@@ -5,6 +5,7 @@ using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using AvaloniaEdit;
 using AvaloniaEdit.Document;
@@ -13,6 +14,7 @@ using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
 using AvalonStudio.CodeEditor;
+using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
 using AvalonStudio.Controls.Standard.CodeEditor.Highlighting;
 using AvalonStudio.Controls.Standard.CodeEditor.Refactoring;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
@@ -101,6 +103,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private SelectedLineBackgroundRenderer _selectedLineBackgroundRenderer;
         private RenameManager _renameManager;
         private CompositeDisposable _disposables;
+        private CompositeDisposable _languageServiceDisposables;
+
+        private ContextActionsRenderer _contextActionsRenderer;
 
         /// <summary>
         ///     Write lock must be held before calling this.
@@ -202,8 +207,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     }
                 }
             };
-
             _disposables = new CompositeDisposable {
+
             this.GetObservable(LineNumbersVisibleProperty).Subscribe(s =>
             {
                 if (s)
@@ -270,6 +275,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 this.TextArea.TextView.InvalidateLayer(KnownLayer.Background);
             }),
 
+            this.GetObservable(ContextActionsIconProperty).Subscribe(icon =>
+            {
+                if(_contextActionsRenderer != null)
+                {
+                    _contextActionsRenderer.IconImage = icon;
+                }
+            }),
+
             this.GetObservable(ColorSchemeProperty).Subscribe(colorScheme =>
             {
                 if (colorScheme != null)
@@ -278,9 +291,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Foreground = colorScheme.Text;
 
                     _lineNumberMargin.Background = colorScheme.BackgroundAccent;
+
                     if (_textColorizer != null)
                     {
                         _textColorizer.ColorScheme = colorScheme;
+                    }
+
+                    if(_diagnosticMarkersRenderer != null)
+                    {
+                        _diagnosticMarkersRenderer.ColorScheme = colorScheme;
                     }
 
                     TextArea.TextView.InvalidateLayer(KnownLayer.Background);
@@ -497,9 +516,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
         }
 
-        public void BeginSymbolRename (int offset)
+        public void BeginSymbolRename(int offset)
         {
-            if(LanguageService != null)
+            if (LanguageService != null)
             {
                 Dispatcher.UIThread.InvokeAsync(async () =>
                 {
@@ -554,9 +573,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 var offset = Document.GetOffset(position.Value.Location);
 
-                var matching = Diagnostics?.FindSegmentsContaining(offset).FirstOrDefault();
+                var matching = _diagnosticMarkersRenderer?.GetMarkersAtOffset(offset).FirstOrDefault()?.Diagnostic;
 
-                if (matching != null)
+                if (matching != null && matching.Level != DiagnosticLevel.Hidden)
                 {
                     return new ErrorProbeViewModel(matching);
                 }
@@ -755,29 +774,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     var result = await LanguageService.RunCodeAnalysisAsync(editor, unsavedFiles, () => false);
 
-                    _textColorizer?.SetTransformations(result.SyntaxHighlightingData);
-
-                    TextSegmentCollection<Diagnostic> diagnostics = null;
+                    _textColorizer?.SetTransformations(editor, result.SyntaxHighlightingData);
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
-                        diagnostics = new TextSegmentCollection<Diagnostic>(Document);
                     });
 
-                    foreach (var diagnostic in result.Diagnostics)
+                    Dispatcher.UIThread.Post(() =>
                     {
-                        diagnostics.Add(diagnostic);
-                    }
-
-                    _diagnosticMarkersRenderer?.SetDiagnostics(diagnostics);
-
-                    Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        Diagnostics = diagnostics;
-
-                        _shell.InvalidateErrors();
-
                         TextArea.TextView.Redraw();
                     });
                 }
@@ -800,19 +805,29 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _snippetManager.InitialiseSnippetsForProject(sourceFile.Project);
             }
 
-            LanguageService = _shell.LanguageServices.FirstOrDefault(o => o.CanHandle(DocumentAccessor));
+            var contentTypeService = ContentTypeServiceInstance.Instance;
+
+            LanguageService = _shell.LanguageServices.FirstOrDefault(
+                o => o.Metadata.TargetCapabilities.Any(
+                    c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;
 
             if (LanguageService != null)
             {
                 SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(LanguageService.LanguageId.ToUpper());
-
-                LanguageServiceName = LanguageService.Title;
 
                 LanguageService.RegisterSourceFile(DocumentAccessor);
 
                 _diagnosticMarkersRenderer = new TextMarkerService(Document);
                 _textColorizer = new TextColoringTransformer(Document);
                 _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
+
+                _contextActionsRenderer = new ContextActionsRenderer(this, _diagnosticMarkersRenderer);
+                TextArea.LeftMargins.Add(_contextActionsRenderer);                
+
+                foreach (var contextActionProvider in LanguageService.GetContextActionProviders(DocumentAccessor))
+                {
+                    _contextActionsRenderer.Providers.Add(contextActionProvider);
+                }
 
                 TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
                 TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
@@ -840,21 +855,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     TextArea.IndentationStrategy = new DefaultIndentationStrategy();
                 }
 
-                //LanguageService.Diagnostics?.ObserveOn(AvaloniaScheduler.Instance).Subscribe(d =>
-                //{
-                //    _diagnosticMarkersRenderer?.SetDiagnostics(d);
-
-                //    Diagnostics = d;
-
-                //    _shell.InvalidateErrors();
-
-                //    TextArea.TextView.Redraw();
-                //});
-            }
-            else
-            {
-                LanguageService = null;
-                LanguageServiceName = "Plain Text";
+                _languageServiceDisposables = new CompositeDisposable
+                {
+                    Observable.FromEventPattern<DiagnosticsUpdatedEventArgs>(LanguageService, nameof(LanguageService.DiagnosticsUpdated)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(args =>
+                    LanguageService_DiagnosticsUpdated(args.Sender, args.EventArgs))
+                };
             }
 
             StartBackgroundWorkers();
@@ -866,7 +871,38 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             TextArea.TextEntered += TextArea_TextEntered;
 
             DoCodeAnalysisAsync().GetAwaiter();
-        }        
+        }
+
+        private void LanguageService_DiagnosticsUpdated(object sender, DiagnosticsUpdatedEventArgs e)
+        {
+            if (e.AssociatedSourceFile == SourceFile)
+            {
+                _diagnosticMarkersRenderer?.RemoveAll(marker => Equals(marker.Tag, e.Tag));
+
+                var collection = new TextSegmentCollection<Diagnostic>(Document);
+
+                foreach (var diagnostic in e.Diagnostics)
+                {
+                    collection.Add(diagnostic);
+                }
+
+                if (e.Kind == DiagnosticsUpdatedKind.DiagnosticsCreated)
+                {
+                    _diagnosticMarkersRenderer?.SetDiagnostics(e.Tag, collection);
+
+                    if (e.DiagnosticHighlights != null)
+                    {
+                        _textColorizer.SetTransformations(e.Tag, e.DiagnosticHighlights);
+                    }
+                }
+
+                _contextActionsRenderer.OnDiagnosticsUpdated();
+            }
+
+            _shell.UpdateDiagnostics(e);
+
+            TextArea.TextView.Redraw();
+        }
 
         private void TextArea_TextEntered(object sender, TextInputEventArgs e)
         {
@@ -903,6 +939,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private void UnRegisterLanguageService()
         {
+            _languageServiceDisposables?.Dispose();
+
             if (_scopeLineBackgroundRenderer != null)
             {
                 TextArea.TextView.BackgroundRenderers.Remove(_scopeLineBackgroundRenderer);
@@ -1011,6 +1049,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
         }
 
+        public static readonly StyledProperty<IBitmap> ContextActionsIconProperty = AvaloniaProperty.Register<CodeEditor, IBitmap>(nameof(ContextActionsIcon));
+
+        public IBitmap ContextActionsIcon
+        {
+            get => this.GetValue(ContextActionsIconProperty);
+            set => this.SetValue(ContextActionsIconProperty, value);
+        }
+
         public static readonly StyledProperty<int> CaretOffsetProperty =
             AvaloniaProperty.Register<CodeEditor, int>(nameof(EditorCaretOffset), defaultBindingMode: BindingMode.TwoWay);
 
@@ -1092,16 +1138,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             set { SetValue(ColumnProperty, value); }
         }
 
-        public static readonly StyledProperty<string> LanguageServiceNameProperty =
-            AvaloniaProperty.Register<CodeEditor, string>(nameof(LanguageServiceName), defaultBindingMode: BindingMode.TwoWay);
-
-        public string LanguageServiceName
-        {
-            get { return GetValue(LanguageServiceNameProperty); }
-            set { SetValue(LanguageServiceNameProperty, value); }
-        }
-
-
         public static readonly StyledProperty<ObservableCollection<IVisualLineTransformer>> DocumentLineTransformersProperty =
             AvaloniaProperty.Register<CodeEditor, ObservableCollection<IVisualLineTransformer>>(nameof(DocumentLineTransformers), new ObservableCollection<IVisualLineTransformer>());
 
@@ -1127,15 +1163,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get => GetValue(ColorSchemeProperty);
             set => SetValue(ColorSchemeProperty, value);
-        }
-
-        public static readonly StyledProperty<TextSegmentCollection<Diagnostic>> DiagnosticsProperty =
-            AvaloniaProperty.Register<CodeEditor, TextSegmentCollection<Diagnostic>>(nameof(Diagnostics), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
-
-        public TextSegmentCollection<Diagnostic> Diagnostics
-        {
-            get { return GetValue(DiagnosticsProperty); }
-            set { SetValue(DiagnosticsProperty, value); }
         }
 
         public static readonly AvaloniaProperty<ISourceFile> SourceFileProperty =

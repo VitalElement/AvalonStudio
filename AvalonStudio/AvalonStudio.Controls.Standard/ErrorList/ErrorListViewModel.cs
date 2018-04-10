@@ -36,11 +36,16 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                 {
                     if (value != null)
                     {
-                        var document = await shell.OpenDocumentAsync(shell.CurrentSolution.FindFile(value.Model.File), value.Line);
+                        var currentDocument = shell.CurrentSolution.FindFile(value.Model.File);
 
-                        if (document != null)
+                        if (currentDocument != null)
                         {
-                            document.GotoOffset(value.Model.StartOffset);
+                            var document = await shell.OpenDocumentAsync(currentDocument, value.Line);
+
+                            if (document != null)
+                            {
+                                document.GotoOffset(value.Model.StartOffset);
+                            }
                         }
                     }
                 });

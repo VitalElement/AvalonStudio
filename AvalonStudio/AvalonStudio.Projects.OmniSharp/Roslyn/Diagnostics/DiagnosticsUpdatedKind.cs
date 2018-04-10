@@ -1,4 +1,4 @@
-namespace RoslynPad.Roslyn.Diagnostics
+namespace AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics
 {
     public enum DiagnosticsUpdatedKind
     {

@@ -1,16 +1,24 @@
 using Avalonia.Media;
+using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
+using AvalonStudio.Projects;
+using System;
 using System.IO;
 
 namespace AvalonStudio.Controls.Standard.ErrorList
 {
-    public class ErrorViewModel : ViewModel<Diagnostic>
+    public class ErrorViewModel : ViewModel<Diagnostic>, IComparable<ErrorViewModel>
     {
-        public ErrorViewModel(Diagnostic model) : base(model)
+        public ErrorViewModel(Diagnostic model, object tag, ISourceFile associatedFile) : base(model)
         {
-            offset = model.StartOffset;
+            Tag = tag;
+            AssociatedFile = associatedFile;
         }
+
+        public object Tag { get; private set; }
+
+        public ISourceFile AssociatedFile { get; }
 
         public string File
         {
@@ -32,8 +40,6 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             get { return Model.Line; }
         }
 
-        private int offset { get; }
-
         public DiagnosticLevel Level
         {
             get { return Model.Level; }
@@ -47,39 +53,20 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                 {
                     case DiagnosticLevel.Error:
                     case DiagnosticLevel.Fatal:
-                        return Brush.Parse("#E34937");
+                        return ColorTheme.CurrentTheme.ErrorListError;
 
                     case DiagnosticLevel.Warning:
-                        return Brush.Parse("#D78A04");
+                        return ColorTheme.CurrentTheme.ErrorListWarning;
 
                     default:
-                        return Brush.Parse("#1C7CD2 ");
+                        return ColorTheme.CurrentTheme.ErrorListInfo;
                 }
             }
         }
 
-        public bool IsEqual(ErrorViewModel other)
+        public int CompareTo(ErrorViewModel other)
         {
-            var result = false;
-
-            if (File == other.File)
-            {
-                if (offset == other.offset)
-                {
-                    if (Level == other.Level)
-                    {
-                        //if (this.rangeCount == other.rangeCount)
-                        {
-                            if (Spelling == other.Spelling)
-                            {
-                                result = true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return result;
+            return Line.CompareTo(other.Line);
         }
     }
 }

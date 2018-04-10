@@ -220,5 +220,17 @@ Program.main();
             //TODO: Anything with references?
             SerializedObject.Serialize(Location, this); //Write the project
         }
+
+        public override bool IsItemSupported(string languageName)
+        {
+            switch(languageName)
+            {
+                case "TS":
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
     }
 }

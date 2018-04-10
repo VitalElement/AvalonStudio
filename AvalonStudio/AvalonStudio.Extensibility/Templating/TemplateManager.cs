@@ -108,18 +108,23 @@ namespace AvalonStudio.Extensibility.Templating
             return ListTemplates(language, TemplateKind.Project);
         }
 
-        public async Task<CreationResult> CreateTemplate(ITemplate template, string path, string name = "")
+        public async Task<CreationResult> CreateTemplate(ITemplate template, string path, params (string name, string value)[] parameters )
         {
             if (template is DotNetTemplateAdaptor templateImpl)
             {
-                if (string.IsNullOrEmpty(name))
+                var parameterList = new List<string>();
+
+                parameterList.Add(templateImpl.DotnetTemplate.ShortName);
+                parameterList.Add("--output");
+                parameterList.Add(path);
+
+                foreach(var parameter in parameters)
                 {
-                    _commandInput.ResetArgs(templateImpl.DotnetTemplate.ShortName, "--output", path);
+                    parameterList.Add($"--{parameter.name}");
+                    parameterList.Add(parameter.value);
                 }
-                else
-                {
-                    _commandInput.ResetArgs(templateImpl.DotnetTemplate.ShortName, "--output", path, "--name", name);
-                }
+
+                _commandInput.ResetArgs(parameterList.ToArray());                
 
                 string fallbackName = new DirectoryInfo(_commandInput.OutputPath ?? Directory.GetCurrentDirectory()).Name;
 
@@ -156,7 +161,7 @@ namespace AvalonStudio.Extensibility.Templating
         {
             var templateList = TemplateListResolver.GetTemplateResolutionResult(_settingsLoader.UserTemplateCache.TemplateInfo, _hostDataLoader, _commandInput, _defaultLanguage);
 
-            if (templateList.TryGetUnambiguousTemplateGroupToUse(out IReadOnlyList<ITemplateMatchInfo> unambiguousTemplateGroupForDetailDisplay))
+            if (templateList.TryGetUnambiguousTemplateGroupToUse(out IReadOnlyList<ITemplateMatchInfo> unambiguousTemplateGroupForDetailDisplay, true))
             {
                 return unambiguousTemplateGroupForDetailDisplay.Where(t => t.IsMatch).Select(ti => new DotNetTemplateAdaptor(ti.Info)).ToList().AsReadOnly();
             }
@@ -303,9 +308,7 @@ namespace AvalonStudio.Extensibility.Templating
 
         private static void FirstRun(IEngineEnvironmentSettings environmentSettings, IInstaller installer)
         {
-            var packages = new List<string> { "VitalElement.AvalonStudio.Templates" };
-
-            installer.InstallPackages(packages);
+            UpdatePackages(installer);
         }
 
         public void BeforeActivation()
@@ -316,6 +319,18 @@ namespace AvalonStudio.Extensibility.Templating
         public void Activation()
         {
 
+        }
+
+        public void UpdateDefaultTemplates()
+        {
+            UpdatePackages(Installer);
+        }
+
+        private static void UpdatePackages (IInstaller installer)
+        {
+            var packages = new List<string> { "VitalElement.AvalonStudio.Templates" };
+
+            installer.InstallPackages(packages);
         }
 
         public IDictionary<string, IEnumerable<ITemplate>> GetProjectTemplates() => GetTemplates(TemplateKind.Project);

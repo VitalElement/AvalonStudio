@@ -12,7 +12,6 @@ using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.MainToolBar;
 using AvalonStudio.Extensibility.Menus;
 using AvalonStudio.Extensibility.Plugin;
-using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.ToolBars;
 using AvalonStudio.Extensibility.ToolBars.Models;
@@ -46,7 +45,6 @@ namespace AvalonStudio
         private WorkspaceTaskRunner _taskRunner;
         private ToolBarDefinition _toolBarDefinition;
         private double _globalZoomLevel;
-        private List<ILanguageService> _languageServices;
         private List<IToolChain> _toolChains;
         private List<MenuBarDefinition> _menuBarDefinitions;
         private List<MenuDefinition> _menuDefinitions;
@@ -61,6 +59,8 @@ namespace AvalonStudio
         private Lazy<StatusBarViewModel> _statusBar;
 
         private IEnumerable<Lazy<IEditorProvider>> _editorProviders;
+        private IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> _languageServices;
+
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
         private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
 
@@ -83,7 +83,9 @@ namespace AvalonStudio
         [ImportingConstructor]
         public ShellViewModel(
             Lazy<StatusBarViewModel> statusBar,
+            IContentTypeService contentTypeService,
             [ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
+            [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
             [ImportMany] IEnumerable<IDebugger> debugger2s,
@@ -94,6 +96,7 @@ namespace AvalonStudio
             IoC.RegisterConstant<IStatusBar>(_statusBar.Value);
 
             _editorProviders = editorProviders;
+            _languageServices = languageServices;
 
             _solutionTypes = solutionTypes;
             _projectTypes = projectTypes;
@@ -102,8 +105,6 @@ namespace AvalonStudio
 
             _testFrameworks = testFrameworks;
 
-            _languageServices = new List<ILanguageService>();
-            _debugger2s = new List<IDebugger>();
             _toolChains = new List<IToolChain>();
             _menuBarDefinitions = new List<MenuBarDefinition>();
             _menuDefinitions = new List<MenuDefinition>();
@@ -153,7 +154,6 @@ namespace AvalonStudio
             {
                 extension.Activation();
 
-                _languageServices.ConsumeExtension(extension);
                 _toolChains.ConsumeExtension(extension);
 
                 _commandDefinitions.ConsumeExtension(extension);
@@ -246,14 +246,14 @@ namespace AvalonStudio
                 }
             }
 
-            LeftTabs.SelectedTool = LeftTabs.Tools.FirstOrDefault();
-            RightTabs.SelectedTool = RightTabs.Tools.FirstOrDefault();
-            BottomTabs.SelectedTool = BottomTabs.Tools.FirstOrDefault();
-            BottomRightTabs.SelectedTool = BottomRightTabs.Tools.FirstOrDefault();
-            RightTopTabs.SelectedTool = RightTopTabs.Tools.FirstOrDefault();
-            RightMiddleTabs.SelectedTool = RightMiddleTabs.Tools.FirstOrDefault();
-            RightBottomTabs.SelectedTool = RightBottomTabs.Tools.FirstOrDefault();
-            MiddleTopTabs.SelectedTool = MiddleTopTabs.Tools.FirstOrDefault();
+            LeftTabs.SelectedTool = LeftTabs.Tools.Where(t=>t.IsVisible).FirstOrDefault();
+            RightTabs.SelectedTool = RightTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            BottomTabs.SelectedTool = BottomTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            BottomRightTabs.SelectedTool = BottomRightTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            RightTopTabs.SelectedTool = RightTopTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            RightMiddleTabs.SelectedTool = RightMiddleTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            RightBottomTabs.SelectedTool = RightBottomTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            MiddleTopTabs.SelectedTool = MiddleTopTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
 
             IoC.Get<IStatusBar>().ClearText();
 
@@ -376,7 +376,7 @@ namespace AvalonStudio
 
         public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes => _projectTypes;
 
-        public IEnumerable<ILanguageService> LanguageServices => _languageServices;
+        public IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices => _languageServices;
 
         public IEnumerable<IToolChain> ToolChains => _toolChains;
 
@@ -398,6 +398,16 @@ namespace AvalonStudio
             DocumentTabs.OpenDocument(document, temporary);
         }
 
+        public void RemoveDocument (ISourceFile file)
+        {
+            var document = DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(d => d.SourceFile == file);
+
+            if(document != null)
+            {
+                RemoveDocument(document);
+            }            
+        }
+
         public void RemoveDocument(IDocumentTabViewModel document)
         {
             if (document == null)
@@ -407,7 +417,7 @@ namespace AvalonStudio
 
             if (document is EditorViewModel doc)
             {
-                doc.Editor.Save();
+                doc.Editor?.Save();
             }
 
             DocumentTabs.CloseDocument(document);
@@ -676,13 +686,6 @@ namespace AvalonStudio
             }
         }
 
-        public object BottomSelectedTool
-        {
-            get { return BottomTabs.SelectedTool; }
-
-            set { BottomTabs.SelectedTool = value; }
-        }
-
         public IProject GetDefaultProject()
         {
             IProject result = null;
@@ -723,50 +726,20 @@ namespace AvalonStudio
             Environment.Exit(1);
         }
 
-        public void InvalidateErrors()
+        public void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics)
         {
-            var allErrors = new List<ErrorViewModel>();
-            var toRemove = new List<ErrorViewModel>();
-
-            foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
-            {
-                /*if (document.Diagnostics != null)
-                {
-                    foreach (var diagnostic in document.Diagnostics)
-                    {
-                        var error = new ErrorViewModel(diagnostic);
-                        var matching = allErrors.FirstOrDefault(err => err.IsEqual(error));
-
-                        if (matching == null)
-                        {
-                            allErrors.Add(error);
-                        }
-                    }
-                }*/
-            }
-
-            foreach (var error in ErrorList.Errors)
-            {
-                var matching = allErrors.SingleOrDefault(err => err.IsEqual(error));
-
-                if (matching == null)
-                {
-                    toRemove.Add(error);
-                }
-            }
+            var toRemove = ErrorList.Errors.Where(e => Equals(e.Tag, diagnostics.Tag) && e.AssociatedFile == diagnostics.AssociatedSourceFile).ToList();
 
             foreach (var error in toRemove)
             {
                 ErrorList.Errors.Remove(error);
             }
 
-            foreach (var error in allErrors)
+            foreach (var diagnostic in diagnostics.Diagnostics)
             {
-                var matching = ErrorList.Errors.SingleOrDefault(err => err.IsEqual(error));
-
-                if (matching == null)
+                if (diagnostic.Level != DiagnosticLevel.Hidden)
                 {
-                    ErrorList.Errors.Add(error);
+                    ErrorList.Errors.InsertSorted(new ErrorViewModel(diagnostic, diagnostics.Tag, diagnostics.AssociatedSourceFile));
                 }
             }
         }
@@ -805,6 +778,8 @@ namespace AvalonStudio
 
         public async Task CloseSolutionAsync()
         {
+            ErrorList.Errors.Clear();
+
             var documentsToClose = DocumentTabs.Documents.ToList();
 
             foreach (var document in documentsToClose)

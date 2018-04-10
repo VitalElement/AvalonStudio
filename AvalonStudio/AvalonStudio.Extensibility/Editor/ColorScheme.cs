@@ -32,7 +32,7 @@ namespace AvalonStudio.Extensibility.Editor
         private static readonly ColorScheme DefaultColorScheme = ColorScheme.SolarizedLight;
         private static readonly Dictionary<string, Func<IBrush>> s_colorAccessors = new Dictionary<string, Func<IBrush>>();
         public static IEnumerable<ColorScheme> ColorSchemes => s_colorSchemes;
-        
+
         static ColorScheme()
         {
             s_colorAccessors["background"] = () => CurrentColorScheme.Background;
@@ -72,6 +72,10 @@ namespace AvalonStudio.Extensibility.Editor
             Background = Brush.Parse("#FFFFFF"),
             BackgroundAccent = Brush.Parse("#FFFFFF"),
             Text = Brush.Parse("#000000"),
+            ErrorDiagnostic = Brush.Parse("#FD2D2D"),
+            WarningDiagnostic = Brush.Parse("#FFCF28"),
+            InfoDiagnostic = Brush.Parse("#0019FF"),
+            StyleDiagnostic = Brush.Parse("#D4D4D4"),
             Comment = Brush.Parse("#008000"),
             Keyword = Brush.Parse("#0000FF"),
             Literal = Brush.Parse("#A31515"),
@@ -96,10 +100,14 @@ namespace AvalonStudio.Extensibility.Editor
 
         public static readonly ColorScheme Default = new ColorScheme
         {
-            Name = "Default",
+            Name = "Dark",
             Background = Brush.Parse("#1e1e1e"),
             BackgroundAccent = Brush.Parse("#1e1e1e"),
-            Text = Brush.Parse("#DCDCDC"),
+            Text = Brush.Parse("#C8C8C8"),
+            ErrorDiagnostic = Brush.Parse("#FD2D2D"),
+            WarningDiagnostic = Brush.Parse("#FFCF28"),
+            InfoDiagnostic = Brush.Parse("#0019FF"),
+            StyleDiagnostic = Brush.Parse("#D4D4D4"),
             Comment = Brush.Parse("#57A64A"),
             Keyword = Brush.Parse("#569CD6"),
             Literal = Brush.Parse("#D69D85"),
@@ -122,12 +130,17 @@ namespace AvalonStudio.Extensibility.Editor
             XamlMarkupExtensionPropertyValue = Brush.Parse("#B1B1B1")
         };
 
-        public static readonly ColorScheme SolarizedDark = new ColorScheme {
+        public static readonly ColorScheme SolarizedDark = new ColorScheme
+        {
             Name = "Solarized Dark",
             Background = Brush.Parse("#002b36"),
             BackgroundAccent = Brush.Parse("#073642"),
             Text = Brush.Parse("#839496"),
-            Comment =Brush.Parse("#586e75"),
+            ErrorDiagnostic = Brush.Parse("#FD2D2D"),
+            WarningDiagnostic = Brush.Parse("#FFCF28"),
+            InfoDiagnostic = Brush.Parse("#0019FF"),
+            StyleDiagnostic = Brush.Parse("#D4D4D4"),
+            Comment = Brush.Parse("#586e75"),
             Keyword = Brush.Parse("#859900"),
             Literal = Brush.Parse("#2aa198"),
             Identifier = Brush.Parse("#839496"),
@@ -148,6 +161,10 @@ namespace AvalonStudio.Extensibility.Editor
             Background = Brush.Parse("#fdf6e3"),
             BackgroundAccent = Brush.Parse("#eee8d5"),
             Text = Brush.Parse("#657b83"),
+            ErrorDiagnostic = Brush.Parse("#FD2D2D"),
+            WarningDiagnostic = Brush.Parse("#FFCF28"),
+            InfoDiagnostic = Brush.Parse("#0019FF"),
+            StyleDiagnostic = Brush.Parse("#D4D4D4"),
             Comment = Brush.Parse("#93a1a1"),
             Keyword = Brush.Parse("#859900"),
             Literal = Brush.Parse("#2aa198"),
@@ -199,7 +216,7 @@ namespace AvalonStudio.Extensibility.Editor
             {
                 key = key.ToLower();
 
-                if(s_colorAccessors.ContainsKey(key))
+                if (s_colorAccessors.ContainsKey(key))
                 {
                     return s_colorAccessors[key]();
                 }
@@ -221,13 +238,25 @@ namespace AvalonStudio.Extensibility.Editor
         [JsonProperty(PropertyName = "editor.text")]
         public IBrush Text { get; set; }
 
-        [JsonProperty(PropertyName ="editor.comment")]
+        [JsonProperty(PropertyName = "editor.diagnostics.error")]
+        public IBrush ErrorDiagnostic { get; set; }
+
+        [JsonProperty(PropertyName = "editor.diagnostics.warning")]
+        public IBrush WarningDiagnostic { get; set; }
+
+        [JsonProperty(PropertyName = "editor.diagnostics.info")]
+        public IBrush InfoDiagnostic { get; set; }
+
+        [JsonProperty(PropertyName = "editor.diagnostics.style")]
+        public IBrush StyleDiagnostic { get; set; }
+
+        [JsonProperty(PropertyName = "editor.comment")]
         public IBrush Comment { get; set; }
 
         [JsonProperty(PropertyName = "editor.delegate.name")]
         public IBrush DelegateName { get; set; }
 
-        [JsonProperty(PropertyName ="editor.keyword")]
+        [JsonProperty(PropertyName = "editor.keyword")]
         public IBrush Keyword { get; set; }
 
         [JsonProperty(PropertyName = "editor.literal")]
@@ -286,7 +315,7 @@ namespace AvalonStudio.Extensibility.Editor
             SerializedObject.Serialize(Path.Combine(Platform.SettingsDirectory, fileName), this);
         }
 
-        public static ColorScheme Load (string fileName)
+        public static ColorScheme Load(string fileName)
         {
             return SerializedObject.Deserialize<ColorScheme>(fileName);
         }

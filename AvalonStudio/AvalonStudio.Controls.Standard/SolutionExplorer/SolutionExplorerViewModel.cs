@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Projects;
@@ -75,6 +76,17 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
+        internal void OnKeyDown (Key key, InputModifiers modifiers)
+        {
+            if(key == Key.Delete && modifiers == InputModifiers.None)
+            {
+                if(SelectedItem.Model is IDeleteable deletable)
+                {
+                    deletable.Delete();
+                }
+            }
+        }
+
         public SolutionViewModel Solution
         {
             get { return solution; }
@@ -110,9 +122,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        public override Location DefaultLocation
+        public override MVVM.Location DefaultLocation
         {
-            get { return Location.Right; }
+            get { return MVVM.Location.Right; }
         }
 
         public void BeforeActivation()
