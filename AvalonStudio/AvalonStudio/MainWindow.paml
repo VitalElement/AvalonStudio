@@ -2,8 +2,7 @@
                       xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
                       xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.ViewModels;assembly=AvalonStudio.Extensibility"
                       xmlns:dock="clr-namespace:Mabiavalon.DockNC;assembly=Mabiavalon.DockNC"
-                      xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"      
-                      Icon="resm:AvalonStudio.Assets.logo-256.png?assembly=AvalonStudio" 
+                      xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"                            
                       Title="AvalonStudio" BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}" 
                       FontFamily="Source Sans Pro" FontSize="14"
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized">

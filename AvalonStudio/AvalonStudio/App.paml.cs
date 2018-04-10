@@ -7,6 +7,7 @@ using AvalonStudio.Repositories;
 using Serilog;
 using System;
 using System.Composition;
+using System.ComponentModel;
 
 namespace AvalonStudio
 {
@@ -37,6 +38,13 @@ namespace AvalonStudio
                 {
                     throw new ArgumentNullException(nameof(args));
                 }
+
+                bool bVal=true;
+                string strA="False";
+                var typeConverter1 = TypeDescriptor.GetConverter(bVal);
+                Console.WriteLine(typeConverter1.ConvertTo(bVal, typeof(string)));
+                var typeConverter2 = TypeDescriptor.GetConverter(bVal);
+                Console.WriteLine(typeConverter2.ConvertFrom(strA));
 
                 var builder = BuildAvaloniaApp().AfterSetup(async _ =>
                 {

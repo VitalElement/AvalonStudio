@@ -1,0 +1,50 @@
+<Directives>
+    <Application>
+        <Assembly Name="System.ComponentModel.TypeConverter" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Animation" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Base" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Controls" Dynamic="Required All" />
+        <Assembly Name="Avalonia.DesignerSupport" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Diagnostics" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Input" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Interactivity" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Layout" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Visuals" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Styling" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Themes.Default" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Markup" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Markup.Xaml" Dynamic="Required All" />
+        <Assembly Name="Avalonia.DotNetCoreRuntime" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Win32" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Skia" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Gtk3" Dynamic="Required All" />
+        <Assembly Name="Avalonia.MonoMac" Dynamic="Required All" />        
+        <Assembly Name="AvalonStudio" Dynamic="Required All" />
+        <Assembly Name="AvalonStudio.Extensibility" Dynamic="Required All" />
+        <Assembly Name="AvaloniaEdit" Dynamic="Required All" />
+        <Assembly Name="AvalonStudio.Controls.Standard" Dynamic="Required All" />
+        <Assembly Name="AvalonStudio.Languages.Xaml" Dynamic="Required All" />
+        <Assembly Name="VtNetCore.Avalonia" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Xaml.Interactivity" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Xaml.Interactions" Dynamic="Required All" />
+        <Assembly Name="Avalonia.Xaml.Interactions.Custom" Dynamic="Required All" />
+        <Assembly Name="Newtonsoft.Json" Dynamic="Required All" />
+        <Assembly Name="mscorlib" Dynamic="Required All" />
+        <Assembly Name="System.Memory" Dynamic="Required All" />
+        <Assembly Name="System.Runtime" Dynamic="Required All" />
+        <Assembly Name="System.Private.CoreLib" Dynamic="Required All" />
+        <Assembly Name="System.Private.CoreLib">
+            <Type Name="System.Action`2[System.Object,System.EventArgs]`"> 
+            <Method Name="Invoke" Dynamic="Required All" />            
+            </Type>            
+        </Assembly>
+        <Assembly Name="System.Linq.Expressions">
+            <Type Name="System.Linq.Expressions.ExpressionCreator`1[[Newtonsoft.Json.Serialization.ObjectConstructor`1[[System.Object,System.Private.CoreLib]],Newtonsoft.Json]]" Dynamic="Required All" />
+            <Type Name="System.Linq.Expressions.ExpressionCreator`1[[System.Func`2[[System.Object,System.Private.CoreLib],[System.Object,System.Private.CoreLib]],System.Private.CoreLib]]" Dynamic="Required All" />
+        </Assembly>
+        <Assembly Name="Newtonsoft.Json">
+            <Type Name="Newtonsoft.Json.Serialization.ObjectConstructor`1[[System.Object,System.Private.CoreLib]]" Dynamic="Required All" />
+        </Assembly>
+        <Assembly Name="Mabiavalon.DockNC" Dynamic="Required All" />        
+    </Application>
+</Directives>
