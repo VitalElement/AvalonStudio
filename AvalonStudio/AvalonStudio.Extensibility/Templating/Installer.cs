@@ -27,7 +27,11 @@ namespace AvalonStudio.Extensibility.Templating
             ((SettingsLoader)(_environmentSettings.SettingsLoader)).InstallUnitDescriptorCache.TryAddDescriptorForLocation(mountPointId);
         }
 
-        public void InstallPackages(IEnumerable<string> installationRequests)
+        public void InstallPackages(IEnumerable<string> installationRequests) => InstallPackages(installationRequests, null, false);
+
+        public void InstallPackages(IEnumerable<string> installationRequests, IList<string> nuGetSources) => InstallPackages(installationRequests, nuGetSources, false);
+
+        public void InstallPackages(IEnumerable<string> installationRequests, IList<string> nuGetSources, bool debugAllowDevInstall)
         {
             List<string> localSources = new List<string>();
             List<Package> packages = new List<Package>();
@@ -56,25 +60,15 @@ namespace AvalonStudio.Extensibility.Templating
 
             if (localSources.Count > 0)
             {
-                InstallLocalPackages(localSources);
+                InstallLocalPackages(localSources, debugAllowDevInstall);
             }
 
             if (packages.Count > 0)
             {
-                InstallRemotePackages(packages);
+                InstallRemotePackages(packages, nuGetSources);
             }
 
             _environmentSettings.SettingsLoader.Save();
-        }
-
-        public void InstallPackages(IEnumerable<string> installationRequests, IList<string> nuGetSources)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void InstallPackages(IEnumerable<string> installationRequests, IList<string> nuGetSources, bool debugAllowDevInstall)
-        {
-            throw new NotImplementedException();
         }
 
         private bool OriginalRequestIsImplicitPackageVersionSyntax(string req)
@@ -182,7 +176,7 @@ namespace AvalonStudio.Extensibility.Templating
             return uninstallFailures;
         }
 
-        private void InstallRemotePackages(List<Package> packages)
+        private void InstallRemotePackages(List<Package> packages, IList<string> nuGetSources)
         {
             const string packageRef = @"    <PackageReference Include=""{0}"" Version=""{1}"" />";
             const string projectFile = @"<Project ToolsVersion=""15.0"" Sdk=""Microsoft.NET.Sdk"">
@@ -208,23 +202,41 @@ namespace AvalonStudio.Extensibility.Templating
             string content = string.Format(projectFile, references.ToString());
             _paths.WriteAllText(proj, content);
 
-            _paths.CreateDirectory(_paths.User.Packages);
             string restored = Path.Combine(_paths.User.ScratchDir, "Packages");
-            Dotnet.Restore(proj, "--packages", restored).ForwardStdOut().ForwardStdErr().Execute();
+
+            int additionalSlots = nuGetSources?.Count * 2 ?? 0;
+
+            string[] restoreArgs = new string[3 + additionalSlots];
+            restoreArgs[0] = proj;
+            restoreArgs[1] = "--packages";
+            restoreArgs[2] = restored;
+
+            if (nuGetSources != null)
+            {
+                for (int i = 0; i < nuGetSources.Count; ++i)
+                {
+                    restoreArgs[3 + 2 * i] = "--source";
+                    restoreArgs[4 + 2 * i] = nuGetSources[i];
+                }
+            }
+
+            Dotnet.Restore(restoreArgs).ForwardStdOut().ForwardStdErr().Execute();
+            string stagingDir = Path.Combine(_paths.User.ScratchDir, "Staging");
+            _paths.CreateDirectory(stagingDir);
 
             List<string> newLocalPackages = new List<string>();
             foreach (string packagePath in _paths.EnumerateFiles(restored, "*.nupkg", SearchOption.AllDirectories))
             {
-                string path = Path.Combine(_paths.User.Packages, Path.GetFileName(packagePath));
-                _paths.Copy(packagePath, path);
-                newLocalPackages.Add(path);
+                string stagingPathForPackage = Path.Combine(stagingDir, Path.GetFileName(packagePath));
+                _paths.Copy(packagePath, stagingPathForPackage);
+                newLocalPackages.Add(stagingPathForPackage);
             }
 
+            InstallLocalPackages(newLocalPackages, false);
             _paths.DeleteDirectory(_paths.User.ScratchDir);
-            InstallLocalPackages(newLocalPackages);
         }
 
-        private void InstallLocalPackages(IReadOnlyList<string> packageNames)
+        private void InstallLocalPackages(IReadOnlyList<string> packageNames, bool debugAllowDevInstall)
         {
             List<string> toInstall = new List<string>();
 
@@ -257,7 +269,7 @@ namespace AvalonStudio.Extensibility.Templating
                     {
                         string fullDirectory = new DirectoryInfo(pkg).FullName;
                         string fullPathGlob = Path.Combine(fullDirectory, pattern);
-                        ((SettingsLoader)(_environmentSettings.SettingsLoader)).UserTemplateCache.Scan(fullPathGlob, out IReadOnlyList<Guid> contentMountPointIds);
+                        ((SettingsLoader)(_environmentSettings.SettingsLoader)).UserTemplateCache.Scan(fullPathGlob, out IReadOnlyList<Guid> contentMountPointIds, debugAllowDevInstall);
 
                         foreach (Guid mountPointId in contentMountPointIds)
                         {
@@ -267,7 +279,7 @@ namespace AvalonStudio.Extensibility.Templating
                     else if (_environmentSettings.Host.FileSystem.DirectoryExists(pkg) || _environmentSettings.Host.FileSystem.FileExists(pkg))
                     {
                         string packageLocation = new DirectoryInfo(pkg).FullName;
-                        ((SettingsLoader)(_environmentSettings.SettingsLoader)).UserTemplateCache.Scan(packageLocation, out IReadOnlyList<Guid> contentMountPointIds);
+                        ((SettingsLoader)(_environmentSettings.SettingsLoader)).UserTemplateCache.Scan(packageLocation, out IReadOnlyList<Guid> contentMountPointIds, debugAllowDevInstall);
 
                         foreach (Guid mountPointId in contentMountPointIds)
                         {
