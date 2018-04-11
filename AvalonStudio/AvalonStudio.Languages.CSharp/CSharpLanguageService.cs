@@ -39,6 +39,18 @@ namespace AvalonStudio.Languages.CSharp
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
         private MetadataHelper _metadataHelper;
 
+        private static readonly Microsoft.CodeAnalysis.SymbolDisplayFormat DefaultFormat = Microsoft.CodeAnalysis.SymbolDisplayFormat.MinimallyQualifiedFormat.
+            WithGlobalNamespaceStyle(Microsoft.CodeAnalysis.SymbolDisplayGlobalNamespaceStyle.Omitted).
+            WithMiscellaneousOptions(Microsoft.CodeAnalysis.SymbolDisplayMiscellaneousOptions.None).
+            WithMiscellaneousOptions(Microsoft.CodeAnalysis.SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers);
+
+        private static readonly Microsoft.CodeAnalysis.SymbolDisplayFormat FullyQualifiedFormat = Microsoft.CodeAnalysis.SymbolDisplayFormat.FullyQualifiedFormat.
+            WithGlobalNamespaceStyle(Microsoft.CodeAnalysis.SymbolDisplayGlobalNamespaceStyle.Omitted).
+            WithMiscellaneousOptions(Microsoft.CodeAnalysis.SymbolDisplayMiscellaneousOptions.None).
+            WithMiscellaneousOptions(Microsoft.CodeAnalysis.SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers);
+
+
+
         public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
         public CSharpLanguageService()
@@ -278,6 +290,7 @@ namespace AvalonStudio.Languages.CSharp
             {
                 result.IsVariadic = methodSymbol.Parameters.LastOrDefault()?.IsParams ?? false;
                 result.Kind = CursorKind.CXXMethod;
+                result.IsAsync = methodSymbol.IsAsync;
 
                 result.Arguments = new List<ParameterSymbol>();
 
@@ -296,19 +309,62 @@ namespace AvalonStudio.Languages.CSharp
 
                     result.Arguments.Add(argument);
                 }
+
+                var returnTypeInfo = CheckForStaticExtension.GetReturnType(symbol);
+
+                if (returnTypeInfo.HasValue)
+                {
+                    result.ResultType = returnTypeInfo.Value.name;
+                    result.IsBuiltInType = returnTypeInfo.Value.inbuilt;
+                }
             }
-
-            result.Name = symbol.Name;
-
-            var returnTypeInfo = CheckForStaticExtension.GetReturnType(symbol);
-
-            if (returnTypeInfo.HasValue)
+            else if(symbol is Microsoft.CodeAnalysis.ILocalSymbol localSymbol)
             {
-                result.ResultType = returnTypeInfo.Value.name;
-                result.IsBuiltInType = returnTypeInfo.Value.inbuilt;
+                result.Kind = CursorKind.VarDeclaration;
+                result.Linkage = LinkageKind.NoLinkage;
+                result.SymbolType = localSymbol.Type
+                    .ToDisplayString(DefaultFormat);
+            }
+            else if(symbol is Microsoft.CodeAnalysis.IFieldSymbol fieldSymbol)
+            {
+                result.Kind = CursorKind.VarDeclaration;
+                result.Linkage = LinkageKind.NoLinkage;
+                result.SymbolType = fieldSymbol.Type
+                    .ToDisplayString(DefaultFormat);
+            }
+            else if(symbol is Microsoft.CodeAnalysis.INamedTypeSymbol typeSymbol)
+            {
+                if(typeSymbol.TypeKind == Microsoft.CodeAnalysis.TypeKind.Class)
+                {
+                    result.Kind = CursorKind.ClassDeclaration;
+                }
+
+                result.TypeDescription = typeSymbol.ToDisplayString(FullyQualifiedFormat);
+            }
+            else if (symbol is Microsoft.CodeAnalysis.IParameterSymbol parameterSymbol)
+            {
+                result.Kind = CursorKind.ParmDeclaration;
+
+                result.SymbolType = parameterSymbol.Type
+                    .ToDisplayString(DefaultFormat);
+            }
+            else if (symbol is Microsoft.CodeAnalysis.INamespaceSymbol namespaceSymbol)
+            {
+                result.Kind = CursorKind.Namespace;
+
+                result.Name = namespaceSymbol.ToDisplayString(FullyQualifiedFormat);
             }
 
-            result.TypeDescription = symbol.Kind == Microsoft.CodeAnalysis.SymbolKind.NamedType ? symbol.ToDisplayString() : symbol.ToMinimalDisplayString(semanticModel, offset);
+            if (result.Name == null)
+            {
+                result.Name = symbol.Name;
+            }
+
+            if (result.TypeDescription == null)
+            {
+                result.TypeDescription = symbol.Kind == Microsoft.CodeAnalysis.SymbolKind.NamedType ? symbol.ToDisplayString(DefaultFormat) : symbol.ToMinimalDisplayString(semanticModel, offset);
+            }
+
             var xmlDocumentation = symbol.GetDocumentationCommentXml();
 
             var docComment = DocumentationComment.From(xmlDocumentation, Environment.NewLine);
