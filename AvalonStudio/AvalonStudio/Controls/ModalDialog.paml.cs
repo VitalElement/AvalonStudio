@@ -3,7 +3,7 @@ using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio.Controls
 {
-    public class ModalDialog : UserControl
+    public class ModalDialog : MetroWindow
     {
         public ModalDialog()
         {
