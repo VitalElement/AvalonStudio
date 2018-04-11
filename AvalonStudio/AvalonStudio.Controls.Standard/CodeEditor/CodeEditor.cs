@@ -810,11 +810,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             LanguageService = _shell.LanguageServices.FirstOrDefault(
                 o => o.Metadata.TargetCapabilities.Any(
                     c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;
+            
+            SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(sourceFile.ContentType);
 
             if (LanguageService != null)
             {
-                SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(LanguageService.LanguageId.ToUpper());
-
                 LanguageService.RegisterSourceFile(DocumentAccessor);
 
                 _diagnosticMarkersRenderer = new TextMarkerService(Document);
@@ -822,7 +822,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
 
                 _contextActionsRenderer = new ContextActionsRenderer(this, _diagnosticMarkersRenderer);
-                TextArea.LeftMargins.Add(_contextActionsRenderer);                
+                TextArea.LeftMargins.Add(_contextActionsRenderer);
 
                 foreach (var contextActionProvider in LanguageService.GetContextActionProviders(DocumentAccessor))
                 {
