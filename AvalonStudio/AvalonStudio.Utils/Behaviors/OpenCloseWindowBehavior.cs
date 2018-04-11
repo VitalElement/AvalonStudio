@@ -38,8 +38,8 @@ namespace AvalonStudio.Utils.Behaviors
                     {
                         _currentWindow.DataContext = DataContext;
                     }
-
-                    _currentWindow.Show();
+                                        
+                    _currentWindow.ShowDialog();
                 }
                 else
                 {
