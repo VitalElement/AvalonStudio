@@ -17,8 +17,8 @@
       <End>\?&gt;</End>
     </Span>
     <Span color="xml.tag" multiline="true">
-      <Begin>(?&lt;=&lt;)</Begin>
-      <End>(?=&gt;)</End>
+      <Begin>((?&lt;=&lt;)(?=[^&lt;&gt;]))</Begin>
+      <End>((?&lt;=[^&lt;&gt;])(?=&gt;))</End>
       <RuleSet>
         <!-- Treat the position before '<' as end, as that's not a valid character
 				     in attribute names and indicates the user forgot a closing quote. -->
