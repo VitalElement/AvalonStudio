@@ -52,7 +52,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
 
             _compositionContext = compositionContext;
 
-            _buildNodes = new BlockingCollection<MSBuildHost>();
+            _buildNodes = new BlockingCollection<MSBuildHost>(Environment.ProcessorCount);
 
             DiagnosticProvider.Enable(this, DiagnosticProvider.Options.Semantic | DiagnosticProvider.Options.Syntax);
 

@@ -1,9 +1,8 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:lang="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility"
-             Background="{DynamicResource ThemeBackgroundBrush}">
+             xmlns:lang="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility">
   <Grid RowDefinitions="*,180" ColumnDefinitions="150,*,400">
 
-    <TreeView Background="{DynamicResource ThemeControlDarkBrush}" BorderThickness="0" Margin="1" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}">
+    <TreeView Background="{DynamicResource ThemeBackgroundBrush}" BorderThickness="0" Margin="1" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}">
       <TreeView.Styles>
         <Style Selector="TreeViewItem:selected /template/ Border#header">
           <Setter Property="Background" Value="#5500557d" />
@@ -12,7 +11,7 @@
       <TreeViewItem Header="Languages" IsExpanded="true" Items="{Binding Languages}"/>
     </TreeView>
 
-    <ListBox Grid.Column="1" Background="{DynamicResource ThemeControlDarkBrush}" BorderThickness="0" Margin="1" Items="{Binding ProjectTemplates}" SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}">
+    <ListBox Grid.Column="1" Background="{DynamicResource ThemeBackgroundBrush}" BorderThickness="0" Margin="1" Items="{Binding ProjectTemplates}" SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}">
       <ListBox.ItemTemplate>
         <DataTemplate>
           <Grid Height="45">
@@ -26,7 +25,7 @@
       </ListBox.ItemTemplate>
     </ListBox>
 
-    <Grid Grid.Column="2" Background="{DynamicResource ThemeControlDarkBrush}" Margin="1">
+    <Grid Grid.Column="2" Background="{DynamicResource ThemeBackgroundBrush}" Margin="1">
       <DockPanel LastChildFill="True">
         <Button DockPanel.Dock="Bottom" Content="Check for Updates" Command="{Binding UpdateTemplatesCommand}" />
         <StackPanel Margin="10" Gap="4">
@@ -43,7 +42,7 @@
     </Grid>
 
 
-    <Grid Grid.Row="1" Grid.ColumnSpan="3" ColumnDefinitions="120,*,200" Margin="1" RowDefinitions="30, 30, 30" Background="{DynamicResource ThemeControlDarkBrush}">
+    <Grid Grid.Row="1" Grid.ColumnSpan="3" ColumnDefinitions="120,*,200" Margin="1" RowDefinitions="30, 30, 30" Background="{DynamicResource ThemeBackgroundBrush}">
       <TextBlock Text="Name:" VerticalAlignment="Center" />
       <TextBox Grid.Column="1" Background="Transparent" Text="{Binding Name, Mode=TwoWay}" />
 
