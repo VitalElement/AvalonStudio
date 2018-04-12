@@ -13,7 +13,7 @@ namespace AvalonStudio.GlobalSettings
         private IDictionary<string, object> _rootIndex => Root;
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
-        public ExpandoObject Root { get; set; }        
+        public ExpandoObject Root { get; set; } = new ExpandoObject();     
 
         private static string GlobalSettingsFile => Path.Combine(Platform.SettingsDirectory, "GlobalSettings.json");
 
