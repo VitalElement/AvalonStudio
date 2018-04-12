@@ -7,7 +7,7 @@
     <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.2-build4732-beta" />
+    <PackageReference Include="Avalonia" Version="0.6.2-build4795-beta" />
   </ItemGroup>
 
   <ItemGroup>

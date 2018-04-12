@@ -2,12 +2,21 @@
                       xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
                       xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.ViewModels;assembly=AvalonStudio.Extensibility"
                       xmlns:dock="clr-namespace:Mabiavalon.DockNC;assembly=Mabiavalon.DockNC"
-                      xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"                            
+                      xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"  
+                      xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
+                      xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      Icon="resm:AvalonStudio.Assets.logo-256.png?assembly=AvalonStudio" 
                       Title="AvalonStudio" BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}" 
                       FontFamily="Source Sans Pro" FontSize="14"
+                      xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized">
   <Controls:MetroWindow.TitleBarContent>
   </Controls:MetroWindow.TitleBarContent>
+
+  <i:Interaction.Behaviors>
+    <beh:OpenCloseWindowBehavior DataContext="{Binding ModalDialog}" WindowType="{x:Type cont:ModalDialog}" IsOpen="{Binding ModalDialog.IsVisible}" />
+  </i:Interaction.Behaviors>
   
   <Controls:MetroWindow.Styles>
     <Style Selector="ListBoxItem:selected">
@@ -139,7 +148,5 @@
     </Grid>
 
     <Controls:QuickCommander Grid.RowSpan="3" Grid.ColumnSpan="5" Width="450" MaxHeight="500" DataContext="{Binding QuickCommander}" VerticalAlignment="Top" />
-    
-    <Controls:ModalDialog Grid.RowSpan="3" Grid.ColumnSpan="5" DataContext="{Binding ModalDialog}" IsVisible="{Binding IsVisible}" ZIndex="100" />
   </Grid>
 </Controls:MetroWindow>
