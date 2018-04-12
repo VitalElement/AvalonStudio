@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <RdXmlFile Include="rd.xml" />
+    <IlcArg Include="--stacktracedata" />
   </ItemGroup>
 
   <ItemGroup>
