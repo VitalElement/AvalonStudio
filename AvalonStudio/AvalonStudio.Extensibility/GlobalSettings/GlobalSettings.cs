@@ -10,22 +10,10 @@ namespace AvalonStudio.GlobalSettings
 {
     public class Settings
     {
-        private dynamic _root = new ExpandoObject();
-
-        private IDictionary<string, object> _rootIndex => ((IDictionary<string, object>)_root);
+        private IDictionary<string, object> _rootIndex => Root;
 
         [JsonConverter(typeof(ExpandoObjectConverter))]
-        public ExpandoObject Root
-        {
-            get
-            {
-                return _root;
-            }
-            set
-            {
-                _root = value;
-            }
-        }
+        public ExpandoObject Root { get; set; }        
 
         private static string GlobalSettingsFile => Path.Combine(Platform.SettingsDirectory, "GlobalSettings.json");
 

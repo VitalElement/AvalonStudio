@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Utils;
+using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -12,7 +12,6 @@ namespace AvalonStudio.GlobalSettings
             T result = default(T);
 
             var rootIndex = (IDictionary<string, object>)getRoot();
-            var root = getRoot();
 
             if (!rootIndex.ContainsKey(typeof(T).FullName))
             {
@@ -35,7 +34,6 @@ namespace AvalonStudio.GlobalSettings
             T result = default(T);
 
             var rootIndex = (IDictionary<string, object>)getRoot();
-            var root = getRoot();
 
             if (rootIndex.ContainsKey(typeof(T).FullName))
             {
