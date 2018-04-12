@@ -23,8 +23,7 @@
         <Assembly Name="AvalonStudio.Extensibility" Dynamic="Required All" />
         <Assembly Name="AvaloniaEdit" Dynamic="Required All" />
         <Assembly Name="AvalonStudio.Controls.Standard" Dynamic="Required All" />
-        <Assembly Name="AvalonStudio.Languages.Xaml" Dynamic="Required All" />
-        <Assembly Name="VtNetCore.Avalonia" Dynamic="Required All" />
+        <Assembly Name="AvalonStudio.Languages.Xaml" Dynamic="Required All" />        
         <Assembly Name="Avalonia.Xaml.Interactivity" Dynamic="Required All" />
         <Assembly Name="Avalonia.Xaml.Interactions" Dynamic="Required All" />
         <Assembly Name="Avalonia.Xaml.Interactions.Custom" Dynamic="Required All" />
