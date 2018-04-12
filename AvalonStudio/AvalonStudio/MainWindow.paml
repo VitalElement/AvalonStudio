@@ -6,7 +6,6 @@
                       xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
                       xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      Icon="resm:AvalonStudio.Assets.logo-256.png?assembly=AvalonStudio" 
                       Title="AvalonStudio" BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}" 
                       FontFamily="Source Sans Pro" FontSize="14"
                       xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"

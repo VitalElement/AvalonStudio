@@ -20,6 +20,7 @@
         <Assembly Name="Avalonia.Gtk3" Dynamic="Required All" />
         <Assembly Name="Avalonia.MonoMac" Dynamic="Required All" />        
         <Assembly Name="AvalonStudio" Dynamic="Required All" />
+        <Assembly Name="AvalonStudio.Utils" Dynamic="Required All" />
         <Assembly Name="AvalonStudio.Extensibility" Dynamic="Required All" />
         <Assembly Name="AvaloniaEdit" Dynamic="Required All" />
         <Assembly Name="AvalonStudio.Controls.Standard" Dynamic="Required All" />
