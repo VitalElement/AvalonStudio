@@ -13,7 +13,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.2-build4732-beta" />
+    <PackageReference Include="Avalonia" Version="0.6.2-build4795-beta" />
     <PackageReference Include="AvalonStudio.winpty.NET" Version="0.4.5" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />

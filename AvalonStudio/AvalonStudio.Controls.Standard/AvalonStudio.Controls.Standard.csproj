@@ -27,7 +27,7 @@
     <EmbeddedResource Include="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.2-build4732-beta" />
+    <PackageReference Include="Avalonia" Version="0.6.2-build4795-beta" />
     <PackageReference Include="GitInfo" Version="2.0.10" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
   </ItemGroup>
