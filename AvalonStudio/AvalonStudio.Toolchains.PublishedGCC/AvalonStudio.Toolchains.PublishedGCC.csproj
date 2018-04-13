@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.2-build4849-beta" />
+    <PackageReference Include="Avalonia" Version="0.6.2-build4853-beta" />
   </ItemGroup>
 
   <ItemGroup>
