@@ -359,9 +359,9 @@ namespace AvalonStudio.Toolchains.GCC
         {
             Save();
 
-            if (Model.ToolChain != null && Model.ToolChain is StandardToolChain)
+            if (Model.ToolChain != null && Model.ToolChain is StandardToolchain)
             {
-                CompilerArguments = (Model.ToolChain as StandardToolChain).GetCompilerArguments(Model as IStandardProject,
+                CompilerArguments = (Model.ToolChain as StandardToolchain).GetCompilerArguments(Model as IStandardProject,
                     Model as IStandardProject, null);
             }
         }

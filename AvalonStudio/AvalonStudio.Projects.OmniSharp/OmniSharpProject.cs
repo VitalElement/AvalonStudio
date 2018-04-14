@@ -272,7 +272,7 @@ namespace AvalonStudio.Projects.OmniSharp
             get; set;
         }
 
-        public override IToolChain ToolChain
+        public override IToolchain ToolChain
         {
             get
             {
