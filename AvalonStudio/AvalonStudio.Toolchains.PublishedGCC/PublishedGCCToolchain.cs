@@ -317,7 +317,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
                 _gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
 
-                _gccConfig.ResolveAsync().GetAwaiter().GetResult();
+                _gccConfig?.ResolveAsync().GetAwaiter().GetResult();
             }
 
             var result = base.GetToolchainIncludes(file);

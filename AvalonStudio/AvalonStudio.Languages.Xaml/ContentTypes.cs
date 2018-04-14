@@ -3,11 +3,11 @@
     internal class ContentTypes
     {
         [ExportContentType("XML", ContentCapabilities.Xml)]
-        [FileExtensions(".xml")]
+        [FileExtensions(".xml", ".csproj")]
         public object XmlContentType { get; }
 
         [ExportContentType("XAML", ContentCapabilities.Xml, ContentCapabilities.Xaml)]
-        [FileExtensions(".xaml")]
+        [FileExtensions(".xaml", ".paml")]
         public object XamlContentType { get; }
     }
 }
