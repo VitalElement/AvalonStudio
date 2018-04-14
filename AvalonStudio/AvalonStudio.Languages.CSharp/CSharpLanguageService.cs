@@ -10,12 +10,17 @@ using AvalonStudio.Projects.OmniSharp.Roslyn;
 using AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics;
 using AvalonStudio.Projects.OmniSharp.Roslyn.Editor;
 using AvalonStudio.Utils;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.DocumentationComments;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.LanguageServices;
 using Microsoft.CodeAnalysis.Rename;
+using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
@@ -24,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -448,23 +454,130 @@ namespace AvalonStudio.Languages.CSharp
             }
         }
 
+        static SyntaxNode GetBestFitResolveableNode(SyntaxNode node)
+        {
+            // case constructor name : new Foo (); 'Foo' only resolves to the type not to the constructor
+            if (node.Parent.IsKind(SyntaxKind.ObjectCreationExpression))
+            {
+                var oce = (ObjectCreationExpressionSyntax)node.Parent;
+
+                if (oce.Type == node)
+                    return oce;
+
+            }
+
+            return node;
+        }
+
         public async Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
+            Symbol result = null;
+
             var dataAssociation = GetAssociatedData(editor);
 
             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
 
             var document = GetDocument(dataAssociation, editor.SourceFile, workspace);
 
-            var semanticModel = await document.GetSemanticModelAsync();
+            var semanticModel = await document.GetSemanticModelAsync();            
 
-            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, offset, workspace);
+            var descriptionService = workspace.Services.GetLanguageServices(semanticModel.Language).GetService<ISymbolDisplayService>();
 
-            Symbol result = null;
+            var root = semanticModel.SyntaxTree.GetRoot(CancellationToken.None);
+
+            SyntaxToken syntaxToken;
+
+            try
+            {
+                syntaxToken = root.FindToken(offset);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return null;
+            }
+
+            if (!syntaxToken.Span.IntersectsWith(offset))
+
+                return null;
+
+            var node = GetBestFitResolveableNode(syntaxToken.Parent);
+
+            var symbolInfo = semanticModel.GetSymbolInfo(node, CancellationToken.None);
+
+            var symbol = symbolInfo.Symbol ?? semanticModel.GetDeclaredSymbol(node, CancellationToken.None);
+
+            //var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, offset, workspace);
 
             if (symbol != null)
             {
-                result = SymbolFromRoslynSymbol(offset, semanticModel, symbol);
+                var sections = await descriptionService.ToDescriptionGroupsAsync(workspace, semanticModel, offset, new[] { symbol }.AsImmutable(), default(CancellationToken)).ConfigureAwait(false);
+
+                ImmutableArray<TaggedText> parts;
+
+                var sb = new StringBuilder();
+
+                if (sections.TryGetValue(SymbolDescriptionGroups.MainDescription, out parts))
+                {
+                    //TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                }
+
+                // if generating quick info for an attribute, bind to the class instead of the constructor
+                if (symbol.ContainingType?.IsAttribute() == true)
+                {
+                    symbol = symbol.ContainingType;
+                }
+
+                var formatter = workspace.Services.GetLanguageServices(semanticModel.Language).GetService<IDocumentationCommentFormattingService>();
+                var documentation = symbol.GetDocumentationParts(semanticModel, offset, formatter, CancellationToken.None);
+
+                // sb.Append("<span font='" + FontService.SansFontName + "' size='small'>");
+
+                if (documentation != null && documentation.Any())
+                {
+                    sb.AppendLine();
+                    sb.AppendLine();
+                    //TaggedTextUtil.AppendTaggedText(sb, theme, documentation);
+                }
+
+                if (sections.TryGetValue(SymbolDescriptionGroups.AnonymousTypes, out parts))
+                {
+                    if (!parts.IsDefaultOrEmpty)
+                    {
+                        sb.AppendLine();
+                        //TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                    }
+                }
+
+                if (sections.TryGetValue(SymbolDescriptionGroups.AwaitableUsageText, out parts))
+                {
+                    if (!parts.IsDefaultOrEmpty)
+                    {
+                        sb.AppendLine();
+                        //TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                    }
+                }
+
+
+                if (sections.TryGetValue(SymbolDescriptionGroups.Exceptions, out parts))
+                {
+                    if (!parts.IsDefaultOrEmpty)
+                    {
+                        sb.AppendLine();
+                        //TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                    }
+                }
+
+                if (sections.TryGetValue(SymbolDescriptionGroups.Captures, out parts))
+                {
+                    if (!parts.IsDefaultOrEmpty)
+                    {
+                        sb.AppendLine();
+                        //TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                    }
+                }
+                sb.Append("</span>");                
+
+                result = SymbolFromRoslynSymbol(offset, semanticModel, symbol);               
             }
 
             return result;
