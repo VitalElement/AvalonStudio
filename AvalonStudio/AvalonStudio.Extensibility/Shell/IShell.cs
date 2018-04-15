@@ -48,7 +48,7 @@ namespace AvalonStudio.Shell
 
         IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
 
-        IEnumerable<IToolChain> ToolChains { get; }
+        IEnumerable<IToolchain> ToolChains { get; }
 
         IEnumerable<IDebugger> Debugger2s { get; }
 

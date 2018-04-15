@@ -4,6 +4,8 @@ namespace AvalonStudio.Shell
     using AvalonStudio.Documents;
     using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Dialogs;
+    using AvalonStudio.Extensibility.Editor;
+    using AvalonStudio.Extensibility.MainMenu;
     using AvalonStudio.Extensibility.Plugin;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
@@ -13,9 +15,8 @@ namespace AvalonStudio.Shell
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Composition;
+    using System.Linq;
     using System.Threading.Tasks;
-    using AvalonStudio.Extensibility.Editor;
-    using AvalonStudio.Extensibility.MainMenu;
 
     [Export]
     [Export(typeof(IShell))]
@@ -24,13 +25,12 @@ namespace AvalonStudio.Shell
     {
         public static IShell Instance { get; set; }
 
-        private List<IToolChain> _toolChains;
-
         private IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> _languageServices;
 
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
         private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
 
+        private IEnumerable<Lazy<IToolchain>> _toolChains;
         private IEnumerable<IDebugger> _debugger2s;
 
         private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
@@ -45,6 +45,7 @@ namespace AvalonStudio.Shell
             [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
+            [ImportMany] IEnumerable<Lazy<IToolchain>> toolChains,
             [ImportMany] IEnumerable<IDebugger> debugger2s,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             [ImportMany] IEnumerable<IExtension> extensions)
@@ -53,12 +54,11 @@ namespace AvalonStudio.Shell
 
             _solutionTypes = solutionTypes;
             _projectTypes = projectTypes;
-
+            
+            _toolChains = toolChains;
             _debugger2s = debugger2s;
 
             _testFrameworks = testFrameworks;
-
-            _toolChains = new List<IToolChain>();
 
             IoC.RegisterConstant(this, typeof(IShell));
 
@@ -70,8 +70,6 @@ namespace AvalonStudio.Shell
             foreach (var extension in extensions)
             {
                 extension.Activation();
-
-                _toolChains.ConsumeExtension(extension);
             }
 
             IoC.RegisterConstant(this);
@@ -102,7 +100,7 @@ namespace AvalonStudio.Shell
 
         public IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices => _languageServices;
 
-        public IEnumerable<IToolChain> ToolChains => _toolChains;
+        public IEnumerable<IToolchain> ToolChains => _toolChains.Select(t => t.Value);
 
         public IEnumerable<IDebugger> Debugger2s => _debugger2s;
 

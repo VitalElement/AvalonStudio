@@ -1,4 +1,3 @@
-using Avalonia.Threading;
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Shell;
@@ -8,17 +7,15 @@ using AvalonStudio.Projects.Standard;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.Standard
 {
-    public abstract class StandardToolChain : IToolChain
+    public abstract class StandardToolchain : IToolchain
     {
         private int buildCount;
 
@@ -33,8 +30,10 @@ namespace AvalonStudio.Toolchains.Standard
 
         private bool terminateBuild;
 
-        public StandardToolChain()
+        protected StandardToolchain(IStatusBar statusBar)
         {
+            _statusBar = statusBar;
+
             Jobs = Environment.ProcessorCount;
         }
 
@@ -89,7 +88,7 @@ namespace AvalonStudio.Toolchains.Standard
             return exitCode;
         }
 
-        public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
+        public async Task<bool> BuildAsync(IConsole console, IProject project, string label = "", IEnumerable<string> defines = null)
         {
             try
             {
@@ -255,17 +254,6 @@ namespace AvalonStudio.Toolchains.Standard
         public abstract IList<object> GetConfigurationPages(IProject project);
 
         public abstract bool CanHandle(IProject project);
-
-        public void BeforeActivation()
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void Activation()
-        {
-            //throw new NotImplementedException();
-            _statusBar = IoC.Get<IStatusBar>();
-        }
 
         public string Name
         {
@@ -462,7 +450,7 @@ namespace AvalonStudio.Toolchains.Standard
                     console.WriteLine($"Project: {project.Name} does not have a toolchain set.");
                 }
 
-                await project.ToolChain?.Build(console, project);
+                await project.ToolChain?.BuildAsync(console, project);
             }
             else
             {
