@@ -93,7 +93,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         case LinkageKind.External:
                             ScopeDescription = "(global variable) ";
                             break;
-                    }
+                    }                    
 
                     if (model.IsBuiltInType)
                     {

@@ -25,7 +25,7 @@ namespace AvalonStudio.Controls
             _builder.AppendLine();
 
             return this;
-        }
+        }        
 
         public StyledText AppendLine(string text, IBrush brush = null)
         {

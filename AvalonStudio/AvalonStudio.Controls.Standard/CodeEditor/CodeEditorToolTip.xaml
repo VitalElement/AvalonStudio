@@ -1,15 +1,17 @@
 ﻿<Styles xmlns="https://github.com/avaloniaui"
         xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
-         xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility"
-          xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+        xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility"
+        xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
+        xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
   <Style Selector="local|CodeEditorToolTip">
     <Setter Property="Template">
       <ControlTemplate>
-                <Popup IsOpen="{Binding IsVisible, Mode=TwoWay}" StaysOpen="False" Name="PART_Popup" DataContext="" 
-                       TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}">
-                  <cont:FormattedTextBlock StyledText="{Binding }" Name="PART_FormattedTextBlock" Margin="8" />
-                  <!--
-                  <cont:ViewModelViewHost Name="PART_ViewHost" />-->
+        <Popup StaysOpen="False" Name="PART_Popup">          
+          <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1" Name="PART_Presenter" >
+            <Grid Margin="2" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}" TextBlock.FontFamily="Source Sans Pro" TextBlock.FontSize="14">
+              <cont:FormattedTextBlock StyledText="{Binding }" Margin="8" />
+            </Grid>
+          </Border>
         </Popup>
       </ControlTemplate>
     </Setter>

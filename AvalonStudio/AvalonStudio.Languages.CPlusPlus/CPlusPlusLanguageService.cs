@@ -4,6 +4,7 @@ using AvalonStudio.CodeEditor;
 using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
@@ -487,7 +488,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     var diag = new Diagnostic(
                         diagnostic.Location.FileLocation.Offset,
                         0,
-                        file.Project,                        
+                        file.Project,
                         diagnostic.Location.FileLocation.File.FileName,
                         diagnostic.Location.FileLocation.Line,
                         diagnostic.Spelling,
@@ -548,7 +549,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             });
 
-            DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs (this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
+            DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
 
             return result;
         }
@@ -688,7 +689,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public async Task<StyledText> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
-            Symbol result = null;
+            StyledText result = null;
             var associatedData = GetAssociatedData(editor.SourceFile);
 
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
@@ -712,15 +713,125 @@ namespace AvalonStudio.Languages.CPlusPlus
                         case NClang.CursorKind.DeclarationReferenceExpression:
                         case NClang.CursorKind.CallExpression:
                         case NClang.CursorKind.TypeReference:
-                            cursor = cursor.Referenced;
+                            result = InfoTextFromCursor(cursor.Referenced);
+                            break;
+
+                        case NClang.CursorKind.NoDeclarationFound:
+                            break;
+
+                        default:
+                            result = InfoTextFromCursor(cursor);
                             break;
                     }
-
-                    result = SymbolFromClangCursor(cursor);
                 }
             });
 
-            return null;
+            return result;
+        }
+
+        private static Symbol SymbolFromClangCursor(ClangCursor cursor)
+        {
+            var result = new Symbol();
+
+            switch (cursor.Kind)
+            {
+                case NClang.CursorKind.CXXAccessSpecifier:
+                    result.Name = "(Access Specifier) " + cursor.CxxAccessSpecifier;
+                    break;
+
+                default:
+                    result.Name = cursor.Spelling;
+                    break;
+            }
+
+            result.Kind = (CursorKind)cursor.Kind;
+            result.BriefComment = cursor.BriefCommentText;
+            result.TypeDescription = cursor.CursorType?.Spelling;
+            result.EnumDescription = cursor.EnumConstantDeclValue.ToString();
+            result.Definition = cursor.Definition.DisplayName;
+            result.Linkage = (LinkageKind)cursor.Linkage;
+            result.IsBuiltInType = IsBuiltInType(cursor.CursorType);
+            result.SymbolType = cursor.CursorType?.Spelling.Replace(" &", "&").Replace(" *", "*") + " ";
+            result.ResultType = cursor.ResultType?.Spelling;
+            result.Arguments = new List<ParameterSymbol>();
+            result.Access = (AccessType)cursor.CxxAccessSpecifier;
+            result.IsVariadic = cursor.IsVariadic;
+
+            switch (result.Kind)
+            {
+                case CursorKind.FunctionDeclaration:
+                case CursorKind.CXXMethod:
+                case CursorKind.Constructor:
+                case CursorKind.Destructor:
+                    for (var i = 0; i < cursor.ArgumentCount; i++)
+                    {
+                        var argument = cursor.GetArgument(i);
+
+                        var arg = new ParameterSymbol();
+                        arg.IsBuiltInType = IsBuiltInType(argument.CursorType);
+                        arg.Name = argument.Spelling;
+
+                        arg.TypeDescription = argument.CursorType.Spelling;
+                        result.Arguments.Add(arg);
+                    }
+
+                    if (cursor.IsVariadic)
+                    {
+                        result.Arguments.Last().Name += ", ";
+                        result.Arguments.Add(new ParameterSymbol { Name = "... variadic" });
+                    }
+
+                    if (cursor.ParsedComment.FullCommentAsXml != null)
+                    {
+                        var documentation = XDocument.Parse(cursor.ParsedComment.FullCommentAsXml);
+
+                        var function = documentation.Element("Function");
+
+                        var parameters = function.Element("Parameters");
+
+                        if (parameters != null)
+                        {
+                            var arguments = parameters.Elements("Parameter");
+
+                            foreach (var argument in arguments)
+                            {
+                                var isVarArgs = argument.Element("IsVarArg");
+
+                                var discussion = argument.Element("Discussion");
+
+                                var paragraph = discussion.Element("Para");
+
+                                if (paragraph != null)
+                                {
+                                    if (isVarArgs != null)
+                                    {
+                                        result.Arguments.Last().Comment = paragraph.Value;
+                                    }
+                                    else
+                                    {
+                                        var inx = argument.Element("Index");
+
+                                        if (inx != null)
+                                        {
+                                            // This happens when documentation for an argument was left in, but the argument no longer exists.
+                                            var index = int.Parse(inx.Value);
+
+                                            result.Arguments[index].Comment = paragraph.Value;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (result.Arguments.Count == 0)
+                    {
+                        result.Arguments.Add(new ParameterSymbol { Name = "void" });
+                    }
+                    break;
+            }
+
+            return result;
         }
 
         public async Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
@@ -1064,57 +1175,146 @@ namespace AvalonStudio.Languages.CPlusPlus
             return replaceCursor ? cursor : -1;
         }
 
-        private static Symbol SymbolFromClangCursor(ClangCursor cursor)
+        private static StyledText InfoTextFromCursor(ClangCursor cursor)
         {
-            var result = new Symbol();
+            var result = StyledText.Create();
+
+            string name = "";
+            CursorKind kind = (CursorKind)cursor.Kind;
 
             switch (cursor.Kind)
             {
                 case NClang.CursorKind.CXXAccessSpecifier:
-                    result.Name = "(Access Specifier) " + cursor.CxxAccessSpecifier;
+                    name = "(Access Specifier) " + cursor.CxxAccessSpecifier;
                     break;
 
                 default:
-                    result.Name = cursor.Spelling;
+                    name = cursor.Spelling;
                     break;
             }
 
-            result.Kind = (CursorKind)cursor.Kind;
-            result.BriefComment = cursor.BriefCommentText;
-            result.TypeDescription = cursor.CursorType?.Spelling;
-            result.EnumDescription = cursor.EnumConstantDeclValue.ToString();
-            result.Definition = cursor.Definition.DisplayName;
-            result.Linkage = (LinkageKind)cursor.Linkage;
-            result.IsBuiltInType = IsBuiltInType(cursor.CursorType);
-            result.SymbolType = cursor.CursorType?.Spelling.Replace(" &", "&").Replace(" *", "*") + " ";
-            result.ResultType = cursor.ResultType?.Spelling;
-            result.Arguments = new List<ParameterSymbol>();
-            result.Access = (AccessType)cursor.CxxAccessSpecifier;
-            result.IsVariadic = cursor.IsVariadic;
+            var theme = ColorScheme.CurrentColorScheme;
 
-            switch (result.Kind)
+            if (cursor.Kind == NClang.CursorKind.VarDeclaration)
             {
+                switch (cursor.Linkage)
+                {
+                    case NClang.LinkageKind.NoLinkage:
+                        result.Append("(local variable) ");
+                        break;
+
+                    case NClang.LinkageKind.Internal:
+                        result.Append("(static variable) ");
+                        break;
+
+                    case NClang.LinkageKind.External:
+                        result.Append("(global variable) ");
+                        break;
+                }
+            }
+
+            switch (cursor.CxxAccessSpecifier)
+            {
+                case CXXAccessSpecifier.Private:
+                    result.Append("(private) ");
+                    break;
+
+                case CXXAccessSpecifier.Protected:
+                    result.Append("(protected) ");
+                    break;
+
+                case CXXAccessSpecifier.Public:
+                    result.Append("(public) ");
+                    break;
+            }
+
+            if (cursor.ResultType != null)
+            {
+                result.Append(cursor.ResultType.Spelling + " ", IsBuiltInType(cursor.ResultType) ? theme.Keyword : theme.Type);
+            }
+            else if (cursor.CursorType != null)
+            {
+                switch (kind)
+                {
+                    case CursorKind.ClassDeclaration:
+                    case CursorKind.CXXThisExpression:
+                        result.Append("class ", theme.Keyword);
+                        break;
+
+                    case CursorKind.Namespace:
+                        result.Append("namespace ", theme.Keyword);
+                        break;
+
+                    case CursorKind.TypedefDeclaration:
+                        result.Append("typedef ", theme.Keyword);
+                        break;
+
+                    case CursorKind.EnumDeclaration:
+                        result.Append("enum ", theme.Keyword);
+                        break;
+
+                    case CursorKind.StructDeclaration:
+                        result.Append("struct ", theme.Keyword);
+                        break;
+
+                    case CursorKind.UnionDeclaration:
+                        result.Append("union ", theme.Keyword);
+                        break;
+                }
+
+                result.Append(cursor.CursorType.Spelling + " ", IsBuiltInType(cursor.ResultType) ? theme.Keyword : theme.Type);
+            }
+
+            switch (kind)
+            {
+                case CursorKind.UnionDeclaration:
+                case CursorKind.TypedefDeclaration:
+                case CursorKind.StructDeclaration:
+                case CursorKind.ClassDeclaration:
+                case CursorKind.CXXThisExpression:
+                case CursorKind.Namespace:
+                case CursorKind.EnumDeclaration:
+                    break;
+
+                default:
+                    result.Append(name);
+                    break;
+            }
+
+            string parsedDocumentation = "";
+
+            switch (kind)
+            {
+                case CursorKind.EnumConstantDeclaration:
+                    result.Append(" = " + cursor.EnumConstantDeclUnsignedValue.ToString());
+                    break;
+
                 case CursorKind.FunctionDeclaration:
                 case CursorKind.CXXMethod:
                 case CursorKind.Constructor:
                 case CursorKind.Destructor:
+                    result.Append(" (");
+
                     for (var i = 0; i < cursor.ArgumentCount; i++)
                     {
                         var argument = cursor.GetArgument(i);
 
-                        var arg = new ParameterSymbol();
-                        arg.IsBuiltInType = IsBuiltInType(argument.CursorType);
-                        arg.Name = argument.Spelling;
+                        result.Append(argument.CursorType.Spelling + " ", IsBuiltInType(argument.CursorType) ? theme.Keyword : theme.Type);
 
-                        arg.TypeDescription = argument.CursorType.Spelling;
-                        result.Arguments.Add(arg);
+                        result.Append(argument.Spelling + (i == cursor.ArgumentCount - 1 ? "" : ", "));
                     }
 
                     if (cursor.IsVariadic)
                     {
-                        result.Arguments.Last().Name += ", ";
-                        result.Arguments.Add(new ParameterSymbol { Name = "... variadic" });
+                        result.Append(", ... variadic");
                     }
+
+                    if (cursor.ArgumentCount == 0)
+                    {
+                        result.Append("void", theme.Keyword);
+                    }
+
+                    result.Append(")");
 
                     if (cursor.ParsedComment.FullCommentAsXml != null)
                     {
@@ -1140,7 +1340,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 {
                                     if (isVarArgs != null)
                                     {
-                                        result.Arguments.Last().Comment = paragraph.Value;
+                                        parsedDocumentation += paragraph.Value + Environment.NewLine;
                                     }
                                     else
                                     {
@@ -1148,22 +1348,29 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                                         if (inx != null)
                                         {
-                                            // This happens when documentation for an argument was left in, but the argument no longer exists.
-                                            var index = int.Parse(inx.Value);
-
-                                            result.Arguments[index].Comment = paragraph.Value;
+                                            parsedDocumentation += paragraph.Value + Environment.NewLine;
                                         }
                                     }
                                 }
                             }
                         }
                     }
-
-                    if (result.Arguments.Count == 0)
-                    {
-                        result.Arguments.Add(new ParameterSymbol { Name = "void" });
-                    }
                     break;
+            }
+
+            if (cursor.BriefCommentText != null || !string.IsNullOrEmpty(parsedDocumentation))
+            {
+                result.AppendLine();
+
+                if (cursor.BriefCommentText != null)
+                {
+                    result.AppendLine(cursor.BriefCommentText);
+                }
+
+                if (!string.IsNullOrEmpty(parsedDocumentation))
+                {
+                    result.Append(parsedDocumentation);
+                }
             }
 
             return result;

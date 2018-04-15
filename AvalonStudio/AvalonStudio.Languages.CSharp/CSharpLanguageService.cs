@@ -417,98 +417,7 @@ namespace AvalonStudio.Languages.CSharp
             RoslynWorkspace.GetWorkspace(dataAssociation.Solution).TryApplyChanges(formattedDocument.Project.Solution);
 
             return -1;
-        }
-
-        private static Symbol SymbolFromRoslynSymbol(int offset, Microsoft.CodeAnalysis.SemanticModel semanticModel, Microsoft.CodeAnalysis.ISymbol symbol)
-        {
-            var result = new Symbol();
-
-            if (symbol is Microsoft.CodeAnalysis.IMethodSymbol methodSymbol)
-            {
-                result.IsVariadic = methodSymbol.Parameters.LastOrDefault()?.IsParams ?? false;
-                result.Kind = CursorKind.CXXMethod;
-                result.IsAsync = methodSymbol.IsAsync;
-
-                result.Arguments = new List<ParameterSymbol>();
-
-                foreach (var parameter in methodSymbol.Parameters)
-                {
-                    var argument = new ParameterSymbol();
-                    argument.Name = parameter.Name;
-
-                    var info = CheckForStaticExtension.GetReturnType(parameter);
-
-                    if (info.HasValue)
-                    {
-                        argument.TypeDescription = info.Value.name;
-                        argument.IsBuiltInType = info.Value.inbuilt;
-                    }
-
-                    result.Arguments.Add(argument);
-                }
-
-                var returnTypeInfo = CheckForStaticExtension.GetReturnType(symbol);
-
-                if (returnTypeInfo.HasValue)
-                {
-                    result.ResultType = returnTypeInfo.Value.name;
-                    result.IsBuiltInType = returnTypeInfo.Value.inbuilt;
-                }
-            }
-            else if (symbol is Microsoft.CodeAnalysis.ILocalSymbol localSymbol)
-            {
-                result.Kind = CursorKind.VarDeclaration;
-                result.Linkage = LinkageKind.NoLinkage;
-                result.SymbolType = localSymbol.Type
-                    .ToDisplayString(DefaultFormat);
-            }
-            else if (symbol is Microsoft.CodeAnalysis.IFieldSymbol fieldSymbol)
-            {
-                result.Kind = CursorKind.VarDeclaration;
-                result.Linkage = LinkageKind.NoLinkage;
-                result.SymbolType = fieldSymbol.Type
-                    .ToDisplayString(DefaultFormat);
-            }
-            else if (symbol is Microsoft.CodeAnalysis.INamedTypeSymbol typeSymbol)
-            {
-                if (typeSymbol.TypeKind == Microsoft.CodeAnalysis.TypeKind.Class)
-                {
-                    result.Kind = CursorKind.ClassDeclaration;
-                }
-
-                result.TypeDescription = typeSymbol.ToDisplayString(FullyQualifiedFormat);
-            }
-            else if (symbol is Microsoft.CodeAnalysis.IParameterSymbol parameterSymbol)
-            {
-                result.Kind = CursorKind.ParmDeclaration;
-
-                result.SymbolType = parameterSymbol.Type
-                    .ToDisplayString(DefaultFormat);
-            }
-            else if (symbol is Microsoft.CodeAnalysis.INamespaceSymbol namespaceSymbol)
-            {
-                result.Kind = CursorKind.Namespace;
-
-                result.Name = namespaceSymbol.ToDisplayString(FullyQualifiedFormat);
-            }
-
-            if (result.Name == null)
-            {
-                result.Name = symbol.Name;
-            }
-
-            if (result.TypeDescription == null)
-            {
-                result.TypeDescription = symbol.Kind == Microsoft.CodeAnalysis.SymbolKind.NamedType ? symbol.ToDisplayString(DefaultFormat) : symbol.ToMinimalDisplayString(semanticModel, offset);
-            }
-
-            var xmlDocumentation = symbol.GetDocumentationCommentXml();
-
-            var docComment = DocumentationComment.From(xmlDocumentation, Environment.NewLine);
-            result.BriefComment = docComment.SummaryText;
-
-            return result;
-        }
+        }        
 
         public async Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
         {
@@ -635,9 +544,7 @@ namespace AvalonStudio.Languages.CSharp
 
             var symbolInfo = semanticModel.GetSymbolInfo(node, CancellationToken.None);
 
-            var symbol = symbolInfo.Symbol ?? semanticModel.GetDeclaredSymbol(node, CancellationToken.None);
-
-            //var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, offset, workspace);
+            var symbol = symbolInfo.Symbol ?? semanticModel.GetDeclaredSymbol(node, CancellationToken.None);            
 
             if (symbol != null)
             {
@@ -661,13 +568,10 @@ namespace AvalonStudio.Languages.CSharp
                 }
 
                 var formatter = workspace.Services.GetLanguageServices(semanticModel.Language).GetService<IDocumentationCommentFormattingService>();
-                var documentation = symbol.GetDocumentationParts(semanticModel, offset, formatter, CancellationToken.None);
-
-                // sb.Append("<span font='" + FontService.SansFontName + "' size='small'>");
+                var documentation = symbol.GetDocumentationParts(semanticModel, offset, formatter, CancellationToken.None);                
 
                 if (documentation != null && documentation.Any())
-                {
-                    sb.AppendLine();
+                {                    
                     sb.AppendLine();
                     TaggedTextUtil.AppendTaggedText(sb, theme, documentation);
                 }
@@ -690,7 +594,6 @@ namespace AvalonStudio.Languages.CSharp
                     }
                 }
 
-
                 if (sections.TryGetValue(SymbolDescriptionGroups.Exceptions, out parts))
                 {
                     if (!parts.IsDefaultOrEmpty)
@@ -707,9 +610,7 @@ namespace AvalonStudio.Languages.CSharp
                         sb.AppendLine();
                         TaggedTextUtil.AppendTaggedText(sb, theme, parts);
                     }
-                }
-
-                //result = SymbolFromRoslynSymbol(offset, semanticModel, symbol);
+                }                
             }
 
             return sb;
