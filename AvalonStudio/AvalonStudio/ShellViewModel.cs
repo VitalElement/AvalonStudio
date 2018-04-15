@@ -45,7 +45,6 @@ namespace AvalonStudio
         private WorkspaceTaskRunner _taskRunner;
         private ToolBarDefinition _toolBarDefinition;
         private double _globalZoomLevel;
-        private List<IToolChain> _toolChains;
         private List<MenuBarDefinition> _menuBarDefinitions;
         private List<MenuDefinition> _menuDefinitions;
         private List<MenuItemGroupDefinition> _menuItemGroupDefinitions;
@@ -64,6 +63,7 @@ namespace AvalonStudio
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
         private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
 
+        private IEnumerable<Lazy<IToolchain>> _toolChains;
         private IEnumerable<IDebugger> _debugger2s;
 
         private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
@@ -88,6 +88,7 @@ namespace AvalonStudio
             [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
+            [ImportMany] IEnumerable<Lazy<IToolchain>> toolChains,
             [ImportMany] IEnumerable<IDebugger> debugger2s,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             [ImportMany] IEnumerable<IExtension> extensions)
@@ -101,11 +102,11 @@ namespace AvalonStudio
             _solutionTypes = solutionTypes;
             _projectTypes = projectTypes;
 
+            _toolChains = toolChains;
             _debugger2s = debugger2s;
 
             _testFrameworks = testFrameworks;
 
-            _toolChains = new List<IToolChain>();
             _menuBarDefinitions = new List<MenuBarDefinition>();
             _menuDefinitions = new List<MenuDefinition>();
             _menuItemGroupDefinitions = new List<MenuItemGroupDefinition>();
@@ -153,8 +154,6 @@ namespace AvalonStudio
             foreach (var extension in extensions)
             {
                 extension.Activation();
-
-                _toolChains.ConsumeExtension(extension);
 
                 _commandDefinitions.ConsumeExtension(extension);
             }
@@ -309,6 +308,8 @@ namespace AvalonStudio
 
         public IMenu MainMenu { get; }
 
+        public StatusBarViewModel StatusBar => _statusBar.Value;
+
         public bool DebugVisible
         {
             get { return debugControlsVisible; }
@@ -325,6 +326,14 @@ namespace AvalonStudio
             {
                 this.RaiseAndSetIfChanged(ref _toolBarDefinition, value);
                 // Might need to do a global raise property change (NPC(string.Empty))
+            }
+        }
+
+        public IEnumerable<IToolBar> ToolBars
+        {
+            get
+            {
+                yield return ToolBar;
             }
         }
 
@@ -370,15 +379,13 @@ namespace AvalonStudio
 
         public IErrorList ErrorList { get; }
 
-        public StatusBarViewModel StatusBar => _statusBar.Value;
-
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
         public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes => _projectTypes;
 
         public IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices => _languageServices;
 
-        public IEnumerable<IToolChain> ToolChains => _toolChains;
+        public IEnumerable<IToolchain> ToolChains => _toolChains.Select(t => t.Value);
 
         public IEnumerable<IDebugger> Debugger2s => _debugger2s;
 
@@ -563,11 +570,11 @@ namespace AvalonStudio
             {
                 BuildStarting?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
 
-                await TaskRunner.RunTask(() =>
+                await TaskRunner.RunTask(async () =>
                 {
-                    result = project.ToolChain.Build(Console, project).GetAwaiter().GetResult();
+                    result = await project.ToolChain.BuildAsync(Console, project).ConfigureAwait(false);
 
-                    Dispatcher.UIThread.InvokeAsync(() =>
+                    await Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         BuildCompleted?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
                     });
