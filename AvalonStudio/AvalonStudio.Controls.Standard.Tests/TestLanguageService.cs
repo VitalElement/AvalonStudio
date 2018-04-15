@@ -61,7 +61,7 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
-        public Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<StyledText> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             throw new NotImplementedException();
         }
