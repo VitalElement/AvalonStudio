@@ -1,9 +1,12 @@
-﻿using Avalonia.Threading;
+﻿using Avalonia.Media;
+using Avalonia.Threading;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvalonStudio.CodeEditor;
+using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.OmniSharp.Roslyn;
@@ -35,6 +38,134 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.CSharp
 {
+    static class TaggedTextUtil
+    {
+        public static void AppendTaggedText(this StyledText markup, ColorScheme theme, IEnumerable<TaggedText> text)
+        {
+            foreach (var part in text)
+            {
+                if (part.Tag == TextTags.LineBreak)
+                {
+                    markup.AppendLine();
+                    continue;
+                }
+
+                markup.Append(part.Text, part.Tag != TextTags.Text ? GetThemeColor(theme, part.Tag) : null);
+            }
+        }
+
+        public static void AppendTaggedText(this StyledText markup, ColorScheme theme, IEnumerable<TaggedText> text, int col, int maxColumn)
+        {
+            foreach (var part in text)
+            {
+                if (part.Tag == TextTags.LineBreak)
+                {
+                    markup.AppendLine();
+                    col = 0;
+                    continue;
+                }
+                if (maxColumn >= 0 && col + part.Text.Length > maxColumn)
+                {
+                    markup.AppendLine(part.Text, part.Tag != TextTags.Text ? GetThemeColor(theme, part.Tag) : null);
+                    //AppendAndBreakText(markup, part.Text, col, maxColumn);
+                    col = 0;
+                }
+                else
+                {
+                    markup.Append(part.Text);
+                    var lineBreak = part.Text.LastIndexOfAny(new[] { '\n', '\r' });
+                    if (lineBreak >= 0)
+                    {
+                        col += part.Text.Length - lineBreak;
+                    }
+                    else
+                    {
+                        col += part.Text.Length;
+                    }
+                }
+            }
+        }
+
+        static void AppendAndBreakText(StringBuilder markup, string text, int col, int maxColumn)
+        {
+            var idx = maxColumn - col > 0 && maxColumn - col < text.Length ? text.IndexOf(' ', maxColumn - col) : -1;
+            if (idx < 0)
+            {
+                markup.Append(text);
+            }
+            else
+            {
+                markup.Append(text.Substring(0, idx));
+                if (idx + 1 >= text.Length)
+                    return;
+                markup.AppendLine();
+                AppendAndBreakText(markup, text.Substring(idx + 1), 0, maxColumn);
+            }
+        }
+
+        static IBrush GetThemeColor(ColorScheme theme, string tag)
+        {
+            switch (tag)
+            {
+                case TextTags.Keyword:
+                    return theme.Keyword;
+                case TextTags.Class:
+                    return theme.Type;
+                case TextTags.Delegate:
+                    return theme.DelegateName;
+                case TextTags.Enum:
+                    return theme.EnumType;
+                case TextTags.Interface:
+                    return theme.InterfaceType;
+                case TextTags.Module:
+                    return theme.Type;
+                case TextTags.Struct:
+                    return theme.StructName;
+                case TextTags.TypeParameter:
+                    return theme.Type;
+
+                case TextTags.Alias:
+                case TextTags.Assembly:
+                case TextTags.Field:
+                case TextTags.ErrorType:
+                case TextTags.Event:
+                case TextTags.Label:
+                case TextTags.Local:
+                case TextTags.Method:
+                case TextTags.Namespace:
+                case TextTags.Parameter:
+                case TextTags.Property:
+                case TextTags.RangeVariable:
+                    return null;
+
+                case TextTags.NumericLiteral:
+                    return theme.NumericLiteral;
+
+                case TextTags.StringLiteral:
+                    return theme.Literal;
+
+                case TextTags.Space:
+                case TextTags.LineBreak:
+                    return null;
+
+                case TextTags.Operator:
+                    return theme.Operator;
+
+                case TextTags.Punctuation:
+                    return theme.Punctuation;
+
+                case TextTags.AnonymousTypeIndicator:
+                case TextTags.Text:
+                    return null;
+
+                default:
+                    Console.WriteLine("Warning unexpected text tag: " + tag);
+                    return null;
+            }
+        }
+    }
+
+
     [ExportLanguageService(ContentCapabilities.CSharp)]
     internal class CSharpLanguageService : ILanguageService
     {
@@ -324,23 +455,23 @@ namespace AvalonStudio.Languages.CSharp
                     result.IsBuiltInType = returnTypeInfo.Value.inbuilt;
                 }
             }
-            else if(symbol is Microsoft.CodeAnalysis.ILocalSymbol localSymbol)
+            else if (symbol is Microsoft.CodeAnalysis.ILocalSymbol localSymbol)
             {
                 result.Kind = CursorKind.VarDeclaration;
                 result.Linkage = LinkageKind.NoLinkage;
                 result.SymbolType = localSymbol.Type
                     .ToDisplayString(DefaultFormat);
             }
-            else if(symbol is Microsoft.CodeAnalysis.IFieldSymbol fieldSymbol)
+            else if (symbol is Microsoft.CodeAnalysis.IFieldSymbol fieldSymbol)
             {
                 result.Kind = CursorKind.VarDeclaration;
                 result.Linkage = LinkageKind.NoLinkage;
                 result.SymbolType = fieldSymbol.Type
                     .ToDisplayString(DefaultFormat);
             }
-            else if(symbol is Microsoft.CodeAnalysis.INamedTypeSymbol typeSymbol)
+            else if (symbol is Microsoft.CodeAnalysis.INamedTypeSymbol typeSymbol)
             {
-                if(typeSymbol.TypeKind == Microsoft.CodeAnalysis.TypeKind.Class)
+                if (typeSymbol.TypeKind == Microsoft.CodeAnalysis.TypeKind.Class)
                 {
                     result.Kind = CursorKind.ClassDeclaration;
                 }
@@ -469,9 +600,9 @@ namespace AvalonStudio.Languages.CSharp
             return node;
         }
 
-        public async Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<StyledText> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
-            Symbol result = null;
+            StyledText sb = null;
 
             var dataAssociation = GetAssociatedData(editor);
 
@@ -479,7 +610,7 @@ namespace AvalonStudio.Languages.CSharp
 
             var document = GetDocument(dataAssociation, editor.SourceFile, workspace);
 
-            var semanticModel = await document.GetSemanticModelAsync();            
+            var semanticModel = await document.GetSemanticModelAsync();
 
             var descriptionService = workspace.Services.GetLanguageServices(semanticModel.Language).GetService<ISymbolDisplayService>();
 
@@ -514,11 +645,13 @@ namespace AvalonStudio.Languages.CSharp
 
                 ImmutableArray<TaggedText> parts;
 
-                var sb = new StringBuilder();
+                sb = StyledText.Create();
+                var theme = ColorScheme.CurrentColorScheme;
+
 
                 if (sections.TryGetValue(SymbolDescriptionGroups.MainDescription, out parts))
                 {
-                    //TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                    TaggedTextUtil.AppendTaggedText(sb, theme, parts);
                 }
 
                 // if generating quick info for an attribute, bind to the class instead of the constructor
@@ -536,7 +669,7 @@ namespace AvalonStudio.Languages.CSharp
                 {
                     sb.AppendLine();
                     sb.AppendLine();
-                    //TaggedTextUtil.AppendTaggedText(sb, theme, documentation);
+                    TaggedTextUtil.AppendTaggedText(sb, theme, documentation);
                 }
 
                 if (sections.TryGetValue(SymbolDescriptionGroups.AnonymousTypes, out parts))
@@ -544,7 +677,7 @@ namespace AvalonStudio.Languages.CSharp
                     if (!parts.IsDefaultOrEmpty)
                     {
                         sb.AppendLine();
-                        //TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                        TaggedTextUtil.AppendTaggedText(sb, theme, parts);
                     }
                 }
 
@@ -553,7 +686,7 @@ namespace AvalonStudio.Languages.CSharp
                     if (!parts.IsDefaultOrEmpty)
                     {
                         sb.AppendLine();
-                        //TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                        TaggedTextUtil.AppendTaggedText(sb, theme, parts);
                     }
                 }
 
@@ -563,7 +696,7 @@ namespace AvalonStudio.Languages.CSharp
                     if (!parts.IsDefaultOrEmpty)
                     {
                         sb.AppendLine();
-                        //TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                        TaggedTextUtil.AppendTaggedText(sb, theme, parts);
                     }
                 }
 
@@ -572,15 +705,14 @@ namespace AvalonStudio.Languages.CSharp
                     if (!parts.IsDefaultOrEmpty)
                     {
                         sb.AppendLine();
-                        //TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                        TaggedTextUtil.AppendTaggedText(sb, theme, parts);
                     }
                 }
-                sb.Append("</span>");                
 
-                result = SymbolFromRoslynSymbol(offset, semanticModel, symbol);               
+                //result = SymbolFromRoslynSymbol(offset, semanticModel, symbol);
             }
 
-            return result;
+            return sb;
         }
 
         public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)

@@ -1,6 +1,7 @@
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvalonStudio.CodeEditor;
+using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages;
@@ -685,7 +686,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return cursor;
         }
 
-        public async Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<StyledText> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             Symbol result = null;
             var associatedData = GetAssociatedData(editor.SourceFile);
@@ -719,7 +720,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             });
 
-            return result;
+            return null;
         }
 
         public async Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)

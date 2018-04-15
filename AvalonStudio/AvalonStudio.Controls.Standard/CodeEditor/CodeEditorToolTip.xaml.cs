@@ -108,7 +108,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             base.OnTemplateApplied(e);
 
-            _viewHost = e.NameScope.Find<Control>("PART_ViewHost");
+            _viewHost = e.NameScope.Find<Control>("PART_FormattedTextBlock");
 
             _popup = e.NameScope.Find<Popup>("PART_Popup");
 

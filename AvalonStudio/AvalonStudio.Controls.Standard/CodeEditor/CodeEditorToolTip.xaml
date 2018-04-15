@@ -7,7 +7,9 @@
       <ControlTemplate>
                 <Popup IsOpen="{Binding IsVisible, Mode=TwoWay}" StaysOpen="False" Name="PART_Popup" DataContext="" 
                        TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}">
-          <cont:ViewModelViewHost Name="PART_ViewHost" />
+                  <cont:FormattedTextBlock StyledText="{Binding }" Name="PART_FormattedTextBlock" Margin="8" />
+                  <!--
+                  <cont:ViewModelViewHost Name="PART_ViewHost" />-->
         </Popup>
       </ControlTemplate>
     </Setter>

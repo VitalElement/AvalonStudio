@@ -20,6 +20,13 @@ namespace AvalonStudio.Controls
         public string Text => _builder.ToString();
         public IReadOnlyList<FormattedTextStyleSpan> Spans => _spans.AsReadOnly();
 
+        public StyledText AppendLine ()
+        {
+            _builder.AppendLine();
+
+            return this;
+        }
+
         public StyledText AppendLine(string text, IBrush brush = null)
         {
             if (brush != null)

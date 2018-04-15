@@ -1,4 +1,5 @@
 ﻿using AvaloniaEdit.Indentation;
+using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
@@ -88,9 +89,9 @@ namespace AvalonStudio.Languages.Xaml
             return cursor;
         }
 
-        public Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<StyledText> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
-            return Task.FromResult<Symbol>(null);
+            return Task.FromResult<StyledText>(null);
         }
 
         public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
