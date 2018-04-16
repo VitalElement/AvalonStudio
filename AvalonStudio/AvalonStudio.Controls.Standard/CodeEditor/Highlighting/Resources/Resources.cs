@@ -18,7 +18,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.Resources
         internal static void RegisterBuiltInHighlightings(CustomHighlightingManager hlm)
         {
             hlm.RegisterHighlighting("XML-Mode.xshd");
-            hlm.RegisterHighlighting("csharp.tmLanguage.json");
+            //hlm.RegisterHighlighting("csharp.tmLanguage");
+            hlm.RegisterHighlighting("C#.sublime-syntax");
         }
     }
 }

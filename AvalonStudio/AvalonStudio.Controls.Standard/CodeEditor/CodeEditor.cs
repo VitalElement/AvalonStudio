@@ -775,7 +775,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     var result = await LanguageService.RunCodeAnalysisAsync(editor, unsavedFiles, () => false);
 
-                    //_textColorizer?.SetTransformations(editor, result.SyntaxHighlightingData);
+                    _textColorizer?.SetTransformations(editor, result.SyntaxHighlightingData);
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
@@ -810,21 +810,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             LanguageService = _shell.LanguageServices.FirstOrDefault(
                 o => o.Metadata.TargetCapabilities.Any(
-                    c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;
-            
-            var definition = CustomHighlightingManager.Instance.GetAvalonStudioDefinition(sourceFile.ContentType);
-
-            if(definition is IHighlightingDefinition avalonEditHighlighting)
-            {
-                SyntaxHighlighting = avalonEditHighlighting;
-            }
-            else if(definition is SyntaxHighlightingDefinition highlightingDefinition)
-            {
-                var colorizer = new StaticHighlightingColorizer(highlightingDefinition);
-                TextArea.TextView.LineTransformers.Insert(0, colorizer);
-
-                colorizer.OnAddToEditor(this);
-            }
+                    c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;                       
 
             if (LanguageService != null)
             {
@@ -873,6 +859,20 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Observable.FromEventPattern<DiagnosticsUpdatedEventArgs>(LanguageService, nameof(LanguageService.DiagnosticsUpdated)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(args =>
                     LanguageService_DiagnosticsUpdated(args.Sender, args.EventArgs))
                 };
+            }
+
+            var definition = CustomHighlightingManager.Instance.GetAvalonStudioDefinition(sourceFile.ContentType);
+
+            if (definition is IHighlightingDefinition avalonEditHighlighting)
+            {
+                SyntaxHighlighting = avalonEditHighlighting;
+            }
+            else if (definition is SyntaxHighlightingDefinition highlightingDefinition)
+            {
+                var colorizer = new StaticHighlightingColorizer(highlightingDefinition);
+                TextArea.TextView.LineTransformers.Insert(0, colorizer);
+
+                colorizer.OnAddToEditor(this);
             }
 
             StartBackgroundWorkers();

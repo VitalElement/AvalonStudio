@@ -473,6 +473,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                             return (new List<string> { definition.Name }, definition);
                         }
                         break;
+
+                    case ".sublime-syntax":
+                        {
+                            using (var sr = new StreamReader(s))
+                            {
+                                var definition = Sublime3.Sublime3Format.ReadHighlighting(sr);
+                                definition.PrepareMatches();
+                                return (new List<string> { definition.Name }, definition);
+                            }
+                        }                        
                 }
             }
 

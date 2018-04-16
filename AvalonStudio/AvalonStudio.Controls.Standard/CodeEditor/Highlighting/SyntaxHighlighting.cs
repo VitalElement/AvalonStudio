@@ -508,11 +508,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
 
                         if (pattern == "(?<=\\})" && offset > 0)
                         { // HACK to fix typescript highlighting.
-                            possibleMatch = r.Match(lineText, offset - 1, length);//, matchTimeout);
+                            possibleMatch = r.Match(lineText, offset - 1, length);
                         }
                         else
                         {
-                            possibleMatch = r.Match(lineText, offset, length);//, matchTimeout);
+                            possibleMatch = r.Match(lineText, offset, length);
                         }
                         if (possibleMatch.Success)
                         {
@@ -670,7 +670,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                     return Task.FromResult(new HighlightedLine(new SimpleSegment(startOffset, length), new[] { new ColoredSegment(0, length, ScopeStack.Empty) }));
                 SyntaxContext currentContext = null;
                 List<SyntaxContext> lastContexts = new List<SyntaxContext>();
-                System.Text.RegularExpressions.Match match = null;
+                Match match = null;
                 SyntaxMatch curMatch = null;
                 var segments = new List<ColoredSegment>();
                 int offset = 0;

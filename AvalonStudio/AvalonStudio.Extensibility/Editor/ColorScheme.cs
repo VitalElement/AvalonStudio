@@ -43,6 +43,8 @@ namespace AvalonStudio.Extensibility.Editor
             s_colorAccessors["keyword.operator"] = () => CurrentColorScheme.Operator;
             s_colorAccessors["storage.type"] = () => CurrentColorScheme.Keyword;
             s_colorAccessors["storage.modifier"] = () => CurrentColorScheme.Keyword;
+            s_colorAccessors["constant.numeric"] = () => CurrentColorScheme.NumericLiteral;
+            s_colorAccessors["string"] = () => CurrentColorScheme.Literal;
 
             s_colorAccessors["entity.name.type"] = () => Brushes.Red;
             s_colorAccessors["entity.name.type.class"] = () => CurrentColorScheme.Type;

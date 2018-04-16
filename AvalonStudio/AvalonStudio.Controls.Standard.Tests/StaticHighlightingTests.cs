@@ -3,6 +3,7 @@ using AvalonStudio.Controls.Standard.CodeEditor.Highlighting;
 using AvalonStudio.Controls.Standard.CodeEditor.Highlighting.Resources;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading;
 using Xunit;
@@ -14,11 +15,13 @@ namespace AvalonStudio.Controls.Standard.Tests
         [Fact]
         public void CSharp_Highlighting_Can_Detect_BuiltInTypes()
         {
-            using (var s = Resources.OpenStream("csharp.tmLanguage"))
+            using (var s = (Resources.OpenStream("C#.sublime-syntax")))
             {
-                var definition = CodeEditor.Highlighting.TextMate.TextMateFormat.ReadHighlighting(s);
+                using (var sr = new StreamReader(s))
+                {
+                    var definition = CodeEditor.Highlighting.Sublime3.Sublime3Format.ReadHighlighting(sr);
 
-                string testCode = @"namespace Test
+                    string testCode = @"namespace Test
 {
     public class TestClass
     {
@@ -28,7 +31,8 @@ namespace AvalonStudio.Controls.Standard.Tests
     }
 }";
 
-                RunHighlightingTest(definition, testCode);
+                    RunHighlightingTest(definition, testCode);
+                }
             }
         }
 

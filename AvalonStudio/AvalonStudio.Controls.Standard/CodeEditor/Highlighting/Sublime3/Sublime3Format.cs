@@ -8,7 +8,7 @@ using YamlDotNet.RepresentationModel;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.Sublime3
 {
-    static class Sublime3Format
+    public static class Sublime3Format
     {
         public static SyntaxHighlightingDefinition ReadHighlighting(TextReader input)
         {
