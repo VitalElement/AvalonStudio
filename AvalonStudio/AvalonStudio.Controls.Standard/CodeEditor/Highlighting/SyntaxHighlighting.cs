@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -49,7 +50,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
         }
     }
 
-    public class HighlightingSegment : OffsetSyntaxHighlightingData
+    public class ColoredSegment : OffsetSyntaxHighlightingData
     {
         readonly ScopeStack scopeStack;
 
@@ -69,29 +70,29 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             }
         }
 
-        public HighlightingSegment(int offset, int length, ScopeStack scopeStack) : base(offset, length)
+        public ColoredSegment(int offset, int length, ScopeStack scopeStack) : base(offset, length)
         {
             this.scopeStack = scopeStack;
         }
 
-        public HighlightingSegment(ISegment segment, ScopeStack scopeStack) : base(segment)
+        public ColoredSegment(ISegment segment, ScopeStack scopeStack) : base(segment)
         {
             this.scopeStack = scopeStack;
         }
 
-        public HighlightingSegment WithOffsetAndLength(int offset, int length)
+        public ColoredSegment WithOffsetAndLength(int offset, int length)
         {
-            return new HighlightingSegment(offset, length, scopeStack);
+            return new ColoredSegment(offset, length, scopeStack);
         }
 
-        public HighlightingSegment WithOffset(int offset)
+        public ColoredSegment WithOffset(int offset)
         {
-            return new HighlightingSegment(offset, Length, scopeStack);
+            return new ColoredSegment(offset, Length, scopeStack);
         }
 
-        public HighlightingSegment WithLength(int length)
+        public ColoredSegment WithLength(int length)
         {
-            return new HighlightingSegment(Offset, length, scopeStack);
+            return new ColoredSegment(Offset, length, scopeStack);
         }
     }
 
@@ -204,8 +205,25 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
         /// <summary>
         /// The segment offsets are 0 at line start regardless of where the line is inside the document.
         /// </summary>
-        public IReadOnlyList<HighlightingSegment> Segments { get; private set; }
-        public HighlightedLine(ISegment textSegment, IReadOnlyList<HighlightingSegment> segments)
+        public IReadOnlyList<ColoredSegment> Segments { get; private set; }
+
+        bool? isContinuedBeyondLineEnd;
+        public bool? IsContinuedBeyondLineEnd
+        {
+            get
+            {
+                if (isContinuedBeyondLineEnd.HasValue)
+                    return isContinuedBeyondLineEnd.Value;
+                var result = Segments.Count > 0 ? TextSegment.Length < Segments.Last().EndOffset : false;
+                return isContinuedBeyondLineEnd = result;
+            }
+            set
+            {
+                isContinuedBeyondLineEnd = value;
+            }
+        }
+
+        public HighlightedLine(ISegment textSegment, IReadOnlyList<ColoredSegment> segments)
         {
             TextSegment = textSegment;
             Segments = segments;
@@ -239,7 +257,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
 
         public Task<HighlightedLine> GetHighlightedLineAsync(IDocumentLine line, CancellationToken cancellationToken)
         {
-            return Task.FromResult(new HighlightedLine(line, new[] { new HighlightingSegment(0, line.Length, ScopeStack.Empty) }));
+            return Task.FromResult(new HighlightedLine(line, new[] { new ColoredSegment(0, line.Length, ScopeStack.Empty) }));
         }
 
         public Task<ScopeStack> GetScopeStackAsync(int offset, CancellationToken cancellationToken)
@@ -253,6 +271,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
         {
         }
     }
+
 
     public class SyntaxHighlighting : ISyntaxHighlighting
     {
@@ -285,7 +304,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             Document.TextChanged -= Handle_TextChanged;
         }
 
-        async void Handle_TextChanged(object sender, TextChangeEventArgs e)
+        void Handle_TextChanged(object sender, TextChangeEventArgs e)
         {
             var newOffset = e.GetNewOffset(e.Offset);
             var ln = Document.GetLineByOffset(newOffset).LineNumber;
@@ -295,7 +314,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                 var lastState = GetState(line);
 
                 var high = new Highlighter(this, lastState);
-                await high.GetColoredSegments(Document, line.Offset, line.Length + line.DelimiterLength);
+                high.GetColoredSegments(Document, line.Offset, line.Length + line.DelimiterLength).Wait();
                 OnHighlightingStateChanged(new LineEventArgs(line));
                 stateCache.RemoveRange(ln - 1, stateCache.Count - ln + 1);
             }
@@ -428,12 +447,232 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             public Task<HighlightedLine> GetColoredSegments(ITextSource text, int startOffset, int length)
             {
                 if (ContextStack.IsEmpty)
-                    return Task.FromResult(new HighlightedLine(new SimpleSegment(startOffset, length), new[] { new HighlightingSegment(0, length, ScopeStack.Empty) }));
+                    return Task.FromResult(new HighlightedLine(new SimpleSegment(startOffset, length), new[] { new ColoredSegment(0, length, ScopeStack.Empty) }));
+                SyntaxContext currentContext = null;
+                List<SyntaxContext> lastContexts = new List<SyntaxContext>();
+                Match match = null;
+                SyntaxMatch curMatch = null;
+                var segments = new List<ColoredSegment>();
+                int offset = 0;
+                int curSegmentOffset = 0;
+                int endOffset = offset + length;
+                int lastMatch = -1;
+                var highlightedSegment = new SimpleSegment(startOffset, length);
+                string lineText = text.GetText(startOffset, length);
+                var initialState = state.Clone();
+                int timeoutOccursAt;
+                unchecked
+                {
+                    timeoutOccursAt = Environment.TickCount + (int)matchTimeout.TotalMilliseconds;
+                }
+                restart:
+                if (lastMatch == offset)
+                {
+                    if (lastContexts.Contains(currentContext))
+                    {
+                        offset++;
+                        length--;
+                    }
+                    else
+                    {
+                        lastContexts.Add(currentContext);
+                    }
+                }
+                else
+                {
+                    lastContexts.Clear();
+                    lastContexts.Add(currentContext);
+                }
+                if (offset >= lineText.Length)
+                    goto end;
+                lastMatch = offset;
+                currentContext = ContextStack.Peek();
+                match = null;
+                curMatch = null;
+                foreach (var m in currentContext.Matches)
+                {
+                    if(m.Match.Contains("void"))
+                    {
+
+                    }
+
+                    if (m.GotTimeout)
+                        continue;
+                    var r = m.GetRegex();
+                    if (r == null)
+                        continue;
+                    try
+                    {
+                        Match possibleMatch;
+                        var pattern = r.ToString();
+
+                        if (pattern == "(?<=\\})" && offset > 0)
+                        { // HACK to fix typescript highlighting.
+                            possibleMatch = r.Match(lineText, offset - 1, length);//, matchTimeout);
+                        }
+                        else
+                        {
+                            possibleMatch = r.Match(lineText, offset, length);//, matchTimeout);
+                        }
+                        if (possibleMatch.Success)
+                        {
+                            if (match == null || possibleMatch.Index < match.Index)
+                            {
+                                match = possibleMatch;
+                                curMatch = m;
+                                // Console.WriteLine (match.Index + " possible match : " + m + "/" + possibleMatch.Index + "-" + possibleMatch.Length);
+                            }
+                            else
+                            {
+                                // Console.WriteLine (match.Index + " skip match : " + m + "/" + possibleMatch.Index + "-" + possibleMatch.Length);
+                            }
+                        }
+                        else
+                        {
+                            // Console.WriteLine ("fail match : " + m);
+                        }
+                    }
+                    catch (RegexMatchTimeoutException)
+                    {
+                        //LoggingService.LogWarning("Warning: Regex " + m.Match + " timed out on line:" + text.GetText(offset, length));
+                        m.GotTimeout = true;
+                        continue;
+                    }
+                }
+                if (length <= 0 && curMatch == null)
+                    goto end;
+
+                /*if (Environment.TickCount >= timeoutOccursAt)
+                {
+                    curMatch.GotTimeout = true;
+                    goto end;
+                }*/
+
+                if (match != null)
+                {
+                    // Console.WriteLine (match.Index + " taken match : " + curMatch + "/" + match.Index + "-" + match.Length);
+                    var matchEndOffset = match.Index + match.Length;
+                    if (curSegmentOffset < match.Index && match.Length > 0)
+                    {
+                        segments.Add(new ColoredSegment(curSegmentOffset, match.Index - curSegmentOffset, ScopeStack));
+                        curSegmentOffset = match.Index;
+                    }
+                    if (curMatch.Pop)
+                    {
+                        PopMetaContentScopeStack(currentContext, curMatch);
+                    }
+
+                    PushScopeStack(curMatch.Scope);
+
+                    if (curMatch.Captures.Groups.Count > 0)
+                    {
+                        for (int i = 0; i < curMatch.Captures.Groups.Count; ++i)
+                        {
+                            var capture = curMatch.Captures.Groups[i];
+                            var grp = match.Groups[capture.Item1];
+                            if (grp == null || grp.Length == 0)
+                                continue;
+                            if (curSegmentOffset < grp.Index)
+                            {
+                                ReplaceSegment(segments, new ColoredSegment(curSegmentOffset, grp.Index - curSegmentOffset, ScopeStack));
+                            }
+                            ReplaceSegment(segments, new ColoredSegment(grp.Index, grp.Length, ScopeStack.Push(capture.Item2)));
+                            curSegmentOffset = Math.Max(curSegmentOffset, grp.Index + grp.Length);
+                        }
+                    }
+
+                    if (curMatch.Captures.NamedGroups.Count > 0)
+                    {
+                        for (int i = 0; i < curMatch.Captures.NamedGroups.Count; ++i)
+                        {
+                            var capture = curMatch.Captures.NamedGroups[i];
+                            var grp = match.Groups[capture.Item1];
+                            if (grp == null || grp.Length == 0)
+                                continue;
+                            if (curSegmentOffset < grp.Index)
+                            {
+                                ReplaceSegment(segments, new ColoredSegment(curSegmentOffset, grp.Index - curSegmentOffset, ScopeStack));
+                            }
+                            ReplaceSegment(segments, new ColoredSegment(grp.Index, grp.Length, ScopeStack.Push(capture.Item2)));
+                            curSegmentOffset = grp.Index + grp.Length;
+                        }
+                    }
+
+                    if (curMatch.Scope.Count > 0 && curSegmentOffset < matchEndOffset && match.Length > 0)
+                    {
+                        segments.Add(new ColoredSegment(curSegmentOffset, matchEndOffset - curSegmentOffset, ScopeStack));
+                        curSegmentOffset = matchEndOffset;
+                    }
+
+                    if (curMatch.Pop)
+                    {
+                        if (matchEndOffset - curSegmentOffset > 0)
+                            segments.Add(new ColoredSegment(curSegmentOffset, matchEndOffset - curSegmentOffset, ScopeStack));
+                        //if (curMatch.Scope != null)
+                        //	scopeStack = scopeStack.Pop ();
+                        PopStack(currentContext, curMatch);
+                        curSegmentOffset = matchEndOffset;
+                    }
+                    else if (curMatch.Set != null)
+                    {
+                        // if (matchEndOffset - curSegmentOffset > 0)
+                        //	segments.Add (new ColoredSegment (curSegmentOffset, matchEndOffset - curSegmentOffset, ScopeStack));
+                        //if (curMatch.Scope != null)
+                        //	scopeStack = scopeStack.Pop ();
+                        PopMetaContentScopeStack(currentContext, curMatch);
+                        PopStack(currentContext, curMatch);
+                        //curSegmentOffset = matchEndOffset;
+                        var nextContexts = curMatch.Set.GetContexts(currentContext);
+                        PushStack(curMatch, nextContexts);
+                        goto skip;
+                    }
+                    else if (curMatch.Push != null)
+                    {
+                        var nextContexts = curMatch.Push.GetContexts(currentContext);
+                        PushStack(curMatch, nextContexts);
+                    }
+                    else
+                    {
+                        if (curMatch.Scope.Count > 0)
+                        {
+                            for (int i = 0; i < curMatch.Scope.Count; i++)
+                                ScopeStack = ScopeStack.Pop();
+                        }
+                    }
+
+                    if (curSegmentOffset < matchEndOffset && match.Length > 0)
+                    {
+                        segments.Add(new ColoredSegment(curSegmentOffset, matchEndOffset - curSegmentOffset, ScopeStack));
+                        curSegmentOffset = matchEndOffset;
+                    }
+                    skip:
+                    length -= curSegmentOffset - offset;
+                    offset = curSegmentOffset;
+                    goto restart;
+                }
+
+                end:
+                if (endOffset - curSegmentOffset > 0)
+                {
+                    segments.Add(new ColoredSegment(curSegmentOffset, endOffset - curSegmentOffset, ScopeStack));
+                }
+
+                return Task.FromResult(new HighlightedLine(highlightedSegment, segments)
+                {
+                    IsContinuedBeyondLineEnd = !initialState.Equals(state)
+                });
+            }
+
+
+            public Task<HighlightedLine> GetColoredSegmentsOld(ITextSource text, int startOffset, int length)
+            {
+                if (ContextStack.IsEmpty)
+                    return Task.FromResult(new HighlightedLine(new SimpleSegment(startOffset, length), new[] { new ColoredSegment(0, length, ScopeStack.Empty) }));
                 SyntaxContext currentContext = null;
                 List<SyntaxContext> lastContexts = new List<SyntaxContext>();
                 System.Text.RegularExpressions.Match match = null;
                 SyntaxMatch curMatch = null;
-                var segments = new List<HighlightingSegment>();
+                var segments = new List<ColoredSegment>();
                 int offset = 0;
                 int curSegmentOffset = 0;
                 int endOffset = offset + length;
@@ -470,6 +709,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                 currentContext = ContextStack.Peek();
                 match = null;
                 curMatch = null;
+
+
                 foreach (var m in currentContext.Matches)
                 {
                     if (m.GotTimeout)
@@ -477,25 +718,37 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                     var r = m.GetRegex();
                     if (r == null)
                         continue;
+
+                    if (m.Match.Contains("void"))
+                    {
+
+                    }
+
                     try
                     {
-                        var possibleMatch = r.Match(lineText, offset, length/*, matchTimeout*/);
-                        if (possibleMatch.Success)
+                        var possibleMatches = r.Matches(lineText, offset/*, matchTimeout*/);
+
+                        //foreach (Match possibleMatch in possibleMatches)
+                        var possibleMatch = r.Match(lineText, offset, length);
+
                         {
-                            if (match == null || possibleMatch.Index < match.Index)
+                            if (possibleMatch.Success)
                             {
-                                match = possibleMatch;
-                                curMatch = m;
-                                // Console.WriteLine (match.Index + " possible match : " + m + "/" + possibleMatch.Index + "-" + possibleMatch.Length);
+                                if (match == null || possibleMatch.Index < match.Index)
+                                {
+                                    match = possibleMatch;
+                                    curMatch = m;
+                                    // Console.WriteLine (match.Index + " possible match : " + m + "/" + possibleMatch.Index + "-" + possibleMatch.Length);
+                                }
+                                else
+                                {
+                                    // Console.WriteLine (match.Index + " skip match : " + m + "/" + possibleMatch.Index + "-" + possibleMatch.Length);
+                                }
                             }
                             else
                             {
-                                // Console.WriteLine (match.Index + " skip match : " + m + "/" + possibleMatch.Index + "-" + possibleMatch.Length);
+                                // Console.WriteLine ("fail match : " + m);
                             }
-                        }
-                        else
-                        {
-                            // Console.WriteLine ("fail match : " + m);
                         }
                     }
                     catch (Exception)//RegexMatchTimeoutException)
@@ -517,7 +770,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                     var matchEndOffset = match.Index + match.Length;
                     if (curSegmentOffset < match.Index && match.Length > 0)
                     {
-                        segments.Add(new HighlightingSegment(curSegmentOffset, match.Index - curSegmentOffset, ScopeStack));
+                        segments.Add(new ColoredSegment(curSegmentOffset, match.Index - curSegmentOffset, ScopeStack));
                         curSegmentOffset = match.Index;
                     }
                     if (curMatch.Pop)
@@ -537,9 +790,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                                 continue;
                             if (curSegmentOffset < grp.Index)
                             {
-                                ReplaceSegment(segments, new HighlightingSegment(curSegmentOffset, grp.Index - curSegmentOffset, ScopeStack));
+                                ReplaceSegment(segments, new ColoredSegment(curSegmentOffset, grp.Index - curSegmentOffset, ScopeStack));
                             }
-                            ReplaceSegment(segments, new HighlightingSegment(grp.Index, grp.Length, ScopeStack.Push(capture.Item2)));
+                            ReplaceSegment(segments, new ColoredSegment(grp.Index, grp.Length, ScopeStack.Push(capture.Item2)));
                             curSegmentOffset = Math.Max(curSegmentOffset, grp.Index + grp.Length);
                         }
                     }
@@ -554,23 +807,23 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                                 continue;
                             if (curSegmentOffset < grp.Index)
                             {
-                                ReplaceSegment(segments, new HighlightingSegment(curSegmentOffset, grp.Index - curSegmentOffset, ScopeStack));
+                                ReplaceSegment(segments, new ColoredSegment(curSegmentOffset, grp.Index - curSegmentOffset, ScopeStack));
                             }
-                            ReplaceSegment(segments, new HighlightingSegment(grp.Index, grp.Length, ScopeStack.Push(capture.Item2)));
+                            ReplaceSegment(segments, new ColoredSegment(grp.Index, grp.Length, ScopeStack.Push(capture.Item2)));
                             curSegmentOffset = grp.Index + grp.Length;
                         }
                     }
 
                     if (curMatch.Scope.Count > 0 && curSegmentOffset < matchEndOffset && match.Length > 0)
                     {
-                        segments.Add(new HighlightingSegment(curSegmentOffset, matchEndOffset - curSegmentOffset, ScopeStack));
+                        segments.Add(new ColoredSegment(curSegmentOffset, matchEndOffset - curSegmentOffset, ScopeStack));
                         curSegmentOffset = matchEndOffset;
                     }
 
                     if (curMatch.Pop)
                     {
                         if (matchEndOffset - curSegmentOffset > 0)
-                            segments.Add(new HighlightingSegment(curSegmentOffset, matchEndOffset - curSegmentOffset, ScopeStack));
+                            segments.Add(new ColoredSegment(curSegmentOffset, matchEndOffset - curSegmentOffset, ScopeStack));
                         //if (curMatch.Scope != null)
                         //	scopeStack = scopeStack.Pop ();
                         PopStack(currentContext, curMatch);
@@ -605,7 +858,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
 
                     if (curSegmentOffset < matchEndOffset && match.Length > 0)
                     {
-                        segments.Add(new HighlightingSegment(curSegmentOffset, matchEndOffset - curSegmentOffset, ScopeStack));
+                        segments.Add(new ColoredSegment(curSegmentOffset, matchEndOffset - curSegmentOffset, ScopeStack));
                         curSegmentOffset = matchEndOffset;
                     }
                     skip:
@@ -617,7 +870,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                 end:
                 if (endOffset - curSegmentOffset > 0)
                 {
-                    segments.Add(new HighlightingSegment(curSegmentOffset, endOffset - curSegmentOffset, ScopeStack));
+                    segments.Add(new ColoredSegment(curSegmentOffset, endOffset - curSegmentOffset, ScopeStack));
                 }
 
                 return Task.FromResult(new HighlightedLine(highlightedSegment, segments));
@@ -702,7 +955,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             }
         }
 
-        internal static void ReplaceSegment(List<HighlightingSegment> list, HighlightingSegment newSegment)
+        internal static void ReplaceSegment(List<ColoredSegment> list, ColoredSegment newSegment)
         {
             if (list.Count == 0)
             {
@@ -730,12 +983,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             list.RemoveRange(i, j - i + 1);
             var lengthAfter = endItem.EndOffset - newSegment.EndOffset;
             if (lengthAfter > 0)
-                list.Insert(i, new HighlightingSegment(newSegment.EndOffset, lengthAfter, endItem.ScopeStack));
+                list.Insert(i, new ColoredSegment(newSegment.EndOffset, lengthAfter, endItem.ScopeStack));
 
             list.Insert(i, newSegment);
             var lengthBefore = newSegment.Offset - startItem.Offset;
             if (lengthBefore > 0)
-                list.Insert(i, new HighlightingSegment(startItem.Offset, lengthBefore, startItem.ScopeStack));
+                list.Insert(i, new ColoredSegment(startItem.Offset, lengthBefore, startItem.ScopeStack));
         }
 
         void OnHighlightingStateChanged(LineEventArgs e)

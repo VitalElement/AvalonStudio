@@ -46,7 +46,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             }
         }
 
-        internal void PrepareMatches()
+        public void PrepareMatches()
         {
             foreach (var ctx in Contexts)
             {

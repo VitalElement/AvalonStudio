@@ -24,6 +24,7 @@
 using AvalonStudio.Controls.Standard.CodeEditor.Highlighting.Sublime3;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -32,7 +33,7 @@ using System.Xml.XPath;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.TextMate
 {
-    static class TextMateFormat
+    public static class TextMateFormat
     {
         #region Themes
 
@@ -111,9 +112,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.TextMate
             }
 
             return new EditorTheme(name, settings, uuid);
-        }*/
+        }
 
-        /*static void ConvertSetting(List<ThemeSetting> settings, string fromSetting, string toSetting)
+        static void ConvertSetting(List<ThemeSetting> settings, string fromSetting, string toSetting)
         {
             var fs = GetSetting(settings, fromSetting, false);
             var ts = GetSetting(settings, toSetting);
@@ -125,9 +126,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.TextMate
                     fs.Settings
                 ));
             }
-        }*/
+        }
 
-        /*static ThemeSetting GetSetting(List<ThemeSetting> settings, string scope, bool exact = true)
+        static ThemeSetting GetSetting(List<ThemeSetting> settings, string scope, bool exact = true)
         {
             ThemeSetting result = null;
             string cs = null;
@@ -141,9 +142,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.TextMate
                 }
             }
             return result;
-        }*/
+        }
 
-        /*public static void Save(TextWriter writer, EditorTheme theme)
+        public static void Save(TextWriter writer, EditorTheme theme)
         {
             writer.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             writer.WriteLine("<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">");
@@ -184,9 +185,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.TextMate
             writer.WriteLine("\t<string>" + theme.Uuid + "</string>");
             writer.WriteLine("</dict>");
             writer.WriteLine("</plist>");
-        }*/
+        }
 
-        /*static ThemeSetting LoadThemeSetting(PDictionary dict)
+        static ThemeSetting LoadThemeSetting(PDictionary dict)
         {
             string name = null;
             var scopes = new List<string>();
@@ -305,7 +306,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.TextMate
 
         #region Syntax highlighting
 
-        internal static SyntaxHighlightingDefinition ReadHighlighting(Stream stream)
+        public static SyntaxHighlightingDefinition ReadHighlighting(Stream stream)
         {
             var dictionary = PDictionary.FromStream(stream);
             return ReadHighlighting(dictionary);
@@ -354,6 +355,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.TextMate
             foreach (var kv in repository)
             {
                 string contextName = kv.Key;
+
+                Debug.WriteLine(kv.Key);
+
                 var includes = new List<object>();
                 var contents = kv.Value as PDictionary;
                 if (contents != null)
@@ -521,6 +525,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.TextMate
                 var s = ((kv.Value as PDictionary)["name"] as PString)?.Value;
                 if (s == null)
                     continue;
+
+                //Debug.WriteLine(s);
                 int g;
                 try
                 {
@@ -538,7 +544,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.TextMate
         #endregion
 
         #region JSon Format
-        internal static SyntaxHighlightingDefinition ReadHighlightingFromJson(Stream stream)
+        public static SyntaxHighlightingDefinition ReadHighlightingFromJson(Stream stream)
         {
             byte[] bytes;
             using (var sr = new StreamReader(stream))
@@ -584,7 +590,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.TextMate
                         }
                         else
                         {
-                           // LoggingService.LogWarning("Warning while converting json highlighting to textmate 'key' " + name + " is duplicated in : " + f);
+                            //LoggingService.LogWarning("Warning while converting json highlighting to textmate 'key' " + name + " is duplicated in : " + f);
                         }
                     }
                     return val;
@@ -599,5 +605,4 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.TextMate
         }
         #endregion
     }
-
 }

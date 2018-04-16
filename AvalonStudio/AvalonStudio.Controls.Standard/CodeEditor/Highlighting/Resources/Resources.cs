@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.Resources
 {
-    internal static class Resources
+    public static class Resources
     {
         private const string Prefix = "AvalonStudio.Controls.Standard.CodeEditor.Highlighting.Resources.";
 

@@ -17,6 +17,7 @@
     <None Remove="AboutScreen\Assets\logo-256.png" />
     <None Remove="AboutScreen\Assets\logo-65.png" />
     <None Remove="AboutScreen\Assets\logo.png" />
+    <None Remove="CodeEditor\Highlighting\Resources\csharp.tmLanguage" />
     <None Remove="CodeEditor\Highlighting\Resources\csharp.tmLanguage.json" />
     <None Remove="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
     <None Remove="SolutionExplorer\TemplateView.xaml" />
@@ -26,6 +27,7 @@
     <EmbeddedResource Include="AboutScreen\Assets\logo-256.png" />
     <EmbeddedResource Include="AboutScreen\Assets\logo-65.png" />
     <EmbeddedResource Include="AboutScreen\Assets\logo.png" />
+    <EmbeddedResource Include="CodeEditor\Highlighting\Resources\csharp.tmLanguage" />
     <EmbeddedResource Include="CodeEditor\Highlighting\Resources\csharp.tmLanguage.json" />
     <EmbeddedResource Include="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
   </ItemGroup>
