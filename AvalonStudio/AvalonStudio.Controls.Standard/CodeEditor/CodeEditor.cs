@@ -553,7 +553,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             if (LanguageService != null)
             {
-                return await LanguageService.GetSymbolAsync(DocumentAccessor, UnsavedFiles, offset);
+                return await LanguageService.QuickInfo(DocumentAccessor, UnsavedFiles, offset);
             }
 
             return null;
@@ -582,7 +582,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 if (LanguageService != null)
                 {
-                    var symbol = await LanguageService?.GetSymbolAsync(DocumentAccessor, UnsavedFiles, offset);
+                    var symbol = await LanguageService?.QuickInfo(DocumentAccessor, UnsavedFiles, offset);
 
                     if (symbol != null)
                     {

@@ -509,7 +509,7 @@ namespace AvalonStudio.Languages.CSharp
             return node;
         }
 
-        public async Task<StyledText> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<StyledText> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             StyledText sb = null;
 

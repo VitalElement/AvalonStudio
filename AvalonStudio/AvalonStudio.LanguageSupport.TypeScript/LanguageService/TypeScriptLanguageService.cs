@@ -188,7 +188,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return -1;
         }
 
-        public Task<StyledText> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<StyledText> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             //STUB!
             return Task.FromResult<StyledText>(null);

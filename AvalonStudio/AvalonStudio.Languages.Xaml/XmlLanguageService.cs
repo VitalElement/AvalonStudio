@@ -89,7 +89,7 @@ namespace AvalonStudio.Languages.Xaml
             return cursor;
         }
 
-        public Task<StyledText> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<StyledText> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             return Task.FromResult<StyledText>(null);
         }
