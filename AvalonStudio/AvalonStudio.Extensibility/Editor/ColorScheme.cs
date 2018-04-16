@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Avalonia;
 using AvalonStudio.Extensibility.Plugin;
 using System;
+using System.Linq;
 
 namespace AvalonStudio.Extensibility.Editor
 {
@@ -35,12 +36,29 @@ namespace AvalonStudio.Extensibility.Editor
 
         static ColorScheme()
         {
+            s_colorAccessors["source"] = () => CurrentColorScheme.Text;
+            s_colorAccessors["constant.language"] = () => CurrentColorScheme.Keyword;
+            s_colorAccessors["punctuation"] = () => CurrentColorScheme.Punctuation;
+            s_colorAccessors["keyword"] = () => CurrentColorScheme.Keyword;
+            s_colorAccessors["keyword.operator"] = () => CurrentColorScheme.Operator;
+            s_colorAccessors["storage.type"] = () => CurrentColorScheme.Keyword;
+            s_colorAccessors["storage.modifier"] = () => CurrentColorScheme.Keyword;
+
+            s_colorAccessors["entity.name.type"] = () => Brushes.Red;
+            s_colorAccessors["entity.name.type.class"] = () => CurrentColorScheme.Type;
+            /*s_colorAccessors["storage.type.generic.cs"] = () => CurrentColorScheme.Type;
+            s_colorAccessors["storage.type.modifier.cs"] = () => CurrentColorScheme.Type;
+            s_colorAccessors["storage.type.variable.cs"] = () => CurrentColorScheme.Type;*/
+
+
             s_colorAccessors["background"] = () => CurrentColorScheme.Background;
             s_colorAccessors["background.accented"] = () => CurrentColorScheme.BackgroundAccent;
             s_colorAccessors["text"] = () => CurrentColorScheme.Text;
+            
             s_colorAccessors["comment"] = () => CurrentColorScheme.Comment;
             s_colorAccessors["delegate.name"] = () => CurrentColorScheme.DelegateName;
-            s_colorAccessors["keyword"] = () => CurrentColorScheme.Keyword;
+            
+
             s_colorAccessors["literal"] = () => CurrentColorScheme.Literal;
             s_colorAccessors["identifier"] = () => CurrentColorScheme.Identifier;
             s_colorAccessors["callexpression"] = () => CurrentColorScheme.CallExpression;
@@ -50,7 +68,7 @@ namespace AvalonStudio.Extensibility.Editor
             s_colorAccessors["operator"] = () => CurrentColorScheme.Operator;
             s_colorAccessors["struct.name"] = () => CurrentColorScheme.StructName;
             s_colorAccessors["interface"] = () => CurrentColorScheme.InterfaceType;
-            s_colorAccessors["punctuation"] = () => CurrentColorScheme.Punctuation;
+            
             s_colorAccessors["type"] = () => CurrentColorScheme.Type;
             s_colorAccessors["xml.tag"] = () => CurrentColorScheme.XmlTag;
             s_colorAccessors["xml.property"] = () => CurrentColorScheme.XmlProperty;
@@ -214,14 +232,31 @@ namespace AvalonStudio.Extensibility.Editor
         {
             get
             {
-                key = key.ToLower();
-
-                if (s_colorAccessors.ContainsKey(key))
+                if (key.Contains('.'))
                 {
-                    return s_colorAccessors[key]();
+                    var parts = key.Split('.');
+
+                    for(int i = parts.Length - 1; i > 0; i--)
+                    {
+                        var specificKeyword = string.Join(".", parts.Take(i));
+
+                        if (s_colorAccessors.ContainsKey(specificKeyword))
+                        {
+                            return s_colorAccessors[specificKeyword]();
+                        }
+                    }
+                }
+                else
+                {
+                    key = key.ToLower();
+
+                    if (s_colorAccessors.ContainsKey(key))
+                    {
+                        return s_colorAccessors[key]();
+                    }
                 }
 
-                return Brushes.Red;
+                return null;
             }
         }
 

@@ -382,7 +382,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
 
     public class CustomHighlightingManager : IHighlightingDefinitionReferenceResolver
     {
-        private readonly Dictionary<string, IHighlightingDefinition> _highlightingsByContentTypes = new Dictionary<string, IHighlightingDefinition>();
+        private readonly Dictionary<string, object> _highlightingsByContentTypes = new Dictionary<string, object>();
 
         public static CustomHighlightingManager Instance { get; } = new CustomHighlightingManager();
 
@@ -403,6 +403,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             }
         }
 
+        public object GetAvalonStudioDefinition(string contentType)
+        {
+            lock (this)
+            {
+                return _highlightingsByContentTypes.TryGetValue(contentType, out var rh) ? rh : null;
+            }
+        }
+
         internal void RegisterHighlighting(string resourceName)
         {
             try
@@ -417,7 +425,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             }
         }
 
-        public void RegisterHighlighting(IEnumerable<string> contentTypes, IHighlightingDefinition highlighting)
+        public void RegisterHighlighting(IEnumerable<string> contentTypes, object highlighting)
         {
             if (highlighting == null)
             {
@@ -433,7 +441,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             }
         }
 
-        public (IEnumerable<string> contentTypes, IHighlightingDefinition definition) Load(string resourceName)
+        private (IEnumerable<string> contentTypes, object definition) Load(string resourceName)
         {
             var extension = Path.GetExtension(resourceName);
 
@@ -451,9 +459,19 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                         return (xshd.ContentTypes, HighlightingLoader.Load(xshd, this));
 
                     case ".tmLanguage":
-                        var definition = TextMate.TextMateFormat.ReadHighlighting(s);
+                        {
+                            var definition = TextMate.TextMateFormat.ReadHighlighting(s);
+                            definition.PrepareMatches();
+                            return (new List<string> { definition.Name }, definition);
+                        }
 
-                        
+                    case ".json":
+                        if(resourceName.EndsWith(".tmLanguage.json"))
+                        {
+                            var definition = TextMate.TextMateFormat.ReadHighlightingFromJson(s);
+                            definition.PrepareMatches();
+                            return (new List<string> { definition.Name }, definition);
+                        }
                         break;
                 }
             }

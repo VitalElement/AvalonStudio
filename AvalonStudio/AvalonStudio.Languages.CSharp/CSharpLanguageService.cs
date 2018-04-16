@@ -519,7 +519,7 @@ namespace AvalonStudio.Languages.CSharp
                         {
                             fadedCode.Add(new OffsetSyntaxHighlightingData
                             {
-                                Start = diagnostic.TextSpan.Start,
+                                Offset = diagnostic.TextSpan.Start,
                                 Length = diagnostic.TextSpan.Length,
                                 Type = HighlightType.Unnecessary
                             });
@@ -723,7 +723,7 @@ namespace AvalonStudio.Languages.CSharp
 
                 foreach (var span in highlightData)
                 {
-                    result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
+                    result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Offset = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
                 }
             }
             catch (NullReferenceException)

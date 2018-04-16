@@ -250,7 +250,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private void _document_Changed(object sender, AvaloniaEdit.Document.DocumentChangeEventArgs e)
         {
-            Changed?.Invoke(this, new DocumentChangeEventArgs(e.Offset, e.RemovedText.Text, e.InsertedText.Text));
+            Changed?.Invoke(this, new DocumentChangeEventArgs(e.Offset, offset => e.GetNewOffset(offset), e.RemovedText.Text, e.InsertedText.Text));
         }
 
         ~DocumentAdaptor()
@@ -291,6 +291,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         }
 
         public IDocumentLine GetLineByNumber(int lineNumber) => Lines[lineNumber - 1];
+
+        public IDocumentLine GetLineByOffset(int offset) => Lines[_document.GetLocation(offset).Line - 1];
 
         public TextLocation GetLocation(int offset)
         {

@@ -382,7 +382,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     return new OffsetSyntaxHighlightingData()
                     {
-                        Start = cursor.Location.SpellingLocation.Offset,
+                        Offset = cursor.Location.SpellingLocation.Offset,
                         Length = cursor.Spelling.Length - 5, // Because spelling includes keyword "class"
                         Type = highlightKind
                     };
@@ -391,7 +391,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     return new OffsetSyntaxHighlightingData()
                     {
-                        Start = cursor.Location.SpellingLocation.Offset,
+                        Offset = cursor.Location.SpellingLocation.Offset,
                         Length = cursor.Spelling.Length, // TODO select only the name...
                         Type = highlightKind
                     };
@@ -400,7 +400,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     return new OffsetSyntaxHighlightingData()
                     {
-                        Start = cursor.Location.SpellingLocation.Offset,
+                        Offset = cursor.Location.SpellingLocation.Offset,
                         Length = cursor.Spelling.Length,
                         Type = highlightKind
                     };
@@ -410,7 +410,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 return new OffsetSyntaxHighlightingData()
                 {
-                    Start = cursor.CursorExtent.Start.FileLocation.Offset,
+                    Offset = cursor.CursorExtent.Start.FileLocation.Offset,
                     Length = cursor.CursorExtent.End.FileLocation.Offset - cursor.CursorExtent.Start.FileLocation.Offset,
                     Type = highlightKind
                 };
@@ -424,8 +424,8 @@ namespace AvalonStudio.Languages.CPlusPlus
             foreach (var token in tokens.Tokens)
             {
                 var highlightData = new OffsetSyntaxHighlightingData();
-                highlightData.Start = token.Extent.Start.FileLocation.Offset;
-                highlightData.Length = token.Extent.End.FileLocation.Offset - highlightData.Start;
+                highlightData.Offset = token.Extent.Start.FileLocation.Offset;
+                highlightData.Length = token.Extent.End.FileLocation.Offset - highlightData.Offset;
 
                 switch (token.Kind)
                 {

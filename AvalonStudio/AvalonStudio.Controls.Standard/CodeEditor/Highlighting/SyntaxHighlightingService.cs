@@ -38,5 +38,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             return null;
         }
 
+        static void PrepareMatches()
+        {
+            foreach (var bundle in languageBundles)
+            {
+                foreach (var h in bundle.Highlightings)
+                    h.PrepareMatches();
+            }
+        }
+
+
     }
 }

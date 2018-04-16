@@ -265,7 +265,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData
                 {
-                    Start = commentMatch.Index,
+                    Offset = commentMatch.Index,
                     Length = commentMatch.Length,
                     Type = HighlightType.Comment
                 });
@@ -276,7 +276,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData
                 {
-                    Start = commentMatch.Index,
+                    Offset = commentMatch.Index,
                     Length = commentMatch.Length,
                     Type = HighlightType.Comment
                 });
@@ -288,7 +288,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData
                 {
-                    Start = keywordMatch.Index,
+                    Offset = keywordMatch.Index,
                     Length = keywordMatch.Length,
                     Type = HighlightType.Keyword
                 });
@@ -365,7 +365,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                         endPos = ((FunctionDeclaration)node).Name.End;
                     }
 
-                    highlightData.Start = startPos;
+                    highlightData.Offset = startPos;
                     highlightData.Length = endPos - startPos;
                     result.SyntaxHighlightingData.Add(highlightData);
                 }
