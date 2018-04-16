@@ -14,9 +14,9 @@ namespace AvalonStudio.Controls.Standard.Tests
         [Fact]
         public void CSharp_Highlighting_Can_Detect_BuiltInTypes()
         {
-            using (var s = Resources.OpenStream("csharp.tmLanguage.json"))
+            using (var s = Resources.OpenStream("csharp.tmLanguage"))
             {
-                var definition = CodeEditor.Highlighting.TextMate.TextMateFormat.ReadHighlightingFromJson(s);
+                var definition = CodeEditor.Highlighting.TextMate.TextMateFormat.ReadHighlighting(s);
 
                 string testCode = @"namespace Test
 {
