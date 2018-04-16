@@ -125,7 +125,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             {
                 throw new InvalidOperationException("Cannot use a HighlightingColorizer instance in multiple text views. Please create a separate instance for each text view.");
             }
-            
+
             _editor = editor;
             editor.DocumentChanged += TextView_DocumentChanged;
             editor.TextArea.TextView.VisualLineConstructionStarting += TextView_VisualLineConstructionStarting;
@@ -194,7 +194,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                     _lineNumberBeingColorized = context.VisualLine.LastDocumentLine.LineNumber;
 
                     var highlightedLine = _highlighter.GetHighlightedLineAsync(context.Document.GetLineByNumber(_lineNumberBeingColorized), CancellationToken.None).Result;
-                    
+
                     _lineNumberBeingColorized = 0;
                 }
             }
@@ -203,7 +203,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
 
         private int _lineNumberBeingColorized;
 
-        public IBrush GetBrush(ColorScheme ColorScheme,  HighlightType type)
+        public IBrush GetBrush(ColorScheme ColorScheme, HighlightType type)
         {
             IBrush result;
 
@@ -234,7 +234,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
                     break;
 
                 case HighlightType.Punctuation:
-                    result =ColorScheme.Punctuation;
+                    result = ColorScheme.Punctuation;
                     break;
 
                 case HighlightType.InterfaceName:
