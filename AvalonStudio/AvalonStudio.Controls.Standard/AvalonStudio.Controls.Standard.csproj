@@ -21,6 +21,8 @@
     <None Remove="AboutScreen\Assets\logo-65.png" />
     <None Remove="AboutScreen\Assets\logo.png" />
     <None Remove="CodeEditor\Highlighting\Resources\C#.sublime-syntax" />
+    <None Remove="CodeEditor\Highlighting\Resources\c.tmLanguage.json" />
+    <None Remove="CodeEditor\Highlighting\Resources\cpp.tmLanguage.json" />
     <None Remove="CodeEditor\Highlighting\Resources\csharp.tmLanguage" />
     <None Remove="CodeEditor\Highlighting\Resources\csharp.tmLanguage.json" />
     <None Remove="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
@@ -32,6 +34,8 @@
     <EmbeddedResource Include="AboutScreen\Assets\logo-65.png" />
     <EmbeddedResource Include="AboutScreen\Assets\logo.png" />
     <EmbeddedResource Include="CodeEditor\Highlighting\Resources\C#.sublime-syntax" />
+    <EmbeddedResource Include="CodeEditor\Highlighting\Resources\c.tmLanguage.json" />
+    <EmbeddedResource Include="CodeEditor\Highlighting\Resources\cpp.tmLanguage.json" />
     <EmbeddedResource Include="CodeEditor\Highlighting\Resources\csharp.tmLanguage" />
     <EmbeddedResource Include="CodeEditor\Highlighting\Resources\csharp.tmLanguage.json" />
     <EmbeddedResource Include="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
