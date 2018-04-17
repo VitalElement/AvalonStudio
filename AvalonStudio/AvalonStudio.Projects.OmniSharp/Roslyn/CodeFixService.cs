@@ -773,7 +773,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                                     {
                                         if (attribute.Languages == null ||
                                             attribute.Languages.Length == 0 ||
-                                            EnumerableExtensions.Contains(attribute.Languages, language))
+                                            attribute.Languages.Contains(language))
                                         {
                                             builder.Add((CodeFixProvider)Activator.CreateInstance(typeInfo.AsType()));
                                         }

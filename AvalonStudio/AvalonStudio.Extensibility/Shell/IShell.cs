@@ -91,5 +91,7 @@ namespace AvalonStudio.Shell
         IProject GetDefaultProject();
 
         bool DebugMode { get; }
+
+        double GlobalZoomLevel { get; set; }
     }
 }

@@ -152,6 +152,7 @@ namespace AvalonStudio.Shell
         public IWorkspaceTaskRunner TaskRunner => throw new NotImplementedException();
 
         public ColorScheme CurrentColorScheme { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public double GlobalZoomLevel { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public IEditor OpenDocument(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false,
             bool selectLine = false, bool focus = true)

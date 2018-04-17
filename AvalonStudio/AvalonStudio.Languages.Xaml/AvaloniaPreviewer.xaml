@@ -25,7 +25,7 @@
           <Grid Background="#0fffffff" x:Name="PART_Overlay" IsVisible="False">
             <StackPanel Gap="4" VerticalAlignment="Center">
               <TextBlock Text="Unable to Load Previewer" FontSize="18"  HorizontalAlignment="Center" />
-              <TextBlock x:Name="PART_Status" HorizontalAlignment="Center" />
+              <TextBlock x:Name="PART_Status" HorizontalAlignment="Center" Foreground="WhiteSmoke" />
             </StackPanel>
           </Grid>
         </Grid>
