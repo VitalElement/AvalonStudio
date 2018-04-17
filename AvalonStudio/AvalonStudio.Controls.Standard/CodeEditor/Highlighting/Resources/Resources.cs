@@ -20,7 +20,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.Resources
             hlm.RegisterHighlighting("XML-Mode.xshd");
             hlm.RegisterHighlighting("c.tmLanguage.json");
             hlm.RegisterHighlighting("cpp.tmLanguage.json");
-            hlm.RegisterHighlighting("C#.sublime-syntax");
+            hlm.RegisterHighlighting("csharp.tmLanguage");
         }
     }
 }
