@@ -32,7 +32,7 @@
         public ITestFramework TestFramework { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool Hidden { get; set; }
 
-        public string CurrentDirectory => throw new NotImplementedException();
+        public string CurrentDirectory => Path.GetDirectoryName(Location);
 
         public IList<object> ConfigurationPages => throw new NotImplementedException();
 

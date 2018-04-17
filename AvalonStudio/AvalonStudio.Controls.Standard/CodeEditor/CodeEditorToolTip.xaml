@@ -6,7 +6,7 @@
     <Style Selector="local|CodeEditorToolTip">
         <Setter Property="Template">
             <ControlTemplate>
-                <Popup StaysOpen="False" Name="PART_Popup">
+                <Popup StaysOpen="False" Name="PART_Popup" DataContext="">
                     <Border BorderBrush="{DynamicResource EditorBorderBrush}" 
                             BorderThickness="1" Name="PART_Presenter" 
                             Background="{DynamicResource EditorBackgroundAccentBrush}">
