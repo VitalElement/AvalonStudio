@@ -417,7 +417,7 @@ namespace AvalonStudio.Languages.CSharp
             RoslynWorkspace.GetWorkspace(dataAssociation.Solution).TryApplyChanges(formattedDocument.Project.Solution);
 
             return -1;
-        }        
+        }
 
         public async Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
         {
@@ -511,8 +511,6 @@ namespace AvalonStudio.Languages.CSharp
 
         public async Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
-            StyledText styledText = null;
-
             var dataAssociation = GetAssociatedData(editor);
 
             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
@@ -544,7 +542,7 @@ namespace AvalonStudio.Languages.CSharp
 
             var symbolInfo = semanticModel.GetSymbolInfo(node, CancellationToken.None);
 
-            var symbol = symbolInfo.Symbol ?? semanticModel.GetDeclaredSymbol(node, CancellationToken.None);            
+            var symbol = symbolInfo.Symbol ?? semanticModel.GetDeclaredSymbol(node, CancellationToken.None);
 
             if (symbol != null)
             {
@@ -552,7 +550,7 @@ namespace AvalonStudio.Languages.CSharp
 
                 ImmutableArray<TaggedText> parts;
 
-                styledText = StyledText.Create();
+                var styledText = StyledText.Create();
                 var theme = ColorScheme.CurrentColorScheme;
 
 
@@ -568,10 +566,10 @@ namespace AvalonStudio.Languages.CSharp
                 }
 
                 var formatter = workspace.Services.GetLanguageServices(semanticModel.Language).GetService<IDocumentationCommentFormattingService>();
-                var documentation = symbol.GetDocumentationParts(semanticModel, offset, formatter, CancellationToken.None);                
+                var documentation = symbol.GetDocumentationParts(semanticModel, offset, formatter, CancellationToken.None);
 
                 if (documentation != null && documentation.Any())
-                {                    
+                {
                     styledText.AppendLine();
                     TaggedTextUtil.AppendTaggedText(styledText, theme, documentation);
                 }
@@ -610,10 +608,12 @@ namespace AvalonStudio.Languages.CSharp
                         styledText.AppendLine();
                         TaggedTextUtil.AppendTaggedText(styledText, theme, parts);
                     }
-                }                
+                }
+
+                return new QuickInfoResult(styledText);
             }
 
-            return new QuickInfoResult(styledText);
+            return null;
         }
 
         public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
