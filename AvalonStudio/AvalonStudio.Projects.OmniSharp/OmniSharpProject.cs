@@ -95,10 +95,16 @@ namespace AvalonStudio.Projects.OmniSharp
 
                         statusBar.SetText($"Project: {Name} has changed, re-evaluating project...");
 
-                        // todo restore packages and re-evaluate.
-                        await RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
-
-                        statusBar.ClearText();
+                        try
+                        {
+                            // todo restore packages and re-evaluate.
+                            await RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
+                            statusBar.ClearText();
+                        }
+                        catch(Exception)
+                        {
+                            statusBar.SetText("Error parsing Project File: Please check for valid syntax.");
+                        }                        
                     }
                 };
             }
@@ -137,7 +143,7 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             return await Task.Factory.StartNew(() =>
             {
-                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"restore {Path.GetFileName(Location)}", (s, e) =>
+                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"restore /m {Path.GetFileName(Location)}", (s, e) =>
                 {
                     if (statusBar != null)
                     {
@@ -272,7 +278,7 @@ namespace AvalonStudio.Projects.OmniSharp
             get; set;
         }
 
-        public override IToolChain ToolChain
+        public override IToolchain ToolChain
         {
             get
             {
@@ -398,6 +404,18 @@ namespace AvalonStudio.Projects.OmniSharp
                 {
                     RoslynWorkspace.DisposeWorkspace(Solution);
                 }
+            }
+        }
+
+        public override bool IsItemSupported(string languageName)
+        {
+            switch(languageName)
+            {
+                case "C#":
+                    return true;
+
+                default:
+                    return false;
             }
         }
 

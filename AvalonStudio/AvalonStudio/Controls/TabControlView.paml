@@ -2,52 +2,54 @@
              xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
              xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+
   <DockPanel>
-    <StackPanel DockPanel.Dock="Bottom" ZIndex="100">
-      <TabStrip Name="toolStrip" Items="{Binding Tools}" SelectedItem="{Binding SelectedTool, Mode=TwoWay}" Focusable="false" IsVisible="{Binding TabStripVisible}">
-        <TabStrip.ItemsPanel>
-          <ItemsPanelTemplate>
-            <DockPanel LastChildFill="false" />
-          </ItemsPanelTemplate>
-        </TabStrip.ItemsPanel>
+    <TabStrip Name="toolStrip" Items="{Binding Tools}" DockPanel.Dock="Bottom" ClipToBounds="False" SelectedItem="{Binding SelectedTool, Mode=TwoWay}" Focusable="false" IsVisible="{Binding TabStripVisible}" ZIndex="1">
+      <TabStrip.Styles>
+        <Style Selector="TabStrip">
+          <Setter Property="ItemsPanel">
+            <ItemsPanelTemplate>
+              <WrapPanel ClipToBounds="False" />
+            </ItemsPanelTemplate>
+          </Setter>
+        </Style>
+        <Style Selector="TabStripItem">
+          <Setter Property="Height" Value="20" />
+          <Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}" />
+          <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderDarkBrush}" />
+          <Setter Property="BorderThickness" Value="0" />
+          <Setter Property="Margin" Value="0" />
+          <Setter Property="Padding" Value="4 1 4 0" />
+          <Setter Property="FontSize" Value="12"/>
+          <Setter Property="IsVisible" Value="{Binding IsVisible}" />
+          <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
+        </Style>
+        <Style Selector="TabStripItem:pointerover">
+          <Setter Property="Background" Value="{DynamicResource ThemeControlDarkBrush}" />
+          <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrush}" />
+        </Style>
+        <Style Selector="TabStripItem:selected">
+          <Setter Property="Background" Value="{DynamicResource ThemeControlBackgroundBrush}" />
+          <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrushLight}" />
+          <Setter Property="BorderThickness" Value="1 0 1 1" />
+          <Setter Property="Margin" Value="0 -1 0 0" />
+        </Style>
+      </TabStrip.Styles>
 
-        <TabStrip.Styles>
-          <Style Selector="TabStripItem">
-            <Setter Property="Height" Value="20" />
-            <Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderDarkBrush}" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Margin" Value="0 -1 0 0" />
-            <Setter Property="Padding" Value="4 0 4 0" />
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="IsVisible" Value="{Binding IsVisible}" />
-            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
-          </Style>
-          <Style Selector="TabStripItem:pointerover">
-            <Setter Property="Background" Value="{DynamicResource ThemeControlDarkBrush}" />
-            <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrush}" />
-          </Style>
-          <Style Selector="TabStripItem:selected">
-            <Setter Property="Background" Value="{DynamicResource ThemeControlBackgroundBrush}" />
-            <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrushLight}" />
-            <Setter Property="BorderThickness" Value="1" />
-          </Style>
-        </TabStrip.Styles>
+      <TabStrip.DataTemplates>
+        <DataTemplate>
 
-        <TabStrip.DataTemplates>
-          <DataTemplate>
-            <StackPanel Orientation="Horizontal" Gap="2">
-              <TextBlock Text="{Binding Title}" Margin="2"/>
-            </StackPanel>
-          </DataTemplate>
-        </TabStrip.DataTemplates>
-      </TabStrip>
-    </StackPanel>
+          <StackPanel Orientation="Horizontal" Gap="2">
+            <TextBlock Text="{Binding Title}" Margin="2"/>
+          </StackPanel>
+        </DataTemplate>
+      </TabStrip.DataTemplates>
+    </TabStrip>
 
-    <Carousel Items="{Binding Tools}" SelectedItem="{Binding SelectedTool}" IsVirtualized="false" ZIndex="50">
+    <Carousel Items="{Binding Tools}" SelectedItem="{Binding SelectedTool}" IsVirtualized="false" ZIndex="-1">
       <Carousel.ItemTemplate>
         <DataTemplate>
-          <cont:ViewModelViewHost IsVisible ="{Binding IsVisible}" />
+          <cont:ViewModelViewHost IsVisible ="{Binding IsVisible}" ZIndex="-1" />
         </DataTemplate>
       </Carousel.ItemTemplate>
     </Carousel>

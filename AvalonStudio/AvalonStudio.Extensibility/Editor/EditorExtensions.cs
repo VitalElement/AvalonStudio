@@ -21,7 +21,16 @@ namespace AvalonStudio.CodeEditor
             {
                 foreach (var line in document.Lines)
                 {
-                    document.Replace(line, document.GetText(line).TrimEnd());
+                    var text = document.GetText(line);
+
+                    var orignalLength = text.Length;
+
+                    text = text.TrimEnd();
+
+                    if(text.Length != orignalLength)
+                    {
+                        document.Replace(line.Offset + text.Length, orignalLength - text.Length, "");
+                    }
                 }
             }
         }

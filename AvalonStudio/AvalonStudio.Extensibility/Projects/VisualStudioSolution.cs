@@ -188,7 +188,7 @@ namespace AvalonStudio.Projects
                 {
                     statusBar.SetText($"Restoring Packages for solution: {Name}");
 
-                    var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.DotNetPath, $"restore {Path.GetFileName(Location)}", (s, e) =>
+                    var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.DotNetPath, $"restore /m {Path.GetFileName(Location)}", (s, e) =>
                     {
                         if (statusBar != null)
                         {

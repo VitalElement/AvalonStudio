@@ -45,7 +45,6 @@ namespace AvalonStudio
         private WorkspaceTaskRunner _taskRunner;
         private ToolBarDefinition _toolBarDefinition;
         private double _globalZoomLevel;
-        private List<IToolChain> _toolChains;
         private List<MenuBarDefinition> _menuBarDefinitions;
         private List<MenuDefinition> _menuDefinitions;
         private List<MenuItemGroupDefinition> _menuItemGroupDefinitions;
@@ -64,6 +63,7 @@ namespace AvalonStudio
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
         private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
 
+        private IEnumerable<Lazy<IToolchain>> _toolChains;
         private IEnumerable<IDebugger> _debugger2s;
 
         private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
@@ -88,6 +88,7 @@ namespace AvalonStudio
             [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
+            [ImportMany] IEnumerable<Lazy<IToolchain>> toolChains,
             [ImportMany] IEnumerable<IDebugger> debugger2s,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             [ImportMany] IEnumerable<IExtension> extensions)
@@ -101,11 +102,11 @@ namespace AvalonStudio
             _solutionTypes = solutionTypes;
             _projectTypes = projectTypes;
 
+            _toolChains = toolChains;
             _debugger2s = debugger2s;
 
             _testFrameworks = testFrameworks;
 
-            _toolChains = new List<IToolChain>();
             _menuBarDefinitions = new List<MenuBarDefinition>();
             _menuDefinitions = new List<MenuDefinition>();
             _menuItemGroupDefinitions = new List<MenuItemGroupDefinition>();
@@ -153,8 +154,6 @@ namespace AvalonStudio
             foreach (var extension in extensions)
             {
                 extension.Activation();
-
-                _toolChains.ConsumeExtension(extension);
 
                 _commandDefinitions.ConsumeExtension(extension);
             }
@@ -246,14 +245,14 @@ namespace AvalonStudio
                 }
             }
 
-            LeftTabs.SelectedTool = LeftTabs.Tools.FirstOrDefault();
-            RightTabs.SelectedTool = RightTabs.Tools.FirstOrDefault();
-            BottomTabs.SelectedTool = BottomTabs.Tools.FirstOrDefault();
-            BottomRightTabs.SelectedTool = BottomRightTabs.Tools.FirstOrDefault();
-            RightTopTabs.SelectedTool = RightTopTabs.Tools.FirstOrDefault();
-            RightMiddleTabs.SelectedTool = RightMiddleTabs.Tools.FirstOrDefault();
-            RightBottomTabs.SelectedTool = RightBottomTabs.Tools.FirstOrDefault();
-            MiddleTopTabs.SelectedTool = MiddleTopTabs.Tools.FirstOrDefault();
+            LeftTabs.SelectedTool = LeftTabs.Tools.Where(t=>t.IsVisible).FirstOrDefault();
+            RightTabs.SelectedTool = RightTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            BottomTabs.SelectedTool = BottomTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            BottomRightTabs.SelectedTool = BottomRightTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            RightTopTabs.SelectedTool = RightTopTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            RightMiddleTabs.SelectedTool = RightMiddleTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            RightBottomTabs.SelectedTool = RightBottomTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
+            MiddleTopTabs.SelectedTool = MiddleTopTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
 
             IoC.Get<IStatusBar>().ClearText();
 
@@ -269,7 +268,7 @@ namespace AvalonStudio
             {
                 foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
                 {
-                    //document.ZoomLevel = zoomLevel;
+                    document.ZoomLevel = zoomLevel;
                 }
             });
 
@@ -309,6 +308,8 @@ namespace AvalonStudio
 
         public IMenu MainMenu { get; }
 
+        public StatusBarViewModel StatusBar => _statusBar.Value;
+
         public bool DebugVisible
         {
             get { return debugControlsVisible; }
@@ -325,6 +326,14 @@ namespace AvalonStudio
             {
                 this.RaiseAndSetIfChanged(ref _toolBarDefinition, value);
                 // Might need to do a global raise property change (NPC(string.Empty))
+            }
+        }
+
+        public IEnumerable<IToolBar> ToolBars
+        {
+            get
+            {
+                yield return ToolBar;
             }
         }
 
@@ -370,15 +379,13 @@ namespace AvalonStudio
 
         public IErrorList ErrorList { get; }
 
-        public StatusBarViewModel StatusBar => _statusBar.Value;
-
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
         public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes => _projectTypes;
 
         public IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices => _languageServices;
 
-        public IEnumerable<IToolChain> ToolChains => _toolChains;
+        public IEnumerable<IToolchain> ToolChains => _toolChains.Select(t => t.Value);
 
         public IEnumerable<IDebugger> Debugger2s => _debugger2s;
 
@@ -565,12 +572,12 @@ namespace AvalonStudio
 
                 await TaskRunner.RunTask(() =>
                 {
-                    result = project.ToolChain.Build(Console, project).GetAwaiter().GetResult();
+                    result = project.ToolChain.BuildAsync(Console, project).Result;
+                });
 
-                    Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        BuildCompleted?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
-                    });
+                Dispatcher.UIThread.Post(() =>
+                {
+                    BuildCompleted?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
                 });
             }
             else
@@ -684,13 +691,6 @@ namespace AvalonStudio
                     DocumentTabs.SelectedDocument = value;
                 }
             }
-        }
-
-        public object BottomSelectedTool
-        {
-            get { return BottomTabs.SelectedTool; }
-
-            set { BottomTabs.SelectedTool = value; }
         }
 
         public IProject GetDefaultProject()

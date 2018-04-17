@@ -440,7 +440,7 @@
             get; set;
         }
 
-        public abstract IToolChain ToolChain
+        public abstract IToolchain ToolChain
         {
             get; set;
         }
@@ -504,5 +504,7 @@
 
             return Task.CompletedTask;
         }
+
+        public abstract bool IsItemSupported(string languageName);
     }
 }

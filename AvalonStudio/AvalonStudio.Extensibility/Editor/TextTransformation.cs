@@ -35,13 +35,19 @@
             }
 
             var formattedOffset = 0;
+            var endOffset = line.EndOffset;
 
             if (StartOffset > line.Offset)
             {
                 formattedOffset = StartOffset - line.Offset;
             }
 
-            transformer.SetTextStyle(line, formattedOffset, Length, Foreground);
+            if(EndOffset < line.EndOffset)
+            {
+                endOffset = EndOffset;
+            }
+
+            transformer.SetTextStyle(line, formattedOffset, endOffset - line.Offset - formattedOffset, Foreground);
         }
     }
 
@@ -62,13 +68,19 @@
             }
 
             var formattedOffset = 0;
+            var endOffset = line.EndOffset;
 
             if (StartOffset > line.Offset)
             {
                 formattedOffset = StartOffset - line.Offset;
             }
 
-            transformer.SetTextOpacity(line, formattedOffset, Length, Opacity);
+            if (EndOffset < line.EndOffset)
+            {
+                endOffset = EndOffset;
+            }
+
+            transformer.SetTextOpacity(line, formattedOffset, endOffset - line.Offset - formattedOffset, Opacity);            
         }
     }
 }

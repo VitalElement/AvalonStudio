@@ -13,7 +13,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.2-build4628-beta" />
+    <PackageReference Include="Avalonia" Version="0.6.2-build4853-beta" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="reactiveui" Version="8.0.0-alpha0089" />

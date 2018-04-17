@@ -84,7 +84,7 @@ namespace AvalonStudio.Controls
 
             if (string.IsNullOrEmpty(query))
             {
-                Dispatcher.UIThread.InvokeAsync(() =>
+                Dispatcher.UIThread.Post(() =>
                 {
                     ResultsVisible = false;
                     _results.Clear();
@@ -119,7 +119,7 @@ namespace AvalonStudio.Controls
                             {
                                 if (range.matched)
                                 {
-                                    var span = new FormattedTextStyleSpan(index + tp.Item4.Project.Name.Length + 1, range.text.Length + 1, ColorTheme.CurrentTheme.Accent);
+                                    var span = new FormattedTextStyleSpan(index + tp.Item4.Project.Name.Length + 1, range.text.Length, ColorTheme.CurrentTheme.Accent);
                                     spans.Add(span);
                                 }
 
@@ -133,7 +133,7 @@ namespace AvalonStudio.Controls
                     }
                 });
 
-                Dispatcher.UIThread.InvokeAsync(() =>
+                Dispatcher.UIThread.Post(() =>
                 {
                     _results.Clear();
 

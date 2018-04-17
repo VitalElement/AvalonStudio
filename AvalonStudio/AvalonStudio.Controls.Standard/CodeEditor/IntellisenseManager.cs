@@ -381,7 +381,7 @@
             }
         }
 
-        private async Task PushToSignatureHelp(string currentWord, int offset)
+        private async Task<bool> PushToSignatureHelp(string currentWord, int offset)
         {
             SignatureHelp signatureHelp = null;
 
@@ -397,7 +397,11 @@
             {
                 _onSetSignatureHelpPosition(signatureHelp.Offset);
                 completionAssistant.PushMethod(signatureHelp);
+
+                return true;
             }
+
+            return false;
         }
 
         private async Task UpdateActiveParameterAndVisibility(bool canTrigger = false)
@@ -431,7 +435,11 @@
 
                                 if ((level + 1) > completionAssistant.Stack.Count)
                                 {
-                                    await PushToSignatureHelp("", offset);
+                                    if(!await PushToSignatureHelp("", offset))
+                                    {
+                                        level--;
+                                        break;
+                                    }
                                 }
 
                                 currentHelpStack = completionAssistant.Stack[completionAssistant.Stack.Count - level - 1];
@@ -565,8 +573,11 @@
 
                                 if (unfilteredCompletions.Count > 0)
                                 {
-                                    UpdateFilter(editor.CaretOffset, false);
-                                    intellisenseControl.IsVisible = !_hidden;
+                                    if (editor != null)
+                                    {
+                                        UpdateFilter(editor.CaretOffset, false);
+                                        intellisenseControl.IsVisible = !_hidden;
+                                    }
                                 }
                                 else
                                 {

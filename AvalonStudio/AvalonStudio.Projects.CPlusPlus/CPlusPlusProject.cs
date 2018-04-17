@@ -80,12 +80,6 @@ namespace AvalonStudio.Projects.CPlusPlus
         public override List<string> ExcludedFiles { get; set; }
 
         [JsonIgnore]
-        public IList<IMenuItem> ProjectMenuItems
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        [JsonIgnore]
         public bool IsBuilding { get; set; }
 
         [JsonIgnore]
@@ -358,7 +352,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         }
 
         [JsonIgnore]
-        public override IToolChain ToolChain
+        public override IToolchain ToolChain
         {
             get
             {
@@ -689,6 +683,18 @@ namespace AvalonStudio.Projects.CPlusPlus
         public override int CompareTo(IProjectItem other)
         {
             return Name.CompareTo(other.Name);
+        }
+
+        public override bool IsItemSupported(string languageName)
+        {
+            switch(languageName)
+            {
+                case "C++":
+                    return true;
+
+                default:
+                    return false;
+            }
         }
     }
 }

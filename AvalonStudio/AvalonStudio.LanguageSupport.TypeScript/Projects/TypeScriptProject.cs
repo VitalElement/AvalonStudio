@@ -161,7 +161,7 @@ Program.main();
         public override ITestFramework TestFramework { get; set; }
 
         [JsonIgnore]
-        public override IToolChain ToolChain
+        public override IToolchain ToolChain
         {
             get => IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType() == typeof(TypeScriptToolchain));
             set { throw new NotSupportedException(); }
@@ -219,6 +219,18 @@ Program.main();
         {
             //TODO: Anything with references?
             SerializedObject.Serialize(Location, this); //Write the project
+        }
+
+        public override bool IsItemSupported(string languageName)
+        {
+            switch(languageName)
+            {
+                case "TS":
+                    return true;
+
+                default:
+                    return false;
+            }
         }
     }
 }

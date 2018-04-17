@@ -1,19 +1,20 @@
+using AvalonStudio.Extensibility.Shell;
+using AvalonStudio.Packages;
+using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
+using AvalonStudio.Projects.CPlusPlus;
+using AvalonStudio.Projects.Standard;
+using AvalonStudio.Toolchains.GCC;
+using AvalonStudio.Utils;
+using System;
+using System.Collections.Generic;
+using System.Composition;
+using System.IO;
+using System.Threading.Tasks;
+
 namespace AvalonStudio.Toolchains.STM32
 {
-    using AvalonStudio.Packages;
-    using AvalonStudio.Platforms;
-    using AvalonStudio.Projects;
-    using AvalonStudio.Projects.Standard;
-    using AvalonStudio.Toolchains.GCC;
-    using AvalonStudio.Utils;
-    using CommandLineTools;
-    using Standard;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Threading.Tasks;
-    using AvalonStudio.Projects.CPlusPlus;
-
+    [ExportToolchain]
     public class STM32GCCToolchain : GCCToolchain
     {
         private static string _contentDirectory;
@@ -46,7 +47,13 @@ namespace AvalonStudio.Toolchains.STM32
 
         public override string StaticLibraryExtension => ".a";
 
-        public override string Prefix => "arm-none-eabi-";        
+        public override string Prefix => "arm-none-eabi-";
+
+        [ImportingConstructor]
+        public STM32GCCToolchain(IStatusBar statusBar)
+            : base (statusBar)
+        {
+        }
 
         private string GetLinkerScriptLocation(IStandardProject project)
         {
@@ -437,7 +444,7 @@ namespace AvalonStudio.Toolchains.STM32
         {
             bool result = true;
 
-            if(await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console) == PackageEnsureStatus.Installed)
+            if (await PackageManager.EnsurePackage("AvalonStudio.Toolchains.Clang", (project as CPlusPlusProject).ToolchainVersion, console) == PackageEnsureStatus.Installed)
             {
                 // this ensures content directory is re-evaluated if we just installed the toolchain.
                 _contentDirectory = null;
