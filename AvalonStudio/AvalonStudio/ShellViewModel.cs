@@ -268,7 +268,7 @@ namespace AvalonStudio
             {
                 foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
                 {
-                    //document.ZoomLevel = zoomLevel;
+                    document.ZoomLevel = zoomLevel;
                 }
             });
 
