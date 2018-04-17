@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains
 {
-    public interface IToolChain : IPlugin, IInstallable
+    public interface IToolchain : IInstallable
     {
         IEnumerable<string> GetToolchainIncludes(ISourceFile file);
 
-        Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null);
+        Task<bool> BuildAsync(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null);
 
         Task Clean(IConsole console, IProject project);
 

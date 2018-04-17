@@ -32,9 +32,9 @@ namespace AvalonStudio.Controls
             return priorityCompare;
         }
 
-        private List<FormattedTextStyleSpan> spans;
+        private IReadOnlyList<FormattedTextStyleSpan> spans;
 
-        public List<FormattedTextStyleSpan> Spans
+        public IReadOnlyList<FormattedTextStyleSpan> Spans
         {
             get { return spans; }
             set { this.RaiseAndSetIfChanged(ref spans, value); }
