@@ -1,18 +1,20 @@
+using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
+using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.GCC;
-using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.IO;
 using System.Threading.Tasks;
-using AvalonStudio.Projects.CPlusPlus;
 
 namespace AvalonStudio.Toolchains.LocalGCC
 {
+    [ExportToolchain]
     public class LocalGCCToolchain : GCCToolchain
     {
         private static string _contentDirectory;
@@ -80,6 +82,12 @@ namespace AvalonStudio.Toolchains.LocalGCC
         public override string ExecutableExtension => Platform.ExecutableExtension;
 
         public override string StaticLibraryExtension => ".a";
+
+        [ImportingConstructor]
+        public LocalGCCToolchain(IStatusBar statusBar)
+            : base(statusBar)
+        {
+        }
 
         private string GetLinkerScriptLocation(IStandardProject project)
         {
@@ -383,7 +391,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
                 }
             }
 
-            return true;
+            return await base.InstallAsync(console, project);
         }
     }
 }

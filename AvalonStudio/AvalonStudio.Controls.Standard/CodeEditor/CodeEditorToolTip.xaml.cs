@@ -65,7 +65,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
                 else
                 {
-                    DataContext = null;
+                    _viewHost.DataContext = null;
                 }
             }
         }
@@ -108,7 +108,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             base.OnTemplateApplied(e);
 
-            _viewHost = e.NameScope.Find<Control>("PART_ViewHost");
+            _viewHost = e.NameScope.Find<Control>("PART_Presenter");
 
             _popup = e.NameScope.Find<Popup>("PART_Popup");
 

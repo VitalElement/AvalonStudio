@@ -2,6 +2,7 @@
     <Style Selector="cont|EditableTextBlock">
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Padding" Value="0"/>
+        <Setter Property="Focusable" Value="True" />
         <Setter Property="Template">
             <ControlTemplate>
                 <Grid>

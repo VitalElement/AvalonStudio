@@ -14,13 +14,13 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         private object selectedConfigPage;
 
-        private IToolChain selectedToolchain;
+        private IToolchain selectedToolchain;
 
-        private List<IToolChain> toolchains;
+        private List<IToolchain> toolchains;
 
         public ToolchainSettingsFormViewModel(CPlusPlusProject project) : base("Toolchain", project)
         {
-            toolchains = new List<IToolChain>(IoC.Get<IShell>().ToolChains);
+            toolchains = new List<IToolchain>(IoC.Get<IShell>().ToolChains);
             selectedToolchain = project.ToolChain;
         }
 
@@ -36,13 +36,13 @@ namespace AvalonStudio.Projects.CPlusPlus
             set { this.RaiseAndSetIfChanged(ref selectedConfigPage, value); }
         }
 
-        public List<IToolChain> Toolchains
+        public List<IToolchain> Toolchains
         {
             get { return toolchains; }
             set { this.RaiseAndSetIfChanged(ref toolchains, value); }
         }
 
-        public IToolChain SelectedToolchain
+        public IToolchain SelectedToolchain
         {
             get
             {

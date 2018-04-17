@@ -145,7 +145,7 @@ namespace AvalonStudio.Controls
 
             titleBar.DoubleTapped += (sender, ee) => { ToggleWindowState(); };
 
-            closeButton.Click += (sender, ee) => { Application.Current.Exit(); };
+            closeButton.Click += (sender, ee) => { Close(); };
 
             icon.DoubleTapped += (sender, ee) => { Close(); };
         }

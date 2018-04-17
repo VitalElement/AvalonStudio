@@ -440,7 +440,7 @@
             get; set;
         }
 
-        public abstract IToolChain ToolChain
+        public abstract IToolchain ToolChain
         {
             get; set;
         }

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.6.1-build499-alpha" />
+    <PackageReference Include="Avalonia.Xaml.Interactions" Version="0.6.1-build499-alpha" />
+    <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="0.6.1-build499-alpha" />
+  </ItemGroup>
+
+</Project>

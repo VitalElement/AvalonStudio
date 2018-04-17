@@ -290,7 +290,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Background = colorScheme.Background;
                     Foreground = colorScheme.Text;
 
-                    _lineNumberMargin.Background = colorScheme.BackgroundAccent;
+                    _lineNumberMargin.Background = colorScheme.Background;
 
                     if (_textColorizer != null)
                     {
@@ -549,11 +549,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
         }
 
-        public async Task<Symbol> GetSymbolAsync(int offset)
+        public async Task<QuickInfoResult> GetSymbolAsync(int offset)
         {
             if (LanguageService != null)
             {
-                return await LanguageService.GetSymbolAsync(DocumentAccessor, UnsavedFiles, offset);
+                return await LanguageService.QuickInfo(DocumentAccessor, UnsavedFiles, offset);
             }
 
             return null;
@@ -582,27 +582,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 if (LanguageService != null)
                 {
-                    var symbol = await LanguageService?.GetSymbolAsync(DocumentAccessor, UnsavedFiles, offset);
+                    var quickInfo = await LanguageService?.QuickInfo(DocumentAccessor, UnsavedFiles, offset);
 
-                    if (symbol != null)
+                    if (quickInfo != null)
                     {
-                        switch (symbol.Kind)
-                        {
-                            case CursorKind.CompoundStatement:
-                            case CursorKind.NoDeclarationFound:
-                            case CursorKind.NotImplemented:
-                            case CursorKind.FirstDeclaration:
-                            case CursorKind.InitListExpression:
-                            case CursorKind.IntegerLiteral:
-                            case CursorKind.ReturnStatement:
-                            case CursorKind.WhileStatement:
-                            case CursorKind.BinaryOperator:
-                                return null;
-
-                            default:
-                                return new SymbolViewModel(symbol);
-                        }
-
+                        return new QuickInfoViewModel(quickInfo);
                     }
                 }
 
@@ -810,11 +794,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             LanguageService = _shell.LanguageServices.FirstOrDefault(
                 o => o.Metadata.TargetCapabilities.Any(
                     c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;
+            
+            SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(sourceFile.ContentType);
 
             if (LanguageService != null)
             {
-                SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(LanguageService.LanguageId.ToUpper());
-
                 LanguageService.RegisterSourceFile(DocumentAccessor);
 
                 _diagnosticMarkersRenderer = new TextMarkerService(Document);
@@ -822,7 +806,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
 
                 _contextActionsRenderer = new ContextActionsRenderer(this, _diagnosticMarkersRenderer);
-                TextArea.LeftMargins.Add(_contextActionsRenderer);                
+                TextArea.LeftMargins.Add(_contextActionsRenderer);
 
                 foreach (var contextActionProvider in LanguageService.GetContextActionProviders(DocumentAccessor))
                 {

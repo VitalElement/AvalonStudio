@@ -41,7 +41,6 @@ namespace AvalonStudio.Shell
         IDocumentTabViewModel SelectedDocument { get; set; }
         ObservableCollection<object> Tools { get; }
         ModalDialogViewModelBase ModalDialog { get; set; }
-        object BottomSelectedTool { get; set; }
 
         ColorScheme CurrentColorScheme { get; set; }
 
@@ -49,7 +48,7 @@ namespace AvalonStudio.Shell
 
         IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
 
-        IEnumerable<IToolChain> ToolChains { get; }
+        IEnumerable<IToolchain> ToolChains { get; }
 
         IEnumerable<IDebugger> Debugger2s { get; }
 
@@ -92,5 +91,7 @@ namespace AvalonStudio.Shell
         IProject GetDefaultProject();
 
         bool DebugMode { get; }
+
+        double GlobalZoomLevel { get; set; }
     }
 }

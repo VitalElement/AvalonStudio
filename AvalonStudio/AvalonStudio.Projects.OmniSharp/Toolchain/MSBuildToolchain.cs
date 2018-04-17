@@ -1,20 +1,19 @@
+using AvalonStudio.CommandLineTools;
+using AvalonStudio.Extensibility.Projects;
+using AvalonStudio.Platforms;
+using AvalonStudio.Projects;
+using AvalonStudio.Projects.OmniSharp;
+using AvalonStudio.Projects.OmniSharp.Toolchain;
+using AvalonStudio.Utils;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace AvalonStudio.Toolchains.MSBuild
 {
-    using AvalonStudio.CommandLineTools;
-    using AvalonStudio.Extensibility.Projects;
-    using AvalonStudio.GlobalSettings;
-    using AvalonStudio.Platforms;
-    using AvalonStudio.Projects;
-    using AvalonStudio.Projects.OmniSharp;
-    using AvalonStudio.Projects.OmniSharp.Toolchain;
-    using AvalonStudio.Utils;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Threading;
-    using System.Threading.Tasks;
-
     public static class IEnumerableExtensions
     {
         /// <summary>
@@ -57,7 +56,8 @@ namespace AvalonStudio.Toolchains.MSBuild
         }
     }
 
-    public class MSBuildToolchain : IToolChain
+    [ExportToolchain]
+    public class MSBuildToolchain : IToolchain
     {
         public string BinDirectory => Path.Combine(Platform.ReposDirectory, "AvalonStudio.Languages.CSharp", "coreclr");
 
@@ -66,14 +66,6 @@ namespace AvalonStudio.Toolchains.MSBuild
         public string Name => "MSBuild Toolchain";
 
         public Version Version => new Version(0, 0, 0);
-
-        public void Activation()
-        {
-        }
-
-        public void BeforeActivation()
-        {
-        }
 
         private static bool RequiresBuilding(IProject project)
         {
@@ -163,7 +155,7 @@ namespace AvalonStudio.Toolchains.MSBuild
             return tasks;
         }
 
-        public async Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
+        public async Task<bool> BuildAsync(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
             var builtProjects = new List<IProject>();
 
