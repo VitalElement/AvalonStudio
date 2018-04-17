@@ -1,13 +1,11 @@
-﻿using AvalonStudio.Languages;
-using System;
+﻿using AvaloniaEdit.Indentation;
+using AvalonStudio.Documents;
+using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
-using AvalonStudio.Projects;
+using AvalonStudio.Languages;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AvaloniaEdit.Document;
-using AvalonStudio.Editor;
-using AvalonStudio.Documents;
-using AvaloniaEdit.Indentation;
 
 namespace AvalonStudio.Controls.Standard.Tests
 {
@@ -25,25 +23,13 @@ namespace AvalonStudio.Controls.Standard.Tests
 
         public IIndentationStrategy IndentationStrategy => throw new NotImplementedException();
 
-        public string Title => throw new NotImplementedException();
-
-        public string Identifier => throw new NotImplementedException();
-
         public IEnumerable<char> IntellisenseSearchCharacters => throw new NotImplementedException();
 
         public IEnumerable<char> IntellisenseCompleteCharacters => throw new NotImplementedException();
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => throw new NotImplementedException();
 
-        public void Activation()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void BeforeActivation()
-        {
-            throw new NotImplementedException();
-        }
+        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
         public bool CanHandle(IEditor editor)
         {
@@ -66,6 +52,11 @@ namespace AvalonStudio.Controls.Standard.Tests
         }
 
         public int Format(IEditor editor, uint offset, uint length, int cursor)
+        {
+            throw new NotImplementedException();
+        }        
+
+        public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
         {
             throw new NotImplementedException();
         }

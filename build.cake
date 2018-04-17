@@ -55,7 +55,7 @@ var isNuGetRelease = isTagged && isReleasable;
 // VERSION
 ///////////////////////////////////////////////////////////////////////////////
 
-var version = "0.4.3";
+var version = "0.4.4";
 
 if (isRunningOnAppVeyor)
 {
@@ -75,12 +75,12 @@ if (isRunningOnAppVeyor)
 // DIRECTORIES
 ///////////////////////////////////////////////////////////////////////////////
 
-var msvcp140_x86 = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.12.25810\x86\Microsoft.VC141.CRT\msvcp140.dll";
-var msvcp140_x64 = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.12.25810\x64\Microsoft.VC141.CRT\msvcp140.dll";
-var vcruntime140_x86 = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.12.25810\x86\Microsoft.VC141.CRT\vcruntime140.dll";
-var vcruntime140_x64 = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.12.25810\x64\Microsoft.VC141.CRT\vcruntime140.dll";
+var msvcp140_x86 = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.13.26020\x86\Microsoft.VC141.CRT\msvcp140.dll";
+var msvcp140_x64 = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.13.26020\x64\Microsoft.VC141.CRT\msvcp140.dll";
+var vcruntime140_x86 = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.13.26020\x86\Microsoft.VC141.CRT\vcruntime140.dll";
+var vcruntime140_x64 = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.13.26020\x64\Microsoft.VC141.CRT\vcruntime140.dll";
 
-var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.12.25827\bin\HostX86\x86\editbin.exe";
+var editbin = @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.13.26128\bin\HostX86\x86\editbin.exe";
 
 var artifactsDir = (DirectoryPath)Directory("./artifacts");
 var zipRootDir = artifactsDir.Combine("zip");
@@ -270,6 +270,7 @@ Task("Publish-NetCore")
 
 Task("Copy-Redist-Files-NetCore")
     .IsDependentOn("Publish-NetCore")
+    .WithCriteria(()=>((isMainRepo && isMasterBranch && isRunningOnAppVeyor  && !isPullRequest) || isLocalBuild))
     .Does(() =>
 {
     foreach (var project in netCoreProjects)

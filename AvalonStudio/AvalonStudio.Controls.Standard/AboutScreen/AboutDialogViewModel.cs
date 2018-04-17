@@ -19,6 +19,7 @@ namespace AvalonStudio.Controls.Standard.AboutScreen
         public override ReactiveCommand OKCommand { get; protected set; }
 
         public string Version => FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).FileVersion;
+	public string DescriptiveVersion => ThisAssembly.Git.Tag + (ThisAssembly.Git.IsDirty ? "-dirty": "");
 
         public string PlatformString { get; }
     }

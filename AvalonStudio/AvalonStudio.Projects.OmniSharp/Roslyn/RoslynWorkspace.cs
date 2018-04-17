@@ -1,10 +1,9 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
-
-using AvalonStudio.Extensibility.Projects;
+﻿using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.Platforms;
-using AvalonStudio.Projects.OmniSharp;
 using AvalonStudio.Projects.OmniSharp.MSBuild;
-using AvalonStudio.Projects.OmniSharp.Roslyn;
+using AvalonStudio.Projects.OmniSharp.Roslyn.Common;
+using AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics;
+using AvalonStudio.Projects.OmniSharp.Roslyn.Editor;
 using AvalonStudio.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -12,24 +11,25 @@ using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis.Text;
 using Roslyn.Utilities;
-using RoslynPad.Editor.Windows;
-using RoslynPad.Roslyn.Diagnostics;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition;
 using System.Composition.Hosting;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RoslynPad.Roslyn
+namespace AvalonStudio.Projects.OmniSharp.Roslyn
 {
     public sealed class RoslynWorkspace : Workspace
     {
-        private static Dictionary<AvalonStudio.Projects.ISolution, RoslynWorkspace> s_solutionWorkspaces = new Dictionary<AvalonStudio.Projects.ISolution, RoslynWorkspace>();
+        private static Dictionary<ISolution, RoslynWorkspace> s_solutionWorkspaces = new Dictionary<ISolution, RoslynWorkspace>();
 
         private CompositionHost _compositionContext;
         private readonly NuGetConfiguration _nuGetConfiguration;
@@ -39,6 +39,7 @@ namespace RoslynPad.Roslyn
         private readonly string dotnetPath;
         private readonly string sdkPath;
 
+        [ImportingConstructor]
         internal RoslynWorkspace(HostServices host, NuGetConfiguration nuGetConfiguration, CompositionHost compositionContext, string dotnetPath, string sdkPath)
             : base(host, WorkspaceKind.Host)
         {
@@ -51,9 +52,11 @@ namespace RoslynPad.Roslyn
 
             _compositionContext = compositionContext;
 
-            _buildNodes = new BlockingCollection<MSBuildHost>();
+            _buildNodes = new BlockingCollection<MSBuildHost>(Environment.ProcessorCount);
 
-            this.EnableDiagnostics(DiagnosticOptions.Semantic | DiagnosticOptions.Syntax);
+            DiagnosticProvider.Enable(this, DiagnosticProvider.Options.Semantic | DiagnosticProvider.Options.Syntax);
+
+            //this.EnableDiagnostics(DiagnosticOptions.Semantic | DiagnosticOptions.Syntax);
 
             GetService<IDiagnosticService>().DiagnosticsUpdated += OnDiagnosticsUpdated;
         }
@@ -92,7 +95,7 @@ namespace RoslynPad.Roslyn
             }
         }
 
-        public static Task<RoslynWorkspace> CreateWorkspaceAsync(AvalonStudio.Projects.ISolution solution)
+        public static Task<RoslynWorkspace> CreateWorkspaceAsync(ISolution solution)
         {
             return Task.Run(() =>
             {
@@ -104,9 +107,9 @@ namespace RoslynPad.Roslyn
 
                         //var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
 
-                        var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
+                        var currentDir = Platforms.Platform.ExecutionPath;
 
-                        var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+                        var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
                         var assemblies = new[]
                         {
@@ -134,6 +137,11 @@ namespace RoslynPad.Roslyn
 
                         var workspace = new RoslynWorkspace(host, null, compositionContext, DotNetCliService.Instance.Info.Executable, DotNetCliService.Instance.Info.BasePath);
 
+                        compositionContext.GetExport<ICodeFixService>();
+                        var diagnosticService = compositionContext.GetExport<IDiagnosticService>();
+
+                        // TODO implement IPickMemberService.
+
                         workspace.RegisterWorkspace(solution);
 
                         workspace.InitialiseBuildNodesAsync(true).Wait();
@@ -144,7 +152,7 @@ namespace RoslynPad.Roslyn
             });
         }
 
-        public static void DisposeWorkspace(AvalonStudio.Projects.ISolution solution)
+        public static void DisposeWorkspace(ISolution solution)
         {
             lock (s_solutionWorkspaces)
             {
@@ -161,7 +169,7 @@ namespace RoslynPad.Roslyn
             }
         }
 
-        public static RoslynWorkspace GetWorkspace(AvalonStudio.Projects.ISolution solution, bool create = true)
+        public static RoslynWorkspace GetWorkspace(ISolution solution, bool create = true)
         {
             lock (s_solutionWorkspaces)
             {
@@ -176,9 +184,9 @@ namespace RoslynPad.Roslyn
 
                     //var dotnetDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Languages.CSharp"), "content");
 
-                    var currentDir = AvalonStudio.Platforms.Platform.ExecutionPath;
+                    var currentDir = Platforms.Platform.ExecutionPath;
 
-                    var loadedAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+                    var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
                     var assemblies = new[]
                     {
@@ -206,6 +214,8 @@ namespace RoslynPad.Roslyn
 
                     var workspace = new RoslynWorkspace(host, null, compositionContext, DotNetCliService.Instance.Info.Executable, DotNetCliService.Instance.Info.BasePath);
 
+                    compositionContext.GetExport<ICodeFixService>();
+
                     workspace.RegisterWorkspace(solution);
 
                     workspace.InitialiseBuildNodesAsync(true).Wait();
@@ -215,7 +225,7 @@ namespace RoslynPad.Roslyn
             }
         }
 
-        internal RoslynWorkspace RegisterWorkspace(AvalonStudio.Projects.ISolution solution) => s_solutionWorkspaces[solution] = this;
+        internal RoslynWorkspace RegisterWorkspace(ISolution solution) => s_solutionWorkspaces[solution] = this;
 
         private void OnDiagnosticsUpdated(object sender, DiagnosticsUpdatedArgs diagnosticsUpdatedArgs)
         {
@@ -253,7 +263,7 @@ namespace RoslynPad.Roslyn
             }
         }
 
-        public async Task ReevaluateProject(AvalonStudio.Projects.IProject project)
+        public async Task ReevaluateProject(IProject project)
         {
             var proj = project as OmniSharpProject;
 
@@ -264,7 +274,7 @@ namespace RoslynPad.Roslyn
             _buildNodes.Add(buildHost);
         }
 
-        public ProjectId GetProjectId(AvalonStudio.Projects.IProject project)
+        public ProjectId GetProjectId(IProject project)
         {
             var projects = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(Path.Combine(project.Location)) == 0);
 
@@ -276,7 +286,7 @@ namespace RoslynPad.Roslyn
             return projects.First().Id;
         }
 
-        public Project GetProject(AvalonStudio.Projects.IProject project)
+        public Project GetProject(IProject project)
         {
             var projects = CurrentSolution.Projects.Where(p => p.FilePath.CompareFilePath(Path.Combine(project.Location)) == 0);
 
@@ -333,7 +343,7 @@ namespace RoslynPad.Roslyn
             }
         }
 
-        public DocumentId AddDocument(Project project, AvalonStudio.Projects.ISourceFile file)
+        public DocumentId AddDocument(Project project, ISourceFile file)
         {
             var id = DocumentId.CreateNewId(project.Id);
             OnDocumentAdded(DocumentInfo.Create(id, file.Name, filePath: file.FilePath, loader: new FileTextLoader(file, System.Text.Encoding.UTF8)));
@@ -341,7 +351,13 @@ namespace RoslynPad.Roslyn
             return id;
         }
 
-        public DocumentId GetDocumentId(AvalonStudio.Projects.ISourceFile file)
+        public void RemoveDocument (Project project, ISourceFile file)
+        {
+            var id = GetDocumentId(file);
+            OnDocumentRemoved(id);
+        }
+
+        public DocumentId GetDocumentId(ISourceFile file)
         {
             var ids = CurrentSolution.GetDocumentIdsWithFilePath(file.Location);
 
@@ -353,14 +369,14 @@ namespace RoslynPad.Roslyn
             return ids.First();
         }
 
-        public Document GetDocument(AvalonStudio.Projects.ISourceFile file)
+        public Document GetDocument(ISourceFile file)
         {
             var documentId = GetDocumentId(file);
 
             return CurrentSolution.GetDocument(documentId);
         }
 
-        public void OpenDocument(AvalonStudio.Projects.ISourceFile file, AvalonEditTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated, Action<SourceText> onTextUpdated = null)
+        public void OpenDocument(ISourceFile file, AvalonEditTextContainer textContainer, Action<DiagnosticsUpdatedArgs> onDiagnosticsUpdated, Action<SourceText> onTextUpdated = null)
         {
             var documentId = GetDocumentId(file);
 
@@ -431,16 +447,83 @@ namespace RoslynPad.Roslyn
 
             GetService<IDiagnosticService>().DiagnosticsUpdated -= OnDiagnosticsUpdated;
 
-            this.DisableDiagnostics();                        
+            this.DisableDiagnostics();
         }
 
-        protected override void ApplyDocumentTextChanged(DocumentId document, SourceText newText)
+        protected override void ApplyDocumentTextChanged(DocumentId documentId, SourceText text)
         {
-            _openDocumentTextLoaders[document].UpdateText(newText);
+            if (_openDocumentTextLoaders.ContainsKey(documentId))
+            {
+                _openDocumentTextLoaders[documentId].UpdateText(text);
+            }
+            else
+            {
+                var document = this.CurrentSolution.GetDocument(documentId);
+                if (document != null)
+                {
+                    Encoding encoding = DetermineEncoding(text, document);
 
-            ApplyingTextChange?.Invoke(document, newText);
+                    SaveDocumentText(documentId, document.FilePath, text, encoding ?? new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+                    OnDocumentTextChanged(documentId, text, PreservationMode.PreserveValue);
+                }
+            }
 
-            OnDocumentTextChanged(document, newText, PreservationMode.PreserveIdentity);
+            ApplyingTextChange?.Invoke(documentId, text);
+
+            OnDocumentTextChanged(documentId, text, PreservationMode.PreserveIdentity);
+        }
+
+        private static Encoding DetermineEncoding(SourceText text, Document document)
+        {
+            if (text.Encoding != null)
+            {
+                return text.Encoding;
+            }
+
+            try
+            {
+                using (ExceptionHelpers.SuppressFailFast())
+                {
+                    using (var stream = new FileStream(document.FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    {
+                        var onDiskText = EncodedStringText.Create(stream);
+                        return onDiskText.Encoding;
+                    }
+                }
+            }
+            catch (IOException)
+            {
+            }
+            catch (InvalidDataException)
+            {
+            }
+
+            return null;
+        }
+
+        private void SaveDocumentText(DocumentId id, string fullPath, SourceText newText, Encoding encoding)
+        {
+            try
+            {
+                using (ExceptionHelpers.SuppressFailFast())
+                {
+                    var dir = Path.GetDirectoryName(fullPath);
+                    if (!Directory.Exists(dir))
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
+
+                    Debug.Assert(encoding != null);
+                    using (var writer = new StreamWriter(fullPath, append: false, encoding: encoding))
+                    {
+                        newText.Write(writer);
+                    }
+                }
+            }
+            catch (IOException exception)
+            {
+                this.OnWorkspaceFailed(new DocumentDiagnostic(WorkspaceDiagnosticKind.Failure, exception.Message, id));
+            }
         }
 
         public new void ClearSolution()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,7 +16,7 @@ namespace AvalonStudio.Projects
 
         void UpdateItem(ISolutionItem item);
 
-        T AddItem<T>(T item, ISolutionFolder parent = null) where T : ISolutionItem;
+        T AddItem<T>(T item, Guid? itemGuid = null, ISolutionFolder parent = null) where T : ISolutionItem;
 
         void RemoveItem(ISolutionItem item);
 

@@ -7,6 +7,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     using AvalonStudio.Shell;
     using ReactiveUI;
     using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
+    using System.Reactive.Linq;
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
 
     internal class ProjectFolderViewModel : ProjectItemViewModel<IProjectFolder>
     {
@@ -22,12 +27,27 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             _shell = IoC.Get<IShell>();
 
             Items = new ObservableCollection<ProjectItemViewModel>();
-            Items.BindCollections(model.Items, p => { return Create(p); }, (pivm, p) => pivm.Model == p);
+            Items.BindCollections(model.Items, p => { return Create(p); }, (pivm, p) => pivm.Model == p);                        
 
             NewItemCommand = ReactiveCommand.Create(() =>
             {
                 _shell.ModalDialog = new NewItemDialogViewModel(model);
                 _shell.ModalDialog.ShowDialog();
+            });
+
+            NewFileCommand = ReactiveCommand.Create(async () =>
+            {
+                var observable = Items.ObserveNewItems().OfType<SourceFileViewModel>().FirstOrDefaultAsync();
+
+                using (var subscription = observable.Subscribe(item =>
+                 {   
+                     item.InEditMode = true;
+                 }))
+                {
+                    File.CreateText(Path.Combine(model.Location, "NewFile1"));
+
+                    await observable;
+                }                             
             });
 
             RemoveCommand = ReactiveCommand.Create(() => model.Project.ExcludeFolder(model));
@@ -38,6 +58,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public ObservableCollection<ProjectItemViewModel> Items { get; }
 
+        public ReactiveCommand NewFileCommand { get; }
         public ReactiveCommand NewItemCommand { get; }
         public ReactiveCommand RemoveCommand { get; }
 

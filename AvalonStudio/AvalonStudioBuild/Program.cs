@@ -109,7 +109,7 @@ namespace AvalonStudio
             {
                 if (project.TestFramework != null)
                 {
-                    var buildTask = project.ToolChain.Build(console, project, "");
+                    var buildTask = project.ToolChain.BuildAsync(console, project, "");
 
                     buildTask.Wait();
 
@@ -187,12 +187,12 @@ namespace AvalonStudio
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
 
-                if (project.ToolChain is StandardToolChain)
+                if (project.ToolChain is StandardToolchain)
                 {
-                    (project.ToolChain as StandardToolChain).Jobs = options.Jobs;
+                    (project.ToolChain as StandardToolchain).Jobs = options.Jobs;
                 }
 
-                var awaiter = project.ToolChain.Build(console, project, options.Label, options.Defines);
+                var awaiter = project.ToolChain.BuildAsync(console, project, options.Label, options.Defines);
                 awaiter.Wait();
 
                 stopWatch.Stop();

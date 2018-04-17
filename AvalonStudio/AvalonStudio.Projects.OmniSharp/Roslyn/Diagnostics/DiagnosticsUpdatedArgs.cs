@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace RoslynPad.Roslyn.Diagnostics
+namespace AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics
 {
     public class DiagnosticsUpdatedArgs : UpdatedEventArgs
     {

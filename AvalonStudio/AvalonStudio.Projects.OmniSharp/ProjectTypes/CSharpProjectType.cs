@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace AvalonStudio.Projects.OmniSharp.ProjectTypes
+﻿namespace AvalonStudio.Projects.OmniSharp.ProjectTypes
 {
-    class CSharpProjectType : DotNetCoreCSharpProjectType
+    [ExportProjectType("csproj", Description, ProjectTypeGuid)]
+    internal class CSharpProjectType : DotNetCoreCSharpProjectType
     {
-        public static Guid CSharpProjectTypeId = Guid.Parse("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}");
-
-        public override Guid ProjectTypeId => CSharpProjectTypeId;
+        private const string ProjectTypeGuid = "fae04ec0-301f-11d3-bf4b-00c04f79efbc";
+        private const string Description = "C# Project";
     }
 }

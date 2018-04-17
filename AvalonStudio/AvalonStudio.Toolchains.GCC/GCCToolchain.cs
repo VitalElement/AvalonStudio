@@ -1,19 +1,21 @@
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
-using AvalonStudio.Shell;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
 using System.Collections.Generic;
+using System.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.GCC
 {
-    public abstract class GCCToolchain : StandardToolChain
+    [ExportToolchain]
+    public abstract class GCCToolchain : StandardToolchain
     {
         protected virtual bool RunWithSystemPaths => false;
 
@@ -54,6 +56,12 @@ namespace AvalonStudio.Toolchains.GCC
         public virtual string LDExecutable => Path.Combine(BinDirectory, $"{LDPrefix}{LDName}" + Platform.ExecutableExtension);
 
         public virtual string SizeExecutable => Path.Combine(BinDirectory, $"{SizePrefix}{SizeName}" + Platform.ExecutableExtension);
+
+        [ImportingConstructor]
+        public GCCToolchain(IStatusBar statusBar)
+            : base(statusBar)
+        {
+        }
 
         public override bool SupportsFile(ISourceFile file)
         {

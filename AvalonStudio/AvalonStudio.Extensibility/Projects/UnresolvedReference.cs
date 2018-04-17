@@ -27,7 +27,7 @@
 
         public ObservableCollection<IProject> References => null;
 
-        public IToolChain ToolChain { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IToolchain ToolChain { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public IDebugger Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ITestFramework TestFramework { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool Hidden { get; set; }
@@ -66,8 +66,6 @@
         public Guid Id { get; set; }
 
         ISolutionFolder ISolutionItem.Parent { get; set; }
-
-        public Guid ProjectTypeId => Guid.Empty;
 
         public IReadOnlyList<ISourceFile> SourceFiles => null;
 
@@ -159,6 +157,11 @@
         public Task UnloadAsync()
         {
             return Task.CompletedTask;
+        }
+
+        public bool IsItemSupported(string languageName)
+        {
+            return false;
         }
     }
 

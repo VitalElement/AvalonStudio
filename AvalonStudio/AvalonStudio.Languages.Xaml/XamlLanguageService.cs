@@ -1,22 +1,18 @@
 ﻿using Avalonia.Ide.CompletionEngine;
 using Avalonia.Ide.CompletionEngine.AssemblyMetadata;
 using Avalonia.Ide.CompletionEngine.SrmMetadataProvider;
+using Avalonia.Threading;
 using AvalonStudio.Documents;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using Avalonia.Threading;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    class XamlLanguageService : XmlLanguageService
+    [ExportLanguageService(ContentCapabilities.Xaml)]
+    internal class XamlLanguageService : XmlLanguageService
     {
-        public override string Title => "XAML";
-
         public override string LanguageId => "xaml";
-
-        public override string Identifier => "XAML";
 
         public override bool CanHandle(IEditor editor)
         {

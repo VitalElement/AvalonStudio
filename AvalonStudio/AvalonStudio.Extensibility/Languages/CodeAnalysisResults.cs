@@ -7,13 +7,11 @@ namespace AvalonStudio.Languages
     {
         public CodeAnalysisResults()
         {
-            SyntaxHighlightingData = new SyntaxHighlightDataList();
-            Diagnostics = new List<Diagnostic>();
+            SyntaxHighlightingData = new SyntaxHighlightDataList();            
             IndexItems = new List<IndexEntry>();
         }
 
-        public SyntaxHighlightDataList SyntaxHighlightingData { get; set; }
-        public List<Diagnostic> Diagnostics { get; set; }
+        public SyntaxHighlightDataList SyntaxHighlightingData { get; set; }        
         public List<IndexEntry> IndexItems { get; set; }
     }
 }

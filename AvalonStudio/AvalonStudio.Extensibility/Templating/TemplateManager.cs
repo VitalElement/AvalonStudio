@@ -108,25 +108,28 @@ namespace AvalonStudio.Extensibility.Templating
             return ListTemplates(language, TemplateKind.Project);
         }
 
-        public async Task<CreationResult> CreateTemplate(ITemplate template, string path, string name = "")
+        public async Task<CreationResult> CreateTemplate(ITemplate template, string path, params (string name, string value)[] parameters )
         {
             if (template is DotNetTemplateAdaptor templateImpl)
             {
-                if (string.IsNullOrEmpty(name))
+                var parameterList = new List<string>();
+
+                parameterList.Add(templateImpl.DotnetTemplate.ShortName);
+                parameterList.Add("--output");
+                parameterList.Add(path);
+
+                foreach(var parameter in parameters)
                 {
-                    _commandInput.ResetArgs(templateImpl.DotnetTemplate.Info.ShortName, "--output", path);
+                    parameterList.Add($"--{parameter.name}");
+                    parameterList.Add(parameter.value);
                 }
-                else
-                {
-                    _commandInput.ResetArgs(templateImpl.DotnetTemplate.Info.ShortName, "--output", path, "--name", name);
-                }
+
+                _commandInput.ResetArgs(parameterList.ToArray());                
 
                 string fallbackName = new DirectoryInfo(_commandInput.OutputPath ?? Directory.GetCurrentDirectory()).Name;
 
-                var result = await _templateCreator.InstantiateAsync(templateImpl.DotnetTemplate.Info, _commandInput.Name, fallbackName, _commandInput.OutputPath, templateImpl.DotnetTemplate.GetValidTemplateParameters(), _commandInput.SkipUpdateCheck, _commandInput.IsForceFlagSpecified, _commandInput.BaselineName).ConfigureAwait(false);
-
+                var result = await _templateCreator.InstantiateAsync(templateImpl.DotnetTemplate, _commandInput.Name, fallbackName, _commandInput.OutputPath, _commandInput.InputTemplateParams, _commandInput.SkipUpdateCheck, _commandInput.IsForceFlagSpecified, _commandInput.BaselineName).ConfigureAwait(false);
                 return (CreationResult)result.Status;
-
             }
 
             return CreationResult.NotFound;
@@ -158,16 +161,16 @@ namespace AvalonStudio.Extensibility.Templating
         {
             var templateList = TemplateListResolver.GetTemplateResolutionResult(_settingsLoader.UserTemplateCache.TemplateInfo, _hostDataLoader, _commandInput, _defaultLanguage);
 
-            if (templateList.TryGetUnambiguousTemplateGroupToUse(out IReadOnlyList<ITemplateMatchInfo> unambiguousTemplateGroupForDetailDisplay))
+            if (templateList.TryGetUnambiguousTemplateGroupToUse(out IReadOnlyList<ITemplateMatchInfo> unambiguousTemplateGroupForDetailDisplay, true))
             {
-                return unambiguousTemplateGroupForDetailDisplay.Where(t => t.IsMatch).Select(ti => new DotNetTemplateAdaptor(ti, kind)).ToList().AsReadOnly();
+                return unambiguousTemplateGroupForDetailDisplay.Where(t => t.IsMatch).Select(ti => new DotNetTemplateAdaptor(ti.Info)).ToList().AsReadOnly();
             }
 
             var ambiguous = templateList.GetBestTemplateMatchList(true);
 
             var groups = HelpForTemplateResolution.GetLanguagesForTemplateInfoGroups(ambiguous, language, "C#");
 
-            return groups.Keys.Where(t => t.IsMatch).Select(ti => new DotNetTemplateAdaptor(ti, kind)).ToList().AsReadOnly();
+            return groups.Keys.Where(t => t.IsMatch).Select(ti => new DotNetTemplateAdaptor(ti.Info)).ToList().AsReadOnly();
         }
 
         private bool ConfigureLocale()
@@ -305,9 +308,7 @@ namespace AvalonStudio.Extensibility.Templating
 
         private static void FirstRun(IEngineEnvironmentSettings environmentSettings, IInstaller installer)
         {
-            var packages = new List<string> { "VitalElement.AvalonStudio.Templates" };
-
-            installer.InstallPackages(packages);
+            UpdatePackages(installer);
         }
 
         public void BeforeActivation()
@@ -318,6 +319,32 @@ namespace AvalonStudio.Extensibility.Templating
         public void Activation()
         {
 
+        }
+
+        public void UpdateDefaultTemplates()
+        {
+            UpdatePackages(Installer);
+        }
+
+        private static void UpdatePackages (IInstaller installer)
+        {
+            var packages = new List<string> { "VitalElement.AvalonStudio.Templates" };
+
+            installer.InstallPackages(packages);
+        }
+
+        public IDictionary<string, IEnumerable<ITemplate>> GetProjectTemplates() => GetTemplates(TemplateKind.Project);
+        public IDictionary<string, IEnumerable<ITemplate>> GetItemTemplates() => GetTemplates(TemplateKind.Item);
+
+        private IDictionary<string, IEnumerable<ITemplate>> GetTemplates(TemplateKind kind)
+        {
+            var templates = new HashSet<ITemplateInfo>();
+            _settingsLoader.GetTemplates(templates);
+
+            return templates.Where(t => t.GetTemplateKind() == kind)
+                .Select(t => new DotNetTemplateAdaptor(t))
+                .GroupBy(t => t.Language)
+                .ToDictionary(t => t.Key, t => t.AsEnumerable<ITemplate>());
         }
     }
 }

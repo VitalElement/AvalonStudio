@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.TestFrameworks
 {
-    public interface ITestFramework : IExtension
+    public interface ITestFramework
     {
         Task<IEnumerable<Test>> EnumerateTestsAsync(IProject project);
 

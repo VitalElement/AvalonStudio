@@ -5,6 +5,7 @@ using AvaloniaEdit.Rendering;
 using AvalonStudio.CodeEditor;
 using AvalonStudio.Extensibility.Editor;
 using System;
+using System.Linq;
 
 namespace AvalonStudio.Languages
 {
@@ -25,58 +26,92 @@ namespace AvalonStudio.Languages
 
         public ColorScheme ColorScheme { get; set; }
 
-        
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
             var transformsInLine = TextTransformations.FindOverlappingSegments(line);
 
-            foreach (var transform in transformsInLine)
+            foreach (var transform in transformsInLine.OfType<ForegroundTextTransformation>())
             {
-                var formattedOffset = 0;
+                transform.Transform(this, line);
+            }
 
-                if (transform.StartOffset > line.Offset)
-                {
-                    formattedOffset = transform.StartOffset - line.Offset;
-                }
-
-                SetTextStyle(line, formattedOffset, transform.Length, transform.Foreground);
+            foreach (var transform in transformsInLine.OfType<OpacityTextTransformation>())
+            {
+                transform.Transform(this, line);
             }
         }
 
-        public void SetTransformations(SyntaxHighlightDataList highlightData)
+        public void RemoveAll(Predicate<TextTransformation> predicate)
+        {
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+
+            if (TextTransformations != null)
+            {
+                var toRemove = TextTransformations.Where(t => predicate(t)).ToArray();
+
+                foreach (var m in toRemove)
+                {
+                    TextTransformations.Remove(m);
+                }
+            }
+        }
+
+        private TextTransformation GetTextTransformation(object tag, OffsetSyntaxHighlightingData highlight)
+        {
+            if (highlight is LineColumnSyntaxHighlightingData lineColumnHighlight)
+            {
+                if (highlight.Type == HighlightType.Unnecessary)
+                {
+                    return new OpacityTextTransformation(
+                        tag,
+                        document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
+                        document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
+                        0.5);
+                }
+                else
+                {
+                    return new ForegroundTextTransformation(
+                        tag,
+                        document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
+                        document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
+                        GetBrush(highlight.Type));
+                }
+            }
+            else
+            {
+                if (highlight.Type == HighlightType.Unnecessary)
+                {
+                    return new OpacityTextTransformation(
+                    tag,
+                    highlight.Start,
+                    highlight.Start + highlight.Length,
+                    0.5);
+                }
+                else
+                {
+                    return new ForegroundTextTransformation(
+                    tag,
+                    highlight.Start,
+                    highlight.Start + highlight.Length,
+                    GetBrush(highlight.Type));
+                }
+            }
+        }
+
+        public void SetTransformations(object tag, SyntaxHighlightDataList highlightData)
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                var transformations = new TextSegmentCollection<TextTransformation>(document);
+                RemoveAll(transform => Equals(transform.Tag, tag));
 
-                foreach (var transform in highlightData)
+                foreach (var highlight in highlightData)
                 {
-                    if (transform.Type != HighlightType.None)
+                    if (highlight.Type != HighlightType.None)
                     {
-                        if (transform is LineColumnSyntaxHighlightingData)
-                        {
-                            var trans = transform as LineColumnSyntaxHighlightingData;
-
-                            transformations.Add(new TextTransformation
-                            {
-                                Foreground = GetBrush(transform.Type),
-                                StartOffset = document.GetOffset(trans.StartLine, trans.StartColumn),
-                                EndOffset = document.GetOffset(trans.EndLine, trans.EndColumn)
-                            });
-                        }
-                        else
-                        {
-                            transformations.Add(new TextTransformation
-                            {
-                                Foreground = GetBrush(transform.Type),
-                                StartOffset = transform.Start,
-                                EndOffset = transform.Start + transform.Length
-                            });
-                        }
+                        TextTransformations.Add(GetTextTransformation(tag, highlight));
                     }
                 }
-
-                TextTransformations = transformations;
             });
         }
 

@@ -1,0 +1,19 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.SolutionExplorer;assembly=AvalonStudio.Controls.Standard">
+  <StackPanel>    
+    <ItemsControl Items="{Binding Parameters}">
+      <ItemsControl.DataTemplates>
+        <DataTemplate>
+          <local:TextTemplateParameter Margin="20" MinWidth="150" />
+        </DataTemplate>
+      </ItemsControl.DataTemplates>
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+    </ItemsControl>
+
+  </StackPanel>
+</UserControl>

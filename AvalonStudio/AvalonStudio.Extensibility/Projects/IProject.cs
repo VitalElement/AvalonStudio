@@ -15,9 +15,7 @@ namespace AvalonStudio.Projects
         /// </summary>
         ObservableCollection<IProject> References { get; }
 
-        Guid ProjectTypeId { get; }
-
-        IToolChain ToolChain { get; set; }
+        IToolchain ToolChain { get; set; }
         IDebugger Debugger2 { get; set; }
 
         ITestFramework TestFramework { get; set; }
@@ -70,5 +68,7 @@ namespace AvalonStudio.Projects
         Task UnloadAsync();
 
         void Save();
+
+        bool IsItemSupported(string languageName);
     }
 }

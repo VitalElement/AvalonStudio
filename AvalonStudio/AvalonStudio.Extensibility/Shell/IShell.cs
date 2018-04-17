@@ -41,19 +41,14 @@ namespace AvalonStudio.Shell
         IDocumentTabViewModel SelectedDocument { get; set; }
         ObservableCollection<object> Tools { get; }
         ModalDialogViewModelBase ModalDialog { get; set; }
-        object BottomSelectedTool { get; set; }
 
         ColorScheme CurrentColorScheme { get; set; }
 
-        IEnumerable<IEditorProvider> EditorProviders { get; }
+        IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
 
-        IEnumerable<ISolutionType> SolutionTypes { get; }
+        IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
 
-        IEnumerable<IProjectType> ProjectTypes { get; }
-
-        IEnumerable<ILanguageService> LanguageServices { get; }
-
-        IEnumerable<IToolChain> ToolChains { get; }
+        IEnumerable<IToolchain> ToolChains { get; }
 
         IEnumerable<IDebugger> Debugger2s { get; }
 
@@ -75,9 +70,11 @@ namespace AvalonStudio.Shell
 
         void RemoveDocument(IDocumentTabViewModel document);
 
+        void RemoveDocument(ISourceFile document);
+
         void InvalidateCodeAnalysis();
 
-        void InvalidateErrors();
+        void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics);
 
         Task<bool> BuildAsync(IProject project);
 

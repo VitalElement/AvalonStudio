@@ -75,7 +75,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     if (!rect.IsEmpty)
                     {
-                        var xPos = charSize.Width * (textView.Document.GetLocation(newEntry.StartOffset).Column - 1);
+                        var startColumn = textView.Document.GetLocation(newEntry.StartOffset).Column - 1;
+                        var endColumn = textView.Document.GetLocation(newEntry.EndOffset).Column - 2;
+
+                        var xPos = charSize.Width * Math.Min(startColumn, endColumn);
 
                         rect = rect.WithX(xPos + (charSize.Width / 2));
 

@@ -28,6 +28,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
         }
     }
 
+    public class ASXshdSyntaxDefinition : XshdSyntaxDefinition
+    {
+        public ASXshdSyntaxDefinition()
+        {
+            ContentTypes = new List<string>();
+        }
+
+        public IList<string> ContentTypes { get; }
+    }
+
     /// <summary>
     /// Loads .xshd files, version 2.0.
     /// Version 2.0 files are recognized by the namespace.
@@ -36,7 +46,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
     {
         public const string Namespace = "http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008";
 
-        public static XshdSyntaxDefinition LoadDefinition(XmlReader reader, bool skipValidation)
+        public static ASXshdSyntaxDefinition LoadDefinition(XmlReader reader, bool skipValidation)
         {
             var settings = new XmlReaderSettings
             {
@@ -52,13 +62,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             return ParseDefinition(reader);
         }
 
-        private static XshdSyntaxDefinition ParseDefinition(XmlReader reader)
+        private static ASXshdSyntaxDefinition ParseDefinition(XmlReader reader)
         {
             Debug.Assert(reader.LocalName == "SyntaxDefinition");
-            var def = new XshdSyntaxDefinition { Name = reader.GetAttribute("name") };
+            var def = new ASXshdSyntaxDefinition { Name = reader.GetAttribute("name") };
             var extensions = reader.GetAttribute("extensions");
             if (extensions != null)
                 def.Extensions.AddRange(extensions.Split(';'));
+
+            var contentTypes = reader.GetAttribute("contentTypes");
+            if (contentTypes != null)
+                def.ContentTypes.AddRange(contentTypes.Split(';'));
+
             ParseElements(def.Elements, reader);
             Debug.Assert(reader.NodeType == XmlNodeType.EndElement);
             Debug.Assert(reader.LocalName == "SyntaxDefinition");
@@ -366,7 +381,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
 
     public class CustomHighlightingManager : IHighlightingDefinitionReferenceResolver
     {
-        private readonly Dictionary<string, IHighlightingDefinition> _highlightingsByName = new Dictionary<string, IHighlightingDefinition>();
+        private readonly Dictionary<string, IHighlightingDefinition> _highlightingsByContentTypes = new Dictionary<string, IHighlightingDefinition>();
 
         public static CustomHighlightingManager Instance { get; } = new CustomHighlightingManager();
 
@@ -379,56 +394,57 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
         /// Gets a highlighting definition by name.
         /// Returns null if the definition is not found.
         /// </summary>
-        public IHighlightingDefinition GetDefinition(string name)
+        public IHighlightingDefinition GetDefinition(string contentType)
         {
             lock (this)
             {
-                return _highlightingsByName.TryGetValue(name, out var rh) ? rh : null;
+                return _highlightingsByContentTypes.TryGetValue(contentType, out var rh) ? rh as IHighlightingDefinition : null;
             }
         }
 
-        internal void RegisterHighlighting(string resourceName, params string[] names)
+        internal void RegisterHighlighting(string resourceName)
         {
             try
             {
+                var info = Load(resourceName);
 
-                RegisterHighlighting(Load(resourceName), names);
+                RegisterHighlighting(info.contentTypes, info.definition);
             }
             catch (HighlightingDefinitionInvalidException ex)
             {
-                throw new InvalidOperationException("The built-in highlighting '" + names[0] + "' is invalid.", ex);
+                throw new InvalidOperationException("The built-in highlighting '" + resourceName + "' is invalid.", ex);
             }
         }
 
-        public void RegisterHighlighting(IHighlightingDefinition highlighting, params string[] names)
+        public void RegisterHighlighting(IEnumerable<string> contentTypes, IHighlightingDefinition highlighting)
         {
             if (highlighting == null)
             {
                 throw new ArgumentNullException(nameof(highlighting));
             }
 
-            foreach (var name in names)
+            foreach(var contentType in contentTypes)
             {
-                lock (this)
+                lock(this)
                 {
-                    _highlightingsByName[name] = highlighting;
+                    _highlightingsByContentTypes[contentType] = highlighting;
                 }
             }
         }
 
-        public IHighlightingDefinition Load(string resourceName)
+        public (IEnumerable<string> contentTypes, IHighlightingDefinition definition) Load(string resourceName)
         {
-            XshdSyntaxDefinition xshd;
+            ASXshdSyntaxDefinition xshd;
             using (var s = Resources.Resources.OpenStream(resourceName))
             using (var reader = XmlReader.Create(s))
             {
                 // in release builds, skip validating the built-in highlightings
                 xshd = LoadXshd(reader, true);
             }
-            return HighlightingLoader.Load(xshd, this);
+            return (xshd.ContentTypes, HighlightingLoader.Load(xshd, this));
         }
 
-        internal static XshdSyntaxDefinition LoadXshd(XmlReader reader, bool skipValidation)
+        internal static ASXshdSyntaxDefinition LoadXshd(XmlReader reader, bool skipValidation)
         {
             if (reader == null)
                 throw new ArgumentNullException(nameof(reader));

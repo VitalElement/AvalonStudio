@@ -6,8 +6,8 @@
     <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.1" />
-    <PackageReference Include="AvalonStudio.Languages.CPlusPlus.LibClang" Version="5.0.0" />
+    <PackageReference Include="Avalonia" Version="0.6.2-build4853-beta" />
+    <PackageReference Include="AvalonStudio.Languages.CPlusPlus.LibClang" Version="6.0.0" />
     <PackageReference Include="VitalElement.NClang" Version="0.9.0-build15-alpha" />
   </ItemGroup>
   <ItemGroup>

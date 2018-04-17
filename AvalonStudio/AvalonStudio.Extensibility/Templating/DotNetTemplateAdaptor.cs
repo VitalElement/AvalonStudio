@@ -1,46 +1,46 @@
-﻿using Microsoft.TemplateEngine.Edge.Template;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.TemplateEngine.Abstractions;
 
 namespace AvalonStudio.Extensibility.Templating
 {
-    public class DotNetTemplateAdaptor : ITemplate
-    { 
-        private ITemplateMatchInfo _template;
-        private TemplateKind _kind;
+    class DotNetTemplateAdaptor : ITemplate
+    {
+        private ITemplateInfo _inner;
 
-        internal DotNetTemplateAdaptor(ITemplateMatchInfo template, TemplateKind kind)
+        public string Language { get; }
+
+        public string Name => _inner.Name;
+        public string ShortName => _inner.ShortName;
+        public string Description => _inner.Description;
+        public string Author => _inner.Author;
+
+        public string DefaultName { get; }
+
+        public TemplateKind Kind { get; }
+
+        internal ITemplateInfo DotnetTemplate => _inner;
+
+        public IEnumerable<ITemplateParameter> Parameters => _inner.Parameters
+            .Where(p=>p.Name != "language" && p.Name != "type" && p.Name != "namespace")
+            .Select(p => new DotnetTemplateParameterAdaptor(p));
+
+        internal DotNetTemplateAdaptor(ITemplateInfo template)
         {
-            _kind = kind;
-            _template = template;
-        }
+            _inner = template;
 
-        public string Name => _template.Info.Name;
+            Language = template.GetLanguage();
 
-        public string ShortName => _template.Info.ShortName;
-
-        public string Description => _template.Info.Description;
-
-        public string Author => _template.Info.Author;
-
-        public string DefaultName
-        {
-            get
+            if (!string.IsNullOrEmpty(template.DefaultName))
             {
-                if (!string.IsNullOrEmpty(_template.Info.DefaultName))
-                {
-                    return _template.Info.DefaultName;
-                }
-                else
-                {
-                    return Name.Replace(" ", "").Replace(".", "");
-                }
+                DefaultName = template.DefaultName;
             }
+            else
+            {
+                DefaultName = Name.Replace(" ", "").Replace(".", "");
+            }
+
+            Kind = template.GetTemplateKind();
         }
-
-        public IReadOnlyList<string> Classifications => _template.Info.Classifications;
-
-        public TemplateKind Kind => _kind;
-
-        internal ITemplateMatchInfo DotnetTemplate => _template;
     }
 }

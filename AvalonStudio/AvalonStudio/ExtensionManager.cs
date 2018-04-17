@@ -1,10 +1,11 @@
-﻿using AvalonStudio.Platforms;
+﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Platforms;
 using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.IO;
 
-namespace AvalonStudio.Extensibility
+namespace AvalonStudio
 {
     [Export(typeof(IExtensionManager))]
     [Shared]
@@ -12,19 +13,11 @@ namespace AvalonStudio.Extensibility
     {
         private const string ExtensionManifestFilename = "extension.json";
 
-        private IEnumerable<IExtensionManifest> _installedExtensions;
+        private static Lazy<IEnumerable<IExtensionManifest>> _installedExtensions = new Lazy<IEnumerable<IExtensionManifest>>(LoadExtensions);
 
-        public IEnumerable<IExtensionManifest> GetInstalledExtensions()
-        {
-            if (_installedExtensions == null)
-            {
-                _installedExtensions = LoadExtensions();
-            }
+        public IEnumerable<IExtensionManifest> GetInstalledExtensions() => _installedExtensions.Value;
 
-            return _installedExtensions;
-        }
-
-        private List<IExtensionManifest> LoadExtensions()
+        private static List<IExtensionManifest> LoadExtensions()
         {
             var extensions = new List<IExtensionManifest>();
 
