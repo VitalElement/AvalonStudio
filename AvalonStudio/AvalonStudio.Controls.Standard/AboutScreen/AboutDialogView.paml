@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:lang="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility"
              xmlns:proj="clr-namespace:AvalonStudio.Projects;assembly=AvalonStudio.Extensibility"
-             Background="{DynamicResource ThemeBackgroundBrush}">
+             Background="{DynamicResource ThemeBackgroundBrush}" MinWidth="800" MinHeight="600">
   <DockPanel>
     <Grid DockPanel.Dock ="Top" Background="WhiteSmoke">
       <StackPanel Orientation="Horizontal" Gap="12">

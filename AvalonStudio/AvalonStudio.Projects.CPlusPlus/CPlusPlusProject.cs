@@ -352,7 +352,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         }
 
         [JsonIgnore]
-        public override IToolChain ToolChain
+        public override IToolchain ToolChain
         {
             get
             {

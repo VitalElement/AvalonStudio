@@ -573,8 +573,11 @@
 
                                 if (unfilteredCompletions.Count > 0)
                                 {
-                                    UpdateFilter(editor.CaretOffset, false);
-                                    intellisenseControl.IsVisible = !_hidden;
+                                    if (editor != null)
+                                    {
+                                        UpdateFilter(editor.CaretOffset, false);
+                                        intellisenseControl.IsVisible = !_hidden;
+                                    }
                                 }
                                 else
                                 {

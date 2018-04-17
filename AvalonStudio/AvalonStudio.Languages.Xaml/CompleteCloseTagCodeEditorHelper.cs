@@ -17,9 +17,9 @@ namespace AvalonStudio.Languages.Xaml
                 if (textBefore.Length > 2 && textBefore[textBefore.Length - 1] != '/')
                 {
                     var state = XmlParser.Parse(textBefore);
-                    if (state.State == XmlParser.ParserState.InsideElement
+                    if (!state.TagName.StartsWith('/') && (state.State == XmlParser.ParserState.InsideElement
                         || state.State == XmlParser.ParserState.StartElement
-                        || state.State == XmlParser.ParserState.AfterAttributeValue)
+                        || state.State == XmlParser.ParserState.AfterAttributeValue))
                     {
                         var caret = editor.CaretOffset;
                         editor.Document.Insert(caret, $"</{state.TagName}>");

@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Platforms;
+﻿using AvalonStudio.Extensibility.Shell;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Projects.Standard;
@@ -6,6 +7,7 @@ using AvalonStudio.Toolchains.GCC;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,6 +44,12 @@ namespace AvalonStudio.Toolchains.CustomGCC
         public override string GDBExecutable => _settings.GDBExecutable;
 
         public override string LibraryQueryCommand => Path.Combine(BinDirectory, _settings.LibraryQueryCommand + Platform.ExecutableExtension);
+
+        [ImportingConstructor]
+        public CustomGCCToolchain(IStatusBar statusBar)
+            : base(statusBar)
+        {
+        }
 
         public override bool CanHandle(IProject project)
         {
