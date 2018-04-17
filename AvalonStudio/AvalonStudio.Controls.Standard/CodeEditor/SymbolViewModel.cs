@@ -48,6 +48,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     TypeDescription = model.TypeDescription;
                     break;
 
+                case CursorKind.Namespace:
+                    BuiltInTypeDescription = "namespace ";
+                    break;
+
                 case CursorKind.TypedefDeclaration:
                     BuiltInTypeDescription = "typedef ";
                     TypeDescription = model.TypeDescription;
@@ -89,7 +93,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         case LinkageKind.External:
                             ScopeDescription = "(global variable) ";
                             break;
-                    }
+                    }                    
 
                     if (model.IsBuiltInType)
                     {
@@ -295,6 +299,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         }
                         break;
                 }
+            }
+
+            if(Model.IsAsync)
+            {
+                ScopeDescription = "(awaitable) ";
             }
 
             Spelling = Model.Name;
