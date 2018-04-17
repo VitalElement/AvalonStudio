@@ -1,6 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:local="clr-namespace:AvalonStudio.Extensibility.Editor">
-    <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
-        <local:EditorView />
-    </Border>
+  <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
+    <local:EditorView />       
+  </Border>
 </UserControl>
