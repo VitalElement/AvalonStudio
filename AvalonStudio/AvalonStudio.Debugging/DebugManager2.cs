@@ -177,6 +177,8 @@ namespace AvalonStudio.Debugging
 
         private void OnEndSession()
         {
+            _session.Exit();
+
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 DebugSessionEnded?.Invoke(this, EventArgs.Empty);
