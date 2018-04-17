@@ -687,9 +687,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             return cursor;
         }
 
-        public async Task<StyledText> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
-            StyledText result = null;
+            StyledText styledText = null;
             var associatedData = GetAssociatedData(editor.SourceFile);
 
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
@@ -713,20 +713,20 @@ namespace AvalonStudio.Languages.CPlusPlus
                         case NClang.CursorKind.DeclarationReferenceExpression:
                         case NClang.CursorKind.CallExpression:
                         case NClang.CursorKind.TypeReference:
-                            result = InfoTextFromCursor(cursor.Referenced);
+                            styledText = InfoTextFromCursor(cursor.Referenced);
                             break;
 
                         case NClang.CursorKind.NoDeclarationFound:
                             break;
 
                         default:
-                            result = InfoTextFromCursor(cursor);
+                            styledText = InfoTextFromCursor(cursor);
                             break;
                     }
                 }
             });
 
-            return result;
+            return new QuickInfoResult(styledText);
         }
 
         private static Symbol SymbolFromClangCursor(ClangCursor cursor)

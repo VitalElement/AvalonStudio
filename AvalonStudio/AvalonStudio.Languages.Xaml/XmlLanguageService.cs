@@ -89,9 +89,9 @@ namespace AvalonStudio.Languages.Xaml
             return cursor;
         }
 
-        public Task<StyledText> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
-            return Task.FromResult<StyledText>(null);
+            return Task.FromResult<QuickInfoResult>(null);
         }
 
         public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)

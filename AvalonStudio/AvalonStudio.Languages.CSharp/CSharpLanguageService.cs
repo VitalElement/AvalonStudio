@@ -509,9 +509,9 @@ namespace AvalonStudio.Languages.CSharp
             return node;
         }
 
-        public async Task<StyledText> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
-            StyledText sb = null;
+            StyledText styledText = null;
 
             var dataAssociation = GetAssociatedData(editor);
 
@@ -552,13 +552,13 @@ namespace AvalonStudio.Languages.CSharp
 
                 ImmutableArray<TaggedText> parts;
 
-                sb = StyledText.Create();
+                styledText = StyledText.Create();
                 var theme = ColorScheme.CurrentColorScheme;
 
 
                 if (sections.TryGetValue(SymbolDescriptionGroups.MainDescription, out parts))
                 {
-                    TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                    TaggedTextUtil.AppendTaggedText(styledText, theme, parts);
                 }
 
                 // if generating quick info for an attribute, bind to the class instead of the constructor
@@ -572,16 +572,16 @@ namespace AvalonStudio.Languages.CSharp
 
                 if (documentation != null && documentation.Any())
                 {                    
-                    sb.AppendLine();
-                    TaggedTextUtil.AppendTaggedText(sb, theme, documentation);
+                    styledText.AppendLine();
+                    TaggedTextUtil.AppendTaggedText(styledText, theme, documentation);
                 }
 
                 if (sections.TryGetValue(SymbolDescriptionGroups.AnonymousTypes, out parts))
                 {
                     if (!parts.IsDefaultOrEmpty)
                     {
-                        sb.AppendLine();
-                        TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                        styledText.AppendLine();
+                        TaggedTextUtil.AppendTaggedText(styledText, theme, parts);
                     }
                 }
 
@@ -589,8 +589,8 @@ namespace AvalonStudio.Languages.CSharp
                 {
                     if (!parts.IsDefaultOrEmpty)
                     {
-                        sb.AppendLine();
-                        TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                        styledText.AppendLine();
+                        TaggedTextUtil.AppendTaggedText(styledText, theme, parts);
                     }
                 }
 
@@ -598,8 +598,8 @@ namespace AvalonStudio.Languages.CSharp
                 {
                     if (!parts.IsDefaultOrEmpty)
                     {
-                        sb.AppendLine();
-                        TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                        styledText.AppendLine();
+                        TaggedTextUtil.AppendTaggedText(styledText, theme, parts);
                     }
                 }
 
@@ -607,13 +607,13 @@ namespace AvalonStudio.Languages.CSharp
                 {
                     if (!parts.IsDefaultOrEmpty)
                     {
-                        sb.AppendLine();
-                        TaggedTextUtil.AppendTaggedText(sb, theme, parts);
+                        styledText.AppendLine();
+                        TaggedTextUtil.AppendTaggedText(styledText, theme, parts);
                     }
                 }                
             }
 
-            return sb;
+            return new QuickInfoResult(styledText);
         }
 
         public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)

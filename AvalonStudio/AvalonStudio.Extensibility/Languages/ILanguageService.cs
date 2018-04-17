@@ -73,7 +73,7 @@ namespace AvalonStudio.Languages
 
         Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName);
 
-        Task<StyledText> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset);
+        Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset);
 
         Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name);
 
