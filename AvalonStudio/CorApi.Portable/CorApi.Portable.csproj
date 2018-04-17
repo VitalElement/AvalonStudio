@@ -12,8 +12,8 @@
   </ItemGroup>-->
 
   <ItemGroup>
-    <PackageReference Include="SharpGen.Runtime" Version="1.0.3" />
-    <PackageReference Include="SharpGen.Runtime.COM" Version="1.0.2" />
+    <PackageReference Include="SharpGen.Runtime" Version="1.0.4-ci394" />
+    <PackageReference Include="SharpGen.Runtime.COM" Version="1.0.3" />
     <PackageReference Include="SharpGenTools.Sdk" Version="1.0.3" PrivateAssets="all" />
   </ItemGroup>
 
