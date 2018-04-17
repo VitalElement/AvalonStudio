@@ -7,8 +7,10 @@
         <Setter Property="Template">
             <ControlTemplate>
                 <Popup StaysOpen="False" Name="PART_Popup">
-                    <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1" Name="PART_Presenter">
-                        <Grid Margin="4" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}" TextBlock.FontFamily="Source Sans Pro" TextBlock.FontSize="14">
+                    <Border BorderBrush="{DynamicResource EditorBorderBrush}" 
+                            BorderThickness="1" Name="PART_Presenter" 
+                            Background="{DynamicResource EditorBackgroundAccentBrush}">
+                        <Grid Margin="4" TextBlock.Foreground="{DynamicResource EditorForegroundBrush}" TextBlock.FontFamily="Source Sans Pro" TextBlock.FontSize="14">
                             <cont:ViewModelViewHost Name="PART_ViewHost" />
                         </Grid>
                     </Border>

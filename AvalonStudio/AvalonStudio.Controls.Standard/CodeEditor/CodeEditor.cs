@@ -290,7 +290,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Background = colorScheme.Background;
                     Foreground = colorScheme.Text;
 
-                    _lineNumberMargin.Background = colorScheme.BackgroundAccent;
+                    _lineNumberMargin.Background = colorScheme.Background;
 
                     if (_textColorizer != null)
                     {

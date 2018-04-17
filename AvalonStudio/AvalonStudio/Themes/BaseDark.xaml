@@ -5,6 +5,10 @@
     <Style.Resources>
         <SolidColorBrush x:Key="AvalonBorderBrush">#FF004C8A</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeBackgroundBrush">#FF2D2D30</SolidColorBrush>
+        <SolidColorBrush x:Key="EditorBackgroundBrush">#FF2D2D30</SolidColorBrush>
+        <SolidColorBrush x:Key="EditorBackgroundAccentBrush">#FF2D2D30</SolidColorBrush>
+        <SolidColorBrush x:Key="EditorForegroundBrush">#FFE4E4E4</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeBorderBrush">#3E3E42</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeBorderLightBrush">#FFAAAAAA</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeBorderMidBrush">#FF888888</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeBorderDarkBrush">#3E3E42</SolidColorBrush>
