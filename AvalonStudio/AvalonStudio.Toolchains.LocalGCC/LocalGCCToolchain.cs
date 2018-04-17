@@ -391,7 +391,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
                 }
             }
 
-            return true;
+            return await base.InstallAsync(console, project);
         }
     }
 }
