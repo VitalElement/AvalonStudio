@@ -15,9 +15,18 @@ namespace AvalonStudio.Controls
         private bool _isDirty;
         private ISourceFile _sourceFile;
         private ColorScheme _colorScheme;
+        private string _zoomLevelText;
+        private double _fontSize;
+        private double _zoomLevel;
+        private double _visualFontSize;
+        private IShell _shell;
 
         public EditorViewModel(ISourceFile file)
         {
+            _shell = IoC.Get<IShell>();
+            _visualFontSize = _fontSize = 14;
+            _zoomLevel = 1;
+
             _sourceFile = file;
 
             var settings = GlobalSettings.Settings.GetSettings<EditorSettings>();
@@ -37,7 +46,7 @@ namespace AvalonStudio.Controls
                     if (document != null)
                     {
                         await shell.OpenDocumentAsync(document, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
-                    }                    
+                    }
                 }
                 else
                 {
@@ -49,12 +58,66 @@ namespace AvalonStudio.Controls
             {
                 Editor.RenameSymbol(Editor.CaretOffset);
             });
+
+            ZoomLevel = _shell.GlobalZoomLevel;
         }
 
         ~EditorViewModel()
         {
         }
-        
+
+        public double ZoomLevel
+        {
+            get
+            {
+                return _zoomLevel;
+            }
+            set
+            {
+                if (value != _zoomLevel)
+                {
+                    _zoomLevel = value;
+                    _shell.GlobalZoomLevel = value;
+                    InvalidateVisualFontSize();
+
+                    ZoomLevelText = $"{ZoomLevel:0} %";
+                }
+            }
+        }
+
+        public string ZoomLevelText
+        {
+            get { return _zoomLevelText; }
+            set { this.RaiseAndSetIfChanged(ref _zoomLevelText, value); }
+        }
+
+        public double FontSize
+        {
+            get
+            {
+                return _fontSize;
+            }
+            set
+            {
+                if (_fontSize != value)
+                {
+                    _fontSize = value;
+                    InvalidateVisualFontSize();
+                }
+            }
+        }
+
+        public double VisualFontSize
+        {
+            get { return _visualFontSize; }
+            set { this.RaiseAndSetIfChanged(ref _visualFontSize, value); }
+        }
+
+        private void InvalidateVisualFontSize()
+        {
+            VisualFontSize = (ZoomLevel / 100) * FontSize;
+        }
+
         public IMenu ContextMenu => IoC.Get<IShell>().BuildEditorContextMenu();
 
         public ReactiveCommand GotoDefinitionCommand { get; }

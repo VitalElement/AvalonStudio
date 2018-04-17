@@ -33,7 +33,14 @@ namespace AvalonStudio.Projects
 
             if (projectType != null)
             {
-                return await projectType.LoadAsync(solution, fileName);
+                try
+                {
+                    return await projectType.LoadAsync(solution, fileName);
+                }
+                catch (Exception)
+                {
+
+                }
             }
 
             return new UnsupportedProjectType(solution, fileName);

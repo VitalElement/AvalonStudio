@@ -90,7 +90,8 @@ namespace AvalonStudio.Extensibility.Editor
         {
             Name = "Light",
             Background = Brush.Parse("#FFFFFF"),
-            BackgroundAccent = Brush.Parse("#FFFFFF"),
+            BackgroundAccent = Brush.Parse("#EEEEF2"),
+            Border = Brush.Parse("#FFCCCEDB"),
             Text = Brush.Parse("#000000"),
             ErrorDiagnostic = Brush.Parse("#FD2D2D"),
             WarningDiagnostic = Brush.Parse("#FFCF28"),
@@ -122,7 +123,8 @@ namespace AvalonStudio.Extensibility.Editor
         {
             Name = "Dark",
             Background = Brush.Parse("#1e1e1e"),
-            BackgroundAccent = Brush.Parse("#1e1e1e"),
+            BackgroundAccent = Brush.Parse("#FF2D2D30"),
+            Border = Brush.Parse("#FF3E3E42"),
             Text = Brush.Parse("#C8C8C8"),
             ErrorDiagnostic = Brush.Parse("#FD2D2D"),
             WarningDiagnostic = Brush.Parse("#FFCF28"),
@@ -155,6 +157,7 @@ namespace AvalonStudio.Extensibility.Editor
             Name = "Solarized Dark",
             Background = Brush.Parse("#002b36"),
             BackgroundAccent = Brush.Parse("#073642"),
+            Border = Brush.Parse("#093844"),
             Text = Brush.Parse("#839496"),
             ErrorDiagnostic = Brush.Parse("#FD2D2D"),
             WarningDiagnostic = Brush.Parse("#FFCF28"),
@@ -180,6 +183,7 @@ namespace AvalonStudio.Extensibility.Editor
             Name = "Solarized Light",
             Background = Brush.Parse("#fdf6e3"),
             BackgroundAccent = Brush.Parse("#eee8d5"),
+            Border = Brush.Parse("#F0F0d7"),
             Text = Brush.Parse("#657b83"),
             ErrorDiagnostic = Brush.Parse("#FD2D2D"),
             WarningDiagnostic = Brush.Parse("#FFCF28"),
@@ -224,6 +228,10 @@ namespace AvalonStudio.Extensibility.Editor
             if (colorScheme != CurrentColorScheme)
             {
                 Application.Current.Resources["EditorColorScheme"] = colorScheme;
+                Application.Current.Resources["EditorBackgroundBrush"] = colorScheme.Background;
+                Application.Current.Resources["EditorBackgroundAccentBrush"] = colorScheme.BackgroundAccent;
+                Application.Current.Resources["EditorForegroundBrush"] = colorScheme.Text;
+                Application.Current.Resources["EditorBorderBrush"] = colorScheme.Border;
                 CurrentColorScheme = colorScheme;
             }
         }
@@ -271,6 +279,9 @@ namespace AvalonStudio.Extensibility.Editor
 
         [JsonProperty(PropertyName = "editor.background.accented")]
         public IBrush BackgroundAccent { get; set; }
+
+        [JsonProperty(PropertyName = "editor.border")]
+        public IBrush Border { get; set; }
 
         [JsonProperty(PropertyName = "editor.text")]
         public IBrush Text { get; set; }

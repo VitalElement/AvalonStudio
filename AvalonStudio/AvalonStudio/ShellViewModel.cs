@@ -268,7 +268,7 @@ namespace AvalonStudio
             {
                 foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
                 {
-                    //document.ZoomLevel = zoomLevel;
+                    document.ZoomLevel = zoomLevel;
                 }
             });
 
@@ -570,14 +570,14 @@ namespace AvalonStudio
             {
                 BuildStarting?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
 
-                await TaskRunner.RunTask(async () =>
+                await TaskRunner.RunTask(() =>
                 {
-                    result = await project.ToolChain.BuildAsync(Console, project).ConfigureAwait(false);
+                    result = project.ToolChain.BuildAsync(Console, project).Result;
+                });
 
-                    await Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        BuildCompleted?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
-                    });
+                Dispatcher.UIThread.Post(() =>
+                {
+                    BuildCompleted?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
                 });
             }
             else
