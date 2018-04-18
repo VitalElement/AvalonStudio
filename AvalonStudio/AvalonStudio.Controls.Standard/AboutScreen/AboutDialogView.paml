@@ -17,7 +17,7 @@
         </StackPanel>
 	<StackPanel Orientation="Horizontal" Gap="4">
 	  <TextBlock Text="Descriptive Version:" />
-	  <TextBox BorderThickness="0" Text="{Binding DescriptiveVersion, Mode=OneWay}" IsReadOnly="True"/>
+	  <TextBox BorderThickness="0" Text="{Binding DescriptiveVersion, Mode=OneWay}" IsReadOnly="True" Padding="0" />
 	</StackPanel>
         <StackPanel Orientation="Horizontal" Gap="4">
           <TextBlock Text="Platform:" />
