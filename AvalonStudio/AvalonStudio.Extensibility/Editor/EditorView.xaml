@@ -11,46 +11,78 @@
   <UserControl.KeyBindings>
     <KeyBinding Command="{Binding RenameSymbolCommand}" Gesture="F2" />
   </UserControl.KeyBindings>
-    <DockPanel LastChildFill="True">
-      <i:Interaction.Behaviors>
-        <beh:PointerWheelValueBehavior Value="{Binding ZoomLevel}" MinValue="20" MaxValue="400" Scale="10" InputModifiers="Control" />
-      </i:Interaction.Behaviors>
-  <Grid>
-    <DockPanel>
-      <Grid DockPanel.Dock="Top">
-        <ItemsControl Items="{Binding Index.SelectedChild.Children}">
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-              <StackPanel Orientation="Horizontal" Gap="1" />
-            </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
+  <DockPanel LastChildFill="True">
+    <i:Interaction.Behaviors>
+      <beh:PointerWheelValueBehavior Value="{Binding ZoomLevel}" MinValue="20" MaxValue="400" Scale="10" InputModifiers="Control" />
+    </i:Interaction.Behaviors>
+    <Grid DockPanel.Dock="Top" MinHeight="18">
+      <!--<ItemsControl Items="{Binding Index.Children}">
+        <ItemsControl.ItemsPanel>
+          <ItemsPanelTemplate>
+            <StackPanel Orientation="Horizontal" Gap="1" />
+          </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
 
-          <ItemsControl.ItemTemplate>
-            <TreeDataTemplate ItemsSource="{Binding Parent.SelectedChild.Children}">
-              <DropDown Items="{Binding Children}" SelectedItem="{Binding SelectedChild}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10">
-                <DropDown.DataTemplates>
-                  <DataTemplate>
-                    <TextBlock Text="{Binding Title}" TextAlignment="Left" />
-                  </DataTemplate>
-                </DropDown.DataTemplates>
-              </DropDown>
-            </TreeDataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <!--<TreeView BorderThickness="0" Items="{Binding Index.Children}">
+        <ItemsControl.ItemTemplate>
+          <TreeDataTemplate ItemsSource="{Binding SelectedChild.Children}">
+            <DropDown Items="{Binding Children}" SelectedItem="{Binding SelectedChild}" FontFamily ="Arial" BorderThickness="0" Height="20" MaxDropDownHeight="350" FontSize="10">
+              <DropDown.DataTemplates>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Title}" TextAlignment="Left" />
+                </DataTemplate>
+              </DropDown.DataTemplates>
+            </DropDown>
+          </TreeDataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>-->
+      <TreeView BorderThickness="0" Items="{Binding Index.Children}">
+        <TreeView.Styles>
+          <Style Selector="TreeViewItem">
+            <Setter Property="Template">
+              <ControlTemplate>
+                <StackPanel>
+                  <Grid ColumnDefinitions="16, Auto">                    
+                    <ContentPresenter Name="PART_HeaderPresenter"
+                                      Background="{TemplateBinding Background}"
+                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                      Content="{TemplateBinding Header}"
+                                      Padding="{TemplateBinding Padding}"
+                                      TemplatedControl.IsTemplateFocusTarget="True"
+                                      Grid.Column="1"/>
+                  </Grid>
+                  <ItemsPresenter Name="PART_ItemsPresenter"
+                                  IsVisible="True"
+                                  Items="{TemplateBinding Items}"
+                                  Margin="24,0,0,0"
+                                  MemberSelector="{TemplateBinding MemberSelector}">
+                    <ItemsPresenter.ItemsPanel>
+                      <StackPanel Orientation="Horizontal" />
+                    </ItemsPresenter.ItemsPanel>
+                  </ItemsPresenter>
+                </StackPanel>
+              </ControlTemplate>
+            </Setter>
+          </Style>
+        </TreeView.Styles>
+        <TreeView.ItemsPanel>
+          <ItemsPanelTemplate>
+            <StackPanel Orientation="Horizontal" />
+          </ItemsPanelTemplate>
+        </TreeView.ItemsPanel>
           <TreeView.ItemTemplate>
-            <TreeDataTemplate ItemsSource="{Binding Parent.SelectedChild.Children}">
+            <TreeDataTemplate ItemsSource="{Binding Children}">
               <TextBlock Text="{Binding Title}" />
             </TreeDataTemplate>
           </TreeView.ItemTemplate>
-        </TreeView>-->
-      </Grid>
-      <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
-        <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
-      </Grid>
-      <Grid>
-        <Grid.ContextMenu>
-          <!--<ContextMenu Items="{Binding ContextMenu}">
+        </TreeView>
+    </Grid>
+    <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
+      <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
+    </Grid>
+    <Grid>
+      <Grid.ContextMenu>
+        <!--<ContextMenu Items="{Binding ContextMenu}">
                         <ContextMenu.Styles>
                             <Style Selector="MenuItem">
                                 <Setter Property="Command" Value="{Binding Command}" />
@@ -71,26 +103,26 @@
                             </DataTemplate>
                         </ContextMenu.DataTemplates>
                     </ContextMenu>-->
-          <ContextMenu>
-            <MenuItem Header="Goto Definition" Command="{Binding GotoDefinitionCommand}" />
-          </ContextMenu>
-        </Grid.ContextMenu>
+        <ContextMenu>
+          <MenuItem Header="Goto Definition" Command="{Binding GotoDefinitionCommand}" />
+        </ContextMenu>
+      </Grid.ContextMenu>
 
-        <editor:CodeEditor Name="editor"
-                           BorderThickness="0" Margin="0"
-                           VerticalAlignment="Stretch"
-                           FontFamily="{Binding FontFamily}"
-                           FontSize="{Binding VisualFontSize}"
-                           SourceFile="{Binding SourceFile}"
-                           IsDirty="{Binding IsDirty}"
-                           IsReadOnly="{Binding IsReadOnly}"
-                           SourceText="{Binding SourceText}"
-                           HighlightSelectedWord="False"
-                           ColorScheme="{Binding ColorScheme}"
-                           CodeIndex="{Binding CodeIndex}"
-                           EditorCaretOffset="{Binding CaretIndex}"
-                           DocumentAccessor="{Binding DocumentAccessor}">
-        </editor:CodeEditor>
-      </Grid>
-    </DockPanel>
+      <editor:CodeEditor Name="editor"
+                         BorderThickness="0" Margin="0"
+                         VerticalAlignment="Stretch"
+                         FontFamily="{Binding FontFamily}"
+                         FontSize="{Binding VisualFontSize}"
+                         SourceFile="{Binding SourceFile}"
+                         IsDirty="{Binding IsDirty}"
+                         IsReadOnly="{Binding IsReadOnly}"
+                         SourceText="{Binding SourceText}"
+                         HighlightSelectedWord="False"
+                         ColorScheme="{Binding ColorScheme}"
+                         CodeIndex="{Binding CodeIndex}"
+                         EditorCaretOffset="{Binding CaretIndex}"
+                         DocumentAccessor="{Binding DocumentAccessor}">
+      </editor:CodeEditor>
+    </Grid>
+  </DockPanel>
 </UserControl>

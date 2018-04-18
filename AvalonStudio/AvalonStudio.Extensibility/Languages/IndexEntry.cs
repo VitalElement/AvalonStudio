@@ -43,7 +43,7 @@ namespace AvalonStudio.Extensibility.Languages
 
         public int CompareTo(IndexEntry other)
         {
-            if(other.StartOffset <= StartOffset && other.EndOffset >= EndOffset)
+            if (other.StartOffset <= StartOffset && other.EndOffset >= EndOffset)
             {
                 return Length.CompareTo(other.Length);
             }
@@ -57,7 +57,7 @@ namespace AvalonStudio.Extensibility.Languages
     public class IndexTree
     {
         private TreeNode<IndexEntry> _root;
-        private TreeNode<IndexEntry> _navigationTree;        
+        private TreeNode<IndexEntry> _navigationTree;
 
         public IndexTree()
         {
@@ -67,16 +67,17 @@ namespace AvalonStudio.Extensibility.Languages
 
         public void Add(IndexEntry newEntry)
         {
-            var node = _root.FindLowestTreeNode(entry => entry.Data.Contains(newEntry));
+            TreeNode<IndexEntry> node;
 
-            node.AddChild(newEntry);
-
-            switch(newEntry.Kind)
+            switch (newEntry.Kind)
             {
                 case CursorKind.Namespace:
                     node = _navigationTree;
                     break;
-                
+
+                case CursorKind.EnumDeclaration:
+                case CursorKind.StructDeclaration:
+                case CursorKind.UnionDeclaration:
                 case CursorKind.ClassDeclaration:
                     node = _navigationTree.FindLowestTreeNode(entry => entry.Data.Contains(newEntry) && (entry.Data.Kind == CursorKind.Namespace || entry.Data.Kind == CursorKind.TranslationUnit));
                     break;
@@ -84,7 +85,7 @@ namespace AvalonStudio.Extensibility.Languages
                 default:
                     node = _navigationTree.FindTreeNode(entry => entry.Data.Contains(newEntry) && (entry.Data.Kind != CursorKind.TranslationUnit && entry.Data.Kind != CursorKind.Namespace));
                     break;
-            }            
+            }
 
             node.AddChild(newEntry);
         }
@@ -93,6 +94,6 @@ namespace AvalonStudio.Extensibility.Languages
 
         public TreeNode<IndexEntry> NavigationTree => _navigationTree;
     }
-        
+
 
 }

@@ -100,8 +100,7 @@ namespace AvalonStudio.Extensibility.Editor
                     //SelectedIndexEntry = CodeIndex.FindLowestTreeNode(entry => entry.Data.Contains(index.Value, 0))?.Data;
                     _caretSettingIndex = false;
                 }
-            });
-            //ZoomLevel = _shell.GlobalZoomLevel;
+            });            
         }
 
         public bool IsReadOnly
