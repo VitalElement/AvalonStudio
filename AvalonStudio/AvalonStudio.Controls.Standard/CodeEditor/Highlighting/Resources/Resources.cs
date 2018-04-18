@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.Resources
 {
-    internal static class Resources
+    public static class Resources
     {
         private const string Prefix = "AvalonStudio.Controls.Standard.CodeEditor.Highlighting.Resources.";
 
@@ -18,6 +18,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting.Resources
         internal static void RegisterBuiltInHighlightings(CustomHighlightingManager hlm)
         {
             hlm.RegisterHighlighting("XML-Mode.xshd");
+            hlm.RegisterHighlighting("c.tmLanguage.json");
+            hlm.RegisterHighlighting("cpp.tmLanguage.json");
+            hlm.RegisterHighlighting("csharp.tmLanguage");
         }
     }
 }

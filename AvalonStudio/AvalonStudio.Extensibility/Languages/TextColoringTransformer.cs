@@ -84,16 +84,16 @@ namespace AvalonStudio.Languages
                 {
                     return new OpacityTextTransformation(
                     tag,
-                    highlight.Start,
-                    highlight.Start + highlight.Length,
+                    highlight.Offset,
+                    highlight.Offset + highlight.Length,
                     0.5);
                 }
                 else
                 {
                     return new ForegroundTextTransformation(
                     tag,
-                    highlight.Start,
-                    highlight.Start + highlight.Length,
+                    highlight.Offset,
+                    highlight.Offset + highlight.Length,
                     GetBrush(highlight.Type));
                 }
             }

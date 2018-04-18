@@ -721,7 +721,7 @@ namespace AvalonStudio.Languages.CSharp
                         {
                             fadedCode.Add(new OffsetSyntaxHighlightingData
                             {
-                                Start = diagnostic.TextSpan.Start,
+                                Offset = diagnostic.TextSpan.Start,
                                 Length = diagnostic.TextSpan.Length,
                                 Type = HighlightType.Unnecessary
                             });
@@ -921,11 +921,21 @@ namespace AvalonStudio.Languages.CSharp
             try
             {
                 var highlightData = await Classifier.GetClassifiedSpansAsync(document, new TextSpan(0, textLength));
-                var displayParts = await Classifier.GetClassifiedSymbolDisplayPartsAsync(document, new TextSpan(0, textLength));
 
                 foreach (var span in highlightData)
                 {
-                    result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
+                    var type = FromRoslynType(span.ClassificationType);
+
+                    switch (type)
+                    {
+                        case HighlightType.DelegateName:
+                        case HighlightType.EnumTypeName:
+                        case HighlightType.StructName:
+                        case HighlightType.InterfaceName:
+                        case HighlightType.ClassName:
+                            result.SyntaxHighlightingData.Add(new OffsetSyntaxHighlightingData { Offset = span.TextSpan.Start, Length = span.TextSpan.Length, Type = type });
+                            break;
+                    }
                 }
             }
             catch (NullReferenceException)

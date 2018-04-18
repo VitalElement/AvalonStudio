@@ -8,6 +8,7 @@ using AvalonStudio.Extensibility.Editor;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Xml;
 
@@ -381,7 +382,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
 
     public class CustomHighlightingManager : IHighlightingDefinitionReferenceResolver
     {
-        private readonly Dictionary<string, IHighlightingDefinition> _highlightingsByContentTypes = new Dictionary<string, IHighlightingDefinition>();
+        private readonly Dictionary<string, object> _highlightingsByContentTypes = new Dictionary<string, object>();
 
         public static CustomHighlightingManager Instance { get; } = new CustomHighlightingManager();
 
@@ -402,6 +403,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             }
         }
 
+        public object GetAvalonStudioDefinition(string contentType)
+        {
+            lock (this)
+            {
+                return _highlightingsByContentTypes.TryGetValue(contentType, out var rh) ? rh : null;
+            }
+        }
+
         internal void RegisterHighlighting(string resourceName)
         {
             try
@@ -416,7 +425,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             }
         }
 
-        public void RegisterHighlighting(IEnumerable<string> contentTypes, IHighlightingDefinition highlighting)
+        public void RegisterHighlighting(IEnumerable<string> contentTypes, object highlighting)
         {
             if (highlighting == null)
             {
@@ -432,16 +441,52 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Highlighting
             }
         }
 
-        public (IEnumerable<string> contentTypes, IHighlightingDefinition definition) Load(string resourceName)
+        private (IEnumerable<string> contentTypes, object definition) Load(string resourceName)
         {
-            ASXshdSyntaxDefinition xshd;
+            var extension = Path.GetExtension(resourceName);
+
             using (var s = Resources.Resources.OpenStream(resourceName))
-            using (var reader = XmlReader.Create(s))
             {
-                // in release builds, skip validating the built-in highlightings
-                xshd = LoadXshd(reader, true);
+                switch (extension)
+                {
+                    case ".xshd":
+                        ASXshdSyntaxDefinition xshd;
+                        using (var reader = XmlReader.Create(s))
+                        {
+                            // in release builds, skip validating the built-in highlightings
+                            xshd = LoadXshd(reader, true);
+                        }
+                        return (xshd.ContentTypes, HighlightingLoader.Load(xshd, this));
+
+                    case ".tmLanguage":
+                        {
+                            var definition = TextMate.TextMateFormat.ReadHighlighting(s);
+                            definition.PrepareMatches();
+                            return (new List<string> { definition.Name }, definition);
+                        }
+
+                    case ".json":
+                        if(resourceName.EndsWith(".tmLanguage.json"))
+                        {
+                            var definition = TextMate.TextMateFormat.ReadHighlightingFromJson(s);
+                            definition.PrepareMatches();
+                            return (new List<string> { definition.Name }, definition);
+                        }
+                        break;
+
+                    case ".sublime-syntax":
+                        {
+                            using (var sr = new StreamReader(s))
+                            {
+                                var definition = Sublime3.Sublime3Format.ReadHighlighting(sr);
+                                definition.PrepareMatches();
+                                return (new List<string> { definition.Name }, definition);
+                            }
+                        }                        
+                }
             }
-            return (xshd.ContentTypes, HighlightingLoader.Load(xshd, this));
+
+            return (null, null);
         }
 
         internal static ASXshdSyntaxDefinition LoadXshd(XmlReader reader, bool skipValidation)

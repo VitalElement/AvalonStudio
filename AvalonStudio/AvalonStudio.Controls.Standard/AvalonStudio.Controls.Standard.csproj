@@ -5,13 +5,26 @@
     </PostBuildEvent>
     <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;DISABLE_CAS_USE</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="CodeEditor\Highlighting\RegexEngine\**" />
+    <EmbeddedResource Remove="CodeEditor\Highlighting\RegexEngine\**" />
+    <None Remove="CodeEditor\Highlighting\RegexEngine\**" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="AboutScreen\Assets\logo-256.png" />
     <None Remove="AboutScreen\Assets\logo-65.png" />
     <None Remove="AboutScreen\Assets\logo.png" />
+    <None Remove="CodeEditor\Highlighting\Resources\C#.sublime-syntax" />
+    <None Remove="CodeEditor\Highlighting\Resources\c.tmLanguage.json" />
+    <None Remove="CodeEditor\Highlighting\Resources\cpp.tmLanguage.json" />
+    <None Remove="CodeEditor\Highlighting\Resources\csharp.tmLanguage" />
+    <None Remove="CodeEditor\Highlighting\Resources\csharp.tmLanguage.json" />
     <None Remove="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
     <None Remove="SolutionExplorer\TemplateView.xaml" />
     <None Remove="SolutionExplorer\TextTemplateParameter.xaml" />
@@ -20,12 +33,21 @@
     <EmbeddedResource Include="AboutScreen\Assets\logo-256.png" />
     <EmbeddedResource Include="AboutScreen\Assets\logo-65.png" />
     <EmbeddedResource Include="AboutScreen\Assets\logo.png" />
+    <EmbeddedResource Include="CodeEditor\Highlighting\Resources\C#.sublime-syntax" />
+    <EmbeddedResource Include="CodeEditor\Highlighting\Resources\c.tmLanguage.json" />
+    <EmbeddedResource Include="CodeEditor\Highlighting\Resources\cpp.tmLanguage.json" />
+    <EmbeddedResource Include="CodeEditor\Highlighting\Resources\csharp.tmLanguage" />
+    <EmbeddedResource Include="CodeEditor\Highlighting\Resources\csharp.tmLanguage.json" />
     <EmbeddedResource Include="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.6.2-build4853-beta" />
     <PackageReference Include="GitInfo" Version="2.0.10" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
+    <PackageReference Include="System.Security.Permissions" Version="4.4.1" />
+    <PackageReference Include="YamlDotNet.NetCore" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />

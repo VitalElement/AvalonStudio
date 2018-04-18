@@ -10,6 +10,7 @@ using Avalonia.Threading;
 using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
+using AvaloniaEdit.Highlighting;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
@@ -793,9 +794,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             LanguageService = _shell.LanguageServices.FirstOrDefault(
                 o => o.Metadata.TargetCapabilities.Any(
-                    c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;
-            
-            SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(sourceFile.ContentType);
+                    c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;                       
 
             if (LanguageService != null)
             {
@@ -844,6 +843,20 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Observable.FromEventPattern<DiagnosticsUpdatedEventArgs>(LanguageService, nameof(LanguageService.DiagnosticsUpdated)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(args =>
                     LanguageService_DiagnosticsUpdated(args.Sender, args.EventArgs))
                 };
+            }
+
+            var definition = CustomHighlightingManager.Instance.GetAvalonStudioDefinition(sourceFile.ContentType);
+
+            if (definition is IHighlightingDefinition avalonEditHighlighting)
+            {
+                SyntaxHighlighting = avalonEditHighlighting;
+            }
+            else if (definition is SyntaxHighlightingDefinition highlightingDefinition)
+            {
+                var colorizer = new StaticHighlightingColorizer(highlightingDefinition);
+                TextArea.TextView.LineTransformers.Insert(0, colorizer);
+
+                colorizer.OnAddToEditor(this);
             }
 
             StartBackgroundWorkers();

@@ -1,21 +1,40 @@
-﻿using System;
+﻿using AvalonStudio.Documents;
+using System;
 
 namespace AvalonStudio.Languages
 {
-    public class OffsetSyntaxHighlightingData : IComparable<OffsetSyntaxHighlightingData>
+    public class OffsetSyntaxHighlightingData : IComparable<OffsetSyntaxHighlightingData>, ISegment
     {
+        public OffsetSyntaxHighlightingData()
+        {
+
+        }
+
+        public OffsetSyntaxHighlightingData(ISegment segment)
+        {
+            Offset = segment.Offset;
+            Length = segment.Length;
+        }
+
+        public OffsetSyntaxHighlightingData (int offset, int length)
+        {
+            Offset = offset;
+            Length = length;
+        }
+
         public HighlightType Type { get; set; }
-        public int Start { get; set; }
+        public int Offset { get; set; }
         public int Length { get; set; }
+        public int EndOffset => Offset + Length;
 
         public int CompareTo(OffsetSyntaxHighlightingData other)
         {
-            if (Start > other.Start)
+            if (Offset > other.Offset)
             {
                 return 1;
             }
 
-            if (Start == other.Start)
+            if (Offset == other.Offset)
             {
                 return 0;
             }

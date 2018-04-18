@@ -71,6 +71,16 @@ namespace AvalonStudio.Documents
             pos++; // go back the one character that isn't whitespace
             return new SimpleSegment(pos, offset - pos);
         }
+
+        public static bool Contains(this ISegment segment, int offset)
+        {
+            return segment.Contains(offset, 0);
+        }
+
+        public static bool Contains (this ISegment segment, int offset, int length)
+        {
+            return segment.Offset <= offset && offset + length <= segment.EndOffset;
+        }
     }
 
     /// <summary>
@@ -271,14 +281,20 @@ namespace AvalonStudio.Documents
 
     public class DocumentChangeEventArgs : EventArgs
     {
-        public DocumentChangeEventArgs(int offset, string removedText, string insertedText)
+        public DocumentChangeEventArgs(int offset, Func<int,int> getNewOffset, string removedText, string insertedText)
         {
             if (offset < 0)
                 throw new ArgumentOutOfRangeException(nameof(offset), offset, "offset must not be negative");
             Offset = offset;
             RemovedText = removedText;
             InsertedText = insertedText;
+
+            _getNewOffset = getNewOffset;
         }
+
+        private Func<int, int> _getNewOffset;
+
+        public int GetNewOffset(int offset) => _getNewOffset(offset);
 
         public int Offset { get; }
 
@@ -318,6 +334,8 @@ namespace AvalonStudio.Documents
         IIndexableList<IDocumentLine> Lines { get; }
 
         IDocumentLine GetLineByNumber(int lineNumber);
+
+        IDocumentLine GetLineByOffset(int offset);
 
         int LineCount { get; }
 
