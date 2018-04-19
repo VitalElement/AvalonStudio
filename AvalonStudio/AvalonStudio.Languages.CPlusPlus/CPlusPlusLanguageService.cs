@@ -726,7 +726,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             });
 
-            return new QuickInfoResult(styledText);
+            return styledText == null ? null : new QuickInfoResult(styledText);
         }
 
         private static Symbol SymbolFromClangCursor(ClangCursor cursor)
