@@ -214,7 +214,7 @@ namespace AvalonStudio.Packages
                 if (!project.PackageExists(identity))
                 {
                     var packageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, Platform.ReposDirectory)
-                    {
+                    {                         
                         PackagesFolderNuGetProject = project,
                     };
 
@@ -224,7 +224,8 @@ namespace AvalonStudio.Packages
                     ResolutionContext resolutionContext = new ResolutionContext(
                         DependencyBehavior.Lowest, allowPrereleaseVersions, allowUnlisted, VersionConstraints.None);
 
-                    INuGetProjectContext projectContext = new ProjectContext(logger);                    
+                    INuGetProjectContext projectContext = new ProjectContext(logger);  
+                    
 
                     await packageManager.InstallPackageAsync(packageManager.PackagesFolderNuGetProject,
                         identity, resolutionContext, projectContext, s_sourceRepositories,

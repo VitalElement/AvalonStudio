@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace AvalonStudio.Packages
 {
     // This primarily exists to intercept package installations and store their paths
-    internal class AvalonStudioExtensionsFolderProject : AvalonStudio.Repository.FolderNuGetProject
+    internal class AvalonStudioExtensionsFolderProject : FolderNuGetProject
     {
         private readonly NuGetFramework _currentFramework;
         private readonly InstalledPackagesCache _installedPackages;

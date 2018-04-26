@@ -12,6 +12,7 @@ namespace AvalonStudio.Packages
         public ProjectContext(ILogger logger)
         {
             _logger = logger;
+            PackageExtractionContext = new PackageExtractionContext(PackageSaveMode.Files, XmlDocFileSaveMode.Skip, logger, null);
         }
 
         public void Log(MessageLevel level, string message, params object[] args)
