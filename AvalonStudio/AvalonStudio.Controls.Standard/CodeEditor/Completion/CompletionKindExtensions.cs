@@ -28,7 +28,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Completion
                     }
                     else
                     {
-                        System.Console.WriteLine($"No intellisense icon provided for {icon}");
+                        //System.Console.WriteLine($"No intellisense icon provided for {icon}");
                     }
                 }
 
