@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -231,11 +232,25 @@ namespace AvalonStudio.Packages
                         CancellationToken.None);
 
                     var packageDir = GetPackageDirectory(identity);
+                    var contentZip = Path.Combine(packageDir, "Content.zip");
+
+                    if (File.Exists(contentZip))
+                    {
+                        logger.LogInformation("Extracting Package Content.");
+
+                        ZipFile.ExtractToDirectory(contentZip, packageDir);
+
+                        File.Delete(contentZip);
+
+                        logger.LogInformation("Package Content Extracted.");
+                    }
 
                     var files = Directory.EnumerateFiles(packageDir, "*.*", SearchOption.AllDirectories);
 
                     if (Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
                     {
+                        logger.LogInformation("Applying file attributes.");
+
                         foreach (var file in files)
                         {
                             Platform.Chmod(file, chmodFileMode);
