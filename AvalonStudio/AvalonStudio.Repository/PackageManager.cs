@@ -233,13 +233,13 @@ namespace AvalonStudio.Packages
                         CancellationToken.None);
 
                     var packageDir = GetPackageDirectory(identity);
-                    var contentZip = Path.Combine(packageDir, "Content.zip");
+                    var contentZip = Path.Combine(packageDir, "content", "Content.zip");
 
                     if (File.Exists(contentZip))
                     {
                         logger.LogInformation("Extracting Package Content.");
-
-                        ZipFile.ExtractToDirectory(contentZip, packageDir);
+                        
+                        ZipFile.ExtractToDirectory(contentZip, Path.Combine(packageDir, "content"), System.Text.Encoding.UTF8);
 
                         File.Delete(contentZip);
 
