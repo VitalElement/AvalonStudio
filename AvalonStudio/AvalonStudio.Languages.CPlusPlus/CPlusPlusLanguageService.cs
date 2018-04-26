@@ -726,7 +726,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             });
 
-            return new QuickInfoResult(styledText);
+            return styledText == null ? null : new QuickInfoResult(styledText);
         }
 
         private static Symbol SymbolFromClangCursor(ClangCursor cursor)
@@ -1287,6 +1287,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 case CursorKind.EnumConstantDeclaration:
                     result.Append(" = " + cursor.EnumConstantDeclUnsignedValue.ToString());
+                    result.Append(" (0x" + cursor.EnumConstantDeclUnsignedValue.ToString("X") + ")");
                     break;
 
                 case CursorKind.FunctionDeclaration:

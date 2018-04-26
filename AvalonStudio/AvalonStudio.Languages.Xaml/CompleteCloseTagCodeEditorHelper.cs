@@ -17,7 +17,7 @@ namespace AvalonStudio.Languages.Xaml
                 if (textBefore.Length > 2 && textBefore[textBefore.Length - 1] != '/')
                 {
                     var state = XmlParser.Parse(textBefore);
-                    if (!state.TagName.StartsWith('/') && (state.State == XmlParser.ParserState.InsideElement
+                    if ((state.TagName == null || !state.TagName.StartsWith('/')) && (state.State == XmlParser.ParserState.InsideElement
                         || state.State == XmlParser.ParserState.StartElement
                         || state.State == XmlParser.ParserState.AfterAttributeValue))
                     {
