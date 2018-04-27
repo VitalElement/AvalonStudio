@@ -4,6 +4,7 @@ using AvalonStudio.Packages;
 using AvalonStudio.Projects;
 using AvalonStudio.Toolchains.CustomGCC;
 using ReactiveUI;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -95,7 +96,9 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
             var versionData = await versions.FirstOrDefault().GetVersionsAsync();
 
-            Versions = new ObservableCollection<string>(versionData.Select(v=>v.Version.ToNormalizedString()));
+            var baseVersion = new List<NuGet.Protocol.Core.Types.VersionInfo> { new NuGet.Protocol.Core.Types.VersionInfo(versionData.First().Version) };
+
+            Versions = new ObservableCollection<string>(versionData.Concat(baseVersion).Select(v=>v.Version.ToNormalizedString()));
         }
 
         public PackageMetaData SelectedPackage
