@@ -11,6 +11,9 @@ using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using NuGet.Resolver;
 using NuGet.Versioning;
+using SharpCompress.Archives;
+using SharpCompress.Readers;
+using SharpCompress.Readers.Tar;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -194,6 +197,26 @@ namespace AvalonStudio.Packages
             }
         }
 
+        public static bool ExtractArchiveToFolder(string archivePath, string extractionPath)
+        {
+            using (var archive = ArchiveFactory.Open(archivePath))
+            {
+                try
+                {
+                    using (var reader = archive.ExtractAllEntries())
+                    {
+                        reader.WriteAllToDirectory(extractionPath, new ExtractionOptions() { Overwrite = true, ExtractFullPath = true });
+                    }
+
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+        }
+
         public static async Task InstallPackage(string packageId, string version, ILogger logger = null, int chmodFileMode = DefaultFilePermissions)
         {
             if (logger == null)
@@ -226,22 +249,34 @@ namespace AvalonStudio.Packages
 
                     INuGetProjectContext projectContext = new ProjectContext(logger);  
                     
-
                     await packageManager.InstallPackageAsync(packageManager.PackagesFolderNuGetProject,
                         identity, resolutionContext, projectContext, s_sourceRepositories,
                         Array.Empty<SourceRepository>(),  // This is a list of secondary source respositories, probably empty
                         CancellationToken.None);
 
                     var packageDir = GetPackageDirectory(identity);
-                    var contentZip = Path.Combine(packageDir, "content", "Content.zip");
+                    var contentZip = Path.Combine(packageDir, "Content.zip");
 
                     if (File.Exists(contentZip))
                     {
                         logger.LogInformation("Extracting Package Content.");
-                        
-                        ZipFile.ExtractToDirectory(contentZip, Path.Combine(packageDir, "content"), System.Text.Encoding.UTF8);
+
+                        ExtractArchiveToFolder(contentZip, Path.Combine(packageDir, "content"));
 
                         File.Delete(contentZip);
+
+                        logger.LogInformation("Package Content Extracted.");
+                    }
+
+                    var contentTar = Path.Combine(packageDir, "Content.tar");
+
+                    if (File.Exists(contentTar))
+                    {
+                        logger.LogInformation("Extracting Package Content.");
+
+                        ExtractArchiveToFolder(contentTar, Path.Combine(packageDir, "content"));
+
+                        File.Delete(contentTar);
 
                         logger.LogInformation("Package Content Extracted.");
                     }
