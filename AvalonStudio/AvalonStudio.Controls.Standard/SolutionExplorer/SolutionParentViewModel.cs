@@ -10,6 +10,7 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Reactive.Linq;
 
     public abstract class SolutionParentViewModel<T> : SolutionItemViewModel<T>, ISolutionParentViewModel
         where T : ISolutionFolder
@@ -63,8 +64,21 @@
 
                         if (proj != null)
                         {
-                            Model.Solution.AddItem(proj, projectTypeGuid, Model);
-                            Model.Solution.Save();
+                            var observable = Items.ObserveNewItems().OfType<SolutionItemViewModel>().FirstOrDefaultAsync();
+
+                            using (var subscription = observable.Subscribe(item =>
+                            {
+                                if (item is ProjectViewModel pvm)
+                                {
+                                    pvm.IsExpanded = true;
+                                }
+                            }))
+                            {
+                                Model.Solution.AddItem(proj, projectTypeGuid, Model);
+                                Model.Solution.Save();
+
+                                await observable;
+                            }
                         }
                     }
                     else
@@ -75,12 +89,27 @@
                 }
             });
 
-            AddNewProjectCommand = ReactiveCommand.Create(() =>
+            AddNewProjectCommand = ReactiveCommand.Create(async () =>
             {
                 var shell = IoC.Get<IShell>();
 
                 shell.ModalDialog = new NewProjectDialogViewModel(Model);
-                shell.ModalDialog.ShowDialog();
+
+                if (await shell.ModalDialog.ShowDialog())
+                {
+                    var observable = Items.ObserveNewItems().OfType<SolutionItemViewModel>().FirstOrDefaultAsync();
+
+                    using (var subscription = observable.Subscribe(item =>
+                    {
+                        if (item is ProjectViewModel pvm)
+                        {
+                            pvm.IsExpanded = true;
+                        }
+                    }))
+                    {
+                        await observable;
+                    }
+                }
             });
 
             RemoveCommand = ReactiveCommand.Create(() =>
