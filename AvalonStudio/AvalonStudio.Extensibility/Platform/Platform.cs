@@ -386,7 +386,7 @@ namespace AvalonStudio.Platforms
                 switch (PlatformIdentifier)
                 {
                     case PlatformID.Win32NT:
-                        Process.Start(new ProcessStartInfo { FileName = "cmd.exe", Arguments = $"/c start {path}", CreateNoWindow = true });
+                        Process.Start(new ProcessStartInfo { FileName = "explorer.exe", Arguments = $"\"{path}\"" });
                         break;
 
                     case PlatformID.Unix:
