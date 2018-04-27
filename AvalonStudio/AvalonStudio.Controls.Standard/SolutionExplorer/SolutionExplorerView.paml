@@ -48,7 +48,7 @@
                 </ContextMenu>
               </StackPanel.ContextMenu>
               <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-              <Controls:EditableTextBlock Text="{Binding Title}" Height="15" />
+              <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" />
             </StackPanel>
           </TreeDataTemplate>
 
@@ -68,7 +68,7 @@
                     <MenuItem Header="New File" Command="{Binding NewFileCommand}" />
                     <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
                     <MenuItem Header="Exisiting Item..." />
-                    <MenuItem Header="New Folder..." />
+                    <MenuItem Header="New Folder..." Command="{Binding NewFolderCommand}p" />
                     <MenuItem Header="Import Folder..." />
                     <Separator />
                     <MenuItem Header="New File..." />
@@ -81,7 +81,7 @@
                 </ContextMenu>
               </StackPanel.ContextMenu>
               <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-              <Controls:EditableTextBlock Text="{Binding Title}" Height="15" FontWeight="{Binding FontWeight}" />
+              <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" FontWeight="{Binding FontWeight}" />
             </StackPanel>
           </TreeDataTemplate>
 
@@ -132,7 +132,7 @@
                     <MenuItem Header="New File" Command="{Binding NewFileCommand}" />
                     <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
                     <MenuItem Header="Exisiting Item..." />
-                    <MenuItem Header="New Folder..." />
+                    <MenuItem Header="New Folder..." Command="{Binding NewFolderCommand}" />
                     <MenuItem Header="Import Folder..." />
                     <Separator />
                     <MenuItem Header="New File..." />
@@ -140,7 +140,7 @@
                 </ContextMenu>
               </StackPanel.ContextMenu>
               <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-              <Controls:EditableTextBlock Text="{Binding Title}" Height="15" />
+              <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" />
             </StackPanel>
           </TreeDataTemplate>
         </TreeView.DataTemplates>

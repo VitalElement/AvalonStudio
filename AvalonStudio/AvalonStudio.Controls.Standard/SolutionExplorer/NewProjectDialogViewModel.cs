@@ -234,7 +234,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (value != null)
                 {
-                    Name = value.DefaultName + "1";
+                    Name = Platform.NextAvailableDirectoryName(value.DefaultName);
                 }
 
                 SolutionName = name;

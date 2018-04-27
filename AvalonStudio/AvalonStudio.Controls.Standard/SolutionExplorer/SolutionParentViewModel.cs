@@ -25,9 +25,17 @@
 
             AddNewFolderCommand = ReactiveCommand.Create(() =>
             {
-                Model.Solution.AddItem(SolutionFolder.Create("New Folder"), null, Model);
+                var observable = Items.ObserveNewItems().OfType<SolutionFolderViewModel>().FirstOrDefaultAsync();
 
-                Model.Solution.Save();
+                using (var subscription = observable.Subscribe(item =>
+                {
+                    item.InEditMode = true;
+                }))
+                {
+                    Model.Solution.AddItem(SolutionFolder.Create("New Folder"), null, Model);
+
+                    Model.Solution.Save();
+                }                
             });
 
             AddExistingProjectCommand = ReactiveCommand.Create(async () =>
