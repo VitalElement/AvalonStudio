@@ -8,6 +8,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using AvalonStudio.Extensibility.Templating;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using AvalonStudio.Utils;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -35,12 +37,21 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             OKCommand = ReactiveCommand.Create(async () =>
             {
+                string subNameSpaces = "." + folder.Project.CurrentDirectory.MakeRelativePath(folder.LocationDirectory);
+
+                if(subNameSpaces == ".")
+                {
+                    subNameSpaces = "";
+                }
+
+                var inbuiltParameters = new List<(string name, string value)> { ("namespace", $"{folder.Project.Name}{subNameSpaces}") };
+
                 await templateManager.CreateTemplate(
                     SelectedTemplate.Template, 
                     folder.LocationDirectory, 
                     SelectedTemplate.Parameters
                     .Where(p=>!string.IsNullOrEmpty(p.Value.Trim()))
-                    .Select(p=>(p.Name.ToLower(), p.Value))
+                    .Select(p=>(p.Name.ToLower(), p.Value)).Concat(inbuiltParameters)
                     .ToArray());                
 
                 Close();
