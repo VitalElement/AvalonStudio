@@ -8,7 +8,7 @@
           <Setter Property="Background" Value="#5500557d" />
         </Style>
       </TreeView.Styles>
-      <TreeViewItem Header="Languages" IsExpanded="true" Items="{Binding Languages}"/>p
+      <TreeViewItem Header="Languages" IsExpanded="true" Items="{Binding Languages}"/>
     </TreeView>
 
     <ListBox Grid.Column="1" Background="{DynamicResource ThemeBackgroundBrush}" BorderThickness="0" Margin="1" Items="{Binding ProjectTemplates}" SelectedItem="{Binding SelectedTemplate, Mode=TwoWay}" MinWidth="600" MinHeight="400">
