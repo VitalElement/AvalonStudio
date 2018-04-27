@@ -80,7 +80,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             if(key == Key.Delete && modifiers == InputModifiers.None)
             {
-                if(SelectedItem.Model is IDeleteable deletable)
+                if(SelectedItem?.Model is IDeleteable deletable)
                 {
                     deletable.Delete();
                 }
