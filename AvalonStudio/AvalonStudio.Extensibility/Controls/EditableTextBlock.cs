@@ -15,9 +15,12 @@ namespace AvalonStudio.Controls
         private string _text;
         private string _editText;
         private TextBox _textBox;
-        private bool _focusedOnClick1 = false;
         private DispatcherTimer _editClickTimer;
 
+        static EditableTextBlock()
+        {
+            PseudoClass(InEditModeProperty, ":editing");
+        }
 
         public EditableTextBlock()
         {
