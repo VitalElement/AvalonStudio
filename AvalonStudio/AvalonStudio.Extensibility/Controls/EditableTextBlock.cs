@@ -15,9 +15,12 @@ namespace AvalonStudio.Controls
         private string _text;
         private string _editText;
         private TextBox _textBox;
-        private bool _focusedOnClick1 = false;
         private DispatcherTimer _editClickTimer;
 
+        static EditableTextBlock()
+        {
+            PseudoClass(InEditModeProperty, ":editing");
+        }
 
         public EditableTextBlock()
         {
@@ -55,12 +58,9 @@ namespace AvalonStudio.Controls
 
                 if (!InEditMode)
                 {                    
-                    if (e.ClickCount == 1)
+                    if (e.ClickCount == 1 && e.InputModifiers == InputModifiers.LeftMouseButton && IsFocused)
                     {
-                        if(IsFocused)
-                        {
-                            _editClickTimer.Start();
-                        }
+                        _editClickTimer.Start();
                     }                    
                 }
                 else
@@ -126,10 +126,18 @@ namespace AvalonStudio.Controls
 
         protected override void OnKeyUp(KeyEventArgs e)
         {
-            if (e.Key == Key.Enter || e.Key == Key.Escape)
+            switch (e.Key)
             {
-                ExitEditMode();
-            }            
+                case Key.Enter:
+                    ExitEditMode();
+                    e.Handled = true;
+                    break;
+
+                case Key.Escape:
+                    ExitEditMode(true);
+                    e.Handled = true;
+                    break;
+            }
 
             base.OnKeyUp(e);
         }
@@ -149,9 +157,12 @@ namespace AvalonStudio.Controls
             });
         }
 
-        private void ExitEditMode()
+        private void ExitEditMode(bool restore = false)
         {
-            Text = EditText;
+            if (!restore)
+            {
+                Text = EditText;
+            }
 
             InEditMode = false;
             (VisualRoot as IInputRoot).MouseDevice.Capture(null);
