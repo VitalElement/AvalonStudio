@@ -12,6 +12,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using AvalonStudio.Platforms;
 
     internal class ProjectFolderViewModel : ProjectItemViewModel<IProjectFolder>
     {
@@ -27,7 +28,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             _shell = IoC.Get<IShell>();
 
             Items = new ObservableCollection<ProjectItemViewModel>();
-            Items.BindCollections(model.Items, p => { return Create(p); }, (pivm, p) => pivm.Model == p);                        
+            Items.BindCollections(model.Items, p => { return Create(p); }, (pivm, p) => pivm.Model == p);
 
             NewItemCommand = ReactiveCommand.Create(() =>
             {
@@ -40,14 +41,29 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 var observable = Items.ObserveNewItems().OfType<SourceFileViewModel>().FirstOrDefaultAsync();
 
                 using (var subscription = observable.Subscribe(item =>
-                 {   
+                 {
                      item.InEditMode = true;
                  }))
                 {
-                    File.CreateText(Path.Combine(model.Location, "NewFile1"));
+                    File.CreateText(Platform.NextAvailableFileName(Path.Combine(model.Location, "NewFile")));
 
                     await observable;
-                }                             
+                }
+            });
+
+            NewFolderCommand = ReactiveCommand.Create(async () =>
+            {
+                var observable = Items.ObserveNewItems().OfType<ProjectFolderViewModel>().FirstOrDefaultAsync();
+
+                using (var subscription = observable.Subscribe(item =>
+                {
+                    item.InEditMode = true;
+                }))
+                {
+                    Directory.CreateDirectory(Platform.NextAvailableDirectoryName(Path.Combine(model.Location, "NewFolder")));
+
+                    await observable;
+                }
             });
 
             RemoveCommand = ReactiveCommand.Create(() => model.Project.ExcludeFolder(model));
@@ -59,6 +75,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ObservableCollection<ProjectItemViewModel> Items { get; }
 
         public ReactiveCommand NewFileCommand { get; }
+        public ReactiveCommand NewFolderCommand { get; }
         public ReactiveCommand NewItemCommand { get; }
         public ReactiveCommand RemoveCommand { get; }
 

@@ -49,7 +49,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             var charSize = formattedText.Measure();
             var pixelSize = PixelSnapHelpers.GetPixelSize(textView);
 
-            foreach (var entry in markers)
+            foreach (var entry in markers.Where(e=>e.Length > 0))
             {
                 var startLine = textView.Document.GetLineByOffset(entry.StartOffset);
 

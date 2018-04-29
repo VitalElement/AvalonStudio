@@ -78,7 +78,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             if(key == Key.Delete && modifiers == InputModifiers.None)
             {
-                if(SelectedItem.Model is IDeleteable deletable)
+                if(SelectedItem?.Model is IDeleteable deletable)
                 {
                     deletable.Delete();
                 }
@@ -139,7 +139,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public void NewSolution()
         {
-            shell.ModalDialog = new NewProjectDialogViewModel(shell.CurrentSolution);
+            shell.ModalDialog = new NewProjectDialogViewModel();
             shell.ModalDialog.ShowDialog();
         }
 

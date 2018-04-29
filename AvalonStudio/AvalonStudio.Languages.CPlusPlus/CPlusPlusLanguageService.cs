@@ -179,7 +179,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     return CodeCompletionKind.OverloadCandidate;
             }
 
-            Console.WriteLine($"dont understand{kind.ToString()}");
+            //Console.WriteLine($"dont understand{kind.ToString()}");
             return CodeCompletionKind.None;
         }
 
@@ -254,7 +254,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                                 if (completion.Kind == CodeCompletionKind.OverloadCandidate)
                                 {
-                                    Console.WriteLine("TODO Implement overload candidate.");
+                                    //Console.WriteLine("TODO Implement overload candidate.");
                                 }
                             }
                         }
@@ -726,7 +726,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             });
 
-            return new QuickInfoResult(styledText);
+            return styledText == null ? null : new QuickInfoResult(styledText);
         }
 
         private static Symbol SymbolFromClangCursor(ClangCursor cursor)
@@ -1287,6 +1287,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 case CursorKind.EnumConstantDeclaration:
                     result.Append(" = " + cursor.EnumConstantDeclUnsignedValue.ToString());
+                    result.Append(" (0x" + cursor.EnumConstantDeclUnsignedValue.ToString("X") + ")");
                     break;
 
                 case CursorKind.FunctionDeclaration:
