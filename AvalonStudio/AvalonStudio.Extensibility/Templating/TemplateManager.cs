@@ -128,7 +128,7 @@ namespace AvalonStudio.Extensibility.Templating
 
                 string fallbackName = new DirectoryInfo(_commandInput.OutputPath ?? Directory.GetCurrentDirectory()).Name;
 
-                var result = await _templateCreator.InstantiateAsync(templateImpl.DotnetTemplate, _commandInput.Name, fallbackName, _commandInput.OutputPath, _commandInput.InputTemplateParams, _commandInput.SkipUpdateCheck, _commandInput.IsForceFlagSpecified, _commandInput.BaselineName).ConfigureAwait(false);
+                var result = await _templateCreator.InstantiateAsync(templateImpl.DotnetTemplate, _commandInput.Name, fallbackName, _commandInput.OutputPath, parameters.ToDictionary(x => x.name, x=> x.value), _commandInput.SkipUpdateCheck, _commandInput.IsForceFlagSpecified, _commandInput.BaselineName).ConfigureAwait(false);
                 return (CreationResult)result.Status;
             }
 

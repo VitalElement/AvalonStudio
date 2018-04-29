@@ -6,7 +6,6 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
-using System;
 using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
@@ -15,7 +14,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     {
         private readonly IShell shell;
         private ProjectConfigurationDialogViewModel configuration;
-
+        private bool _isExpanded;
         private bool visibility;
 
         public ProjectViewModel(ISolutionParentViewModel parent, IProject model)
@@ -96,7 +95,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             });
         }
 
-        public bool IsExpanded { get; set; }
+        public bool IsExpanded
+        {
+            get { return _isExpanded; }
+            set { this.RaiseAndSetIfChanged(ref _isExpanded, value); }
+        }
 
         public bool IsVisible => !Model.Hidden;
 
