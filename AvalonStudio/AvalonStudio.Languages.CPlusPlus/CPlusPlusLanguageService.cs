@@ -179,7 +179,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     return CodeCompletionKind.OverloadCandidate;
             }
 
-            Console.WriteLine($"dont understand{kind.ToString()}");
+            //Console.WriteLine($"dont understand{kind.ToString()}");
             return CodeCompletionKind.None;
         }
 
@@ -254,7 +254,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                                 if (completion.Kind == CodeCompletionKind.OverloadCandidate)
                                 {
-                                    Console.WriteLine("TODO Implement overload candidate.");
+                                    //Console.WriteLine("TODO Implement overload candidate.");
                                 }
                             }
                         }

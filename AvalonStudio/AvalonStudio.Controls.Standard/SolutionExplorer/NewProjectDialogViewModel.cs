@@ -56,6 +56,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public NewProjectDialogViewModel(ISolutionFolder solutionFolder) : this()
         {
             _solutionFolder = solutionFolder;
+
+            if (_solutionFolder != null)
+            {
+                location = _solutionFolder.Solution.CurrentDirectory;
+            }
         }
 
         public NewProjectDialogViewModel()
@@ -67,6 +72,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             _allProjectTemplates = new Lazy<IDictionary<string, IEnumerable<ITemplate>>>(_templateManager.GetProjectTemplates);
 
             location = Platform.ProjectDirectory;
+
             SelectedLanguage = Languages.FirstOrDefault();
             SelectedTemplate = ProjectTemplates.FirstOrDefault();
 
@@ -97,6 +103,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                     loadNewSolution = true;
 
                     var destination = Path.Combine(location, solutionName);
+                    location = destination;
                     _solutionFolder = VisualStudioSolution.Create(destination, solutionName, false, VisualStudioSolution.Extension);
                 }
                 else
@@ -106,7 +113,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 var templateManager = IoC.Get<TemplateManager>();
 
-                var templateDestination = Path.Combine(_solutionFolder.Solution.CurrentDirectory, name);
+                var templateDestination = Path.Combine(Location, name);
 
                 if (await templateManager.CreateTemplate(selectedTemplate, templateDestination, ("name", name)) == CreationResult.Success)
                 {
@@ -227,7 +234,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (value != null)
                 {
-                    Name = value.DefaultName + "1";
+                    Name = Platform.NextAvailableDirectoryName(value.DefaultName);
                 }
 
                 SolutionName = name;

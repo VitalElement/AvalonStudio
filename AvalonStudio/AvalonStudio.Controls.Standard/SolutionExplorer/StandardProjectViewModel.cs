@@ -5,6 +5,7 @@ using ReactiveUI;
 using System.IO;
 using System.Reactive.Linq;
 using System;
+using AvalonStudio.Platforms;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -28,10 +29,25 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 using (var subscription = observable.Subscribe(item =>
                 {
+                    item.InEditMode = true;                    
+                }))
+                {
+                    File.CreateText(Platform.NextAvailableFileName(Path.Combine(model.CurrentDirectory, "NewFile")));
+
+                    await observable;
+                }
+            });
+
+            NewFolderCommand = ReactiveCommand.Create(async () =>
+            {
+                var observable = Items.ObserveNewItems().OfType<ProjectFolderViewModel>().FirstOrDefaultAsync();
+
+                using (var subscription = observable.Subscribe(item =>
+                {
                     item.InEditMode = true;
                 }))
                 {
-                    File.CreateText(Path.Combine(model.CurrentDirectory, "NewFile1"));
+                    Directory.CreateDirectory(Platform.NextAvailableDirectoryName(Path.Combine(model.CurrentDirectory, "NewFolder")));
 
                     await observable;
                 }
@@ -39,6 +55,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         }
 
         public ReactiveCommand NewFileCommand { get; }
+
+        public ReactiveCommand NewFolderCommand { get; }
 
         public ReactiveCommand SetDefaultProjectCommand { get; private set; }
 
