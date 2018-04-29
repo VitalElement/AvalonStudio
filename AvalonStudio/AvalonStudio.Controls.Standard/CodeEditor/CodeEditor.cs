@@ -22,7 +22,9 @@ using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Threading;
+using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
@@ -312,7 +314,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 if (Document?.TextLength > s)
                 {
-                    CaretOffset = s;
+                    CaretOffset = s;                    
                 }
             }),
 
@@ -762,7 +764,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
+                        _scopeLineBackgroundRenderer?.ApplyIndex(result.FoldingInfo);
+
+                        //result.CodeIndex.Reverse();
+                        CodeIndex = result.IndexTree;
                     });
 
                     Dispatcher.UIThread.Post(() =>
@@ -1177,12 +1182,21 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         }
 
         public static readonly StyledProperty<bool> IsDirtyProperty =
-            AvaloniaProperty.Register<CodeEditor, bool>(nameof(IsDirty), defaultBindingMode: Avalonia.Data.BindingMode.TwoWay);
+            AvaloniaProperty.Register<CodeEditor, bool>(nameof(IsDirty), defaultBindingMode: BindingMode.TwoWay);
 
         public bool IsDirty
         {
             get { return GetValue(IsDirtyProperty); }
             set { SetValue(IsDirtyProperty, value); }
+        }
+
+        public static readonly StyledProperty<IndexTree> CodeIndexProperty =
+            AvaloniaProperty.Register<CodeEditor, IndexTree>(nameof(CodeIndex), defaultBindingMode: BindingMode.TwoWay);
+
+        public IndexTree CodeIndex
+        {
+            get => GetValue(CodeIndexProperty);
+            set => SetValue(CodeIndexProperty, value);
         }
 
         public int GetOffsetFromPoint(Point point)

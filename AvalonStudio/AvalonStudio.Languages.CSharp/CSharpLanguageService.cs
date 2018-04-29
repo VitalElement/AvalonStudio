@@ -932,7 +932,7 @@ namespace AvalonStudio.Languages.CSharp
             {
             }
 
-            result.IndexItems = await IndexBuilder.Compute(document);
+            result.FoldingInfo = await IndexBuilder.Compute(document);
 
             return result;
         }

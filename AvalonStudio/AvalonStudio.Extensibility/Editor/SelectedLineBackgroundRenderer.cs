@@ -11,8 +11,8 @@ namespace AvalonStudio.TextEditor.Rendering
     {
         private readonly AvaloniaEdit.TextEditor _textEditor;
 
-        public static readonly IBrush BackgroundBrush = new SolidColorBrush(Color.FromArgb(22, 0x0e, 0x0e, 0x0e));
-        public static readonly IBrush BorderBrush = new SolidColorBrush(Color.FromArgb(255, 57, 57, 57));
+        public static readonly IBrush BackgroundBrush = new SolidColorBrush(Color.FromArgb(11, 0x0e, 0x0e, 0x0e));
+        public static readonly IBrush BorderBrush = new SolidColorBrush(Color.FromArgb(22, 57, 57, 57));
 
         public Pen BorderPen { get; set; }
 
@@ -45,7 +45,7 @@ namespace AvalonStudio.TextEditor.Rendering
                 
                 double x = PixelSnapHelpers.PixelAlign(0, pixelSize.Width);
                 double y = PixelSnapHelpers.PixelAlign(linePosY, pixelSize.Height);
-                var x2 = PixelSnapHelpers.PixelAlign(textView.Bounds.Width, pixelSize.Width);
+                var x2 = PixelSnapHelpers.PixelAlign(textView.Bounds.Width -1, pixelSize.Width);
                 var y2 = PixelSnapHelpers.PixelAlign(lineBottom, pixelSize.Height);
 
                 builder.AddRectangle(textView, new Rect(new Point(x, y), new Point(x2, y2)));
@@ -54,8 +54,6 @@ namespace AvalonStudio.TextEditor.Rendering
                 if (geometry != null)
                 {
                     drawingContext.DrawGeometry(BackgroundBrush, BorderPen, geometry);
-
-                    
                 }
             }
         }

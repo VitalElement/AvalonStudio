@@ -1,3 +1,4 @@
+using Avalonia.Threading;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvalonStudio.CodeEditor;
@@ -8,6 +9,7 @@ using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Extensibility.Threading;
+using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -462,7 +464,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         case NClang.CursorKind.CompoundStatement:
                         case NClang.CursorKind.ClassDeclaration:
                         case NClang.CursorKind.Namespace:
-                            result.Add(new IndexEntry(current.Spelling, current.CursorExtent.Start.FileLocation.Offset,
+                            result.InsertSorted(new IndexEntry(current.Spelling, current.CursorExtent.Start.FileLocation.Offset,
                             current.CursorExtent.End.FileLocation.Offset, (CursorKind)current.Kind));
                             break;
                     }
@@ -516,7 +518,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles,
             Func<bool> interruptRequested)
         {
-            var result = new CodeAnalysisResults();
+            var result = new CodeAnalysisResults();            
 
             var dataAssociation = GetAssociatedData(editor.SourceFile);
 
@@ -538,10 +540,44 @@ namespace AvalonStudio.Languages.CPlusPlus
                         {
                             ScanTokens(translationUnit, result.SyntaxHighlightingData);
 
-                            GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.IndexItems);
+                            GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.FoldingInfo);
                         }
 
                         GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, editor.SourceFile, diagnostics);
+
+                        var callbacks = new ClangIndexerCallbacks();
+
+                        callbacks.IndexDeclaration += (handle, e) =>
+                        {
+                            if (e.Cursor.Spelling != null && e.Location.SourceLocation.IsFromMainFile)
+                            {
+                                switch (e.Cursor.Kind)
+                                {
+                                    case NClang.CursorKind.FunctionDeclaration:
+                                    case NClang.CursorKind.CXXMethod:
+                                    case NClang.CursorKind.Constructor:
+                                    case NClang.CursorKind.Destructor:
+                                    case NClang.CursorKind.VarDeclaration:
+                                    case NClang.CursorKind.ParmDeclaration:
+                                    case NClang.CursorKind.StructDeclaration:
+                                    case NClang.CursorKind.ClassDeclaration:
+                                    case NClang.CursorKind.TypedefDeclaration:
+                                    case NClang.CursorKind.ClassTemplate:
+                                    case NClang.CursorKind.EnumDeclaration:
+                                    case NClang.CursorKind.UnionDeclaration:
+                                    case NClang.CursorKind.Namespace:
+                                        result.IndexTree.Add(new IndexEntry(e.Cursor.Spelling, e.Cursor.CursorExtent.Start.FileLocation.Offset,
+                                            e.Cursor.CursorExtent.End.FileLocation.Offset, (CursorKind)e.Cursor.Kind));
+                                        break;
+                                }
+                            }
+                        };
+
+
+                        var indexAction = index.CreateIndexAction();
+                        indexAction.IndexTranslationUnit(IntPtr.Zero, new[] { callbacks }, IndexOptionFlags.SkipParsedBodiesInSession,
+                            translationUnit);
+                        indexAction.Dispose();
                     }
                 }
                 catch (Exception e)
