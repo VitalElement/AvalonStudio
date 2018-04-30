@@ -74,7 +74,7 @@
                     <MenuItem Header="New File..." />
                   </MenuItem>
                   <Separator />
-                  <MenuItem Header="Rename" />
+                  <MenuItem Header="Rename" Command="{Binding RenameCommand}" />
                   <Separator />
                   <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
                   <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
@@ -107,7 +107,7 @@
             <StackPanel Orientation="Horizontal" Gap="4">              
               <StackPanel.ContextMenu>
                 <ContextMenu>
-                  <MenuItem Header="Rename" />
+                  <MenuItem Header="Rename" Command="{Binding RenameCommand}" />
                   <Separator />
                   <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
                   <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
@@ -123,7 +123,7 @@
             <StackPanel Orientation="Horizontal" Gap="4">
               <StackPanel.ContextMenu>
                 <ContextMenu>
-                  <MenuItem Header="Rename" />
+                  <MenuItem Header="Rename" Command="{Binding RenameCommand}" />
                   <Separator />
                   <MenuItem Header="Open Folder"  Command="{Binding OpenInExplorerCommand}" />
                   <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
