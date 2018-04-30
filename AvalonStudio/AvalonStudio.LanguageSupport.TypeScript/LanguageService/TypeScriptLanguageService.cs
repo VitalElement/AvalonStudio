@@ -152,7 +152,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
             var editorCompletions = completions.Entries.Select(cc =>
                 {
-                    var ccData = new CodeCompletionData(cc.Name, cc.Name)
+                    var ccData = new CodeCompletionData(cc.Name, cc.SortText, cc.Name)
                     {
                         Kind = ConvertCodeCompletionKind(cc.Kind),
                         BriefComment = cc.Name
