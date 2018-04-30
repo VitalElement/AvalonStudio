@@ -337,7 +337,7 @@ namespace AvalonStudio.Languages.CSharp
                 var recommendedSymbols = await Microsoft.CodeAnalysis.Recommendations.Recommender.GetRecommendedSymbolsAtPositionAsync(semanticModel, index, workspace);
                 foreach (var completion in data.Items)
                 {
-                    var insertionText = completion.FilterText;
+                    var insertionText = completion.DisplayText;
 
                     if (completion.Properties.ContainsKey("InsertionText"))
                     {
@@ -363,7 +363,7 @@ namespace AvalonStudio.Languages.CSharp
                             {
                                 if (symbol != null)
                                 {
-                                    var newCompletion = new CodeCompletionData(symbol.Name, insertionText, null, selectionBehavior, priority);
+                                    var newCompletion = new CodeCompletionData(symbol.Name, completion.FilterText, insertionText, null, selectionBehavior, priority);
 
                                     if (completion.Properties.ContainsKey("SymbolKind"))
                                     {
@@ -385,7 +385,7 @@ namespace AvalonStudio.Languages.CSharp
                     }
                     else
                     {
-                        var newCompletion = new CodeCompletionData(completion.DisplayText, insertionText, null, selectionBehavior, priority);
+                        var newCompletion = new CodeCompletionData(completion.DisplayText, completion.FilterText, insertionText, null, selectionBehavior, priority);
 
                         if (completion.Properties.ContainsKey("SymbolKind"))
                         {

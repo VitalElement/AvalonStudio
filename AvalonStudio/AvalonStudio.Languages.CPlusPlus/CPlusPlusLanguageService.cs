@@ -215,7 +215,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     foreach (var codeCompletion in completionResults.Results)
                     {
                         var typedText = string.Empty;
-
+                        
                         if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available || codeCompletion.CompletionString.Availability == AvailabilityKind.Deprecated)
                         {
                             foreach (var chunk in codeCompletion.CompletionString.Chunks)
@@ -224,6 +224,10 @@ namespace AvalonStudio.Languages.CPlusPlus
                                 {
                                     typedText = chunk.Text;
                                 }
+
+                                // TODO construct chunks into replacement text.
+
+                                // i.e. do should insert do {} while();
 
                                 switch (chunk.Kind)
                                 {
@@ -243,7 +247,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                             if (filter == string.Empty || typedText.StartsWith(filter))
                             {
-                                var completion = new CodeCompletionData(typedText, typedText)
+                                var completion = new CodeCompletionData(typedText, typedText, typedText)
                                 {
                                     Priority = (int)codeCompletion.CompletionString.Priority,
                                     Kind = FromClangKind(codeCompletion.CursorKind),
