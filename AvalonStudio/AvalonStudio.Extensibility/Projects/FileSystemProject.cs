@@ -361,7 +361,7 @@
 
         private void RemoveFiles(FileSystemProject project, IProjectFolder folder)
         {
-            foreach (var item in folder.Items)
+            foreach (var item in folder.Items.ToList())
             {
                 if (item is IProjectFolder subfolder)
                 {
