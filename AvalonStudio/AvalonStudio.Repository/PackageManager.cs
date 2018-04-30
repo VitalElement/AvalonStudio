@@ -13,12 +13,10 @@ using NuGet.Resolver;
 using NuGet.Versioning;
 using SharpCompress.Archives;
 using SharpCompress.Readers;
-using SharpCompress.Readers.Tar;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -172,7 +170,7 @@ namespace AvalonStudio.Packages
                     {
                         var requestedVersion = NuGetVersion.Parse(packageVersion);
 
-                        var versions = await package.GetVersionsAsync();
+                        var versions = await package.GetAllVersionsAsync();
                         var matchingVersion = versions.FirstOrDefault(v => v.Version == requestedVersion);
 
                         if (matchingVersion == null)
@@ -205,7 +203,7 @@ namespace AvalonStudio.Packages
                 {
                     using (var reader = archive.ExtractAllEntries())
                     {
-                        reader.WriteAllToDirectory(extractionPath, new ExtractionOptions() { Overwrite = true, ExtractFullPath = true });
+                        reader.WriteAllToDirectory(extractionPath);
                     }
 
                     return true;
