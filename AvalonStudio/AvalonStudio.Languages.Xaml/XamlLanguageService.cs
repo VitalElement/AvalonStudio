@@ -84,7 +84,7 @@ namespace AvalonStudio.Languages.Xaml
                 {
                     foreach (var completion in completionSet.Completions)
                     {
-                        results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
+                        results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
                         {
                             BriefComment = completion.Description,
                             Kind = FromAvaloniaCompletionKind(completion.Kind),
