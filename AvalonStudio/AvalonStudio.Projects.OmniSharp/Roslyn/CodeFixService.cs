@@ -180,51 +180,59 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                 // this design's weakness is that each side don't have enough information to narrow down works to do. it will most likely always do more works than needed.
                 // sometimes way more than it is needed. (compilation)
                 Dictionary<TextSpan, List<DiagnosticData>> aggregatedDiagnostics = null;
-                foreach (var diagnostic in await _diagnosticService.GetDiagnosticsForSpanAsync(document, range, cancellationToken: cancellationToken).ConfigureAwait(false))
+
+                try
                 {
-                    if (diagnostic.IsSuppressed)
+                    foreach (var diagnostic in await _diagnosticService.GetDiagnosticsForSpanAsync(document, range, cancellationToken: cancellationToken).ConfigureAwait(false))
                     {
-                        continue;
+                        if (diagnostic.IsSuppressed)
+                        {
+                            continue;
+                        }
+
+                        cancellationToken.ThrowIfCancellationRequested();
+
+                        aggregatedDiagnostics = aggregatedDiagnostics ?? new Dictionary<TextSpan, List<DiagnosticData>>();
+                        aggregatedDiagnostics.GetOrAdd(diagnostic.TextSpan, _ => new List<DiagnosticData>()).Add(diagnostic);
                     }
 
-                    cancellationToken.ThrowIfCancellationRequested();
+                    if (aggregatedDiagnostics == null)
+                    {
+                        return ImmutableArray<CodeFixCollection>.Empty;
+                    }
 
-                    aggregatedDiagnostics = aggregatedDiagnostics ?? new Dictionary<TextSpan, List<DiagnosticData>>();
-                    aggregatedDiagnostics.GetOrAdd(diagnostic.TextSpan, _ => new List<DiagnosticData>()).Add(diagnostic);
-                }
-
-                if (aggregatedDiagnostics == null)
-                {
-                    return ImmutableArray<CodeFixCollection>.Empty;
-                }
-
-                var result = new List<CodeFixCollection>();
-                foreach (var spanAndDiagnostic in aggregatedDiagnostics)
-                {
-                    await AppendFixesAsync(
-                        document, spanAndDiagnostic.Key, spanAndDiagnostic.Value,
-                        result, cancellationToken).ConfigureAwait(false);
-                }
-
-                if (result.Count > 0)
-                {
-                    // sort the result to the order defined by the fixers
-                    var priorityMap = _fixerPriorityMap[document.Project.Language].Value;
-                    result.Sort((d1, d2) => priorityMap.ContainsKey((CodeFixProvider)d1.Provider) ? (priorityMap.ContainsKey((CodeFixProvider)d2.Provider) ? priorityMap[(CodeFixProvider)d1.Provider] - priorityMap[(CodeFixProvider)d2.Provider] : -1) : 1);
-                }
-
-                // TODO (https://github.com/dotnet/roslyn/issues/4932): Don't restrict CodeFixes in Interactive
-                if (document.Project.Solution.Workspace.Kind != WorkspaceKind.Interactive && includeSuppressionFixes)
-                {
+                    var result = new List<CodeFixCollection>();
                     foreach (var spanAndDiagnostic in aggregatedDiagnostics)
                     {
-                        await AppendSuppressionsAsync(
+                        await AppendFixesAsync(
                             document, spanAndDiagnostic.Key, spanAndDiagnostic.Value,
                             result, cancellationToken).ConfigureAwait(false);
                     }
-                }
 
-                return result.ToImmutableArray();
+                    if (result.Count > 0)
+                    {
+                        // sort the result to the order defined by the fixers
+                        var priorityMap = _fixerPriorityMap[document.Project.Language].Value;
+                        result.Sort((d1, d2) => priorityMap.ContainsKey((CodeFixProvider)d1.Provider) ? (priorityMap.ContainsKey((CodeFixProvider)d2.Provider) ? priorityMap[(CodeFixProvider)d1.Provider] - priorityMap[(CodeFixProvider)d2.Provider] : -1) : 1);
+                    }
+
+                    // TODO (https://github.com/dotnet/roslyn/issues/4932): Don't restrict CodeFixes in Interactive
+                    if (document.Project.Solution.Workspace.Kind != WorkspaceKind.Interactive && includeSuppressionFixes)
+                    {
+                        foreach (var spanAndDiagnostic in aggregatedDiagnostics)
+                        {
+                            await AppendSuppressionsAsync(
+                                document, spanAndDiagnostic.Key, spanAndDiagnostic.Value,
+                                result, cancellationToken).ConfigureAwait(false);
+                        }
+                    }
+
+                    return result.ToImmutableArray();
+                }
+                catch(OperationCanceledException)
+                {
+                    return ImmutableArray<CodeFixCollection>.Empty;
+                }
             }
 
             private async Task AppendFixesAsync(
@@ -310,7 +318,16 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                     cancellationToken: cancellationToken);
 
                 var task = fixer.RegisterCodeFixesAsync(context) ?? SpecializedTasks.EmptyTask;
-                await task.ConfigureAwait(false);
+
+                try
+                {
+                    await task.ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+
+                }
+
                 return fixes.ToImmutableAndFree();
             }
 

@@ -159,7 +159,7 @@ namespace AvalonStudio.Languages.CSharp
                     return null;
 
                 default:
-                    Console.WriteLine("Warning unexpected text tag: " + tag);
+                    //Console.WriteLine("Warning unexpected text tag: " + tag);
                     return null;
             }
         }
@@ -302,7 +302,7 @@ namespace AvalonStudio.Languages.CSharp
                     return CodeCompletionKind.FieldPublic;
             }
 
-            Console.WriteLine($"dont understand omnisharp: {kind}");
+            //Console.WriteLine($"dont understand omnisharp: {kind}");
             return CodeCompletionKind.None;
         }
 
@@ -868,7 +868,7 @@ namespace AvalonStudio.Languages.CSharp
                     break;
 
                 default:
-                    Console.WriteLine($"Dont understand {type}");
+                    //Console.WriteLine($"Dont understand {type}");
                     break;
             }
 
