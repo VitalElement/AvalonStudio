@@ -6,10 +6,10 @@
         <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
             <StackPanel Margin="4 0">
                 <StackPanel Gap="2" Orientation="Horizontal">
-                    <TextBlock Text="{Binding SelectedCompletion.Hint}" />
-                    <TextBlock Text="{Binding SelectedCompletion.OverloadText}" />
+                    <TextBlock Text="{Binding Hint}" />
+                    <TextBlock Text="{Binding OverloadText}" />
                 </StackPanel>
-                <TextBlock Text="{Binding SelectedCompletion.Comment}" />
+                <TextBlock Text="{Binding Comment}" />
             </StackPanel>
         </Border>
     </Grid>
