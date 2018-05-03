@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.CustomGCC
 {
+    [ExportToolchain]
     public class CustomGCCToolchain : GCCToolchain
     {
         private string _executableExtension;
