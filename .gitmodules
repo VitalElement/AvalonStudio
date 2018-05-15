@@ -10,3 +10,6 @@
 [submodule "templating"]
 	path = templating
 	url = https://github.com/VitalElement/templating.git
+[submodule "SharpGenTools"]
+	path = SharpGenTools
+	url = https://github.com/jkoritzinsky/SharpGenTools.git

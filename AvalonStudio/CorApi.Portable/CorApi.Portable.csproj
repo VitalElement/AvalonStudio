@@ -11,10 +11,15 @@
     <SharpGenMapping Include="Mapping.xml" />
   </ItemGroup>-->
 
-  <ItemGroup>
-    <PackageReference Include="SharpGen.Runtime" Version="1.0.4-ci407" />
-    <PackageReference Include="SharpGen.Runtime.COM" Version="1.0.3-ci8" />
+  <ItemGroup>        
+    <PackageReference Include="SharpGen.Runtime.COM" Version="1.0.3-ci8" />        
     <PackageReference Include="SharpGenTools.Sdk" Version="1.0.4-ci407" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SharpGen.Runtime">
+      <HintPath>..\..\SharpGenTools\SharpGen.Runtime\bin\Debug\netstandard2.0\SharpGen.Runtime.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
