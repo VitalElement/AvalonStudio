@@ -57,7 +57,7 @@ namespace AvalonStudio
         }
 
         public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>().UseWin32().UseSkia(Avalonia.Skia.RenderBackendType.OpenGL).UseReactiveUI();
+            => AppBuilder.Configure<App>().UseWin32().UseSkia().UseReactiveUI();
 
         public override void Initialize()
         {
