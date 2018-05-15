@@ -1,4 +1,7 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+﻿<UserControl xmlns="https://github.com/avaloniaui" 
+             xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" 
+             xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
+             MinWidth="600" MinHeight="400">
   <Grid>
     <StackPanel Orientation="Horizontal" Gap="20">      
       

@@ -21,7 +21,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private ISolution model;
 
-        private ProjectItemViewModel selectedItem;
+        private ViewModel selectedItem;
 
         private IProject selectedProject;
         private IShell shell;
@@ -80,7 +80,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             if(key == Key.Delete && modifiers == InputModifiers.None)
             {
-                if(SelectedItem.Model is IDeleteable deletable)
+                if(SelectedItem?.Model is IDeleteable deletable)
                 {
                     deletable.Delete();
                 }
@@ -105,7 +105,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        public ProjectItemViewModel SelectedItem
+        public ViewModel SelectedItem
         {
             get
             {
@@ -115,9 +115,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 this.RaiseAndSetIfChanged(ref selectedItem, value);
 
-                if (value is SourceFileViewModel)
+                if (value is SourceFileViewModel sourceFile)
                 {
-                    shell.OpenDocument((ISourceFile)(value as SourceFileViewModel).Model);
+                    shell.OpenDocument((ISourceFile)sourceFile.Model);
                 }
             }
         }
@@ -141,7 +141,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public void NewSolution()
         {
-            shell.ModalDialog = new NewProjectDialogViewModel(shell.CurrentSolution);
+            shell.ModalDialog = new NewProjectDialogViewModel();
             shell.ModalDialog.ShowDialog();
         }
 
