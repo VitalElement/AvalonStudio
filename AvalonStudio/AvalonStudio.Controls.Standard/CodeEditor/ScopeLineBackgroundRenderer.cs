@@ -49,43 +49,46 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             var charSize = formattedText.Measure();
             var pixelSize = PixelSnapHelpers.GetPixelSize(textView);
 
-            foreach (var entry in markers.Where(e=>e.Length > 0))
+            foreach (var entry in markers.Where(e => e.Length > 0))
             {
-                var startLine = textView.Document.GetLineByOffset(entry.StartOffset);
-
-                var start = entry.StartOffset;
-
-                var startChar = textView.Document.GetCharAt(startLine.Offset);
-
-                if (char.IsWhiteSpace(startChar))
+                if (entry.StartOffset <= textView.Document.TextLength)
                 {
-                    start = TextUtilities.GetNextCaretPosition(textView.Document, startLine.Offset, LogicalDirection.Forward,
-                            CaretPositioningMode.WordBorder);
-                }
+                    var startLine = textView.Document.GetLineByOffset(entry.StartOffset);
 
-                var endLine = textView.Document.GetLineByOffset(entry.EndOffset <= textView.Document.TextLength ? entry.EndOffset : textView.Document.TextLength);
+                    var start = entry.StartOffset;
 
-                if (endLine.EndOffset > start && startLine != endLine)
-                {
-                    var newEntry = new TextSegment() { StartOffset = start, EndOffset = endLine.EndOffset };
+                    var startChar = textView.Document.GetCharAt(startLine.Offset);
 
-                    var rects = BackgroundGeometryBuilder.GetRectsForSegment(textView, newEntry);
-
-                    var rect = GetRectForRange(rects);
-
-                    if (!rect.IsEmpty)
+                    if (char.IsWhiteSpace(startChar))
                     {
-                        var startColumn = textView.Document.GetLocation(newEntry.StartOffset).Column - 1;
-                        var endColumn = textView.Document.GetLocation(newEntry.EndOffset).Column - 2;
+                        start = TextUtilities.GetNextCaretPosition(textView.Document, startLine.Offset, LogicalDirection.Forward,
+                                CaretPositioningMode.WordBorder);
+                    }
 
-                        var xPos = charSize.Width * Math.Min(startColumn, endColumn);
+                    var endLine = textView.Document.GetLineByOffset(entry.EndOffset <= textView.Document.TextLength ? entry.EndOffset : textView.Document.TextLength);
 
-                        rect = rect.WithX(xPos + (charSize.Width / 2));
+                    if (endLine.EndOffset > start && startLine != endLine)
+                    {
+                        var newEntry = new TextSegment() { StartOffset = start, EndOffset = endLine.EndOffset };
 
-                        rect = rect.WithX(PixelSnapHelpers.PixelAlign(rect.X, pixelSize.Width));
-                        rect = rect.WithY(PixelSnapHelpers.PixelAlign(rect.Y, pixelSize.Height));
+                        var rects = BackgroundGeometryBuilder.GetRectsForSegment(textView, newEntry);
 
-                        drawingContext.DrawLine(_pen, rect.TopLeft, rect.BottomLeft);
+                        var rect = GetRectForRange(rects);
+
+                        if (!rect.IsEmpty)
+                        {
+                            var startColumn = textView.Document.GetLocation(newEntry.StartOffset).Column - 1;
+                            var endColumn = textView.Document.GetLocation(newEntry.EndOffset).Column - 2;
+
+                            var xPos = charSize.Width * Math.Min(startColumn, endColumn);
+
+                            rect = rect.WithX(xPos + (charSize.Width / 2));
+
+                            rect = rect.WithX(PixelSnapHelpers.PixelAlign(rect.X, pixelSize.Width));
+                            rect = rect.WithY(PixelSnapHelpers.PixelAlign(rect.Y, pixelSize.Height));
+
+                            drawingContext.DrawLine(_pen, rect.TopLeft, rect.BottomLeft);
+                        }
                     }
                 }
             }
