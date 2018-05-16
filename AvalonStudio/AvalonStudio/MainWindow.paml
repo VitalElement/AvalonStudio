@@ -8,7 +8,7 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       Icon="resm:AvalonStudio.Assets.logo-256.png?assembly=AvalonStudio" 
                       Title="AvalonStudio" BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}" 
-                      FontFamily="Source Sans Pro" FontSize="14"
+                      FontFamily="{DynamicResource UiFont}" FontSize="14"
                       xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized">
   <Controls:MetroWindow.TitleBarContent>

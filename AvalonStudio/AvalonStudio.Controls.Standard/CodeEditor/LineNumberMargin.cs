@@ -35,7 +35,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         /// The typeface used for rendering the line number margin.
         /// This field is calculated in MeasureOverride() based on the FontFamily etc. properties.
         /// </summary>
-        protected string Typeface;
+        protected FontFamily Typeface;
 
         /// <summary>
         /// The font size used for rendering the line number margin.

@@ -105,7 +105,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 
             Child = _mainMenu;
 
-            TextBlock.SetFontFamily(this, "Segoi UI");
+            TextBlock.SetFontFamily(this, new FontFamily("Segoi UI"));
             TextBlock.SetFontSize(this, 14);
             TextBlock.SetForeground(this, Application.Current.Resources["ThemeForegroundBrush"] as IBrush);
         }

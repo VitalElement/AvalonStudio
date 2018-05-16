@@ -3,6 +3,8 @@
        xmlns:mut="https://github.com/avaloniaui/mutable"
        xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <Style.Resources>
+        <FontFamily x:Key="UiFont">resm:AvalonStudio.Assets.SourceSansPro-Regular.ttf#Source Sans Pro</FontFamily>
+        <FontFamily x:Key="EditorFont">resm:AvalonStudio.Assets.SourceCodePro-Regular.ttf#Source Code Pro</FontFamily>
         <SolidColorBrush x:Key="AvalonBorderBrush">#FF004C8A</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeBackgroundBrush">#FF2D2D30</SolidColorBrush>
         <SolidColorBrush x:Key="EditorBackgroundBrush">#FF2D2D30</SolidColorBrush>

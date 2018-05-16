@@ -81,7 +81,7 @@
                 </ContextMenu>
               </StackPanel.ContextMenu>
               <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-              <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" FontWeight="{Binding FontWeight}" />
+              <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" FontWeight="Bold" />
             </StackPanel>
           </TreeDataTemplate>
 
