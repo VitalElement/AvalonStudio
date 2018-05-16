@@ -28,7 +28,7 @@
         <TreeView.Styles>
           <Style Selector="TreeViewItem">
             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-          </Style>          
+          </Style>
           <Style Selector="ContextMenu">
             <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
           </Style>
@@ -86,25 +86,21 @@
           </TreeDataTemplate>
 
           <TreeDataTemplate DataType="ViewModels:ReferenceFolderViewModel" ItemsSource="{Binding References}">
-            <Grid RowDefinitions="*,*">
-              <StackPanel Orientation="Horizontal" Gap="4">
-                <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-                <TextBlock Text="{Binding Title}" Height="15" />
-              </StackPanel>
-            </Grid>
+            <StackPanel Orientation="Horizontal" Gap="4">
+              <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
+              <TextBlock Text="{Binding Title}" Height="15" />
+            </StackPanel>
           </TreeDataTemplate>
 
           <TreeDataTemplate DataType="ViewModels:ReferenceViewModel">
-            <Grid RowDefinitions="*,*">
-              <StackPanel Orientation="Horizontal" Gap="4">
-                <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-                <TextBlock Text="{Binding Name}" Height="15" />
-              </StackPanel>
-            </Grid>
+            <StackPanel Orientation="Horizontal" Gap="4">
+              <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
+              <TextBlock Text="{Binding Name}" Height="15" />
+            </StackPanel>
           </TreeDataTemplate>
 
           <TreeDataTemplate DataType="ViewModels:SourceFileViewModel">
-            <StackPanel Orientation="Horizontal" Gap="4">              
+            <StackPanel Orientation="Horizontal" Gap="4">
               <StackPanel.ContextMenu>
                 <ContextMenu>
                   <MenuItem Header="Rename" Command="{Binding RenameCommand}" />
