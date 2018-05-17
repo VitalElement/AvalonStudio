@@ -45,7 +45,7 @@ namespace AvalonStudio.Packages
             }
         }
 
-        private static List<Lazy<INuGetResourceProvider>> s_providers = new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3());            
+        private static List<Lazy<INuGetResourceProvider>> s_providers = new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3());
 
         private static readonly IEnumerable<SourceRepository> s_sourceRepositories = new List<SourceRepository> {
                     new SourceRepository(new PackageSource("https://nuget.vitalelement.co.uk/repository/AvalonStudio/"), s_providers),
@@ -192,7 +192,7 @@ namespace AvalonStudio.Packages
                 return PackageEnsureStatus.Found;
             }
         }
-        
+
         public static async Task InstallPackage(string packageId, string version, ILogger logger = null, int chmodFileMode = DefaultFilePermissions)
         {
             if (logger == null)
@@ -200,7 +200,7 @@ namespace AvalonStudio.Packages
                 logger = new ConsoleNuGetLogger();
             }
 
-            PackageIdentity identity = new PackageIdentity(packageId, new NuGet.Versioning.NuGetVersion(version));            
+            PackageIdentity identity = new PackageIdentity(packageId, new NuGet.Versioning.NuGetVersion(version));
 
             var settings = NuGet.Configuration.Settings.LoadDefaultSettings(Platform.ReposDirectory, null, new MachineWideSettings(), false, true);
 
@@ -213,7 +213,7 @@ namespace AvalonStudio.Packages
                 if (!project.PackageExists(identity))
                 {
                     var packageManager = new NuGetPackageManager(sourceRepositoryProvider, settings, Platform.ReposDirectory)
-                    {                         
+                    {
                         PackagesFolderNuGetProject = project,
                     };
 
@@ -223,8 +223,8 @@ namespace AvalonStudio.Packages
                     ResolutionContext resolutionContext = new ResolutionContext(
                         DependencyBehavior.Lowest, allowPrereleaseVersions, allowUnlisted, VersionConstraints.None);
 
-                    INuGetProjectContext projectContext = new ProjectContext(logger);  
-                    
+                    INuGetProjectContext projectContext = new ProjectContext(logger);
+
                     await packageManager.InstallPackageAsync(packageManager.PackagesFolderNuGetProject,
                         identity, resolutionContext, projectContext, s_sourceRepositories,
                         Array.Empty<SourceRepository>(),  // This is a list of secondary source respositories, probably empty
