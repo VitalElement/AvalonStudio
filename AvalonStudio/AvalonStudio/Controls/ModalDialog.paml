@@ -7,7 +7,7 @@
               Background="{DynamicResource ThemeControlDarkBrush}"
               Icon="resm:AvalonStudio.Assets.logo-256.png?assembly=AvalonStudio"
               Title="{Binding Title}" BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}"
-              FontFamily="resm:AvalonStudio.Assets.SourceSansPro-Regular.ttf#Source Sans Pro" FontSize="14" Foreground="{DynamicResource ThemeForegroundBrush}"
+              FontFamily="{DynamicResource UiFont}" FontSize="14" Foreground="{DynamicResource ThemeForegroundBrush}"
               SizeToContent="WidthAndHeight">
   <DockPanel LastChildFill="True" Margin="4 0">
 
