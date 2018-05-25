@@ -16,9 +16,9 @@
     <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.2-build5147-beta" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.6.2-build5147-beta" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.6.2-build5147-beta" />
+    <PackageReference Include="Avalonia" Version="0.6.2-build5192-beta" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.6.2-build5192-beta" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.6.2-build5192-beta" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.60.0.1" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.6.2-build505-alpha" />
     <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="0.6.2-build505-alpha" />
