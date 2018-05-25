@@ -68,7 +68,7 @@
                     <MenuItem Header="New File" Command="{Binding NewFileCommand}" />
                     <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
                     <MenuItem Header="Exisiting Item..." />
-                    <MenuItem Header="New Folder..." Command="{Binding NewFolderCommand}p" />
+                    <MenuItem Header="New Folder..." Command="{Binding NewFolderCommand}" />
                     <MenuItem Header="Import Folder..." />
                     <Separator />
                     <MenuItem Header="New File..." />

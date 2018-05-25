@@ -1,5 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-              xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard" FontFamily="Source Sans Pro" FontSize="14">
+              xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard" FontFamily="{DynamicResource UiFont}" FontSize="14">
     <Grid Background="{DynamicResource ThemeControlBackgroundBrush}" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}">
         <StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
