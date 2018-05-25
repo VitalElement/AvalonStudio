@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Platforms;
+﻿using Avalonia;
+using AvalonStudio.Platforms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -89,8 +90,8 @@ namespace AvalonStudio.CommandLineTools
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     UseShellExecute = false,
-                    WorkingDirectory = workingDirectory
-                }
+                    WorkingDirectory = workingDirectory,                    
+                }                
             };
 
             if(!includeSystemPaths)
@@ -136,13 +137,42 @@ namespace AvalonStudio.CommandLineTools
                 shellProc.ErrorDataReceived += (s, a) => errorReceivedCallback(s, a);
             }
 
+            new ProcessManager(shellProc);
+
             shellProc.Start();
 
             shellProc.BeginOutputReadLine();
-            shellProc.BeginErrorReadLine();
+            shellProc.BeginErrorReadLine();                       
 
             return shellProc;
         }
+
+        public class ProcessManager
+        {
+            private Process _process;
+
+            public ProcessManager (Process process)
+            {
+                _process = process;
+
+                Application.Current.OnExit += Current_OnExit;
+
+                _process.Exited += _process_Exited;                
+            }
+
+            private void Current_OnExit(object sender, EventArgs e)
+            {
+                _process.Kill();
+            }
+
+            private void _process_Exited(object sender, EventArgs e)
+            {
+                _process.Exited -= _process_Exited;
+
+                Application.Current.OnExit -= Current_OnExit;
+            }
+        }
+
 
         public static int ExecuteShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs>
             outputReceivedCallback, Action<object, DataReceivedEventArgs> errorReceivedCallback = null, bool resolveExecutable = true,

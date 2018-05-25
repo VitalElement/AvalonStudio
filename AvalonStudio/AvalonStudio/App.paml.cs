@@ -48,11 +48,15 @@ namespace AvalonStudio
 
                 InitializeLogging();
 
-                builder.Start<MainWindow>();
+                builder.Start<MainWindow>();                
             }
             catch (Exception e)
             {
                 Print(e);
+            }
+            finally
+            {
+                Application.Current.Exit();
             }
         }
 
