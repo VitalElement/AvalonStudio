@@ -44,16 +44,23 @@ namespace AvalonStudio.Languages.CSharp
                 .GroupBy(f => f.Action.EquivalenceKey)
                 .Select(group => group.First()).Select(fix => new CodeFix { Action = new RoslynCodeAction(fix.Action) });
 
-            var codeRefactorings = (await workspace.GetService<ICodeRefactoringService>().GetRefactoringsAsync(
-                document,
-                textSpan, cancellationToken).ConfigureAwait(false))
-                .Where(x => ExcludedRefactoringProviders.All(p => !x.Provider.GetType().Name.Contains(p)))
-                .SelectMany(refactoring => refactoring.Actions)
-                .GroupBy(f => f.EquivalenceKey)
-                .Select(group => group.First())
-                .Select(refactoring => new CodeFix { Action = new RoslynCodeAction(refactoring) });
+            try
+            {
+                var codeRefactorings = (await workspace.GetService<ICodeRefactoringService>().GetRefactoringsAsync(
+                    document,
+                    textSpan, cancellationToken).ConfigureAwait(false))
+                    .Where(x => ExcludedRefactoringProviders.All(p => !x.Provider.GetType().Name.Contains(p)))
+                    .SelectMany(refactoring => refactoring.Actions)
+                    .GroupBy(f => f.EquivalenceKey)
+                    .Select(group => group.First())
+                    .Select(refactoring => new CodeFix { Action = new RoslynCodeAction(refactoring) });
 
-            return fixes.Concat(codeRefactorings);
+                return fixes.Concat(codeRefactorings);
+            }
+            catch (TaskCanceledException)
+            {
+                return fixes;
+            }
 
             //var actions = new List<CodeAction>();
 

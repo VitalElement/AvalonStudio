@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:lang="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility"
              xmlns:proj="clr-namespace:AvalonStudio.Projects;assembly=AvalonStudio.Extensibility"
-             Background="{DynamicResource ThemeBackgroundBrush}">
+             Background="{DynamicResource ThemeBackgroundBrush}" MinWidth="800" MinHeight="600">
   <DockPanel>
     <Grid DockPanel.Dock ="Top" Background="WhiteSmoke">
       <StackPanel Orientation="Horizontal" Gap="12">
@@ -15,6 +15,10 @@
           <TextBlock Text="Version:" />
           <TextBlock Text="{Binding Version}" />
         </StackPanel>
+	<StackPanel Orientation="Horizontal" Gap="4">
+	  <TextBlock Text="Descriptive Version:" />
+	  <TextBox BorderThickness="0" Text="{Binding DescriptiveVersion, Mode=OneWay}" IsReadOnly="True" Padding="0" />
+	</StackPanel>
         <StackPanel Orientation="Horizontal" Gap="4">
           <TextBlock Text="Platform:" />
           <TextBlock Text="{Binding PlatformString}" />

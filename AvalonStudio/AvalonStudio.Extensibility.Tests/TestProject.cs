@@ -20,7 +20,7 @@ namespace AvalonStudio.Extensibility.Tests
 
         public ObservableCollection<IProject> References => throw new NotImplementedException();
 
-        public IToolChain ToolChain { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IToolchain ToolChain { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public IDebugger Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ITestFramework TestFramework { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool Hidden { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -117,6 +117,11 @@ namespace AvalonStudio.Extensibility.Tests
         public ISourceFile FindFile(string path)
         {
             return null;
+        }
+
+        public bool IsItemSupported(string languageName)
+        {
+            return false;
         }
 
         public Task LoadFilesAsync()

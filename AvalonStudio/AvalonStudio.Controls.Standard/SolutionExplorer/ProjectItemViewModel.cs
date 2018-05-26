@@ -7,6 +7,14 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
     public abstract class ProjectItemViewModel : ViewModel
     {
+        public ProjectItemViewModel()
+        {
+            RenameCommand = ReactiveCommand.Create(() =>
+            {
+                InEditMode = true;
+            });
+        }
+
         private bool _isInEditMode;
 
         public abstract DrawingGroup Icon { get; }
@@ -20,6 +28,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             get { return _isInEditMode; }
             set { this.RaiseAndSetIfChanged(ref _isInEditMode, value); }
         }
+
+        public ReactiveCommand RenameCommand { get; }
 
         public static ProjectItemViewModel Create(IProjectItem item)
         {

@@ -1,9 +1,9 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions.Custom"
-             xmlns:beh="clr-namespace:AvalonStudio.Behaviors;assembly=AvalonStudio">
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
     <StackPanel Orientation="Vertical" Gap="4" Margin="4">
         <TextBlock Text="{Binding Title}" FontSize="14" VerticalAlignment="Bottom" />
-        <beh:FormattedTextBlock Name="LocationTextBlock" Text="{Binding Location}" FontSize="10" Spans="{Binding Spans}" VerticalAlignment="Bottom" />
+        <cont:FormattedTextBlock Name="LocationTextBlock" Text="{Binding Location}" FontSize="10" Spans="{Binding Spans}" VerticalAlignment="Bottom" />
     </StackPanel>
 </UserControl>

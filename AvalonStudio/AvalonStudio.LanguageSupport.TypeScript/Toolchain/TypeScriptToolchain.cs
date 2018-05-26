@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain
 {
-    public class TypeScriptToolchain : IToolChain
+    [ExportToolchain]
+    public class TypeScriptToolchain : IToolchain
     {
         /// <summary>
         /// Stub
@@ -23,18 +24,8 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain
         public Version Version => new Version(0, 1, 1, 2);
 
         public string BinDirectory => null;
-
-        public void Activation()
-        {
-            //throw new NotImplementedException();
-        }
-
-        public void BeforeActivation()
-        {
-            //throw new NotImplementedException();
-        }
-
-        public Task<bool> Build(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
+        
+        public Task<bool> BuildAsync(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
             console.WriteLine($"Build Started - {project.Name}");
             //Make sure tools are available

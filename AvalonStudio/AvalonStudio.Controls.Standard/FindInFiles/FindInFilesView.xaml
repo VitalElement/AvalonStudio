@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
+             xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity">
+  <cont:ToolControl Title="Find In Files">
+    <DockPanel LastChildFill="True" Margin="6">
+      <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="0 0 0 6">
+        <StackPanel Orientation="Horizontal" Gap="16" HorizontalAlignment="Right" DockPanel.Dock="Right">
+          <CheckBox Content="Case Sensitive" IsChecked="{Binding CaseSensitive}" />
+          <CheckBox Content="Whole Words" IsChecked="{Binding WholeWords}" />
+          <CheckBox Content="Regex" IsChecked="{Binding Regex} "/>
+          <StackPanel Orientation="Horizontal" Gap="2">
+            <TextBlock Text="File Mask:" VerticalAlignment="Center" />
+            <TextBox Text="{Binding FileMask}" MinWidth="150">
+              <i:Interaction.Behaviors>
+                <beh:CommandOnEnterBehavior Command="{Binding FindCommand}" />                
+              </i:Interaction.Behaviors>
+            </TextBox>
+          </StackPanel>
+        </StackPanel>
+
+        <Grid Margin="0 0 16 0">
+          <TextBox Text="{Binding SearchTerm}" Watermark="Find ...">
+            <i:Interaction.Behaviors>
+              <beh:CommandOnEnterBehavior Command="{Binding FindCommand}" />
+              <beh:BindFocusedBehavior IsFocused="{Binding IsSelected}" />
+            </i:Interaction.Behaviors>
+          </TextBox>
+         <TextBlock Text="{Binding SearchStats}" Opacity="0.6" TextAlignment="Right" VerticalAlignment="Center" Margin="0 0 8 0" />
+        </Grid>
+      </DockPanel>
+      <ListBox Items="{Binding Results}" BorderThickness="0">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <DockPanel LastChildFill="True" Background="Transparent">
+              <i:Interaction.Behaviors>
+                <beh:CommandOnDoubleClickBehavior Command="{Binding OpenCommand}" />
+              </i:Interaction.Behaviors>
+              <StackPanel Orientation="Horizontal" Gap="4" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                <TextBlock Text="{Binding File}" />
+                <TextBlock Text="{Binding LineNumber}" MinWidth="40" TextAlignment="Right" />
+              </StackPanel>
+              <TextBlock Text="{Binding LineText}" />
+            </DockPanel>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </DockPanel>
+  </cont:ToolControl>
+</UserControl>

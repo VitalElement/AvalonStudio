@@ -45,12 +45,12 @@ namespace AvalonStudio.Packages
             }
         }
 
-        private static List<Lazy<INuGetResourceProvider>> s_providers = new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3());            
+        private static List<Lazy<INuGetResourceProvider>> s_providers = new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3());
 
         private static readonly IEnumerable<SourceRepository> s_sourceRepositories = new List<SourceRepository> {
-                    new SourceRepository(new PackageSource("http://nuget1.vitalelement.co.uk/repository/AvalonStudio/"), s_providers),
-                    new SourceRepository(new PackageSource("http://nuget2.vitalelement.co.uk/repository/AvalonStudio/"), s_providers),
-                    new SourceRepository(new PackageSource("https://nuget.vitalelement.co.uk/repository/AvalonStudio/"), s_providers)
+                    new SourceRepository(new PackageSource("https://nuget.vitalelement.co.uk/repository/AvalonStudio/"), s_providers),
+                    //new SourceRepository(new PackageSource("http://nuget1.vitalelement.co.uk/repository/AvalonStudio/"), s_providers),
+                    new SourceRepository(new PackageSource("http://nuget2.vitalelement.co.uk/repository/AvalonStudio/"), s_providers)
             };
 
         public static NuGetFramework GetFramework()
@@ -168,7 +168,7 @@ namespace AvalonStudio.Packages
                     {
                         var requestedVersion = NuGetVersion.Parse(packageVersion);
 
-                        var versions = await package.GetVersionsAsync();
+                        var versions = await package.GetAllVersionsAsync();
                         var matchingVersion = versions.FirstOrDefault(v => v.Version == requestedVersion);
 
                         if (matchingVersion == null)
@@ -200,7 +200,7 @@ namespace AvalonStudio.Packages
                 logger = new ConsoleNuGetLogger();
             }
 
-            PackageIdentity identity = new PackageIdentity(packageId, new NuGet.Versioning.NuGetVersion(version));            
+            PackageIdentity identity = new PackageIdentity(packageId, new NuGet.Versioning.NuGetVersion(version));
 
             var settings = NuGet.Configuration.Settings.LoadDefaultSettings(Platform.ReposDirectory, null, new MachineWideSettings(), false, true);
 
@@ -223,7 +223,7 @@ namespace AvalonStudio.Packages
                     ResolutionContext resolutionContext = new ResolutionContext(
                         DependencyBehavior.Lowest, allowPrereleaseVersions, allowUnlisted, VersionConstraints.None);
 
-                    INuGetProjectContext projectContext = new ProjectContext(logger);                    
+                    INuGetProjectContext projectContext = new ProjectContext(logger);
 
                     await packageManager.InstallPackageAsync(packageManager.PackagesFolderNuGetProject,
                         identity, resolutionContext, projectContext, s_sourceRepositories,
@@ -236,6 +236,8 @@ namespace AvalonStudio.Packages
 
                     if (Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
                     {
+                        logger.LogInformation("Applying file attributes.");
+
                         foreach (var file in files)
                         {
                             Platform.Chmod(file, chmodFileMode);

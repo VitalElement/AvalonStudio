@@ -141,7 +141,7 @@
                 {
                     CompletionDataViewModel currentCompletion = null;
 
-                    currentCompletion = unfilteredCompletions.BinarySearch(c => c.Title, result.DisplayText);
+                    currentCompletion = unfilteredCompletions.BinarySearch(c => c.FilterText, result.FilterText);
 
                     if (currentCompletion == null)
                     {
@@ -238,16 +238,16 @@
 
                 if (currentFilter != string.Empty)
                 {
-                    filteredResults = unfilteredCompletions.Where(c => c != null && c.Title.ToLower().Contains(currentFilter.ToLower()));
+                    filteredResults = unfilteredCompletions.Where(c => c != null && c.FilterText.ToLower().Contains(currentFilter.ToLower()));
 
                     IEnumerable<CompletionDataViewModel> newSelectedCompletions = null;
 
                     // try find exact match case sensitive
-                    newSelectedCompletions = filteredResults.Where(s => s.Title.StartsWith(currentFilter));
+                    newSelectedCompletions = filteredResults.Where(s => s.FilterText.StartsWith(currentFilter));
 
                     if (newSelectedCompletions.Count() == 0)
                     {
-                        newSelectedCompletions = filteredResults.Where(s => s.Title.ToLower().StartsWith(currentFilter.ToLower()));
+                        newSelectedCompletions = filteredResults.Where(s => s.FilterText.ToLower().StartsWith(currentFilter.ToLower()));
                         // try find non-case sensitve match
                     }
 
@@ -274,7 +274,7 @@
 
                 if (filteredResults?.Count() > 0)
                 {
-                    if (filteredResults?.Count() == 1 && filteredResults.First().Title == currentFilter)
+                    if (filteredResults?.Count() == 1 && filteredResults.First().FilterText == currentFilter)
                     {
                         CloseIntellisense();
                     }
@@ -372,7 +372,7 @@
         {
             foreach (var snippet in _snippets)
             {
-                var current = sortedResults.InsertSortedExclusive(new CodeCompletionData(snippet.Name, snippet.Name) { Kind = CodeCompletionKind.Snippet, BriefComment = snippet.Description });
+                var current = sortedResults.InsertSortedExclusive(new CodeCompletionData(snippet.Name, snippet.Name, snippet.Name) { Kind = CodeCompletionKind.Snippet, BriefComment = snippet.Description });
 
                 if (current != null && current.Kind != CodeCompletionKind.Snippet)
                 {
@@ -381,7 +381,7 @@
             }
         }
 
-        private async Task PushToSignatureHelp(string currentWord, int offset)
+        private async Task<bool> PushToSignatureHelp(string currentWord, int offset)
         {
             SignatureHelp signatureHelp = null;
 
@@ -397,7 +397,11 @@
             {
                 _onSetSignatureHelpPosition(signatureHelp.Offset);
                 completionAssistant.PushMethod(signatureHelp);
+
+                return true;
             }
+
+            return false;
         }
 
         private async Task UpdateActiveParameterAndVisibility(bool canTrigger = false)
@@ -431,7 +435,11 @@
 
                                 if ((level + 1) > completionAssistant.Stack.Count)
                                 {
-                                    await PushToSignatureHelp("", offset);
+                                    if(!await PushToSignatureHelp("", offset))
+                                    {
+                                        level--;
+                                        break;
+                                    }
                                 }
 
                                 currentHelpStack = completionAssistant.Stack[completionAssistant.Stack.Count - level - 1];
@@ -565,8 +573,11 @@
 
                                 if (unfilteredCompletions.Count > 0)
                                 {
-                                    UpdateFilter(editor.CaretOffset, false);
-                                    intellisenseControl.IsVisible = !_hidden;
+                                    if (editor != null)
+                                    {
+                                        UpdateFilter(editor.CaretOffset, false);
+                                        intellisenseControl.IsVisible = !_hidden;
+                                    }
                                 }
                                 else
                                 {

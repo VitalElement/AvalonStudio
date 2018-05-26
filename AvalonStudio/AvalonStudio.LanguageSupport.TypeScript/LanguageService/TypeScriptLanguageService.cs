@@ -1,4 +1,5 @@
 ﻿using AvaloniaEdit.Indentation;
+using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
@@ -97,15 +98,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public IIndentationStrategy IndentationStrategy { get; }
 
-        public string Title => "TypeScript";
-
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => null;
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => null;
 
         public string LanguageId => "ts";
-
-        public string Identifier => "TS";
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
@@ -155,7 +152,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
             var editorCompletions = completions.Entries.Select(cc =>
                 {
-                    var ccData = new CodeCompletionData(cc.Name, cc.Name)
+                    var ccData = new CodeCompletionData(cc.Name, cc.SortText, cc.Name)
                     {
                         Kind = ConvertCodeCompletionKind(cc.Kind),
                         BriefComment = cc.Name
@@ -191,10 +188,10 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return -1;
         }
 
-        public Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             //STUB!
-            return Task.FromResult(new Symbol());
+            return Task.FromResult<QuickInfoResult>(null);
         }
 
         public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)

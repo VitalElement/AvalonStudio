@@ -3,8 +3,14 @@
        xmlns:mut="https://github.com/avaloniaui/mutable"
        xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <Style.Resources>
+        <FontFamily x:Key="UiFont">resm:AvalonStudio.Assets.SourceSansPro-*.ttf?assembly=AvalonStudio#Source Sans Pro</FontFamily>
+        <FontFamily x:Key="EditorFont">resm:AvalonStudio.Assets.SourceCodePro-*.ttf?assembly=AvalonStudio#Source Code Pro</FontFamily>
         <SolidColorBrush x:Key="AvalonBorderBrush">#FF004C8A</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeBackgroundBrush">#FF2D2D30</SolidColorBrush>
+        <SolidColorBrush x:Key="EditorBackgroundBrush">#FF2D2D30</SolidColorBrush>
+        <SolidColorBrush x:Key="EditorBackgroundAccentBrush">#FF2D2D30</SolidColorBrush>
+        <SolidColorBrush x:Key="EditorForegroundBrush">#FFE4E4E4</SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeBorderBrush">#3E3E42</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeBorderLightBrush">#FFAAAAAA</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeBorderMidBrush">#FF888888</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeBorderDarkBrush">#3E3E42</SolidColorBrush>
@@ -26,7 +32,7 @@
         <SolidColorBrush x:Key="ThemeAccentBrush3">#66119EDA</SolidColorBrush>
         <SolidColorBrush x:Key="ThemeAccentBrush4">#33119EDA</SolidColorBrush>
 
-        <sys:Double x:Key="ThemeBorderThickness">2</sys:Double>
+        <Thickness x:Key="ThemeBorderThickness">2</Thickness>
         <sys:Double x:Key="ThemeDisabledOpacity">0.5</sys:Double>
 
         <sys:Double x:Key="FontSizeSmall">10</sys:Double>

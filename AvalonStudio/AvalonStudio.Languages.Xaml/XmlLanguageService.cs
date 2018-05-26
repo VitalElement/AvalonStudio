@@ -1,4 +1,5 @@
 ﻿using AvaloniaEdit.Indentation;
+using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
@@ -26,8 +27,6 @@ namespace AvalonStudio.Languages.Xaml
 
         public IIndentationStrategy IndentationStrategy { get; } = new XamlIndentationStrategy();
 
-        public virtual string Title => "XML";
-
         public virtual string LanguageId => "xml";
 
         public IEnumerable<ICodeEditorInputHelper> InputHelpers => s_InputHelpers;
@@ -45,8 +44,6 @@ namespace AvalonStudio.Languages.Xaml
         {
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
-
-        public virtual string Identifier => "XML";        
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
@@ -92,9 +89,9 @@ namespace AvalonStudio.Languages.Xaml
             return cursor;
         }
 
-        public Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
-            return Task.FromResult<Symbol>(null);
+            return Task.FromResult<QuickInfoResult>(null);
         }
 
         public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)

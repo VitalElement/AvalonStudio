@@ -10,12 +10,6 @@ using System.Composition;
 
 namespace AvalonStudio
 {
-    class ProtoA
-    {
-        public void MethodB(string s) { }
-    }
-
-
     internal class App : Application
     {
         static void Print(Exception ex)
@@ -54,16 +48,20 @@ namespace AvalonStudio
 
                 InitializeLogging();
 
-                builder.Start<MainWindow>();
+                builder.Start<MainWindow>();                
             }
             catch (Exception e)
             {
                 Print(e);
             }
+            finally
+            {
+                Application.Current.Exit();
+            }
         }
 
         public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>().UsePlatformDetect().UseReactiveUI();
+            => AppBuilder.Configure<App>().UsePlatformDetect().UseSkia().UseReactiveUI();
 
         public override void Initialize()
         {

@@ -27,12 +27,12 @@
 
         public ObservableCollection<IProject> References => null;
 
-        public IToolChain ToolChain { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IToolchain ToolChain { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public IDebugger Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ITestFramework TestFramework { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool Hidden { get; set; }
 
-        public string CurrentDirectory => throw new NotImplementedException();
+        public string CurrentDirectory => Path.GetDirectoryName(Location);
 
         public IList<object> ConfigurationPages => throw new NotImplementedException();
 
@@ -157,6 +157,11 @@
         public Task UnloadAsync()
         {
             return Task.CompletedTask;
+        }
+
+        public bool IsItemSupported(string languageName)
+        {
+            return false;
         }
     }
 

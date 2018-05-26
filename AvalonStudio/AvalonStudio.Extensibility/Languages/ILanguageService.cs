@@ -1,4 +1,5 @@
 using AvaloniaEdit.Indentation;
+using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
@@ -40,19 +41,9 @@ namespace AvalonStudio.Languages
         IIndentationStrategy IndentationStrategy { get; }
 
         /// <summary>
-        ///     A description of the language supported by the service, i.e. C/C++
-        /// </summary>
-        string Title { get; }
-
-        /// <summary>
         /// A file path compatible name for the language, i.e. cs, cpp, ts, css, go, vb, fsharp
         /// </summary>
         string LanguageId { get; }
-
-        /// <summary>
-        /// An identifier compatible with Dot CLI language identifiers i.e. C#, F#, VB, etc
-        /// </summary>
-        string Identifier { get; }
 
         /// <summary>
         /// Dictionary of functions for transforming snippet variables. Key is function name, the arugment is the string to transform.
@@ -82,7 +73,7 @@ namespace AvalonStudio.Languages
 
         Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName);
 
-        Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset);
+        Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset);
 
         Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name);
 

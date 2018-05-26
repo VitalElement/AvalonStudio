@@ -1,21 +1,29 @@
-﻿using Avalonia.Threading;
+﻿using Avalonia.Media;
+using Avalonia.Threading;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvalonStudio.CodeEditor;
+using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.OmniSharp.Roslyn;
 using AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics;
 using AvalonStudio.Projects.OmniSharp.Roslyn.Editor;
 using AvalonStudio.Utils;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.DocumentationComments;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.LanguageServices;
 using Microsoft.CodeAnalysis.Rename;
+using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
@@ -24,11 +32,140 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Subjects;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.CSharp
 {
+    static class TaggedTextUtil
+    {
+        public static void AppendTaggedText(this StyledText markup, ColorScheme theme, IEnumerable<TaggedText> text)
+        {
+            foreach (var part in text)
+            {
+                if (part.Tag == TextTags.LineBreak)
+                {
+                    markup.AppendLine();
+                    continue;
+                }
+
+                markup.Append(part.Text, part.Tag != TextTags.Text ? GetThemeColor(theme, part.Tag) : null);
+            }
+        }
+
+        public static void AppendTaggedText(this StyledText markup, ColorScheme theme, IEnumerable<TaggedText> text, int col, int maxColumn)
+        {
+            foreach (var part in text)
+            {
+                if (part.Tag == TextTags.LineBreak)
+                {
+                    markup.AppendLine();
+                    col = 0;
+                    continue;
+                }
+                if (maxColumn >= 0 && col + part.Text.Length > maxColumn)
+                {
+                    markup.AppendLine(part.Text, part.Tag != TextTags.Text ? GetThemeColor(theme, part.Tag) : null);
+                    //AppendAndBreakText(markup, part.Text, col, maxColumn);
+                    col = 0;
+                }
+                else
+                {
+                    markup.Append(part.Text);
+                    var lineBreak = part.Text.LastIndexOfAny(new[] { '\n', '\r' });
+                    if (lineBreak >= 0)
+                    {
+                        col += part.Text.Length - lineBreak;
+                    }
+                    else
+                    {
+                        col += part.Text.Length;
+                    }
+                }
+            }
+        }
+
+        static void AppendAndBreakText(StringBuilder markup, string text, int col, int maxColumn)
+        {
+            var idx = maxColumn - col > 0 && maxColumn - col < text.Length ? text.IndexOf(' ', maxColumn - col) : -1;
+            if (idx < 0)
+            {
+                markup.Append(text);
+            }
+            else
+            {
+                markup.Append(text.Substring(0, idx));
+                if (idx + 1 >= text.Length)
+                    return;
+                markup.AppendLine();
+                AppendAndBreakText(markup, text.Substring(idx + 1), 0, maxColumn);
+            }
+        }
+
+        static IBrush GetThemeColor(ColorScheme theme, string tag)
+        {
+            switch (tag)
+            {
+                case TextTags.Keyword:
+                    return theme.Keyword;
+                case TextTags.Class:
+                    return theme.Type;
+                case TextTags.Delegate:
+                    return theme.DelegateName;
+                case TextTags.Enum:
+                    return theme.EnumType;
+                case TextTags.Interface:
+                    return theme.InterfaceType;
+                case TextTags.Module:
+                    return theme.Type;
+                case TextTags.Struct:
+                    return theme.StructName;
+                case TextTags.TypeParameter:
+                    return theme.Type;
+
+                case TextTags.Alias:
+                case TextTags.Assembly:
+                case TextTags.Field:
+                case TextTags.ErrorType:
+                case TextTags.Event:
+                case TextTags.Label:
+                case TextTags.Local:
+                case TextTags.Method:
+                case TextTags.Namespace:
+                case TextTags.Parameter:
+                case TextTags.Property:
+                case TextTags.RangeVariable:
+                    return null;
+
+                case TextTags.NumericLiteral:
+                    return theme.NumericLiteral;
+
+                case TextTags.StringLiteral:
+                    return theme.Literal;
+
+                case TextTags.Space:
+                case TextTags.LineBreak:
+                    return null;
+
+                case TextTags.Operator:
+                    return theme.Operator;
+
+                case TextTags.Punctuation:
+                    return theme.Punctuation;
+
+                case TextTags.AnonymousTypeIndicator:
+                case TextTags.Text:
+                    return null;
+
+                default:
+                    //Console.WriteLine("Warning unexpected text tag: " + tag);
+                    return null;
+            }
+        }
+    }
+
+
     [ExportLanguageService(ContentCapabilities.CSharp)]
     internal class CSharpLanguageService : ILanguageService
     {
@@ -38,6 +175,18 @@ namespace AvalonStudio.Languages.CSharp
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
         private MetadataHelper _metadataHelper;
+
+        private static readonly Microsoft.CodeAnalysis.SymbolDisplayFormat DefaultFormat = Microsoft.CodeAnalysis.SymbolDisplayFormat.MinimallyQualifiedFormat.
+            WithGlobalNamespaceStyle(Microsoft.CodeAnalysis.SymbolDisplayGlobalNamespaceStyle.Omitted).
+            WithMiscellaneousOptions(Microsoft.CodeAnalysis.SymbolDisplayMiscellaneousOptions.None).
+            WithMiscellaneousOptions(Microsoft.CodeAnalysis.SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers);
+
+        private static readonly Microsoft.CodeAnalysis.SymbolDisplayFormat FullyQualifiedFormat = Microsoft.CodeAnalysis.SymbolDisplayFormat.FullyQualifiedFormat.
+            WithGlobalNamespaceStyle(Microsoft.CodeAnalysis.SymbolDisplayGlobalNamespaceStyle.Omitted).
+            WithMiscellaneousOptions(Microsoft.CodeAnalysis.SymbolDisplayMiscellaneousOptions.None).
+            WithMiscellaneousOptions(Microsoft.CodeAnalysis.SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers);
+
+
 
         public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
@@ -100,21 +249,11 @@ namespace AvalonStudio.Languages.CSharp
             get; private set;
         }
 
-        public string Title
-        {
-            get
-            {
-                return "C#";
-            }
-        }
-
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => _snippetCodeGenerators;
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => _snippetDynamicVars;
 
         public string LanguageId => "cs";
-
-        public string Identifier => "C#";
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData { get; } = new Subject<SyntaxHighlightDataList>();
 
@@ -163,7 +302,7 @@ namespace AvalonStudio.Languages.CSharp
                     return CodeCompletionKind.FieldPublic;
             }
 
-            Console.WriteLine($"dont understand omnisharp: {kind}");
+            //Console.WriteLine($"dont understand omnisharp: {kind}");
             return CodeCompletionKind.None;
         }
 
@@ -198,7 +337,7 @@ namespace AvalonStudio.Languages.CSharp
                 var recommendedSymbols = await Microsoft.CodeAnalysis.Recommendations.Recommender.GetRecommendedSymbolsAtPositionAsync(semanticModel, index, workspace);
                 foreach (var completion in data.Items)
                 {
-                    var insertionText = completion.FilterText;
+                    var insertionText = completion.DisplayText;
 
                     if (completion.Properties.ContainsKey("InsertionText"))
                     {
@@ -224,7 +363,7 @@ namespace AvalonStudio.Languages.CSharp
                             {
                                 if (symbol != null)
                                 {
-                                    var newCompletion = new CodeCompletionData(symbol.Name, insertionText, null, selectionBehavior, priority);
+                                    var newCompletion = new CodeCompletionData(symbol.Name, completion.FilterText, insertionText, null, selectionBehavior, priority);
 
                                     if (completion.Properties.ContainsKey("SymbolKind"))
                                     {
@@ -246,7 +385,7 @@ namespace AvalonStudio.Languages.CSharp
                     }
                     else
                     {
-                        var newCompletion = new CodeCompletionData(completion.DisplayText, insertionText, null, selectionBehavior, priority);
+                        var newCompletion = new CodeCompletionData(completion.DisplayText, completion.FilterText, insertionText, null, selectionBehavior, priority);
 
                         if (completion.Properties.ContainsKey("SymbolKind"))
                         {
@@ -278,53 +417,6 @@ namespace AvalonStudio.Languages.CSharp
             RoslynWorkspace.GetWorkspace(dataAssociation.Solution).TryApplyChanges(formattedDocument.Project.Solution);
 
             return -1;
-        }
-
-        private static Symbol SymbolFromRoslynSymbol(int offset, Microsoft.CodeAnalysis.SemanticModel semanticModel, Microsoft.CodeAnalysis.ISymbol symbol)
-        {
-            var result = new Symbol();
-
-            if (symbol is Microsoft.CodeAnalysis.IMethodSymbol methodSymbol)
-            {
-                result.IsVariadic = methodSymbol.Parameters.LastOrDefault()?.IsParams ?? false;
-                result.Kind = CursorKind.CXXMethod;
-
-                result.Arguments = new List<ParameterSymbol>();
-
-                foreach (var parameter in methodSymbol.Parameters)
-                {
-                    var argument = new ParameterSymbol();
-                    argument.Name = parameter.Name;
-
-                    var info = CheckForStaticExtension.GetReturnType(parameter);
-
-                    if (info.HasValue)
-                    {
-                        argument.TypeDescription = info.Value.name;
-                        argument.IsBuiltInType = info.Value.inbuilt;
-                    }
-
-                    result.Arguments.Add(argument);
-                }
-            }
-
-            result.Name = symbol.Name;
-
-            var returnTypeInfo = CheckForStaticExtension.GetReturnType(symbol);
-
-            if (returnTypeInfo.HasValue)
-            {
-                result.ResultType = returnTypeInfo.Value.name;
-                result.IsBuiltInType = returnTypeInfo.Value.inbuilt;
-            }
-
-            result.TypeDescription = symbol.Kind == Microsoft.CodeAnalysis.SymbolKind.NamedType ? symbol.ToDisplayString() : symbol.ToMinimalDisplayString(semanticModel, offset);
-            var xmlDocumentation = symbol.GetDocumentationCommentXml();
-
-            var docComment = DocumentationComment.From(xmlDocumentation, Environment.NewLine);
-            result.BriefComment = docComment.SummaryText;
-
-            return result;
         }
 
         public async Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
@@ -402,7 +494,22 @@ namespace AvalonStudio.Languages.CSharp
             }
         }
 
-        public async Task<Symbol> GetSymbolAsync(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        static SyntaxNode GetBestFitResolveableNode(SyntaxNode node)
+        {
+            // case constructor name : new Foo (); 'Foo' only resolves to the type not to the constructor
+            if (node.Parent.IsKind(SyntaxKind.ObjectCreationExpression))
+            {
+                var oce = (ObjectCreationExpressionSyntax)node.Parent;
+
+                if (oce.Type == node)
+                    return oce;
+
+            }
+
+            return node;
+        }
+
+        public async Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             var dataAssociation = GetAssociatedData(editor);
 
@@ -412,16 +519,101 @@ namespace AvalonStudio.Languages.CSharp
 
             var semanticModel = await document.GetSemanticModelAsync();
 
-            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, offset, workspace);
+            var descriptionService = workspace.Services.GetLanguageServices(semanticModel.Language).GetService<ISymbolDisplayService>();
 
-            Symbol result = null;
+            var root = semanticModel.SyntaxTree.GetRoot(CancellationToken.None);
+
+            SyntaxToken syntaxToken;
+
+            try
+            {
+                syntaxToken = root.FindToken(offset);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return null;
+            }
+
+            if (!syntaxToken.Span.IntersectsWith(offset))
+
+                return null;
+
+            var node = GetBestFitResolveableNode(syntaxToken.Parent);
+
+            var symbolInfo = semanticModel.GetSymbolInfo(node, CancellationToken.None);
+
+            var symbol = symbolInfo.Symbol ?? semanticModel.GetDeclaredSymbol(node, CancellationToken.None);
 
             if (symbol != null)
             {
-                result = SymbolFromRoslynSymbol(offset, semanticModel, symbol);
+                var sections = await descriptionService.ToDescriptionGroupsAsync(workspace, semanticModel, offset, new[] { symbol }.AsImmutable(), default(CancellationToken)).ConfigureAwait(false);
+
+                ImmutableArray<TaggedText> parts;
+
+                var styledText = StyledText.Create();
+                var theme = ColorScheme.CurrentColorScheme;
+
+
+                if (sections.TryGetValue(SymbolDescriptionGroups.MainDescription, out parts))
+                {
+                    TaggedTextUtil.AppendTaggedText(styledText, theme, parts);
+                }
+
+                // if generating quick info for an attribute, bind to the class instead of the constructor
+                if (symbol.ContainingType?.IsAttribute() == true)
+                {
+                    symbol = symbol.ContainingType;
+                }
+
+                var formatter = workspace.Services.GetLanguageServices(semanticModel.Language).GetService<IDocumentationCommentFormattingService>();
+                var documentation = symbol.GetDocumentationParts(semanticModel, offset, formatter, CancellationToken.None);
+
+                if (documentation != null && documentation.Any())
+                {
+                    styledText.AppendLine();
+                    TaggedTextUtil.AppendTaggedText(styledText, theme, documentation);
+                }
+
+                if (sections.TryGetValue(SymbolDescriptionGroups.AnonymousTypes, out parts))
+                {
+                    if (!parts.IsDefaultOrEmpty)
+                    {
+                        styledText.AppendLine();
+                        TaggedTextUtil.AppendTaggedText(styledText, theme, parts);
+                    }
+                }
+
+                if (sections.TryGetValue(SymbolDescriptionGroups.AwaitableUsageText, out parts))
+                {
+                    if (!parts.IsDefaultOrEmpty)
+                    {
+                        styledText.AppendLine();
+                        TaggedTextUtil.AppendTaggedText(styledText, theme, parts);
+                    }
+                }
+
+                if (sections.TryGetValue(SymbolDescriptionGroups.Exceptions, out parts))
+                {
+                    if (!parts.IsDefaultOrEmpty)
+                    {
+                        styledText.AppendLine();
+                        TaggedTextUtil.AppendTaggedText(styledText, theme, parts);
+                    }
+                }
+
+                if (sections.TryGetValue(SymbolDescriptionGroups.Captures, out parts))
+                {
+                    if (!parts.IsDefaultOrEmpty)
+                    {
+                        styledText.AppendLine();
+                        TaggedTextUtil.AppendTaggedText(styledText, theme, parts);
+                    }
+                }
+
+                return new QuickInfoResult(styledText);
             }
 
-            return result;
+            return null;
         }
 
         public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
@@ -676,7 +868,7 @@ namespace AvalonStudio.Languages.CSharp
                     break;
 
                 default:
-                    Console.WriteLine($"Dont understand {type}");
+                    //Console.WriteLine($"Dont understand {type}");
                     break;
             }
 
@@ -824,19 +1016,19 @@ namespace AvalonStudio.Languages.CSharp
             // Walk up until we find a node that we're interested in.
             while (node != null)
             {
-                if (node is InvocationExpressionSyntax invocation && invocation.ArgumentList.Span.Contains(position))
+                if (node is InvocationExpressionSyntax invocation && invocation.ArgumentList != null && invocation.ArgumentList.Span.Contains(position))
                 {
                     var semanticModel = await document.GetSemanticModelAsync();
                     return new InvocationContext(semanticModel, position, invocation.Expression, invocation.ArgumentList, invocation.IsInStaticContext());
                 }
 
-                if (node is ObjectCreationExpressionSyntax objectCreation && objectCreation.ArgumentList.Span.Contains(position))
+                if (node is ObjectCreationExpressionSyntax objectCreation && objectCreation.ArgumentList != null && objectCreation.ArgumentList.Span.Contains(position))
                 {
                     var semanticModel = await document.GetSemanticModelAsync();
                     return new InvocationContext(semanticModel, position, objectCreation, objectCreation.ArgumentList, objectCreation.IsInStaticContext());
                 }
 
-                if (node is AttributeSyntax attributeSyntax && attributeSyntax.ArgumentList.Span.Contains(position))
+                if (node is AttributeSyntax attributeSyntax && attributeSyntax.ArgumentList != null && attributeSyntax.ArgumentList.Span.Contains(position))
                 {
                     var semanticModel = await document.GetSemanticModelAsync();
                     return new InvocationContext(semanticModel, position, attributeSyntax, attributeSyntax.ArgumentList, attributeSyntax.IsInStaticContext());

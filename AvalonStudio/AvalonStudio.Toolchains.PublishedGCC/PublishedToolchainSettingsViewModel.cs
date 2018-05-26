@@ -4,6 +4,7 @@ using AvalonStudio.Packages;
 using AvalonStudio.Projects;
 using AvalonStudio.Toolchains.CustomGCC;
 using ReactiveUI;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -91,11 +92,9 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
         private async Task LoadVersions()
         {
-            var versions = await PackageManager.FindPackages(SelectedPackage.Title);
+            var packages = await PackageManager.FindPackages(SelectedPackage.Title);
 
-            var versionData = await versions.FirstOrDefault().GetVersionsAsync();
-
-            Versions = new ObservableCollection<string>(versionData.Select(v=>v.Version.ToNormalizedString()));
+            Versions = new ObservableCollection<string>((await packages.FirstOrDefault().GetAllVersionsAsync()).Select(v=>v.Version.ToNormalizedString()));
         }
 
         public PackageMetaData SelectedPackage

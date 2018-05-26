@@ -1,22 +1,18 @@
 ﻿using Avalonia.Ide.CompletionEngine;
 using Avalonia.Ide.CompletionEngine.AssemblyMetadata;
 using Avalonia.Ide.CompletionEngine.SrmMetadataProvider;
+using Avalonia.Threading;
 using AvalonStudio.Documents;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Avalonia.Threading;
 
 namespace AvalonStudio.Languages.Xaml
 {
     [ExportLanguageService(ContentCapabilities.Xaml)]
     internal class XamlLanguageService : XmlLanguageService
     {
-        public override string Title => "XAML";
-
         public override string LanguageId => "xaml";
-
-        public override string Identifier => "XAML";
 
         public override bool CanHandle(IEditor editor)
         {
@@ -88,7 +84,7 @@ namespace AvalonStudio.Languages.Xaml
                 {
                     foreach (var completion in completionSet.Completions)
                     {
-                        results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
+                        results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
                         {
                             BriefComment = completion.Description,
                             Kind = FromAvaloniaCompletionKind(completion.Kind),

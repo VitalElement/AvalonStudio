@@ -2,7 +2,7 @@
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
              xmlns:econt="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:dcont="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging"
-             xmlns:behaviours="clr-namespace:AvalonStudio.Behaviors;assembly=AvalonStudio"
+             xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
              xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
@@ -11,8 +11,10 @@
   <UserControl.KeyBindings>
     <KeyBinding Command="{Binding RenameSymbolCommand}" Gesture="F2" />
   </UserControl.KeyBindings>
-  <Grid>
-    <DockPanel>
+    <DockPanel LastChildFill="True">
+      <i:Interaction.Behaviors>
+        <beh:PointerWheelValueBehavior Value="{Binding ZoomLevel}" MinValue="20" MaxValue="400" Scale="10" InputModifiers="Control" />
+      </i:Interaction.Behaviors>
       <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
         <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
       </Grid>
@@ -43,10 +45,11 @@
             <MenuItem Header="Goto Definition" Command="{Binding GotoDefinitionCommand}" />
           </ContextMenu>
         </Grid.ContextMenu>
+
         <editor:CodeEditor Name="editor"
                            BorderThickness="0" Margin="0"
                            VerticalAlignment="Stretch"
-                           FontFamily="{Binding FontFamily}"
+                           FontFamily="{DynamicResource EditorFont}"
                            FontSize="{Binding VisualFontSize}"
                            SourceFile="{Binding SourceFile}"
                            IsDirty="{Binding IsDirty}"
@@ -54,10 +57,8 @@
                            SourceText="{Binding SourceText}"
                            HighlightSelectedWord="False"
                            ColorScheme="{Binding ColorScheme}"
-                           
-                           DocumentAccessor="{Binding DocumentAccessor}">
+                           DocumentAccessor="{Binding DocumentAccessor}">          
         </editor:CodeEditor>
       </Grid>
     </DockPanel>
-  </Grid>
 </UserControl>
