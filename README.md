@@ -7,7 +7,7 @@
 
 An extensible, cross platform IDE written in C# for Embedded C/C++, .NET Core, Avalonia and Typescript
 
-<img src="https://files.gitter.im/VitalElement/AvalonStudio/h5QT/image.png" />
+<img src="https://files.gitter.im/VitalElement/AvalonStudio/3yMR/image.png" />
 <img src="https://files.gitter.im/VitalElement/AvalonStudio/gEyI/Screenshot-from-2017-10-09-15-43-14.png" />
 <img src="https://files.gitter.im/VitalElement/AvalonStudio/gpYQ/Screenshot-from-2017-10-09-15-51-18.png" />
 <img src="https://files.gitter.im/VitalElement/AvalonStudio/LUgi/image.png" />
