@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop">
-      <Version>0.6.2-build5245-beta</Version>
+      <Version>0.6.2-build5289-beta</Version>
     </PackageReference>
   </ItemGroup>
 </Project>

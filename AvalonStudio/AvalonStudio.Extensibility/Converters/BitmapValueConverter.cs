@@ -4,10 +4,10 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using System;
 using System.Globalization;
+using Avalonia.Data.Converters;
 
 namespace AvalonStudio.Extensibility.Converters
 {
-
     public class BitmapValueConverter : IValueConverter
     {
         public static BitmapValueConverter Instance = new BitmapValueConverter();
