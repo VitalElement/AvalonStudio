@@ -30,6 +30,8 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public List<string> SystemIncludePaths { get; set; }
 
+        public List<string> SystemLibraryPaths { get; set; }
+
         public async Task<GccConfiguration> ToConfigAsync(bool autoInstall = true)
         {
             var result = new GccConfiguration(this);
@@ -114,6 +116,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
     public class GccConfiguration : IComparable<GccConfiguration>
     {
         private List<string> _systemIncludePaths;
+        private List<string> _systemLibraryPaths;
 
         private Version _version;
         private string _id;
@@ -136,6 +139,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
                 _isResolved = true;
 
                 _systemIncludePaths = new List<string>();
+                _systemLibraryPaths = new List<string>();
 
                 try
                 {
@@ -146,11 +150,19 @@ namespace AvalonStudio.Toolchains.CustomGCC
                     Size = await ResolvePackage(_description.Size);
                     Gdb = await ResolvePackage(_description.Gdb);
 
-                    if(_description.SystemIncludePaths != null)
+                    if (_description.SystemIncludePaths != null)
                     {
-                        foreach(var unresolvedPath in _description.SystemIncludePaths)
+                        foreach (var unresolvedPath in _description.SystemIncludePaths)
                         {
                             _systemIncludePaths.Add(await ResolvePackage(unresolvedPath, false));
+                        }
+                    }
+
+                    if (_description.SystemLibraryPaths != null)
+                    {
+                        foreach(var unresolvedPath in _description.SystemLibraryPaths)
+                        {
+                            _systemLibraryPaths.Add(await ResolvePackage(unresolvedPath, false));
                         }
                     }
                 }
@@ -260,6 +272,11 @@ namespace AvalonStudio.Toolchains.CustomGCC
         {
             get => _systemIncludePaths;
             private set => _systemIncludePaths = value;
+        }
+
+        public List<string> SystemLibraryPaths
+        {
+            get => _systemLibraryPaths;
         }
 
         public string CC { get; private set; }
