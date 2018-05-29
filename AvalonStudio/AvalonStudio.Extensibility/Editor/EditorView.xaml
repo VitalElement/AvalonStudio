@@ -49,7 +49,7 @@
         <editor:CodeEditor Name="editor"
                            BorderThickness="0" Margin="0"
                            VerticalAlignment="Stretch"
-                           FontFamily="{Binding FontFamily}"
+                           FontFamily="{DynamicResource EditorFont}"
                            FontSize="{Binding VisualFontSize}"
                            SourceFile="{Binding SourceFile}"
                            IsDirty="{Binding IsDirty}"

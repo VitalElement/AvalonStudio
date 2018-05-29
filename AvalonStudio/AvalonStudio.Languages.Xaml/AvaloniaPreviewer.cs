@@ -2,13 +2,16 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Remote;
+using Avalonia.Controls.Shapes;
 using Avalonia.Data;
+using Avalonia.Media;
 using Avalonia.Remote.Protocol;
 using Avalonia.Remote.Protocol.Designer;
 using Avalonia.Remote.Protocol.Viewport;
 using Avalonia.Threading;
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
@@ -48,6 +51,7 @@ namespace AvalonStudio.Languages.Xaml
         private TextBlock _statusText;
         private CompositeDisposable _disposables;
         private IDisposable _listener;
+        private VisualBrush _visualBrush;
 
         private static int FreeTcpPort()
         {
@@ -169,6 +173,35 @@ namespace AvalonStudio.Languages.Xaml
 
         public AvaloniaPreviewer()
         {
+            _visualBrush = new VisualBrush
+            {
+                DestinationRect = new RelativeRect(0,0,20,20, RelativeUnit.Absolute),
+                TileMode = TileMode.Tile,
+                Visual = new Canvas
+                {
+                    Width=20,
+                    Height=20,
+                    Background= ColorScheme.CurrentColorScheme.Background,
+                    Children =
+                    {
+                        new Rectangle
+                        {
+                            Height = 10,
+                            Width = 10,
+                            Fill = ColorScheme.CurrentColorScheme.BackgroundAccent
+                        },
+                        new Rectangle
+                        {
+                            Height = 10,
+                            Width = 10,
+                            Fill = ColorScheme.CurrentColorScheme.BackgroundAccent,
+                            [Canvas.LeftProperty] = 10,
+                            [Canvas.TopProperty] = 10
+                        }
+                    }
+                }
+            };
+
             var shell = IoC.Get<IShell>();
 
             _disposables = new CompositeDisposable
@@ -221,6 +254,10 @@ namespace AvalonStudio.Languages.Xaml
             _overlay = e.NameScope.Find<Grid>("PART_Overlay");
 
             _statusText = e.NameScope.Find<TextBlock>("PART_Status");
+
+            var background = e.NameScope.Find<ScrollViewer>("PART_Remote");
+
+            background.Background = _visualBrush;
         }
 
         private void OnMessage(IAvaloniaRemoteTransportConnection transport, object obj)

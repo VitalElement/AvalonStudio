@@ -6,6 +6,7 @@
     using System;
     using System.Globalization;
     using System.IO;
+    using Avalonia.Data.Converters;
 
     internal class IconImageConverter : IValueConverter
     {

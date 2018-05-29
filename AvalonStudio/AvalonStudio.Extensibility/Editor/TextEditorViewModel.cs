@@ -67,21 +67,6 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _sourceText, value); }
         }
 
-        public string FontFamily
-        {
-            get
-            {
-                switch (Platform.PlatformIdentifier)
-                {
-                    /*case Platforms.PlatformID.Win32NT:
-                        return "Consolas";*/
-
-                    default:
-                        return "Source Code Pro";
-                }
-            }
-        }
-
         public override async Task WaitForEditorToLoadAsync()
         {
             if (_documentAccessor == null)
