@@ -48,16 +48,20 @@ namespace AvalonStudio
 
                 InitializeLogging();
 
-                builder.Start<MainWindow>();
+                builder.Start<MainWindow>();                
             }
             catch (Exception e)
             {
                 Print(e);
             }
+            finally
+            {
+                Application.Current.Exit();
+            }
         }
 
         public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>().UsePlatformDetect().UseReactiveUI();
+            => AppBuilder.Configure<App>().UsePlatformDetect().UseSkia().UseReactiveUI();
 
         public override void Initialize()
         {

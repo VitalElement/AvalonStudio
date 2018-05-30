@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
               xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
               xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility">
-    <Grid TextBlock.FontFamily="Segoi UI" TextBlock.FontSize="14">
+    <Grid TextBlock.FontFamily="{DynamicResource UiFont}" TextBlock.FontSize="14">
         <Grid.Styles>
             <Style Selector="ListBoxItem:selected">
                 <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
