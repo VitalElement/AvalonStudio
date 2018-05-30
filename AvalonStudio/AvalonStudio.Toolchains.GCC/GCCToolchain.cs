@@ -208,7 +208,7 @@ namespace AvalonStudio.Toolchains.GCC
             var objectArguments = string.Empty;
             foreach (var obj in assemblies.ObjectLocations)
             {
-                objectArguments += obj + " ";
+                objectArguments += project.Solution.CurrentDirectory.MakeRelativePath(obj).ToPlatformPath() + " ";
             }
 
             var libs = string.Empty;
@@ -254,7 +254,8 @@ namespace AvalonStudio.Toolchains.GCC
 
                 foreach (var libraryPath in settings.LinkSettings.LinkedLibraries)
                 {
-                    libraryPaths += $"-Wl,--library-path={Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(libraryPath)).ToPlatformPath()} ";
+                    var path = project.Solution.CurrentDirectory.MakeRelativePath(Path.Combine(project.CurrentDirectory, Path.GetDirectoryName(libraryPath)));
+                    libraryPaths += $"-Wl,--library-path={path.ToPlatformPath()} ";
 
                     var libName = Path.GetFileName(libraryPath);
 
@@ -263,7 +264,7 @@ namespace AvalonStudio.Toolchains.GCC
 
                 foreach (var script in settings.LinkSettings.LinkerScripts)
                 {
-                    linkerScripts += $"-Wl,-T\"{Path.Combine(project.CurrentDirectory, script)}\" ";
+                    linkerScripts += $"-Wl,-T\"{project.Solution.CurrentDirectory.MakeRelativePath(Path.Combine(project.CurrentDirectory, script)).ToPlatformPath()}\" ";
                 }
 
                 foreach (var lib in settings.LinkSettings.SystemLibraries)
@@ -304,7 +305,7 @@ namespace AvalonStudio.Toolchains.GCC
                 {
                     console.WriteLine(e.Data);
                 }
-            }, false, project.Solution.CurrentDirectory, false, RunWithSystemPaths);
+            }, false, project.Solution.CurrentDirectory, false, RunWithSystemPaths, ExtraPaths);
 
             if (Shell.DebugMode)
             {
