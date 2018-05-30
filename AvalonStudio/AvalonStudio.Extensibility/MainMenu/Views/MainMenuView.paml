@@ -1,0 +1,28 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:mod="clr-namespace:AvalonStudio.Menus.Models;assembly=AvalonStudio.Extensibility">
+
+  <Menu Items="{Binding Items}">
+    <Menu.Styles>
+      <Style Selector="MenuItem">
+        <Setter Property="Command" Value="{Binding Command}" />
+        <Setter Property="Items" Value="{Binding Children}" />
+        <Setter Property="Icon">
+          <Setter.Value>
+            <Template>
+              <DrawingPresenter Drawing="{Binding Icon}" />
+            </Template>
+          </Setter.Value>
+        </Setter>
+        <Setter Property="Header" Value="{Binding Label}" />
+      </Style>
+    </Menu.Styles>
+    <Menu.DataTemplates>
+      <DataTemplate DataType="mod:MenuItemSeparatorModel">
+        <DataTemplate>
+          <Separator />
+        </DataTemplate>
+      </DataTemplate>
+    </Menu.DataTemplates>
+  </Menu>
+
+</UserControl>

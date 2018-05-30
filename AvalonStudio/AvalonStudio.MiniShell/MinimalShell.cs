@@ -270,11 +270,6 @@ namespace AvalonStudio.Shell
             throw new NotImplementedException();
         }
 
-        public IMenu BuildEditorContextMenu()
-        {
-            throw new NotImplementedException();
-        }
-
         public void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics)
         {
             throw new NotImplementedException();

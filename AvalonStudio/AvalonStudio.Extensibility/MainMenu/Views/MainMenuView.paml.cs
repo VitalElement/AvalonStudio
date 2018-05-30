@@ -1,12 +1,11 @@
-using System;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Extensibility.MainMenu.Views
 {
-    public class ToolBar : UserControl
+    public class MainMenuView : UserControl
     {
-        public ToolBar()
+        public MainMenuView()
         {
             InitializeComponent();
         }

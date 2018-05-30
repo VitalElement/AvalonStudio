@@ -1,31 +1,34 @@
 using Avalonia.Input;
 using Avalonia.Threading;
+using AvalonStudio.Commands;
+using AvalonStudio.Commands.Settings;
 using AvalonStudio.Controls;
 using AvalonStudio.Controls.Standard.ErrorList;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Commands;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.MainMenu;
-using AvalonStudio.Extensibility.MainToolBar;
-using AvalonStudio.Extensibility.Menus;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Shell;
-using AvalonStudio.Extensibility.ToolBars;
-using AvalonStudio.Extensibility.ToolBars.Models;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
+using AvalonStudio.MainMenu;
+using AvalonStudio.Menus.Models;
+using AvalonStudio.Menus.ViewModels;
 using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
+using AvalonStudio.Toolbars;
+using AvalonStudio.Toolbars.ViewModels;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Composition;
 using System.Linq;
@@ -41,19 +44,11 @@ namespace AvalonStudio
     internal class ShellViewModel : ViewModel, IShell
     {
         public static ShellViewModel Instance { get; internal set; }
-        private IToolBar _toolBar;
         private WorkspaceTaskRunner _taskRunner;
-        private ToolBarDefinition _toolBarDefinition;
         private double _globalZoomLevel;
-        private List<MenuBarDefinition> _menuBarDefinitions;
-        private List<MenuDefinition> _menuDefinitions;
-        private List<MenuItemGroupDefinition> _menuItemGroupDefinitions;
-        private List<MenuItemDefinition> _menuItemDefinitions;
-        private List<CommandDefinition> _commandDefinitions;
         private List<KeyBinding> _keyBindings;
-        private List<ToolBarDefinition> _toolBarDefinitions;
-        private List<ToolBarItemGroupDefinition> _toolBarItemGroupDefinitions;
-        private List<ToolBarItemDefinition> _toolBarItemDefinitions;
+
+        private IEnumerable<ToolbarViewModel> _toolbars;
 
         private Lazy<StatusBarViewModel> _statusBar;
 
@@ -82,8 +77,11 @@ namespace AvalonStudio
 
         [ImportingConstructor]
         public ShellViewModel(
+            CommandService commandService,
             Lazy<StatusBarViewModel> statusBar,
             IContentTypeService contentTypeService,
+            MainMenuService mainMenuService,
+            ToolbarService toolbarService,
             [ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
             [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
@@ -91,8 +89,13 @@ namespace AvalonStudio
             [ImportMany] IEnumerable<Lazy<IToolchain>> toolChains,
             [ImportMany] IEnumerable<IDebugger> debugger2s,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
-            [ImportMany] IEnumerable<IExtension> extensions)
-        {
+            [ImportMany] IEnumerable<Lazy<IExtension>> extensions)
+        {  
+            MainMenu = mainMenuService.GetMainMenu();
+
+            var toolbars = toolbarService.GetToolbars();
+            StandardToolbar = toolbars.Single(t => t.Key == "Standard").Value;
+
             _statusBar = statusBar;
             IoC.RegisterConstant<IStatusBar>(_statusBar.Value);
 
@@ -106,23 +109,15 @@ namespace AvalonStudio
             _debugger2s = debugger2s;
 
             _testFrameworks = testFrameworks;
-
-            _menuBarDefinitions = new List<MenuBarDefinition>();
-            _menuDefinitions = new List<MenuDefinition>();
-            _menuItemGroupDefinitions = new List<MenuItemGroupDefinition>();
-            _menuItemDefinitions = new List<MenuItemDefinition>();
-            _commandDefinitions = new List<CommandDefinition>();
+            
             _keyBindings = new List<KeyBinding>();
-            _toolBarDefinitions = new List<ToolBarDefinition>();
-            _toolBarItemGroupDefinitions = new List<ToolBarItemGroupDefinition>();
-            _toolBarItemDefinitions = new List<ToolBarItemDefinition>();
 
             IoC.RegisterConstant<IShell>(this);
             IoC.RegisterConstant(this);
 
             foreach (var extension in extensions)
             {
-                extension.BeforeActivation();
+                extension.Value.BeforeActivation();
             }
 
             CurrentPerspective = Perspective.Editor;
@@ -153,59 +148,18 @@ namespace AvalonStudio
 
             foreach (var extension in extensions)
             {
-                extension.Activation();
-
-                _commandDefinitions.ConsumeExtension(extension);
+                extension.Value.Activation();
             }
 
-            _menuBarDefinitions.AddRange(IoC.GetServices<MenuBarDefinition>(typeof(MenuBarDefinition)));
-            _menuDefinitions.AddRange(IoC.GetServices<MenuDefinition>(typeof(MenuDefinition)));
-            _menuItemGroupDefinitions.AddRange(IoC.GetServices<MenuItemGroupDefinition>(typeof(MenuItemGroupDefinition)));
-            _menuItemDefinitions.AddRange(IoC.GetServices<MenuItemDefinition>(typeof(MenuItemDefinition)));
-
-            _toolBarDefinitions.AddRange(IoC.GetServices<ToolBarDefinition>(typeof(ToolBarDefinition)));
-            _toolBarItemDefinitions.AddRange(IoC.GetServices<ToolBarItemDefinition>(typeof(ToolBarItemDefinition)));
-            _toolBarItemGroupDefinitions.AddRange(IoC.GetServices<ToolBarItemGroupDefinition>(typeof(ToolBarItemGroupDefinition)));
-
-            foreach (var definition in _toolBarItemDefinitions)
+            foreach (var command in commandService.GetKeyGestures())
             {
-                definition.Activation();
-            }
-
-            foreach (var menuItemDefinition in _menuDefinitions)
-            {
-                menuItemDefinition.Activation();
-            }
-
-            foreach (var menuItemAsReadOnlyDefinition in _menuItemGroupDefinitions)
-            {
-                menuItemAsReadOnlyDefinition.Activation();
-            }
-
-            foreach (var extension in _menuItemDefinitions)
-            {
-                extension.Activation();
-            }
-
-            foreach (var commandDefinition in _commandDefinitions)
-            {
-                if (commandDefinition.Command != null && commandDefinition.Gesture != null)
+                foreach (var keyGesture in command.Value)
                 {
-                    _keyBindings.Add(new KeyBinding { Gesture = commandDefinition.Gesture, Command = commandDefinition.Command });
+                    _keyBindings.Add(new KeyBinding { Command = command.Key.Command, Gesture = KeyGesture.Parse(keyGesture) });
                 }
             }
 
-            ToolBarDefinition = ToolBarDefinitions.MainToolBar;
-
-            var menuBuilder = new MenuBuilder(_menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
-
-            var mainMenu = new Extensibility.MainMenu.ViewModels.MainMenuViewModel(menuBuilder);
-
-            menuBuilder.BuildMenuBar(Extensibility.MenuDefinitions.MainMenuBar, mainMenu.Model);
-
-            MainMenu = mainMenu;
-
-            foreach (var tool in extensions.OfType<ToolViewModel>())
+            foreach (var tool in extensions.Select(e => e.Value).OfType<ToolViewModel>())
             {
                 tools.Add(tool);
 
@@ -287,17 +241,6 @@ namespace AvalonStudio
             });
         }
 
-        public IMenu BuildEditorContextMenu()
-        {
-            var menuBuilder = new MenuBuilder(_menuBarDefinitions.ToArray(), _menuDefinitions.ToArray(), _menuItemGroupDefinitions.ToArray(), _menuItemDefinitions.ToArray(), new ExcludeMenuDefinition[0], new ExcludeMenuItemGroupDefinition[0], new ExcludeMenuItemDefinition[0]);
-
-            var mainMenu = new Extensibility.MainMenu.ViewModels.MainMenuViewModel(menuBuilder);
-
-            menuBuilder.BuildMenuBar(TextEditorContextMenu.EditorContextMenu, mainMenu.Model);
-
-            return mainMenu;
-        }
-
         public ReactiveCommand EnableDebugModeCommand { get; }
 
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
@@ -306,7 +249,7 @@ namespace AvalonStudio
 
         public IObservable<ISolution> OnSolutionChanged { get; }
 
-        public IMenu MainMenu { get; }
+        public MenuViewModel MainMenu { get; }
 
         public StatusBarViewModel StatusBar => _statusBar.Value;
 
@@ -316,49 +259,9 @@ namespace AvalonStudio
             set { this.RaiseAndSetIfChanged(ref debugControlsVisible, value); }
         }
 
-        public ToolBarDefinition ToolBarDefinition
-        {
-            get
-            {
-                return _toolBarDefinition;
-            }
-            protected set
-            {
-                this.RaiseAndSetIfChanged(ref _toolBarDefinition, value);
-                // Might need to do a global raise property change (NPC(string.Empty))
-            }
-        }
+        public IEnumerable<ToolbarViewModel> Toolbars => _toolbars;
 
-        public IEnumerable<IToolBar> ToolBars
-        {
-            get
-            {
-                yield return ToolBar;
-            }
-        }
-
-        public IToolBar ToolBar
-        {
-            get
-            {
-                if (_toolBar != null)
-                    return _toolBar;
-
-                if (ToolBarDefinition == null)
-                    return null;
-
-                var toolBarBuilder = new ToolBarBuilder(_toolBarDefinitions.ToArray(), _toolBarItemGroupDefinitions.ToArray(), _toolBarItemDefinitions.ToArray(), new ExcludeToolBarDefinition[0], new ExcludeToolBarItemGroupDefinition[0], new ExcludeToolBarItemDefinition[0]);
-
-                var mainToolBar = new Extensibility.ToolBars.ViewModels.ToolBarsViewModel(toolBarBuilder);
-
-                toolBarBuilder.BuildToolBars(mainToolBar);
-
-                _toolBar = new ToolBarModel();
-
-                toolBarBuilder.BuildToolBar(ToolBarDefinition, _toolBar);
-                return _toolBar;
-            }
-        }
+        private ToolbarViewModel StandardToolbar { get; }
 
         public IEnumerable<KeyBinding> KeyBindings => _keyBindings;
 

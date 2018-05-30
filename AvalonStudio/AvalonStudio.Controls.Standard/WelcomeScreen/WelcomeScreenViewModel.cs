@@ -1,38 +1,43 @@
-﻿namespace AvalonStudio.Controls.Standard.WelcomeScreen
-{
-    using Avalonia.Media.Imaging;
-    using AvalonStudio.Controls.Standard.SolutionExplorer;
-    using AvalonStudio.Extensibility;
-    using AvalonStudio.Extensibility.Plugin;
-    using AvalonStudio.Platforms;
-    using AvalonStudio.Shell;
-    using ReactiveUI;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Reactive.Disposables;
-    using System.Reactive.Linq;
-    using System.Threading.Tasks;
+﻿using Avalonia.Media.Imaging;
+using AvalonStudio.Controls.Standard.SolutionExplorer;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Platforms;
+using AvalonStudio.Shell;
+using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Composition;
+using System.IO;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 
+namespace AvalonStudio.Controls.Standard.WelcomeScreen
+{
     public class WelcomeScreenViewModel : DocumentTabViewModel, IExtension
     {
+        private ISolutionExplorer _solutionExplorer;
+
         private ObservableCollection<RecentProjectViewModel> _recentProjects;
         private ObservableCollection<NewsFeedViewModel> _newsFeed;
         private ObservableCollection<VideoFeedViewModel> _videoFeed;
-        ISolutionExplorer _solutionExplorer;
         private CompositeDisposable _disposables;
 
-        public WelcomeScreenViewModel()
+        [ImportingConstructor]
+        public WelcomeScreenViewModel(ISolutionExplorer solutionExplorer)
         {
             Title = "Start Page";
+
+            _solutionExplorer = solutionExplorer;
 
             _recentProjects = new ObservableCollection<RecentProjectViewModel>();
             _newsFeed = new ObservableCollection<NewsFeedViewModel>();
             _videoFeed = new ObservableCollection<VideoFeedViewModel>();
 
-            NewSolution = ReactiveCommand.Create(() => _solutionExplorer?.NewSolution());
-            OpenSolution = ReactiveCommand.Create(() => _solutionExplorer?.OpenSolution());
+            NewSolution = ReactiveCommand.Create(_solutionExplorer.NewSolution);
+            OpenSolution = ReactiveCommand.Create(_solutionExplorer.OpenSolution);
 
             LoadRecentProjects();
         }

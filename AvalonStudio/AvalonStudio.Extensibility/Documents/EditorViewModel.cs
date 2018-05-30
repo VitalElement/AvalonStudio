@@ -118,8 +118,6 @@ namespace AvalonStudio.Controls
             VisualFontSize = (ZoomLevel / 100) * FontSize;
         }
 
-        public IMenu ContextMenu => IoC.Get<IShell>().BuildEditorContextMenu();
-
         public ReactiveCommand GotoDefinitionCommand { get; }
 
         public ReactiveCommand RenameSymbolCommand { get; }
