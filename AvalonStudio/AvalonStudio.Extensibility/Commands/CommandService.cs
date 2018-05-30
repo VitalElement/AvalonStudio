@@ -55,7 +55,11 @@ namespace AvalonStudio.Commands
                 if (!commandSettings.Commands.TryGetValue(command.Metadata.Name, out var settings))
                 {
                     settings = new Command();
-                    settings.KeyGestures.AddRange(command.Metadata.DefaultKeyGestures);
+
+                    if (command.Metadata.DefaultKeyGestures != null)
+                    {
+                        settings.KeyGestures.AddRange(command.Metadata.DefaultKeyGestures);
+                    }
 
                     commandSettings.Commands.Add(command.Metadata.Name, settings);
                 }
