@@ -57,6 +57,8 @@ namespace AvalonStudio.Toolchains.GCC
 
         public virtual string SizeExecutable => Path.Combine(BinDirectory, $"{SizePrefix}{SizeName}" + Platform.ExecutableExtension);
 
+        public virtual string[] ExtraPaths => new string[0];
+
         [ImportingConstructor]
         public GCCToolchain(IStatusBar statusBar)
             : base(statusBar)
@@ -187,7 +189,7 @@ namespace AvalonStudio.Toolchains.GCC
                     console.WriteLine(e.Data);
                 }
             },
-            false, "", false, RunWithSystemPaths);
+            false, "", false, RunWithSystemPaths, ExtraPaths);
 
             if (Shell.DebugMode)
             {

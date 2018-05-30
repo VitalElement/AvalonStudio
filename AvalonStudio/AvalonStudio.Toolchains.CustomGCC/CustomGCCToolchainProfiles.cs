@@ -9,6 +9,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
     class CustomGCCToolchainProfile
     {
         public string BasePath { get; set; } = "";
+        public string[] ExtraPaths { get; set; } = new string[0];
     }
 
     class CustomGCCToolchainProfiles : IExtension
