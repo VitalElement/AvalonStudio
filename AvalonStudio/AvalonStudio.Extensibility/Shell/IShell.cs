@@ -35,8 +35,6 @@ namespace AvalonStudio.Shell
 
         IWorkspaceTaskRunner TaskRunner { get; }
 
-        IMenu BuildEditorContextMenu();
-
         Perspective CurrentPerspective { get; set; }
         IDocumentTabViewModel SelectedDocument { get; set; }
         ObservableCollection<object> Tools { get; }

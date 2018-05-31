@@ -1,4 +1,5 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:mod="clr-namespace:AvalonStudio.Extensibility.ToolBars.Models;assembly=AvalonStudio.Extensibility">
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:mod="clr-namespace:AvalonStudio.Menus.Models;assembly=AvalonStudio.Extensibility">
   <UserControl.Styles>
     <Style Selector="Button /template/ ContentPresenter">
       <Setter Property="BorderThickness" Value="0"/>
@@ -23,7 +24,7 @@
   </UserControl.Styles>
 
   <Grid>
-    <ItemsControl Items="{Binding }">
+    <ItemsControl Items="{Binding Items}">
       <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
           <StackPanel Orientation="Horizontal" Gap="1" />
@@ -31,14 +32,14 @@
       </ItemsControl.ItemsPanel>
 
       <ItemsControl.DataTemplates>
-        <DataTemplate DataType="mod:CommandToolBarItem">
-          <Button BorderThickness="0" Margin="0" Height="18" Width="18" Command="{Binding Command}">
-            <DrawingPresenter Drawing="{Binding Icon}" Width="16" Height="16" />
-          </Button>
+        <DataTemplate DataType="mod:MenuItemSeparatorModel">
+          <Grid Width="1" Height="{TemplateBinding Height}" Background="#3F3F46" Margin="4,0" />
         </DataTemplate>
 
-        <DataTemplate DataType="mod:ToolBarItemSeparator">
-          <Grid Width="1" Height="{TemplateBinding Height}" Background="#3F3F46" Margin="4,0" />
+        <DataTemplate DataType="mod:MenuItemModel">
+          <Button BorderThickness="0" Margin="0" Height="18" Width="18" Command="{Binding Command}" ToolTip.Tip="{Binding Label}">
+            <DrawingPresenter Drawing="{Binding Icon}" Width="16" Height="16" />
+          </Button>
         </DataTemplate>
       </ItemsControl.DataTemplates>
     </ItemsControl>

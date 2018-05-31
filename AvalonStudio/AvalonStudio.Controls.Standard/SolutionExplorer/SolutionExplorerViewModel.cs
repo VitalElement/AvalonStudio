@@ -2,7 +2,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
-using AvalonStudio.Extensibility.Projects;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -15,6 +14,9 @@ using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
+    [Export(typeof(ISolutionExplorer))]
+    [Export(typeof(IExtension))]
+    [Shared]
     public class SolutionExplorerViewModel : ToolViewModel, IExtension, ISolutionExplorer
     {
         public const string ToolId = "CIDSEVM00";
@@ -24,7 +26,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         private ViewModel selectedItem;
 
         private IProject selectedProject;
-        private IShell shell;
+        private IShell _shell;
 
         private SolutionViewModel solution;
 
@@ -34,6 +36,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public SolutionExplorerViewModel(
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes)
         {
+            IoC.RegisterConstant<ISolutionExplorer>(this);
+
+            _shell = IoC.Get<IShell>();
+            _shell.SolutionChanged += (sender, e) => { Model = _shell.CurrentSolution; };
+
             _solutionTypes = solutionTypes;
 
             Title = "Solution Explorer";
@@ -117,7 +124,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (value is SourceFileViewModel sourceFile)
                 {
-                    shell.OpenDocument((ISourceFile)sourceFile.Model);
+                    _shell.OpenDocument((ISourceFile)sourceFile.Model);
                 }
             }
         }
@@ -127,22 +134,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             get { return MVVM.Location.Right; }
         }
 
-        public void BeforeActivation()
-        {
-            IoC.RegisterConstant<ISolutionExplorer>(this, typeof(ISolutionExplorer));
-        }
-
-        public void Activation()
-        {
-            shell = IoC.Get<IShell>();
-
-            shell.SolutionChanged += (sender, e) => { Model = shell.CurrentSolution; };
-        }
-
         public void NewSolution()
         {
-            shell.ModalDialog = new NewProjectDialogViewModel();
-            shell.ModalDialog.ShowDialog();
+            _shell.ModalDialog = new NewProjectDialogViewModel();
+            _shell.ModalDialog.ShowDialog();
         }
 
         public async void OpenSolution()
@@ -180,8 +175,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
             {
-                await shell.OpenSolutionAsync(result[0]);
+                await _shell.OpenSolutionAsync(result[0]);
             }
         }
+
+        public void BeforeActivation() { }
+        public void Activation() { }
     }
 }
