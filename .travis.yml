@@ -1,8 +1,11 @@
 sudo: required
 language: csharp
+
+# Use latest images for building
+group: travis_latest
 os:
   - linux
-dist: trusty
+
 dotnet: 2.1.300
 script:  
   - ./build.sh --configuration "Release"  
