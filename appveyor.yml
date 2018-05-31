@@ -39,5 +39,5 @@ notifications:
   on_build_failure: true
   on_build_status_changed: true
   
-  cache:
-    dotnet-sdk-2.1.300-win-x64.zip
+cache:
+  dotnet-sdk-2.1.300-win-x64.zip
