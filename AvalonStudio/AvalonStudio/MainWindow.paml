@@ -1,6 +1,6 @@
 ﻿<Controls:MetroWindow xmlns="https://github.com/avaloniaui"
                       xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
-                      xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.ViewModels;assembly=AvalonStudio.Extensibility"
+                      xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.Views;assembly=AvalonStudio.Extensibility"
                       xmlns:dock="clr-namespace:Mabiavalon.DockNC;assembly=Mabiavalon.DockNC"
                       xmlns:docking="clr-namespace:Mabiavalon.DockNC.Docking;assembly=Mabiavalon.DockNC"  
                       xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
@@ -77,7 +77,7 @@
       <Grid RowDefinitions="Auto, Auto">
         <menu:MainMenuView DataContext="{Binding MainMenu}" Margin="5 4 0 0"  Foreground="{DynamicResource ThemeForegroundBrush}" />
 
-        <Controls:ToolBar DataContext="{Binding ToolBar}" Grid.Row="1" Margin="15 4 0 4" />
+        <Controls:ToolBar DataContext="{Binding StandardToolbar}" Grid.Row="1" Margin="15 4 0 4" />
       </Grid>
     </Grid>
 

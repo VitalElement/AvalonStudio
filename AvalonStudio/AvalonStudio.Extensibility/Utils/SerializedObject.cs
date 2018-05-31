@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using System.IO;
 
 namespace AvalonStudio.Utils
@@ -9,8 +10,12 @@ namespace AvalonStudio.Utils
         private static JsonSerializerSettings DefaultSettings =
             new JsonSerializerSettings
             {
-                NullValueHandling = NullValueHandling.Ignore,
-                Converters = new JsonConverter[] { new StringEnumConverter(), new VersionConverter() }
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy(false, false)
+                },
+                Converters = new JsonConverter[] { new StringEnumConverter(), new VersionConverter() },
+                NullValueHandling = NullValueHandling.Ignore
             };
 
         private static JsonSerializer DefaultSerializer = JsonSerializer.Create(DefaultSettings);

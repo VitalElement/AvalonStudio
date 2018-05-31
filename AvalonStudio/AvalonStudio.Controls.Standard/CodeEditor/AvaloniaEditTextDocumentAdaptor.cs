@@ -189,7 +189,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _codeEditor.CommentSelection();
         }
 
-        public void UnComment()
+        public void Uncomment()
         {
             _codeEditor.UncommentSelection();
         }

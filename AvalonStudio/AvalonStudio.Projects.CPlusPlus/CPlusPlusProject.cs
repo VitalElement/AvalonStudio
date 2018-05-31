@@ -1,6 +1,5 @@
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Menus;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Shell;

@@ -356,7 +356,7 @@ namespace AvalonStudio.Documents
 
         void Comment();
 
-        void UnComment();
+        void Uncomment();
 
         void Undo();
 
