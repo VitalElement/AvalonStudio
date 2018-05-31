@@ -21,8 +21,8 @@
     <PackageReference Include="Avalonia.Desktop" Version="0.6.2-build5289-beta" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.6.2-build5289-beta" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.60.0.1" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.6.2-build505-alpha" />
-    <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="0.6.2-build505-alpha" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.6.2-build514-alpha" />
+    <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="0.6.2-build514-alpha" />
     <PackageReference Include="GitInfo" Version="2.0.10" />
     <PackageReference Include="Mabiavalon.DockNC" Version="0.0.1-build111-alpha" />
     <PackageReference Include="reactiveui" Version="8.0.1" />
@@ -34,6 +34,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
+    <ProjectReference Include="..\..\Dock\src\Dock.Avalonia\Dock.Avalonia.csproj" />
+    <ProjectReference Include="..\..\Dock\src\Dock.Model\Dock.Model.csproj" />
     <ProjectReference Include="..\Avalonia.Ide\src\Avalonia.Ide.LanguageServer.MSBuild\Avalonia.Ide.LanguageServer.MSBuild.csproj" />
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj" />
