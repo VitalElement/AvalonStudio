@@ -8,7 +8,6 @@
     <StyleInclude Source="resm:AvalonStudio.Controls.MetroWindowTheme.paml?assembly=AvalonStudio" />
     <StyleInclude Source="resm:AvalonStudio.Extensibility.Controls.ControlTheme.paml?assembly=AvalonStudio.Extensibility" />
     <StyleInclude Source="resm:AvalonStudio.Styles.GlobalStyles.xaml?assembly=AvalonStudio" />
-    <StyleInclude Source="resm:Mabiavalon.DockNC.Themes.Controls.paml?assembly=Mabiavalon.DockNC" />
     <StyleInclude Source="resm:AvaloniaEdit.AvaloniaEdit.xaml?assembly=AvaloniaEdit" />
     <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.CodeEditor.xaml?assembly=AvalonStudio.Controls.Standard" />
     <StyleInclude Source="resm:AvalonStudio.Debugging.Icons.Icons.xaml?assembly=AvalonStudio.Debugging" />
