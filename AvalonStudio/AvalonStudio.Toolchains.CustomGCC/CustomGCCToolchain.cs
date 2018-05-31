@@ -46,6 +46,10 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public override string LibraryQueryCommand => Path.Combine(BinDirectory, _settings.LibraryQueryCommand + Platform.ExecutableExtension);
 
+        protected override bool RunWithSystemPaths => true;
+
+        public override string[] ExtraPaths => _settings.ExtraPaths;
+
         [ImportingConstructor]
         public CustomGCCToolchain(IStatusBar statusBar)
             : base(statusBar)
@@ -380,7 +384,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
             _staticLibraryExtension = _settings.StaticLibraryExtension;
             _executableExtension = _settings.ExecutableExtension;
-            _binDirectory = _settings.BasePath;
+            _binDirectory = _settings.BasePath;            
 
             return await base.InstallAsync(console, project);
         }

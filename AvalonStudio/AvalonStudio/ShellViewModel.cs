@@ -413,7 +413,7 @@ namespace AvalonStudio
         {
             foreach (var document in DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>())
             {
-                document.Editor.Save();
+                document.Editor?.Save();
             }
         }
 
