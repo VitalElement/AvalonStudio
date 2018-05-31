@@ -119,6 +119,16 @@ namespace AvalonStudio
             IoC.RegisterConstant<IShell>(this);
             IoC.RegisterConstant(this);
 
+            var factory = new DefaultLayoutFactory();
+            Factory = factory;
+            Layout = Factory.CreateLayout();
+            Factory.InitLayout(Layout, this);
+
+            _leftPane = factory.LeftDock;
+            _documentDock = factory.DocumentDock;
+            _rightPane = factory.RightDock;
+            _bottomPane = factory.BottomDock;
+
             foreach (var extension in extensions)
             {
                 extension.Value.BeforeActivation();
@@ -161,17 +171,7 @@ namespace AvalonStudio
                 {
                     _keyBindings.Add(new KeyBinding { Command = command.Key.Command, Gesture = KeyGesture.Parse(keyGesture) });
                 }
-            }
-
-            var factory = new DefaultLayoutFactory();
-            Factory = factory;
-            Layout = Factory.CreateLayout();
-            Factory.InitLayout(Layout, this);
-
-            _leftPane = factory.LeftDock;
-            _documentDock = factory.DocumentDock;
-            _rightPane = factory.RightDock;
-            _bottomPane = factory.BottomDock;
+            }                        
 
             foreach (var tool in extensions.Select(e => e.Value).OfType<ToolViewModel>())
             {
@@ -345,6 +345,7 @@ namespace AvalonStudio
 
         public void AddDocument(IDocumentTabViewModel document, bool temporary = false)
         {
+            _documentDock.Views.Add(document);
             DocumentTabs.OpenDocument(document, temporary);
         }
 
