@@ -738,23 +738,29 @@ namespace AvalonStudio.Debugging.GDB
 
             string indexParams = string.Empty;
 
-            for (int i = 0; i < indexes.Count; i++)
+            if (indexes != null)
             {
-                indexParams += indexes.GetValue(i) + " ";
+                for (int i = 0; i < indexes.Count; i++)
+                {
+                    indexParams += indexes.GetValue(i) + " ";
+                }
             }
 
             var values = RunCommand("-data-list-register-values", "x", indexParams);
 
             var regValues = values.GetObject("register-values");
 
-            for (int n = 0; n < regValues.Count; n++)
+            if (regValues != null)
             {
-                var valueObj = regValues.GetObject(n);
+                for (int n = 0; n < regValues.Count; n++)
+                {
+                    var valueObj = regValues.GetObject(n);
 
-                var index = valueObj.GetInt("number");
-                var value = valueObj.GetValue("value");
+                    var index = valueObj.GetInt("number");
+                    var value = valueObj.GetValue("value");
 
-                result.Add(index, value);
+                    result.Add(index, value);
+                }
             }
 
             return result;
