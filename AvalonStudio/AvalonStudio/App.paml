@@ -13,5 +13,8 @@
     <StyleInclude Source="resm:AvalonStudio.Debugging.Icons.Icons.xaml?assembly=AvalonStudio.Debugging" />
     <StyleInclude Source="resm:AvalonStudio.Controls.Standard.SolutionExplorer.Icons.Icons.xaml?assembly=AvalonStudio.Controls.Standard" />
     <StyleInclude Source="resm:AvalonStudio.Languages.Xaml.AvaloniaPreviewer.xaml?assembly=AvalonStudio.Languages.Xaml" />
+    <StyleInclude Source="resm:Dock.Avalonia.Controls.DockPanelSplitter.xaml?assembly=Dock.Avalonia"/>
+    <StyleInclude Source="resm:Dock.Avalonia.Controls.DockTarget.xaml?assembly=Dock.Avalonia"/>
+    <StyleInclude Source="resm:Dock.Avalonia.Controls.DockToolChrome.xaml?assembly=Dock.Avalonia"/>
   </Application.Styles>
 </Application>

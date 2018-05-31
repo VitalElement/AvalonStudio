@@ -25,6 +25,7 @@ using AvalonStudio.Toolbars;
 using AvalonStudio.Toolbars.ViewModels;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
+using Dock.Model;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -246,6 +247,21 @@ namespace AvalonStudio
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
         public event EventHandler<BuildEventArgs> BuildStarting;
         public event EventHandler<BuildEventArgs> BuildCompleted;
+
+        private IDockFactory _factory;
+        private IView _layout;
+
+        public IDockFactory Factory
+        {
+            get => _factory;
+            set => this.RaiseAndSetIfChanged(ref _factory, value);
+        }
+
+        public IView Layout
+        {
+            get => _layout;
+            set => this.RaiseAndSetIfChanged(ref _layout, value);
+        }
 
         public IObservable<ISolution> OnSolutionChanged { get; }
 
