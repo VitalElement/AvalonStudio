@@ -7,7 +7,7 @@ namespace AvalonStudio.Shell.MainMenu
     internal class ToolsMainMenuItems
     {
         [ExportMainMenuItem("Tools")]
-        [DefaultOrder(50)]
+        [DefaultOrder(150)]
         public IMenuItem Tools => _menuItemFactory.CreateHeaderMenuItem("Tools", null);
 
         [ExportMainMenuDefaultGroup("Tools", "Extensions")]
