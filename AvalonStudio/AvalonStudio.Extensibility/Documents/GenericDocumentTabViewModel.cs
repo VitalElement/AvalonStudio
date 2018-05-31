@@ -9,7 +9,7 @@ namespace AvalonStudio.Controls
 {
     public abstract class DocumentTabViewModel<T> : ViewModel<T>, IDocumentTabViewModel where T : class
     {
-        private Dock dock;
+        private Avalonia.Controls.Dock dock;
         private string title;
         private bool _isTemporary;
         private bool _isHidden;
@@ -17,12 +17,12 @@ namespace AvalonStudio.Controls
 
         public DocumentTabViewModel(T model) : base(model)
         {
-            Dock = Dock.Left;
+            Dock = Avalonia.Controls.Dock.Left;
 
             IsVisible = true;
         }
 
-        public Dock Dock
+        public Avalonia.Controls.Dock Dock
         {
             get { return dock; }
             set { this.RaiseAndSetIfChanged(ref dock, value); }
@@ -47,11 +47,11 @@ namespace AvalonStudio.Controls
             {
                 if (value)
                 {
-                    Dock = Dock.Right;
+                    Dock = Avalonia.Controls.Dock.Right;
                 }
                 else
                 {
-                    Dock = Dock.Left;
+                    Dock = Avalonia.Controls.Dock.Left;
                 }
 
                 this.RaiseAndSetIfChanged(ref _isTemporary, value);

@@ -1,6 +1,8 @@
-﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
+﻿using Dock.Model.Controls;
+
+namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    public interface ISolutionExplorer
+    public interface ISolutionExplorer : IToolTab
     {
         void NewSolution();
 

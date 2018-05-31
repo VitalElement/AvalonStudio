@@ -34,6 +34,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
     <ProjectReference Include="..\..\Dock\src\Dock.Avalonia\Dock.Avalonia.csproj" />
+    <ProjectReference Include="..\..\Dock\src\Dock.Model.ReactiveUI\Dock.Model.ReactiveUI.csproj" />
     <ProjectReference Include="..\..\Dock\src\Dock.Model\Dock.Model.csproj" />
     <ProjectReference Include="..\Avalonia.Ide\src\Avalonia.Ide.LanguageServer.MSBuild\Avalonia.Ide.LanguageServer.MSBuild.csproj" />
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />

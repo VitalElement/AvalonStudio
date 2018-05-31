@@ -4,7 +4,9 @@ using AvalonStudio.Commands;
 using AvalonStudio.Commands.Settings;
 using AvalonStudio.Controls;
 using AvalonStudio.Controls.Standard.ErrorList;
+using AvalonStudio.Controls.Standard.SolutionExplorer;
 using AvalonStudio.Debugging;
+using AvalonStudio.Docking;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Dialogs;
@@ -26,6 +28,7 @@ using AvalonStudio.Toolbars.ViewModels;
 using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using Dock.Model;
+using Dock.Model.Controls;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -160,6 +163,16 @@ namespace AvalonStudio
                 }
             }
 
+            var factory = new DefaultLayoutFactory();
+            Factory = factory;
+            Layout = Factory.CreateLayout();
+            Factory.InitLayout(Layout, this);
+
+            _leftPane = factory.LeftDock;
+            _documentDock = factory.DocumentDock;
+            _rightPane = factory.RightDock;
+            _bottomPane = factory.BottomDock;
+
             foreach (var tool in extensions.Select(e => e.Value).OfType<ToolViewModel>())
             {
                 tools.Add(tool);
@@ -167,7 +180,9 @@ namespace AvalonStudio
                 switch (tool.DefaultLocation)
                 {
                     case Location.Bottom:
-                        BottomTabs.Tools.Add(tool);
+                        _bottomPane.Views.Add(tool);
+
+                        factory.Update(tool, tool, _bottomPane);
                         break;
 
                     case Location.BottomRight:
@@ -191,11 +206,15 @@ namespace AvalonStudio
                         break;
 
                     case Location.Left:
-                        LeftTabs.Tools.Add(tool);
+                        _leftPane.Views.Add(tool);
+
+                        factory.Update(tool, tool, _leftPane);
                         break;
 
                     case Location.Right:
-                        RightTabs.Tools.Add(tool);
+                        _rightPane.Views.Add(tool);
+
+                        factory.Update(tool, tool, _rightPane);
                         break;
                 }
             }
@@ -239,8 +258,13 @@ namespace AvalonStudio
             EnableDebugModeCommand = ReactiveCommand.Create(() =>
             {
                 DebugMode = !DebugMode;
-            });
+            });            
         }
+
+        private DocumentDock _documentDock;
+        private ToolDock _leftPane;
+        private ToolDock _rightPane;
+        private ToolDock _bottomPane;
 
         public ReactiveCommand EnableDebugModeCommand { get; }
 

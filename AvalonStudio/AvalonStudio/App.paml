@@ -1,4 +1,10 @@
-﻿<Application xmlns="https://github.com/avaloniaui">
+﻿<Application xmlns="https://github.com/avaloniaui"
+             xmlns:idc="clr-namespace:Dock.Avalonia.Controls;assembly=Dock.Avalonia"
+             xmlns:id="clr-namespace:Dock.Model;assembly=Dock.Model"
+             xmlns:Documents="clr-namespace:AvaloniaDemo.ViewModels.Documents;assembly=AvalonStudio"
+             xmlns:Tools="clr-namespace:AvaloniaDemo.ViewModels.Tools;assembly=AvalonStudio"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
+             xmlns:Views="clr-namespace:AvaloniaDemo.ViewModels.Views;assembly=AvalonStudio">
   <Application.Styles>
     <StyleInclude Source="resm:Avalonia.Themes.Default.DefaultTheme.xaml?assembly=Avalonia.Themes.Default"/>
     <StyleInclude Source="resm:AvalonStudio.Themes.BaseDark.xaml?assembly=AvalonStudio"/>
@@ -16,5 +22,30 @@
     <StyleInclude Source="resm:Dock.Avalonia.Controls.DockPanelSplitter.xaml?assembly=Dock.Avalonia"/>
     <StyleInclude Source="resm:Dock.Avalonia.Controls.DockTarget.xaml?assembly=Dock.Avalonia"/>
     <StyleInclude Source="resm:Dock.Avalonia.Controls.DockToolChrome.xaml?assembly=Dock.Avalonia"/>
-  </Application.Styles>
+  </Application.Styles>  
+    <Application.DataTemplates>
+      <!-- Documents -->      
+      <DataTemplate DataType="Tools:EditorTool">
+        <idc:EditorControl DataContext="{Binding Context}"/>
+      </DataTemplate>
+      <!-- Views -->
+      <DataTemplate DataType="Views:HomeView">
+        <Grid>
+          <StackPanel>
+            <TextBlock Text="{Binding Id}"/>
+            <TextBlock Text="{Binding Title}"/>
+            <TextBlock Text="{Binding Context}"/>
+            <Button Content="Main" Command="{Binding Context.Navigate}" CommandParameter="Main"/>
+          </StackPanel>
+        </Grid>
+      </DataTemplate>
+      <DataTemplate DataType="Views:MainView">
+        <Grid>
+          <ContentControl Content="{Binding CurrentView}"/>
+        </Grid>
+      </DataTemplate>
+      <DataTemplate DataType="id:IView">
+        <cont:ViewModelViewHost DataContext="{Binding }" />
+      </DataTemplate>
+    </Application.DataTemplates>  
 </Application>
