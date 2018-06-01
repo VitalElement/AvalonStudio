@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
-using AvaloniaDemo.ViewModels.Documents;
-using AvaloniaDemo.ViewModels.Views;
-using AvalonStudio.Controls.Standard.SolutionExplorer;
-using AvalonStudio.Extensibility;
+﻿using AvaloniaDemo.ViewModels.Views;
 using Dock.Avalonia.Controls;
 using Dock.Model;
 using Dock.Model.Controls;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Docking
 {
@@ -24,34 +20,6 @@ namespace AvalonStudio.Docking
         /// <inheritdoc/>
         public override IDock CreateLayout()
         {
-            // Documents
-
-            var document1 = new Document1
-            {
-                Id = "Document1",
-                Width = double.NaN,
-                Height = double.NaN,
-                Title = "Document1"
-            };
-
-            var document2 = new Document2
-            {
-                Id = "Document2",
-                Width = double.NaN,
-                Height = double.NaN,
-                Title = "Document2"
-            };
-
-            var document3 = new Document3
-            {
-                Id = "Document3",
-                Width = double.NaN,
-                Height = double.NaN,
-                Title = "Document3"
-            };
-
-            var rightBottomTool1 = IoC.Get<ISolutionExplorer>();
-
             // Left Pane
 
             LeftDock = new ToolDock
@@ -98,13 +66,8 @@ namespace AvalonStudio.Docking
                 Width = double.NaN,
                 Height = double.NaN,
                 Title = "DocumentsPane",
-                CurrentView = document1,
-                Views = new ObservableCollection<IView>
-                {
-                    document1,
-                    document2,
-                    document3
-                }
+                CurrentView = null,
+                Views = new ObservableCollection<IView>()
             };
 
             // Main
@@ -157,16 +120,6 @@ namespace AvalonStudio.Docking
                 }
             };
 
-            // Home
-
-            var homeView = new HomeView
-            {
-                Id = "Home",
-                Width = double.NaN,
-                Height = double.NaN,
-                Title = "Home"
-            };
-
             // Root
 
             var root = new RootDock
@@ -175,11 +128,10 @@ namespace AvalonStudio.Docking
                 Width = double.NaN,
                 Height = double.NaN,
                 Title = "Root",
-                CurrentView = homeView,
-                DefaultView = homeView,
+                CurrentView = mainView,
+                DefaultView = mainView,
                 Views = new ObservableCollection<IView>
                 {
-                    homeView,
                     mainView,
                 }
             };
