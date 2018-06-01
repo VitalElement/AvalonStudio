@@ -180,9 +180,7 @@ namespace AvalonStudio
                 switch (tool.DefaultLocation)
                 {
                     case Location.Bottom:
-                        _bottomPane.Views.Add(tool);
-
-                        factory.Update(tool, tool, _bottomPane);
+                        DockView(_bottomPane, tool);
                         break;
 
                     case Location.BottomRight:
@@ -206,15 +204,11 @@ namespace AvalonStudio
                         break;
 
                     case Location.Left:
-                        _leftPane.Views.Add(tool);
-
-                        factory.Update(tool, tool, _leftPane);
+                        DockView(_leftPane, tool);
                         break;
 
                     case Location.Right:
-                        _rightPane.Views.Add(tool);
-
-                        factory.Update(tool, tool, _rightPane);
+                        DockView(_rightPane, tool);
                         break;
                 }
             }
@@ -259,6 +253,18 @@ namespace AvalonStudio
             {
                 DebugMode = !DebugMode;
             });            
+        }
+
+        private void DockView (IDock dock, IView view, bool add = true)
+        {
+            if (add)
+            {
+                dock.Views.Add(view);
+            }
+
+            Factory.Update(view, view, dock);
+
+            Factory.Select(view);
         }
 
         private DocumentDock _documentDock;
@@ -345,7 +351,8 @@ namespace AvalonStudio
 
         public void AddDocument(IDocumentTabViewModel document, bool temporary = false)
         {
-            _documentDock.Views.Add(document);
+            DockView(_documentDock, document, !DocumentTabs.Documents.Contains(document));
+
             DocumentTabs.OpenDocument(document, temporary);
         }
 
