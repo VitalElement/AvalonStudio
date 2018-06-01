@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using AvaloniaDemo.ViewModels.Documents;
-using AvaloniaDemo.ViewModels.Tools;
 using AvaloniaDemo.ViewModels.Views;
 using AvalonStudio.Controls.Standard.SolutionExplorer;
 using AvalonStudio.Extensibility;
@@ -51,95 +50,7 @@ namespace AvalonStudio.Docking
                 Title = "Document3"
             };
 
-            // Left / Top
-
-            var leftTopTool1 = new LeftTopTool1
-            {
-                Id = "LeftTop1",
-                Width = double.NaN,
-                Height = double.NaN,
-                Title = "LeftTop1"
-            };
-
-            var leftTopTool2 = new LeftTopTool2
-            {
-                Id = "LeftTop2",
-                Width = 200,
-                Height = 200,
-                Title = "LeftTop2"
-            };
-
-            var leftTopTool3 = new LeftTopTool3
-            {
-                Id = "LeftTop3",
-                Width = double.NaN,
-                Height = double.NaN,
-                Title = "LeftTop3"
-            };
-
-            // Left / Bottom
-
-            var leftBottomTool1 = new LeftBottomTool1
-            {
-                Id = "LeftBottom1",
-                Width = double.NaN,
-                Height = double.NaN,
-                Title = "LeftBottom1"
-            };
-
-            var leftBottomTool2 = new LeftBottomTool2
-            {
-                Id = "LeftBottom2",
-                Width = double.NaN,
-                Height = double.NaN,
-                Title = "LeftBottom2"
-            };
-
-            var leftBottomTool3 = new LeftBottomTool3
-            {
-                Id = "LeftBottom3",
-                Width = double.NaN,
-                Height = double.NaN,
-                Title = "LeftBottom3"
-            };
-
-            // Right / Top            
-
-            var rightTopTool2 = new RightTopTool2
-            {
-                Id = "RightTop2",
-                Width = double.NaN,
-                Height = double.NaN,
-                Title = "RightTop2"
-            };
-
-            var rightTopTool3 = new RightTopTool3
-            {
-                Id = "RightTop3",
-                Width = double.NaN,
-                Height = double.NaN,
-                Title = "RightTop3"
-            };
-
-            // Right / Bottom
-
-            var rightBottomTool2 = new RightBottomTool1
-            {
-                Id = "RightBottom1",
-                Width = double.NaN,
-                Height = double.NaN,
-                Title = "RightBottom1"
-            };
-
             var rightBottomTool1 = IoC.Get<ISolutionExplorer>();
-
-            var rightBottomTool3 = new RightBottomTool3
-            {
-                Id = "RightBottom3",
-                Width = double.NaN,
-                Height = double.NaN,
-                Title = "RightBottom3"
-            };
 
             // Left Pane
 
@@ -150,13 +61,8 @@ namespace AvalonStudio.Docking
                 Width = 340,
                 Height = double.NaN,
                 Title = "LeftPaneTop",
-                CurrentView = leftTopTool1,
-                Views = new ObservableCollection<IView>
-                        {
-                            leftTopTool1,
-                            leftTopTool2,
-                            leftTopTool3
-                        }
+                CurrentView = null,
+                Views = new ObservableCollection<IView>()
             };
 
             // Right Pane
@@ -169,11 +75,7 @@ namespace AvalonStudio.Docking
                 Height = double.NaN,
                 Title = "RightDock",
                 CurrentView = null,
-                Views = new ObservableCollection<IView>
-                        {                            
-                            rightTopTool2,
-                            rightTopTool3
-                        }
+                Views = new ObservableCollection<IView>()
             };
 
             BottomDock = new ToolDock
@@ -184,11 +86,7 @@ namespace AvalonStudio.Docking
                 Height = 300,
                 Title = "BottomDock",
                 CurrentView = null,
-                Views = new ObservableCollection<IView>
-                        {
-                            rightTopTool2,
-                            rightTopTool3
-                        }
+                Views = new ObservableCollection<IView>()
             };
 
             // Documents
