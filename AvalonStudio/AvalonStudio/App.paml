@@ -24,10 +24,6 @@
     <StyleInclude Source="resm:Dock.Avalonia.Controls.DockToolChrome.xaml?assembly=Dock.Avalonia"/>
   </Application.Styles>  
     <Application.DataTemplates>
-      <!-- Documents -->      
-      <DataTemplate DataType="Tools:EditorTool">
-        <idc:EditorControl DataContext="{Binding Context}"/>
-      </DataTemplate>
       <!-- Views -->
       <DataTemplate DataType="Views:HomeView">
         <Grid>
