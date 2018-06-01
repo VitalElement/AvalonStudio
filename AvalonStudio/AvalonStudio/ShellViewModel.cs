@@ -260,9 +260,12 @@ namespace AvalonStudio
             if (add)
             {
                 dock.Views.Add(view);
+                Factory.Update(view, view, dock);
             }
-
-            Factory.Update(view, view, dock);
+            else
+            {
+                Factory.Update(view, view, view.Parent);
+            }
 
             Factory.Select(view);
         }
