@@ -96,13 +96,13 @@ namespace AvalonStudio.Docking
                         Dock = "Right",
                         Title = "RightSplitter"
                     },
+                    BottomDock,
                     new SplitterDock()
                     {
                         Id = "BottomSplitter",
                         Dock = "Bottom",
                         Title = "BottomSplitter"
                     },
-                    BottomDock,
                     DocumentDock
                 }
             };
