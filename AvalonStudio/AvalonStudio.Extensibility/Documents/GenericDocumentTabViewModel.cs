@@ -21,6 +21,9 @@ namespace AvalonStudio.Controls
             Dock = Avalonia.Controls.Dock.Left;
 
             IsVisible = true;
+
+            Width = double.NaN;
+            Height = double.NaN;
         }
 
         public Avalonia.Controls.Dock Dock

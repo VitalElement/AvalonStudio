@@ -20,8 +20,8 @@ namespace AvalonStudio.MVVM
 
             IsVisibleObservable = this.ObservableForProperty(x => x.IsVisible).Select(x => x.Value);
 
-            //Height = double.NaN;
-            //Width = double.NaN;            
+            Height = double.NaN;
+            Width = double.NaN;            
         }
 
         public Action OnSelect { get; set; }
