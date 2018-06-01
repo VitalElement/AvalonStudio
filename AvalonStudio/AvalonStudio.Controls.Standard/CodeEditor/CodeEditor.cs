@@ -944,18 +944,21 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             ShutdownBackgroundWorkers();
 
-            UnsavedFile unsavedFile = null;
-
-            lock (UnsavedFiles)
+            if (SourceFile != null)
             {
-                unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
-            }
+                UnsavedFile unsavedFile = null;
 
-            if (unsavedFile != null)
-            {
                 lock (UnsavedFiles)
                 {
-                    UnsavedFiles.Remove(unsavedFile);
+                    unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
+                }
+
+                if (unsavedFile != null)
+                {
+                    lock (UnsavedFiles)
+                    {
+                        UnsavedFiles.Remove(unsavedFile);
+                    }
                 }
             }
 

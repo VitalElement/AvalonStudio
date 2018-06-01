@@ -160,12 +160,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void Dispose()
         {
-            _codeEditor.TextArea.TextEntering -= TextEntering;
-            _codeEditor.TextArea.TextEntered -= TextEntered;
-            _codeEditor.LostFocus -= _codeEditor_LostFocus;
-            _codeEditor = null;
+            if (_codeEditor != null)
+            {
+                _codeEditor.TextArea.TextEntering -= TextEntering;
+                _codeEditor.TextArea.TextEntered -= TextEntered;
+                _codeEditor.LostFocus -= _codeEditor_LostFocus;
+                _codeEditor = null;
+            }
 
-            _document.Dispose();
+            _document?.Dispose();
             _document = null;
         }
 
