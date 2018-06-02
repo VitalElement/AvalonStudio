@@ -17,10 +17,8 @@
       </Style>
     </Menu.Styles>
     <Menu.DataTemplates>
-      <DataTemplate DataType="mod:MenuItemSeparatorModel">
-        <DataTemplate>
-          <Separator />
-        </DataTemplate>
+      <DataTemplate DataType="mod:MenuItemSeparatorModel">        
+          <Separator />        
       </DataTemplate>
     </Menu.DataTemplates>
   </Menu>
