@@ -381,6 +381,12 @@ namespace AvalonStudio
                 doc.Editor?.Save();
             }
 
+            if (document.Parent is IDock dock)
+            {
+                dock.Views.Remove(document);
+                Factory.Update(document, document, dock);
+            }
+
             DocumentTabs.CloseDocument(document);
         }
 

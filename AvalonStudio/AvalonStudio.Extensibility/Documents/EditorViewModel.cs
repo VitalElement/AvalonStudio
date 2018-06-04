@@ -153,6 +153,13 @@ namespace AvalonStudio.Controls
 
         public abstract Task WaitForEditorToLoadAsync();
 
+        public override void Close()
+        {
+            base.Close();
+
+            Editor.Dispose();            
+        }
+
         /// <summary>
         /// Gets or sets view id.
         /// </summary>
