@@ -52,6 +52,6 @@ dotnet build
 ### Running locally built binaries
 
 ```sh
-cd /AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.0/
+cd /AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.1/
 dotnet ./AvalonStudio.dll
 ```
