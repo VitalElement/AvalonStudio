@@ -62,7 +62,7 @@ namespace AvalonStudio
         }
 
         public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>().UsePlatformDetect().UseSkia().UseReactiveUI();
+            => AppBuilder.Configure<App>().UsePlatformDetect().UseWebRender().UseReactiveUI();
 
         public override void Initialize()
         {
