@@ -36,7 +36,7 @@ cd AvalonStudio
 
 ### Install Dependencies
 
-Install .NET Core 2 from: https://www.microsoft.com/net/download/core
+Install .NET Core 2.1 from: https://www.microsoft.com/net/download/core
 
 ### Building the project
 
