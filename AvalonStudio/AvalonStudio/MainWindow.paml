@@ -11,6 +11,7 @@
                       Title="AvalonStudio" BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}"
                       FontFamily="{DynamicResource UiFont}" FontSize="14"
                       xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+                      MinHeight="200" MinWidth="200"
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized">
   <Controls:MetroWindow.TitleBarContent>
   </Controls:MetroWindow.TitleBarContent>
