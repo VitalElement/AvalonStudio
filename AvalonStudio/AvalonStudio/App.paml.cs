@@ -42,14 +42,16 @@ namespace AvalonStudio
                     var container = CompositionRoot.CreateContainer(extensionManager);
 
                     var shellExportFactory = container.GetExport<ExportFactory<ShellViewModel>>();
-                    ShellViewModel.Instance = shellExportFactory.CreateExport().Value;                    
+                    ShellViewModel.Instance = shellExportFactory.CreateExport().Value;
+
+                    ShellViewModel.Instance.Initialise();
 
                     await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
                 });
 
                 InitializeLogging();
 
-                builder.Start<MainWindow>();                
+                builder.Start<MainWindow>();
             }
             catch (Exception e)
             {
@@ -57,7 +59,9 @@ namespace AvalonStudio
             }
             finally
             {
-                Application.Current.Exit();
+                ShellViewModel.Instance.SaveLayout();
+
+                Application.Current.Exit();                
             }
         }
 

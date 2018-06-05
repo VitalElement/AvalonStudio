@@ -36,8 +36,7 @@ namespace AvalonStudio.Shell
         IWorkspaceTaskRunner TaskRunner { get; }
 
         Perspective CurrentPerspective { get; set; }
-        IDocumentTabViewModel SelectedDocument { get; set; }
-        ObservableCollection<object> Tools { get; }
+        IDocumentTabViewModel SelectedDocument { get; set; }        
         ModalDialogViewModelBase ModalDialog { get; set; }
 
         ColorScheme CurrentColorScheme { get; set; }

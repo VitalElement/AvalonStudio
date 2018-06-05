@@ -20,6 +20,7 @@ using AvalonStudio.MainMenu;
 using AvalonStudio.Menus.Models;
 using AvalonStudio.Menus.ViewModels;
 using AvalonStudio.MVVM;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
@@ -29,6 +30,7 @@ using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using Dock.Model;
 using Dock.Model.Controls;
+using Dock.Serializer;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -53,6 +55,8 @@ namespace AvalonStudio
         private List<KeyBinding> _keyBindings;
 
         private IEnumerable<ToolbarViewModel> _toolbars;
+        private IEnumerable<Lazy<IExtension>> _extensions;
+        private CommandService _commandService;
 
         private Lazy<StatusBarViewModel> _statusBar;
 
@@ -75,9 +79,7 @@ namespace AvalonStudio
 
         private ModalDialogViewModelBase modalDialog;
 
-        private QuickCommanderViewModel _quickCommander;
-
-        private ObservableCollection<object> tools;
+        private QuickCommanderViewModel _quickCommander;        
 
         [ImportingConstructor]
         public ShellViewModel(
@@ -94,7 +96,10 @@ namespace AvalonStudio
             [ImportMany] IEnumerable<IDebugger> debugger2s,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             [ImportMany] IEnumerable<Lazy<IExtension>> extensions)
-        {  
+        {
+            _extensions = extensions;
+            _commandService = commandService;
+
             MainMenu = mainMenuService.GetMainMenu();
 
             var toolbars = toolbarService.GetToolbars();
@@ -113,7 +118,7 @@ namespace AvalonStudio
             _debugger2s = debugger2s;
 
             _testFrameworks = testFrameworks;
-            
+
             _keyBindings = new List<KeyBinding>();
 
             IoC.RegisterConstant<IShell>(this);
@@ -121,36 +126,10 @@ namespace AvalonStudio
 
             var factory = new DefaultLayoutFactory();
             Factory = factory;
-            Layout = Factory.CreateLayout();
-            Factory.InitLayout(Layout, this);
-
-            _leftPane = factory.LeftDock;
-            _documentDock = factory.DocumentDock;
-            _rightPane = factory.RightDock;
-            _bottomPane = factory.BottomDock;
-
-            foreach (var extension in extensions)
-            {
-                extension.Value.BeforeActivation();
-            }
 
             CurrentPerspective = Perspective.Editor;
 
-            DocumentTabs = new DocumentTabControlViewModel();
-
-            Console = IoC.Get<IConsole>();
-            ErrorList = IoC.Get<IErrorList>();
-
-            tools = new ObservableCollection<object>();
-
-            LeftTabs = new TabControlViewModel();
-            RightTabs = new TabControlViewModel();
-            BottomTabs = new TabControlViewModel();
-            BottomRightTabs = new TabControlViewModel();
-            RightBottomTabs = new TabControlViewModel();
-            RightMiddleTabs = new TabControlViewModel();
-            RightTopTabs = new TabControlViewModel();
-            MiddleTopTabs = new TabControlViewModel();
+            DocumentTabs = new DocumentTabControlViewModel();            
 
             ModalDialog = new ModalDialogViewModelBase("Dialog");
 
@@ -160,48 +139,71 @@ namespace AvalonStudio
 
             QuickCommander = new QuickCommanderViewModel();
 
-            foreach (var extension in extensions)
+            ProcessCancellationToken = new CancellationTokenSource();
+
+            EnableDebugModeCommand = ReactiveCommand.Create(() =>
+            {
+                DebugMode = !DebugMode;
+            });
+        }
+
+        public void Initialise()
+        {
+            foreach (var extension in _extensions)
+            {
+                extension.Value.BeforeActivation();
+            }
+
+            LoadLayout();
+
+            _leftPane = (Factory as DefaultLayoutFactory).LeftDock;
+            _documentDock = (Factory as DefaultLayoutFactory).DocumentDock;
+            _rightPane = (Factory as DefaultLayoutFactory).RightDock;
+            _bottomPane = (Factory as DefaultLayoutFactory).BottomDock;            
+
+            Console = IoC.Get<IConsole>();
+            ErrorList = IoC.Get<IErrorList>();
+
+            foreach (var extension in _extensions)
             {
                 extension.Value.Activation();
             }
 
-            foreach (var command in commandService.GetKeyGestures())
+            foreach (var command in _commandService.GetKeyGestures())
             {
                 foreach (var keyGesture in command.Value)
                 {
                     _keyBindings.Add(new KeyBinding { Command = command.Key.Command, Gesture = KeyGesture.Parse(keyGesture) });
                 }
-            }                        
+            }
 
-            foreach (var tool in extensions.Select(e => e.Value).OfType<ToolViewModel>())
+            foreach (var tool in _extensions.Select(e => e.Value).OfType<ToolViewModel>())
             {
-                tools.Add(tool);
-
                 switch (tool.DefaultLocation)
                 {
                     case Location.Bottom:
                         DockView(_bottomPane, tool);
                         break;
 
-                    case Location.BottomRight:
-                        BottomRightTabs.Tools.Add(tool);
-                        break;
+                    //case Location.BottomRight:
+                    //    BottomRightTabs.Tools.Add(tool);
+                    //    break;
 
-                    case Location.RightBottom:
-                        RightBottomTabs.Tools.Add(tool);
-                        break;
+                    //case Location.RightBottom:
+                    //    RightBottomTabs.Tools.Add(tool);
+                    //    break;
 
-                    case Location.RightMiddle:
-                        RightMiddleTabs.Tools.Add(tool);
-                        break;
+                    //case Location.RightMiddle:
+                    //    RightMiddleTabs.Tools.Add(tool);
+                    //    break;
 
-                    case Location.RightTop:
-                        RightTopTabs.Tools.Add(tool);
-                        break;
+                    //case Location.RightTop:
+                    //    RightTopTabs.Tools.Add(tool);
+                    //    break;
 
-                    case Location.MiddleTop:
-                        MiddleTopTabs.Tools.Add(tool);
-                        break;
+                    //case Location.MiddleTop:
+                    //    MiddleTopTabs.Tools.Add(tool);
+                    //    break;
 
                     case Location.Left:
                         DockView(_leftPane, tool);
@@ -213,20 +215,7 @@ namespace AvalonStudio
                 }
             }
 
-            LeftTabs.SelectedTool = LeftTabs.Tools.Where(t=>t.IsVisible).FirstOrDefault();
-            RightTabs.SelectedTool = RightTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
-            BottomTabs.SelectedTool = BottomTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
-            BottomRightTabs.SelectedTool = BottomRightTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
-            RightTopTabs.SelectedTool = RightTopTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
-            RightMiddleTabs.SelectedTool = RightMiddleTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
-            RightBottomTabs.SelectedTool = RightBottomTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
-            MiddleTopTabs.SelectedTool = MiddleTopTabs.Tools.Where(t => t.IsVisible).FirstOrDefault();
-
             IoC.Get<IStatusBar>().ClearText();
-
-            ProcessCancellationToken = new CancellationTokenSource();
-
-            CurrentPerspective = Perspective.Editor;
 
             var editorSettings = Settings.GetSettings<EditorSettings>();
 
@@ -248,14 +237,9 @@ namespace AvalonStudio
 
                 Settings.SetSettings(settings);
             });
-
-            EnableDebugModeCommand = ReactiveCommand.Create(() =>
-            {
-                DebugMode = !DebugMode;
-            });            
         }
 
-        private void DockView (IDock dock, IView view, bool add = true)
+        private void DockView(IDock dock, IView view, bool add = true)
         {
             if (add)
             {
@@ -296,6 +280,33 @@ namespace AvalonStudio
             set => this.RaiseAndSetIfChanged(ref _layout, value);
         }
 
+        public void LoadLayout()
+        {
+            string path = System.IO.Path.Combine(Platform.SettingsDirectory, "Layout.json");
+
+            if (DockSerializer.Exists(path))
+            {
+                //Layout = DockSerializer.Load<RootDock>(path);
+            }
+
+            if (Layout == null)
+            {
+                Layout = Factory.CreateLayout();
+                Factory.InitLayout(Layout, this);
+            }
+        }
+
+        public void CloseLayout()
+        {
+            Factory.CloseLayout(Layout);
+        }
+
+        public void SaveLayout()
+        {
+            string path = System.IO.Path.Combine(Platform.SettingsDirectory, "Layout.json");
+            DockSerializer.Save(path, Layout);
+        }
+
         public IObservable<ISolution> OnSolutionChanged { get; }
 
         public MenuViewModel MainMenu { get; }
@@ -316,20 +327,9 @@ namespace AvalonStudio
 
         public DocumentTabControlViewModel DocumentTabs { get; }
 
-        public TabControlViewModel LeftTabs { get; }
+        public IConsole Console { get; private set; }
 
-        public TabControlViewModel RightTabs { get; }
-
-        public TabControlViewModel RightTopTabs { get; }
-        public TabControlViewModel RightMiddleTabs { get; }
-        public TabControlViewModel RightBottomTabs { get; }
-        public TabControlViewModel BottomTabs { get; }
-        public TabControlViewModel BottomRightTabs { get; }
-        public TabControlViewModel MiddleTopTabs { get; }
-
-        public IConsole Console { get; }
-
-        public IErrorList ErrorList { get; }
+        public IErrorList ErrorList { get; private set; }
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
@@ -359,14 +359,14 @@ namespace AvalonStudio
             DocumentTabs.OpenDocument(document, temporary);
         }
 
-        public void RemoveDocument (ISourceFile file)
+        public void RemoveDocument(ISourceFile file)
         {
             var document = DocumentTabs.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(d => d.SourceFile == file);
 
-            if(document != null)
+            if (document != null)
             {
                 RemoveDocument(document);
-            }            
+            }
         }
 
         public void RemoveDocument(IDocumentTabViewModel document)
@@ -551,12 +551,6 @@ namespace AvalonStudio
         public void ShowQuickCommander()
         {
             this._quickCommander.IsVisible = true;
-        }
-
-        public ObservableCollection<object> Tools
-        {
-            get { return tools; }
-            set { this.RaiseAndSetIfChanged(ref tools, value); }
         }
 
         public Perspective CurrentPerspective
