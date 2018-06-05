@@ -36,7 +36,7 @@ cd AvalonStudio
 
 ### Install Dependencies
 
-Install .NET Core 2 from: https://www.microsoft.com/net/download/core
+Install .NET Core 2.1 from: https://www.microsoft.com/net/download/core
 
 ### Building the project
 
@@ -52,6 +52,6 @@ dotnet build
 ### Running locally built binaries
 
 ```sh
-cd /AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.0/
+cd /AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.1/
 dotnet ./AvalonStudio.dll
 ```
