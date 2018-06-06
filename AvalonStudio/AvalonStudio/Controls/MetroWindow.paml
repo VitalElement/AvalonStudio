@@ -29,8 +29,8 @@
                         </Grid.Styles>
                         <StackPanel Orientation="Horizontal">
                           <Button Background="Transparent" BorderThickness="0" Name="minimiseButton">
-                            <Panel Margin="4">
-                              <Path Margin="0" Height="8" Width="8" Stretch="Uniform" UseLayoutRounding="False"  Data="M20,14H4V10H20" Fill="{DynamicResource ThemeForegroundBrush}" />
+                            <Panel Margin="4" >
+                              <Path Margin="0 5 0 0" Height="8" Width="8" Stretch="Uniform" UseLayoutRounding="False"  Data="M20,14H4V10H20" Fill="{DynamicResource ThemeForegroundBrush}" />
                             </Panel>
                           </Button>
 
