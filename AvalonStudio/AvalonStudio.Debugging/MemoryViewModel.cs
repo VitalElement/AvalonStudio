@@ -9,19 +9,31 @@
     using System.Composition;
     using System.Linq;
 
-    [ExportToolControl]
-    [Export(typeof(IExtension))]    
+    [ExportToolControl]    
     [Shared]
-    public class MemoryViewModel : ToolViewModel, IActivatableExtension
+    public class MemoryViewModel : ToolViewModel
     {
         private IDebugManager2 _debugManager;
         public const string ToolId = "CIDMEM001";
         private const int Columns = 32;
 
-        public MemoryViewModel()
+        [ImportingConstructor]
+        public MemoryViewModel(IDebugManager2 debugManager)
         {
             Address = "0";
             IsVisible = false;
+
+            _debugManager = debugManager;
+
+            _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
+
+            _debugManager.DebugSessionEnded += (sender, e) =>
+            {
+                IsVisible = false;
+
+                // TODO clear out data ready for GC, this requires a fix in Avalonia.
+                //DisassemblyData = null;
+            };
         }
         
         private IDebugger2 debugger;
@@ -86,25 +98,6 @@
 
         public new async void Invalidate()
         {
-        }
-
-        public void BeforeActivation()
-        {
-        }
-
-        public void Activation()
-        {
-            _debugManager = IoC.Get<IDebugManager2>();
-
-            _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
-
-            _debugManager.DebugSessionEnded += (sender, e) =>
-            {
-                IsVisible = false;
-
-                // TODO clear out data ready for GC, this requires a fix in Avalonia.
-                //DisassemblyData = null;
-            };
         }
 
         private ulong currentAddress;

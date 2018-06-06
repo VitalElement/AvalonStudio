@@ -37,7 +37,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
     [Export(typeof(IFindInFilesService))]
     [Shared]
-    public class FindInFilesService : IFindInFilesService, IActivatableExtension
+    public class FindInFilesService : IFindInFilesService
     {
         private IEnumerable<FindResult> GetResults(ISearchStrategy strategy, ISourceFile file)
         {
@@ -85,14 +85,6 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
             }
 
             return files.SelectMany(f => GetResults(searchStrategy, f));
-        }
-
-        public void BeforeActivation()
-        {
-        }
-
-        public void Activation()
-        {
         }
     }
 }

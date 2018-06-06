@@ -10,7 +10,7 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
     [Export(typeof(ISettingsManager))]
     [Export(typeof(SettingsDialogViewModel))]
     [Shared]
-    public class SettingsDialogViewModel : DocumentTabViewModel, IActivatableExtension, ISettingsManager
+    public class SettingsDialogViewModel : DocumentTabViewModel, ISettingsManager
     {
         private Dictionary<string, SettingsCategoryViewModel> _categories = new Dictionary<string, SettingsCategoryViewModel>();
         private ObservableCollection<SettingsCategoryViewModel> _categoryViewModels = new ObservableCollection<SettingsCategoryViewModel>();
@@ -19,14 +19,6 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
         public SettingsDialogViewModel()
         {
             Title = "Options";
-        }
-
-        public void Activation()
-        {
-        }
-
-        public void BeforeActivation()
-        {            
         }
 
         public void RegisterSettingsDialog(string category, SettingsViewModel viewModel)

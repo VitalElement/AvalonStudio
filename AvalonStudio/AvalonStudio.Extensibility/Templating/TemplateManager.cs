@@ -34,7 +34,7 @@ namespace AvalonStudio.Extensibility.Templating
 
     [Export(typeof(TemplateManager))]
     [Shared]
-    public class TemplateManager : IActivatableExtension
+    public class TemplateManager
     {
         private const string HostIdentifier = "AvalonStudio";
         private const string HostVersion = "1.0.0";
@@ -312,14 +312,6 @@ namespace AvalonStudio.Extensibility.Templating
         private static void FirstRun(IEngineEnvironmentSettings environmentSettings, IInstaller installer)
         {
             UpdatePackages(installer);
-        }
-
-        public void BeforeActivation()
-        {            
-        }
-
-        public void Activation()
-        {
         }
 
         public void UpdateDefaultTemplates()

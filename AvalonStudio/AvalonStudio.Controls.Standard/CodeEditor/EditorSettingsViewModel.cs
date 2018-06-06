@@ -6,11 +6,13 @@ using AvalonStudio.GlobalSettings;
 using AvalonStudio.Shell;
 using ReactiveUI;
 using System.Collections.Generic;
+using System.Composition;
 using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
-    public class EditorSettingsViewModel : SettingsViewModel, IActivatableExtension
+    [Export, Shared]
+    public class EditorSettingsViewModel : SettingsViewModel
     {
         private bool _removeTrailingWhiteSpaceOnSave;
         private bool _autoFormat;
@@ -19,6 +21,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public EditorSettingsViewModel() : base("General")
         {
+            IoC.Get<ISettingsManager>().RegisterSettingsDialog("Editor", this);
         }
 
         public override void OnDialogLoaded()
@@ -96,16 +99,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     IoC.Get<IShell>().CurrentColorScheme = loadedScheme;
                 }
             }
-        }
-
-        public void Activation()
-        {
-            IoC.Get<ISettingsManager>().RegisterSettingsDialog("Editor", this);
-        }
-
-        public void BeforeActivation()
-        {
-
         }
     }
 }

@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.WelcomeScreen
 {
-    public class WelcomeScreenViewModel : DocumentTabViewModel, IActivatableExtension
+    public class WelcomeScreenViewModel : DocumentTabViewModel
     {
         private ISolutionExplorer _solutionExplorer;
 
@@ -26,7 +26,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
         private CompositeDisposable _disposables;
 
         [ImportingConstructor]
-        public WelcomeScreenViewModel(ISolutionExplorer solutionExplorer)
+        public WelcomeScreenViewModel(ISolutionExplorer solutionExplorer, IShell shell)
         {
             Title = "Start Page";
 
@@ -38,18 +38,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
 
             NewSolution = ReactiveCommand.Create(_solutionExplorer.NewSolution);
             OpenSolution = ReactiveCommand.Create(_solutionExplorer.OpenSolution);
-
-            LoadRecentProjects();
-        }
-
-        ~WelcomeScreenViewModel()
-        {
-
-        }
-
-        public void Activation()
-        {
-            var shell = IoC.Get<IShell>();
+            
             shell.AddDocument(this, false);
 
             _disposables = new CompositeDisposable
@@ -59,8 +48,14 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             //shell.SolutionChanged += ShellOnSolutionChanged;
 
             //LoadNewsFeed().GetAwaiter().GetResult();
-            //LoadVideoFeed().GetAwaiter().GetResult();
-            _solutionExplorer = IoC.Get<ISolutionExplorer>();
+            //LoadVideoFeed().GetAwaiter().GetResult();            
+
+            LoadRecentProjects();
+        }
+
+        ~WelcomeScreenViewModel()
+        {
+
         }
 
         public override void Close()
@@ -68,10 +63,6 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             base.Close();
 
             _disposables.Dispose();
-        }
-
-        public void BeforeActivation()
-        {
         }
 
         private void LoadRecentProjects()

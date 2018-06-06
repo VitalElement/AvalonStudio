@@ -14,11 +14,10 @@ using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    [Export(typeof(ISolutionExplorer))]
-    [Export(typeof(IExtension))]
+    [Export(typeof(ISolutionExplorer))]    
     [ExportToolControl]
     [Shared]
-    public class SolutionExplorerViewModel : ToolViewModel, IActivatableExtension, ISolutionExplorer
+    public class SolutionExplorerViewModel : ToolViewModel, ISolutionExplorer
     {
         public const string ToolId = "CIDSEVM00";
 
@@ -179,8 +178,5 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 await _shell.OpenSolutionAsync(result[0]);
             }
         }
-
-        public void BeforeActivation() { }
-        public void Activation() { }
     }
 }

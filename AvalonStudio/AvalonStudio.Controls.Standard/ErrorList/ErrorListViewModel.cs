@@ -12,19 +12,20 @@ using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.ErrorList
 {
-    [Export(typeof(IErrorList))]
-    [Export(typeof(IExtension))]
+    [Export(typeof(IErrorList))]    
     [ExportToolControl]
     [Shared]
-    public class ErrorListViewModel : ToolViewModel, IActivatableExtension, IErrorList
+    public class ErrorListViewModel : ToolViewModel, IErrorList
     {
+        private IShell shell;
         private ObservableCollection<ErrorViewModel> errors;
 
-        private ErrorViewModel selectedError;
-        private IShell shell;
+        private ErrorViewModel selectedError;        
 
-        public ErrorListViewModel()
+        [ImportingConstructor]
+        public ErrorListViewModel(IShell shell)
         {
+            this.shell = shell;
             Title = "Error List";
             errors = new ObservableCollection<ErrorViewModel>();
         }
@@ -86,15 +87,6 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                     Errors.InsertSorted(new ErrorViewModel(diagnostic, diagnostics.Tag, diagnostics.AssociatedSourceFile));
                 }
             }
-        }
-
-        public void BeforeActivation()
-        {            
-        }
-
-        public void Activation()
-        {
-            shell = IoC.Get<IShell>();
         }
     }
 }

@@ -14,15 +14,13 @@ using System.Composition;
 namespace AvalonStudio.Controls.Standard.Console
 {
     [ExportToolControl]
-    [Export(typeof(IExtension))]
     [Export(typeof(IConsole))]
     [Shared]
-    public class ConsoleViewModel : ToolViewModel, IConsole, IActivatableExtension
+    public class ConsoleViewModel : ToolViewModel, IConsole
     {
         private ObservableCollection<IBackgroundRenderer> backgroundRenderers;
 
         private int caretIndex;
-        private IShell shell;
 
         public ConsoleViewModel()
         {
@@ -111,15 +109,6 @@ namespace AvalonStudio.Controls.Standard.Console
         public void OverWrite(string data)
         {
             WriteLine(data);
-        }
-
-        public void BeforeActivation()
-        {
-        }
-
-        public void Activation()
-        {
-            shell = IoC.Get<IShell>();
         }
 
         private void ScrollToEnd()

@@ -10,22 +10,34 @@ using System.Composition;
 
 namespace AvalonStudio.Debugging
 {
-    [ExportToolControl]    
-    [Export(typeof(IExtension))]
+    [ExportToolControl]        
     [Shared]
-    public class CallStackViewModel : ToolViewModel, IActivatableExtension
+    public class CallStackViewModel : ToolViewModel
     {
         private IDebugManager2 _debugManager;
 
         private FrameViewModel selectedFrame;
 
-        public CallStackViewModel()
+        [ImportingConstructor]
+        public CallStackViewModel(IDebugManager2 debugManager)
         {
             Title = "CallStack";
 
             Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
 
             Frames = new ObservableCollection<FrameViewModel>();
+
+            _debugManager = debugManager;
+
+            _debugManager.TargetStopped += _debugManager_TargetStopped;
+
+            _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
+
+            _debugManager.DebugSessionEnded += (sender, e) =>
+            {
+                IsVisible = false;
+                Clear();
+            };
         }
 
         public FrameViewModel SelectedFrame
@@ -72,17 +84,7 @@ namespace AvalonStudio.Debugging
 
         public void Activation()
         {
-            _debugManager = IoC.Get<IDebugManager2>();
-
-            _debugManager.TargetStopped += _debugManager_TargetStopped;
-
-            _debugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
-
-            _debugManager.DebugSessionEnded += (sender, e) =>
-            {
-                IsVisible = false;
-                Clear();
-            };
+            
         }
 
         private void _debugManager_TargetStopped(object sender, Mono.Debugging.Client.TargetEventArgs e)

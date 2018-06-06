@@ -38,10 +38,8 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvalonStudio
-{
-    [Export(typeof(ShellViewModel))]
-    [Export(typeof(IShell))]
-    [Shared]
+{    
+    [Export(typeof(IShell)), Export(typeof(ShellViewModel)), Shared]    
     internal class ShellViewModel : ViewModel, IShell
     {
         public static ShellViewModel Instance { get; internal set; }
@@ -50,11 +48,10 @@ namespace AvalonStudio
         private List<KeyBinding> _keyBindings;
 
         private IEnumerable<ToolbarViewModel> _toolbars;
-        private IEnumerable<Lazy<IExtension>> _extensions;
         private IEnumerable<Lazy<ToolViewModel>> _toolControls;
         private CommandService _commandService;
 
-        private Lazy<StatusBarViewModel> _statusBar;        
+        private Lazy<StatusBarViewModel> _statusBar;
 
         private Perspective currentPerspective;
 
@@ -64,7 +61,7 @@ namespace AvalonStudio
 
         private ModalDialogViewModelBase modalDialog;
 
-        private QuickCommanderViewModel _quickCommander;        
+        private QuickCommanderViewModel _quickCommander;
 
         [ImportingConstructor]
         public ShellViewModel(
@@ -72,11 +69,9 @@ namespace AvalonStudio
             Lazy<StatusBarViewModel> statusBar,
             IContentTypeService contentTypeService,
             MainMenuService mainMenuService,
-            ToolbarService toolbarService,            
-            [ImportMany] IEnumerable<Lazy<IExtension>> extensions,
+            ToolbarService toolbarService,
             [ImportMany] IEnumerable<Lazy<ToolViewModel>> toolControls)
         {
-            _extensions = extensions;
             _toolControls = toolControls;
 
             _commandService = commandService;
@@ -99,7 +94,7 @@ namespace AvalonStudio
 
             CurrentPerspective = Perspective.Editor;
 
-            DocumentTabs = new DocumentTabControlViewModel();            
+            DocumentTabs = new DocumentTabControlViewModel();
 
             ModalDialog = new ModalDialogViewModelBase("Dialog");
 
@@ -118,29 +113,13 @@ namespace AvalonStudio
         }
 
         public void Initialise()
-        {   
-            foreach (var extension in _extensions)
-            {
-                if (extension.Value is IActivatableExtension activatable)
-                {
-                    activatable.BeforeActivation();
-                }
-            }
-
+        {
             LoadLayout();
 
             _leftPane = (Factory as DefaultLayoutFactory).LeftDock;
             _documentDock = (Factory as DefaultLayoutFactory).DocumentDock;
             _rightPane = (Factory as DefaultLayoutFactory).RightDock;
-            _bottomPane = (Factory as DefaultLayoutFactory).BottomDock;                        
-
-            foreach (var extension in _extensions)
-            {
-                if (extension.Value is IActivatableExtension activatable)
-                {
-                    activatable.Activation();
-                }                
-            }
+            _bottomPane = (Factory as DefaultLayoutFactory).BottomDock;
 
             foreach (var command in _commandService.GetKeyGestures())
             {
@@ -298,11 +277,11 @@ namespace AvalonStudio
 
         public IEnumerable<KeyBinding> KeyBindings => _keyBindings;
 
-        public DocumentTabControlViewModel DocumentTabs { get; }        
+        public DocumentTabControlViewModel DocumentTabs { get; }
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
-        
+
 
         public void AddDocument(IDocumentTabViewModel document, bool temporary = false)
         {
@@ -620,7 +599,7 @@ namespace AvalonStudio
             }
 
             return result;
-        }        
+        }
 
         public async Task OpenSolutionAsync(string path)
         {

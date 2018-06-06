@@ -4,10 +4,12 @@ using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Settings;
 using ReactiveUI;
 using System.Collections.ObjectModel;
+using System.Composition;
 
 namespace AvalonStudio.Toolchains.CustomGCC
 {
-    class GccProfilesSettingsViewModel : SettingsViewModel, IActivatableExtension
+    [Export, Shared]
+    class GccProfilesSettingsViewModel : SettingsViewModel
     {
         private CustomGCCToolchainProfiles _settings;
         private ObservableCollection<string> _profiles;
@@ -15,8 +17,11 @@ namespace AvalonStudio.Toolchains.CustomGCC
         private string _selectedProfile;
         private string _basePath;
 
-        public GccProfilesSettingsViewModel() : base("GCC Profiles")
+        [ImportingConstructor]
+        public GccProfilesSettingsViewModel(ISettingsManager manager) : base("GCC Profiles")
         {
+            manager.RegisterSettingsDialog("Toolchains", this);
+
             SaveCommand = ReactiveCommand.Create(() =>
             {
                 if (!string.IsNullOrEmpty(InstanceName))
@@ -47,16 +52,6 @@ namespace AvalonStudio.Toolchains.CustomGCC
                     Save();
                 }
             });
-        }
-
-        public void Activation()
-        {
-            IoC.Get<ISettingsManager>().RegisterSettingsDialog("Toolchains", this);
-        }
-
-        public void BeforeActivation()
-        {
-
         }
 
         public override void OnDialogLoaded()

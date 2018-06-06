@@ -5,26 +5,21 @@ using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.GlobalSettings;
 using ReactiveUI;
 using System.Collections.Generic;
+using System.Composition;
 using System.Linq;
 
 namespace AvalonStudio
 {
-    class GeneralSettingsViewModel : SettingsViewModel, IActivatableExtension
+    [Export, Shared]
+    class GeneralSettingsViewModel : SettingsViewModel
     {
         private int _selectedThemeIndex;
 
-        public GeneralSettingsViewModel() : base("General")
+        [ImportingConstructor]
+        public GeneralSettingsViewModel(ISettingsManager manager) : base("General")
         {
+            manager.RegisterSettingsDialog("Environment", this);
             _selectedThemeIndex = -1;
-        }
-
-        public void Activation()
-        {
-            IoC.Get<ISettingsManager>().RegisterSettingsDialog("Environment", this);
-        }
-
-        public void BeforeActivation()
-        {
         }
 
         public override void OnDialogLoaded()

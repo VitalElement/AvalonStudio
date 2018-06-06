@@ -17,7 +17,7 @@ namespace AvalonStudio.Debugging
 
     [Export(typeof(IDebugManager2))]
     [Shared]
-    public class DebugManager2 : IDebugManager2, IActivatableExtension
+    public class DebugManager2 : IDebugManager2
     {
         private DebuggerSession _session;
         private object _sessionLock = new object();
@@ -39,8 +39,12 @@ namespace AvalonStudio.Debugging
 
         public event EventHandler FrameChanged;
 
-        public DebugManager2()
+        [ImportingConstructor]
+        public DebugManager2(IShell shell, IConsole console)
         {
+            _shell = shell;
+            _console = console;
+
             Breakpoints = new BreakpointStore();
 
             Breakpoints.BreakpointAdded += (sender, e) =>
@@ -52,6 +56,36 @@ namespace AvalonStudio.Debugging
             {
                 SaveBreakpoints();
             };
+
+            var started = Observable.FromEventPattern(this, nameof(TargetStarted)).Select(e => true);
+            var stopped = Observable.FromEventPattern(this, nameof(TargetStopped)).Select(e => false);
+            var sessionStarted = Observable.FromEventPattern(this, nameof(DebugSessionStarted)).Select(e => true);
+            var sessionEnded = Observable.FromEventPattern(this, nameof(DebugSessionEnded)).Select(e => false);
+
+            var hasSession = sessionStarted.Merge(sessionEnded).StartWith(false);
+
+            var isRunning = hasSession.Merge(started).Merge(stopped).StartWith(false);
+
+            var canRun = _shell.OnSolutionLoaded().CombineLatest(isRunning, hasSession, _shell.OnCurrentTaskChanged(), (loaded, running, session, hasTask) =>
+            {
+                return loaded && !running && (!hasTask || (hasTask && session));
+            });
+
+            var canPause = _shell.OnSolutionLoaded().CombineLatest(isRunning, (loaded, running) => loaded && running);
+
+            var canStop = _shell.OnSolutionLoaded().CombineLatest(sessionStarted.Merge(sessionEnded), (loaded, sessionActive) => loaded && SessionActive);
+
+            var canStep = canStop.CombineLatest(isRunning, (stop, running) => stop && !running);
+
+            CanStart = canRun.StartWith(false);
+
+            CanPause = canPause.StartWith(false);
+
+            CanStop = canStop.StartWith(false);
+
+            CanStep = canStep.StartWith(false);
+
+            _shell.OnSolutionChanged.Subscribe(_ => LoadBreakpoints());
         }
 
         public void SetFrame(StackFrame frame)
@@ -137,46 +171,6 @@ namespace AvalonStudio.Debugging
 
         public IObservable<bool> CanStep { get; private set; }
 
-        public void Activation()
-        {
-            _shell = IoC.Get<IShell>();
-            _console = IoC.Get<IConsole>();
-
-            var started = Observable.FromEventPattern(this, nameof(TargetStarted)).Select(e => true);
-            var stopped = Observable.FromEventPattern(this, nameof(TargetStopped)).Select(e => false);
-            var sessionStarted = Observable.FromEventPattern(this, nameof(DebugSessionStarted)).Select(e => true);
-            var sessionEnded = Observable.FromEventPattern(this, nameof(DebugSessionEnded)).Select(e => false);
-
-            var hasSession = sessionStarted.Merge(sessionEnded).StartWith(false);
-
-            var isRunning = hasSession.Merge(started).Merge(stopped).StartWith(false);
-
-            var canRun = _shell.OnSolutionLoaded().CombineLatest(isRunning, hasSession, _shell.OnCurrentTaskChanged(), (loaded, running, session, hasTask) =>
-            {
-                return loaded && !running && (!hasTask || (hasTask && session));
-            });
-
-            var canPause = _shell.OnSolutionLoaded().CombineLatest(isRunning, (loaded, running) => loaded && running);
-
-            var canStop = _shell.OnSolutionLoaded().CombineLatest(sessionStarted.Merge(sessionEnded), (loaded, sessionActive) => loaded && SessionActive);
-
-            var canStep = canStop.CombineLatest(isRunning, (stop, running) => stop && !running);
-
-            CanStart = canRun.StartWith(false);
-
-            CanPause = canPause.StartWith(false);
-
-            CanStop = canStop.StartWith(false);
-
-            CanStep = canStep.StartWith(false);
-
-            _shell.OnSolutionChanged.Subscribe(_ => LoadBreakpoints());
-        }
-
-        public void BeforeActivation()
-        {
-        }
-
         private void OnEndSession()
         {
             _session?.Exit();
@@ -194,7 +188,7 @@ namespace AvalonStudio.Debugging
             lock (_sessionLock)
             {
                 if (_session != null)
-                { 
+                {
                     _session.TargetUnhandledException -= _session_TargetStopped;
                     _session.TargetStopped -= _session_TargetStopped;
                     _session.TargetHitBreakpoint -= _session_TargetStopped;
