@@ -1,6 +1,12 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:mod="clr-namespace:AvalonStudio.Menus.Models;assembly=AvalonStudio.Extensibility">
 
+  <UserControl.Styles>
+    <Style Selector="Separator">
+      <Setter Property="Margin" Value="0"/>
+    </Style>
+  </UserControl.Styles>
+
   <Menu Items="{Binding Items}">
     <Menu.Styles>
       <Style Selector="MenuItem">
@@ -17,8 +23,8 @@
       </Style>
     </Menu.Styles>
     <Menu.DataTemplates>
-      <DataTemplate DataType="mod:MenuItemSeparatorModel">        
-          <Separator />        
+      <DataTemplate DataType="mod:MenuItemSeparatorModel">
+          <Separator />
       </DataTemplate>
     </Menu.DataTemplates>
   </Menu>
