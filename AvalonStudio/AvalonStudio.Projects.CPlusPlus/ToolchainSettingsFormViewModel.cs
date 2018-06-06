@@ -20,7 +20,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         public ToolchainSettingsFormViewModel(CPlusPlusProject project) : base("Toolchain", project)
         {
-            toolchains = new List<IToolchain>(IoC.Get<IShell>().GetExtensions<IToolchain>());
+            toolchains = new List<IToolchain>(IoC.Get<IShell>().GetInstances<IToolchain>());
             selectedToolchain = project.ToolChain;
         }
 

@@ -2,6 +2,7 @@
 {
     using Avalonia.Controls;
     using AvalonStudio.Extensibility;
+    using AvalonStudio.Extensibility.Studio;
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;
     using AvalonStudio.Shell;
@@ -45,7 +46,7 @@
 
                 var shell = IoC.Get<IShell>();
 
-                foreach (var projectType in shell.ProjectTypes)
+                foreach (var projectType in shell.GetInstance<IStudio>().ProjectTypes)
                 {
                     var projectTypeMetadata = projectType.Metadata;
                     var extensions = new List<string>();

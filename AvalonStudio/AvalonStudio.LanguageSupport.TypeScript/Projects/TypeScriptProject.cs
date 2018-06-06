@@ -163,7 +163,7 @@ Program.main();
         [JsonIgnore]
         public override IToolchain ToolChain
         {
-            get => IoC.Get<IShell>().GetExtensions<IToolchain>().FirstOrDefault(tc => tc.GetType() == typeof(TypeScriptToolchain));
+            get => IoC.Get<IShell>().GetInstances<IToolchain>().FirstOrDefault(tc => tc.GetType() == typeof(TypeScriptToolchain));
             set { throw new NotSupportedException(); }
         }
 

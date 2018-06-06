@@ -23,6 +23,7 @@ using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
@@ -792,7 +793,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             var contentTypeService = ContentTypeServiceInstance.Instance;
 
-            LanguageService = _shell.LanguageServices.FirstOrDefault(
+            LanguageService = _shell.GetInstance<IStudio>().LanguageServices.FirstOrDefault(
                 o => o.Metadata.TargetCapabilities.Any(
                     c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;
             

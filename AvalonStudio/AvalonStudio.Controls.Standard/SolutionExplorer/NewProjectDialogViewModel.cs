@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Shell;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -39,7 +40,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             var files = Directory.EnumerateFiles(path);
 
-            var ptExtensions = _shell.ProjectTypes.Select(pt => pt.Metadata.DefaultExtension);
+            var ptExtensions = _shell.GetInstance<IStudio>().ProjectTypes.Select(pt => pt.Metadata.DefaultExtension);
 
             var result = files.Where(f => ptExtensions.Contains(Path.GetExtension(f).Replace(".", "")));
 

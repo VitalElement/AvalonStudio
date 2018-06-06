@@ -1,17 +1,9 @@
-using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Editor;
-using AvalonStudio.Extensibility.MainMenu;
-using AvalonStudio.Extensibility.Plugin;
-using AvalonStudio.Extensibility.Templating;
-using AvalonStudio.Languages;
 using AvalonStudio.Projects;
-using AvalonStudio.TestFrameworks;
-using AvalonStudio.Toolchains;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Shell
@@ -35,7 +27,13 @@ namespace AvalonStudio.Shell
 
         ColorScheme CurrentColorScheme { get; set; }
 
-        IEnumerable<T> GetExtensions<T>();
+        IEnumerable<T> GetInstances<T>();
+
+        IEnumerable<T> GetInstances<T>(string contract);
+
+        T GetInstance<T>();
+
+        T GetInstance<T>(string contract);
 
         void AddDocument(IDocumentTabViewModel document, bool temporary = true);
 
@@ -50,13 +48,7 @@ namespace AvalonStudio.Shell
 
         event EventHandler<BuildEventArgs> BuildStarting;
 
-        event EventHandler<BuildEventArgs> BuildCompleted;
-
-        IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
-
-        IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
-
-        IEnumerable<ITestFramework> TestFrameworks { get; }
+        event EventHandler<BuildEventArgs> BuildCompleted;        
 
         IFileDocumentTabViewModel OpenDocument(ISourceFile file);
 

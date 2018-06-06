@@ -3,6 +3,7 @@ using Avalonia.Threading;
 using AvalonStudio.Commands;
 using AvalonStudio.Controls;
 using AvalonStudio.Controls.Standard.ErrorList;
+using AvalonStudio.Controls.Standard.Studio;
 using AvalonStudio.Docking;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
@@ -10,6 +11,7 @@ using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Shell;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
 using AvalonStudio.MainMenu;
@@ -53,15 +55,7 @@ namespace AvalonStudio
         private IEnumerable<Lazy<ToolViewModel>> _toolControls;
         private CommandService _commandService;
 
-        private Lazy<StatusBarViewModel> _statusBar;
-
-        private IEnumerable<Lazy<IEditorProvider>> _editorProviders;
-        private IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> _languageServices;
-
-        private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
-        private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
-
-        private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
+        private Lazy<StatusBarViewModel> _statusBar;        
 
         private Perspective currentPerspective;
 
@@ -79,12 +73,7 @@ namespace AvalonStudio
             Lazy<StatusBarViewModel> statusBar,
             IContentTypeService contentTypeService,
             MainMenuService mainMenuService,
-            ToolbarService toolbarService,
-            [ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
-            [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
-            [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
-            [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,            
-            [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
+            ToolbarService toolbarService,            
             [ImportMany] IEnumerable<Lazy<IExtension>> extensions,
             [ImportMany] IEnumerable<Lazy<ToolViewModel>> toolControls)
         {
@@ -99,15 +88,7 @@ namespace AvalonStudio
             StandardToolbar = toolbars.Single(t => t.Key == "Standard").Value;
 
             _statusBar = statusBar;
-            IoC.RegisterConstant<IStatusBar>(_statusBar.Value);
-
-            _editorProviders = editorProviders;
-            _languageServices = languageServices;
-
-            _solutionTypes = solutionTypes;
-            _projectTypes = projectTypes;            
-
-            _testFrameworks = testFrameworks;
+            IoC.RegisterConstant<IStatusBar>(_statusBar.Value);            
 
             _keyBindings = new List<KeyBinding>();
 
@@ -324,20 +305,7 @@ namespace AvalonStudio
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
-        public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes => _projectTypes;
-
-        public IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices => _languageServices;        
-
-        public IEnumerable<ITestFramework> TestFrameworks
-        {
-            get
-            {
-                foreach (var testFramework in _testFrameworks)
-                {
-                    yield return testFramework.Value;
-                }
-            }
-        }
+        
 
         public void AddDocument(IDocumentTabViewModel document, bool temporary = false)
         {
@@ -383,7 +351,7 @@ namespace AvalonStudio
 
             if (currentTab == null)
             {
-                var provider = _editorProviders.FirstOrDefault(p => p.Value.CanEdit(file))?.Value;
+                var provider = GetInstance<IStudio>().EditorProviders.FirstOrDefault(p => p.Value.CanEdit(file))?.Value;
 
                 if (provider != null)
                 {
@@ -667,7 +635,7 @@ namespace AvalonStudio
             if (System.IO.File.Exists(path))
             {
                 var extension = System.IO.Path.GetExtension(path);
-                var solutionType = _solutionTypes.FirstOrDefault(
+                var solutionType = GetInstance<IStudio>().SolutionTypes.FirstOrDefault(
                     s => s.Metadata.SupportedExtensions.Any(e => extension.EndsWith(e)));
 
                 if (solutionType != null)
@@ -723,9 +691,24 @@ namespace AvalonStudio
             }
         }
 
-        public IEnumerable<T> GetExtensions<T>()
+        public IEnumerable<T> GetInstances<T>()
         {
             return _compositionHost.GetExports<T>();            
+        }
+
+        public IEnumerable<T> GetInstances<T>(string contract)
+        {
+            return _compositionHost.GetExports<T>(contract);
+        }
+
+        public T GetInstance<T> ()
+        {
+            return _compositionHost.GetExport<T>();
+        }
+
+        public T GetInstance<T>(string contract)
+        {
+            return _compositionHost.GetExport<T>(contract);
         }
 
         public double GlobalZoomLevel

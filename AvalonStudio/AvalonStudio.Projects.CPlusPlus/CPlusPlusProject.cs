@@ -1,5 +1,6 @@
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Shell;
@@ -356,7 +357,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             get
             {
-                var result = IoC.Get<IShell>().GetExtensions<IToolchain>().FirstOrDefault(tc => tc.GetType().ToString() == ToolchainReference);
+                var result = IoC.Get<IShell>().GetInstances<IToolchain>().FirstOrDefault(tc => tc.GetType().ToString() == ToolchainReference);
 
                 return result;
             }
@@ -371,7 +372,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             get
             {
-                var result = IoC.Get<IShell>().GetExtensions<IDebugger>().FirstOrDefault(tc => tc.GetType().ToString() == Debugger2Reference);
+                var result = IoC.Get<IShell>().GetInstances<IDebugger>().FirstOrDefault(tc => tc.GetType().ToString() == Debugger2Reference);
 
                 return result;
             }
@@ -386,10 +387,10 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             get
             {
-                var result = IoC.Get<IShell>()
-                    .TestFrameworks.FirstOrDefault(tf => tf.GetType().ToString() == TestFrameworkReference);
+                var result = IoC.Get<IShell>().GetInstance<IStudio>()
+                    .TestFrameworks.FirstOrDefault(tf => tf.Value.GetType().ToString() == TestFrameworkReference);
 
-                return result;
+                return result.Value;
             }
             set
             {

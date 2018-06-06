@@ -1,4 +1,5 @@
 ﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using Microsoft.DotNet.Cli.Sln.Internal;
@@ -16,7 +17,7 @@ namespace AvalonStudio.Projects
 
         public static IProjectType GetProjectType(this Guid projectTypeId)
         {
-            return IoC.Get<IShell>().ProjectTypes.FirstOrDefault(
+            return IoC.Get<IShell>().GetInstance<IStudio>().ProjectTypes.FirstOrDefault(
                 type => type.Metadata.ProjectTypeGuid == projectTypeId)?.Value;
         }
 
