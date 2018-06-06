@@ -18,9 +18,10 @@ using System.Composition;
 
 namespace AvalonStudio.Debugging
 {
-    [ExportToolControl]    
+    [ExportToolControl]
+    [Export(typeof(IExtension))]
     [Shared]
-    public class DisassemblyViewModel : ToolViewModel
+    public class DisassemblyViewModel : ToolViewModel, IActivatableExtension
     {
         private IDebugManager2 _debugManager;
 
@@ -45,8 +46,7 @@ namespace AvalonStudio.Debugging
 
         private ulong selectedIndex;
 
-        [ImportingConstructor]
-        public DisassemblyViewModel(IDebugManager2 debugManager)
+        public DisassemblyViewModel()
         {
             Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
 
@@ -66,34 +66,6 @@ namespace AvalonStudio.Debugging
 
             _lineTransformers.Add(new DisassemblyViewTextColorizer(addressLines));
             _lineTransformers.Add(_selectedLineMarker);
-
-            _debugManager = debugManager;
-
-            _debugManager.DebugSessionStarted += (sender, e) => { Document = runModeDocument; IsVisible = true; };
-
-            _debugManager.DebugSessionEnded += (sender, e) =>
-            {
-                Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    IsVisible = false;
-
-                    Clear();
-                });
-            };
-
-            _debugManager.FrameChanged += (sender, e) =>
-            {
-                Document = document;
-                Update();
-            };
-
-            var started = Observable.FromEventPattern(_debugManager, nameof(_debugManager.TargetStarted));
-            var stopped = Observable.FromEventPattern(_debugManager, nameof(_debugManager.TargetStopped));
-
-            started.SelectMany(_ => Observable.Amb(Observable.Timer(TimeSpan.FromMilliseconds(250)).Select(o => true), stopped.Take(1).Select(o => false))).Where(timeout => timeout == true).Subscribe(s =>
-            {
-                Document = runModeDocument;
-            });
         }
 
         public bool MixedMode
@@ -152,6 +124,41 @@ namespace AvalonStudio.Debugging
         public override Location DefaultLocation
         {
             get { return Location.RightTop; }
+        }
+
+        public void BeforeActivation()
+        {
+        }
+
+        public void Activation()
+        {
+            _debugManager = IoC.Get<IDebugManager2>();
+
+            _debugManager.DebugSessionStarted += (sender, e) => { Document = runModeDocument; IsVisible = true; };
+
+            _debugManager.DebugSessionEnded += (sender, e) =>
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    IsVisible = false;
+
+                    Clear();
+                });
+            };
+
+            _debugManager.FrameChanged += (sender, e) =>
+            {
+                Document = document;
+                Update();
+            };
+
+            var started = Observable.FromEventPattern(_debugManager, nameof(_debugManager.TargetStarted));
+            var stopped = Observable.FromEventPattern(_debugManager, nameof(_debugManager.TargetStopped));
+
+            started.SelectMany(_ => Observable.Amb(Observable.Timer(TimeSpan.FromMilliseconds(250)).Select(o => true), stopped.Take(1).Select(o => false))).Where(timeout => timeout == true).Subscribe(s =>
+            {
+                Document = runModeDocument;
+            });
         }
 
         public void Update()

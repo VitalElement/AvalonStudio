@@ -14,10 +14,11 @@ using System.Composition;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 {
-    [Export(typeof(SnippetManager)), Shared]
-    public class SnippetManager
+    [Export(typeof(SnippetManager))]
+    [Shared]
+    public class SnippetManager : IActivatableExtension
     {
-        public SnippetManager()
+        public SnippetManager ()
         {
             var snippetFolders = Directory.EnumerateDirectories(Platform.SnippetsFolder).Concat(Directory.EnumerateDirectories(Platform.InBuiltSnippetsFolder));
 
@@ -36,6 +37,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
                     }
                 }
             }
+        }
+
+        public void Activation()
+        {
+        }
+
+        public void BeforeActivation()
+        {
+   
         }
 
         public void InitialiseSnippetsForSolution(ISolution solution)

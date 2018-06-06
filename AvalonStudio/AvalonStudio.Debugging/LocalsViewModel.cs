@@ -3,21 +3,27 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using Mono.Debugging.Client;
-using System.Composition;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging
 {
-    public class LocalsViewModel : WatchListViewModel
+    public class LocalsViewModel : WatchListViewModel, IActivatableExtension
     {
-        [ImportingConstructor]
-        public LocalsViewModel(DebugManager2 debugManager) : base(null)
+        public LocalsViewModel()
         {
-            DebugManager = debugManager;
-
             Title = "Locals";
 
-            Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });            
+            Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
+        }
+
+        public override Location DefaultLocation
+        {
+            get { return Location.RightBottom; }
+        }
+
+        public override void Activation()
+        {
+            DebugManager = IoC.Get<IDebugManager2>();
 
             if (DebugManager != null)
             {
@@ -31,11 +37,6 @@ namespace AvalonStudio.Debugging
                     Clear();
                 };
             }
-        }
-
-        public override Location DefaultLocation
-        {
-            get { return Location.RightBottom; }
         }
 
         private void Update (StackFrame stackFrame)

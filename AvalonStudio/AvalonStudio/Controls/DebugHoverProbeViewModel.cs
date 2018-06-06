@@ -5,8 +5,8 @@
 
     [PartNotDiscoverable]
     public class DebugHoverProbeViewModel : WatchListViewModel
-    {        
-        public DebugHoverProbeViewModel() : base(null)
+    {
+        public DebugHoverProbeViewModel() : base()
         {
         }
     }

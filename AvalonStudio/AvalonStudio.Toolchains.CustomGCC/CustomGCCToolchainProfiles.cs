@@ -2,7 +2,6 @@
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using System.Collections.Generic;
-using System.Composition;
 using System.IO;
 
 namespace AvalonStudio.Toolchains.CustomGCC
@@ -13,14 +12,8 @@ namespace AvalonStudio.Toolchains.CustomGCC
         public string[] ExtraPaths { get; set; } = new string[0];
     }
 
-    [Export, Shared]
-    class CustomGCCToolchainProfiles
+    class CustomGCCToolchainProfiles : IActivatableExtension
     {
-        static CustomGCCToolchainProfiles()
-        {
-            Instance = Load();
-        }
-
         private static string ProfilesFile = Path.Combine(Platform.SettingsDirectory, "GccProfiles.json");
 
         public Dictionary<string, CustomGCCToolchainProfile> Profiles { get; } = new Dictionary<string, CustomGCCToolchainProfile>();
@@ -40,6 +33,16 @@ namespace AvalonStudio.Toolchains.CustomGCC
             }
 
             return SerializedObject.Deserialize<CustomGCCToolchainProfiles>(ProfilesFile);
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
+
+        public void Activation()
+        {
+            Instance = Load();
         }
     }
 }

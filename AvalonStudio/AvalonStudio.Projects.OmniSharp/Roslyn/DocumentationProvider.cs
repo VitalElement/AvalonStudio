@@ -8,9 +8,17 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
 {
     [Export(typeof(DocumentationProvider))]
     [Shared]
-    public class DocumentationProvider
+    public class DocumentationProvider : IActivatableExtension
     {
-        private readonly ConcurrentDictionary<string, Microsoft.CodeAnalysis.DocumentationProvider> _assemblyPathToDocumentationProviderMap = new ConcurrentDictionary<string, Microsoft.CodeAnalysis.DocumentationProvider>();        
+        private readonly ConcurrentDictionary<string, Microsoft.CodeAnalysis.DocumentationProvider> _assemblyPathToDocumentationProviderMap = new ConcurrentDictionary<string, Microsoft.CodeAnalysis.DocumentationProvider>();
+
+        public void Activation()
+        {
+        }
+
+        public void BeforeActivation()
+        {            
+        }
 
         public Microsoft.CodeAnalysis.DocumentationProvider GetDocumentationProvider(string location)
         {

@@ -13,7 +13,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
     [Export(typeof(FindInFilesViewModel))]
     [ExportToolControl]
     [Shared]
-    class FindInFilesViewModel : ToolViewModel
+    class FindInFilesViewModel : ToolViewModel, IActivatableExtension
     {
         private string _searchTerm;
         private ObservableCollection<FindResultViewModel> _results;
@@ -45,6 +45,15 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
         }
 
         public override Location DefaultLocation => Location.Bottom;
+
+        public void Activation()
+        {
+        }
+
+        public void BeforeActivation()
+        {
+            
+        }
 
         public ObservableCollection<FindResultViewModel> Results
         {

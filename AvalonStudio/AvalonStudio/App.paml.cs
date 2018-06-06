@@ -5,13 +5,11 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
-using AvalonStudio.Shell;
 using AvalonStudio.Toolchains;
 using Dock.Model;
 using Serilog;
 using System;
 using System.Composition;
-using System.Composition.Hosting;
 
 namespace AvalonStudio
 {
@@ -43,16 +41,12 @@ namespace AvalonStudio
                     PackageSources.InitialisePackageSources();
 
                     var extensionManager = new ExtensionManager();
-                    var container = CompositionRoot.CreateContainer(extensionManager);                    
-                    
+                    var container = CompositionRoot.CreateContainer(extensionManager);
+
                     IoC.Initialise(container);
 
-                    var shellExportFactory = container.GetExport<ExportFactory<ShellViewModel>>();
-                    ShellViewModel.Instance = shellExportFactory.CreateExport().Value;
-
+                    ShellViewModel.Instance = IoC.Get<ShellViewModel>();
                     
-                    var shell = container.GetExport<ShellViewModel>();
-
                     ShellViewModel.Instance.Initialise();
 
                     await PackageManager.LoadAssetsAsync().ConfigureAwait(false);

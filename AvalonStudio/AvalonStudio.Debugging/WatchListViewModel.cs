@@ -13,9 +13,10 @@ namespace AvalonStudio.Debugging
     using System.Threading.Tasks;
 
     [ExportToolControl]
-    [Export(typeof(IWatchList))]    
+    [Export(typeof(IWatchList))]
+    [Export(typeof(IExtension))]
     [Shared]
-    public class WatchListViewModel : ToolViewModel, IWatchList
+    public class WatchListViewModel : ToolViewModel, IActivatableExtension, IWatchList
     {
         protected IDebugManager2 DebugManager { get; set; }
 
@@ -25,8 +26,7 @@ namespace AvalonStudio.Debugging
         private ObservableCollection<ObjectValueViewModel> children;
         public List<ObjectValueViewModel> LastChangedRegisters { get; set; }
 
-        [ImportingConstructor]
-        public WatchListViewModel(IDebugManager2 debugManager)
+        public WatchListViewModel()
         {
             Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
             watches = new List<ObjectValue>();
@@ -43,7 +43,27 @@ namespace AvalonStudio.Debugging
                 Expression = "";
             });
 
-            DebugManager = debugManager;
+            Activation(); // for when we create the part outside of composition.
+        }
+
+        public ObservableCollection<ObjectValueViewModel> Children
+        {
+            get { return children; }
+            set { this.RaiseAndSetIfChanged(ref children, value); }
+        }
+
+        public override Location DefaultLocation
+        {
+            get { return Location.RightMiddle; }
+        }
+
+        public virtual void BeforeActivation()
+        {            
+        }
+
+        public virtual void Activation()
+        {
+            DebugManager = IoC.Get<IDebugManager2>();
 
             if (DebugManager != null)
             {
@@ -57,17 +77,6 @@ namespace AvalonStudio.Debugging
                 };
             }
         }
-
-        public ObservableCollection<ObjectValueViewModel> Children
-        {
-            get { return children; }
-            set { this.RaiseAndSetIfChanged(ref children, value); }
-        }
-
-        public override Location DefaultLocation
-        {
-            get { return Location.RightMiddle; }
-        }        
 
         private void DebugManager_FrameChanged(object sender, System.EventArgs e)
         {

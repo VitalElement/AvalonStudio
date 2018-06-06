@@ -7,21 +7,23 @@ using System.Collections.Generic;
 using Avalonia;
 using AvalonStudio.Extensibility.Plugin;
 using System;
-using System.Composition;
 
 namespace AvalonStudio.Extensibility.Editor
 {
-    [Export, Shared]
-    class DefaultColorSchemes
+    public class DefaultColorSchemes : IActivatableExtension
     {
-        public DefaultColorSchemes()
+        public void Activation()
         {
             ColorScheme.Register(ColorScheme.Default);
             ColorScheme.Register(ColorScheme.Light);
             ColorScheme.Register(ColorScheme.MonoDevelopLight);
             ColorScheme.Register(ColorScheme.SolarizedDark);
             ColorScheme.Register(ColorScheme.SolarizedLight);
-        }        
+        }
+
+        public void BeforeActivation()
+        {
+        }
     }
 
     public class ColorScheme

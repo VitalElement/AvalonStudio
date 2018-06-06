@@ -12,7 +12,8 @@ namespace AvalonStudio
     {
         public static CompositionHost CreateContainer(ExtensionManager extensionManager)
         {
-            var conventions = new ConventionBuilder();            
+            var conventions = new ConventionBuilder();
+            conventions.ForTypesDerivedFrom<IExtension>().Export<IExtension>();
 
             // TODO AppDomain here is a custom appdomain from namespace AvalonStudio.Extensibility.Utils. It is able
             // to load any assembly in the bin directory (so not really appdomain) we need to get rid of this

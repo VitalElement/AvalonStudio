@@ -3,17 +3,19 @@ using Avalonia.Media;
 using AvalonStudio.Extensibility.Plugin;
 using System.Collections;
 using System.Collections.Generic;
-using System.Composition;
 
 namespace AvalonStudio.Extensibility.Theme
 {
-    [Export, Shared]
-    class DefaultColorThemes
+    public class DefaultColorThemes : IActivatableExtension
     {
-        public DefaultColorThemes()
+        public void Activation()
         {
             ColorTheme.Register(ColorTheme.VisualStudioDark);
             ColorTheme.Register(ColorTheme.VisualStudioLight);
+        }
+
+        public void BeforeActivation()
+        {
         }
     }
 

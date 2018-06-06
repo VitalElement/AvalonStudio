@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.WelcomeScreen
 {
-    public class WelcomeScreenViewModel : DocumentTabViewModel
+    public class WelcomeScreenViewModel : DocumentTabViewModel, IActivatableExtension
     {
         private ISolutionExplorer _solutionExplorer;
 
@@ -26,7 +26,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
         private CompositeDisposable _disposables;
 
         [ImportingConstructor]
-        public WelcomeScreenViewModel(ISolutionExplorer solutionExplorer, IShell shell)
+        public WelcomeScreenViewModel(ISolutionExplorer solutionExplorer)
         {
             Title = "Start Page";
 
@@ -38,17 +38,6 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
 
             NewSolution = ReactiveCommand.Create(_solutionExplorer.NewSolution);
             OpenSolution = ReactiveCommand.Create(_solutionExplorer.OpenSolution);
-            
-            shell.AddDocument(this, false);
-
-            _disposables = new CompositeDisposable
-            {
-                Observable.FromEventPattern<SolutionChangedEventArgs>(shell, nameof(shell.SolutionChanged)).Subscribe(o => ShellOnSolutionChanged(o.Sender, o.EventArgs))
-            };
-            //shell.SolutionChanged += ShellOnSolutionChanged;
-
-            //LoadNewsFeed().GetAwaiter().GetResult();
-            //LoadVideoFeed().GetAwaiter().GetResult();            
 
             LoadRecentProjects();
         }
@@ -58,11 +47,31 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
 
         }
 
+        public void Activation()
+        {
+            var shell = IoC.Get<IShell>();
+            shell.AddDocument(this, false);
+
+            _disposables = new CompositeDisposable
+            {
+                Observable.FromEventPattern<SolutionChangedEventArgs>(shell, nameof(shell.SolutionChanged)).Subscribe(o => ShellOnSolutionChanged(o.Sender, o.EventArgs))
+            };
+            //shell.SolutionChanged += ShellOnSolutionChanged;
+
+            //LoadNewsFeed().GetAwaiter().GetResult();
+            //LoadVideoFeed().GetAwaiter().GetResult();
+            _solutionExplorer = IoC.Get<ISolutionExplorer>();
+        }
+
         public override void Close()
         {
             base.Close();
 
             _disposables.Dispose();
+        }
+
+        public void BeforeActivation()
+        {
         }
 
         private void LoadRecentProjects()
