@@ -4,6 +4,7 @@ namespace AvalonStudio.MVVM
 {
     public enum Location
     {
+        None,
         Left,
         Right,
         Bottom,

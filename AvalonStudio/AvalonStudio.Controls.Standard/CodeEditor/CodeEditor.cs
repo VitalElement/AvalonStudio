@@ -18,6 +18,7 @@ using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
 using AvalonStudio.Controls.Standard.CodeEditor.Highlighting;
 using AvalonStudio.Controls.Standard.CodeEditor.Refactoring;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
+using AvalonStudio.Controls.Standard.ErrorList;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
@@ -883,7 +884,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _contextActionsRenderer.OnDiagnosticsUpdated();
             }
 
-            _shell.UpdateDiagnostics(e);
+            IoC.Get<IErrorList>().UpdateDiagnostics(e);
 
             TextArea.TextView.Redraw();
         }

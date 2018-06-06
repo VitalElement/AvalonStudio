@@ -10,10 +10,14 @@ using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.Composition;
 using System.Text.RegularExpressions;
 
 namespace AvalonStudio.Controls.Standard.Console
 {
+    [ExportToolControl]
+    [Export(typeof(IExtension))]
+    [Shared]
     public class ConsoleViewModel : ToolViewModel, IConsole, IActivatableExtension
     {
         private ObservableCollection<IBackgroundRenderer> backgroundRenderers;

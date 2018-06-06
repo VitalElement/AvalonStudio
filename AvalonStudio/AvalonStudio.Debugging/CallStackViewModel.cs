@@ -6,9 +6,13 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using ReactiveUI;
 using System.Collections.ObjectModel;
+using System.Composition;
 
 namespace AvalonStudio.Debugging
 {
+    [ExportToolControl]    
+    [Export(typeof(IExtension))]
+    [Shared]
     public class CallStackViewModel : ToolViewModel, IActivatableExtension
     {
         private IDebugManager2 _debugManager;

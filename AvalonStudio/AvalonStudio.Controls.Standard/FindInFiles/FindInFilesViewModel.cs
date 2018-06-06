@@ -4,11 +4,14 @@ using AvalonStudio.MVVM;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.FindInFiles
 {
+    [ExportToolControl]
+    [Shared]
     class FindInFilesViewModel : ToolViewModel, IActivatableExtension
     {
         private string _searchTerm;

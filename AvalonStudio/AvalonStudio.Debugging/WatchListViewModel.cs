@@ -8,9 +8,13 @@ namespace AvalonStudio.Debugging
     using ReactiveUI;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Composition;
     using System.Linq;
     using System.Threading.Tasks;
 
+    [ExportToolControl]
+    [Export(typeof(IExtension))]
+    [Shared]
     public class WatchListViewModel : ToolViewModel, IActivatableExtension, IWatchList
     {
         protected IDebugManager2 DebugManager { get; set; }

@@ -1,14 +1,21 @@
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
+using AvalonStudio.Utils;
 using ReactiveUI;
 using System.Collections.ObjectModel;
+using System.Composition;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.ErrorList
 {
+    [Export(typeof(IExtension))]
+    [ExportToolControl]
+    [Shared]
     public class ErrorListViewModel : ToolViewModel, IActivatableExtension, IErrorList
     {
         private ObservableCollection<ErrorViewModel> errors;
@@ -61,6 +68,24 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         {
             get { return errors; }
             set { this.RaiseAndSetIfChanged(ref errors, value); }
+        }
+
+        public void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics)
+        {
+            var toRemove = Errors.Where(e => Equals(e.Tag, diagnostics.Tag) && e.AssociatedFile == diagnostics.AssociatedSourceFile).ToList();
+
+            foreach (var error in toRemove)
+            {
+                Errors.Remove(error);
+            }
+
+            foreach (var diagnostic in diagnostics.Diagnostics)
+            {
+                if (diagnostic.Level != DiagnosticLevel.Hidden)
+                {
+                    Errors.InsertSorted(new ErrorViewModel(diagnostic, diagnostics.Tag, diagnostics.AssociatedSourceFile));
+                }
+            }
         }
 
         public void BeforeActivation()

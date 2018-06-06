@@ -16,6 +16,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     [Export(typeof(ISolutionExplorer))]
     [Export(typeof(IExtension))]
+    [ExportToolControl]
     [Shared]
     public class SolutionExplorerViewModel : ToolViewModel, IActivatableExtension, ISolutionExplorer
     {

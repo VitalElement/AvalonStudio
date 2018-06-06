@@ -11,6 +11,7 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Composition;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         private static Dictionary<string, Tuple<string, string>> passwordCache =
             new Dictionary<string, Tuple<string, string>>();
-
+        
         public CPlusPlusProject() : this(true)
         {
         }

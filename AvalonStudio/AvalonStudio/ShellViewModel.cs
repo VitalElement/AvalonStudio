@@ -29,6 +29,7 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Composition;
+using System.Composition.Hosting;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
@@ -45,9 +46,11 @@ namespace AvalonStudio
         private WorkspaceTaskRunner _taskRunner;
         private double _globalZoomLevel;
         private List<KeyBinding> _keyBindings;
+        private CompositionHost _compositionHost;
 
         private IEnumerable<ToolbarViewModel> _toolbars;
         private IEnumerable<Lazy<IExtension>> _extensions;
+        private IEnumerable<Lazy<ToolViewModel>> _toolControls;
         private CommandService _commandService;
 
         private Lazy<StatusBarViewModel> _statusBar;
@@ -82,9 +85,12 @@ namespace AvalonStudio
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,            
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
-            [ImportMany] IEnumerable<Lazy<IExtension>> extensions)
+            [ImportMany] IEnumerable<Lazy<IExtension>> extensions,
+            [ImportMany] IEnumerable<Lazy<ToolViewModel>> toolControls)
         {
             _extensions = extensions;
+            _toolControls = toolControls;
+
             _commandService = commandService;
 
             MainMenu = mainMenuService.GetMainMenu();
@@ -131,8 +137,10 @@ namespace AvalonStudio
             });
         }
 
-        public void Initialise()
+        public void Initialise(CompositionHost compositionHost)
         {
+            _compositionHost = compositionHost;
+
             foreach (var extension in _extensions)
             {
                 if (extension.Value is IActivatableExtension activatable)
@@ -167,12 +175,12 @@ namespace AvalonStudio
                 }
             }
 
-            foreach (var tool in GetExtensions<ToolViewModel>())
+            foreach (var tool in _toolControls)
             {
-                switch (tool.DefaultLocation)
+                switch (tool.Value.DefaultLocation)
                 {
                     case Location.Bottom:
-                        DockView(_bottomPane, tool);
+                        DockView(_bottomPane, tool.Value);
                         break;
 
                     //case Location.BottomRight:
@@ -196,11 +204,11 @@ namespace AvalonStudio
                     //    break;
 
                     case Location.Left:
-                        DockView(_leftPane, tool);
+                        DockView(_leftPane, tool.Value);
                         break;
 
                     case Location.Right:
-                        DockView(_rightPane, tool);
+                        DockView(_rightPane, tool.Value);
                         break;
                 }
             }
@@ -654,42 +662,7 @@ namespace AvalonStudio
             }
 
             return result;
-        }
-
-        public void ShowProjectPropertiesDialog()
-        {
-            //ModalDialog = new ProjectConfigurationDialogViewModel(CurrentSolution.SelectedProject, () => { });
-            //ModalDialog.ShowDialog();
-        }
-
-        public void ShowPackagesDialog()
-        {
-            ModalDialog = new PackageManagerDialogViewModel();
-            ModalDialog.ShowDialog();
-        }
-
-        public void ExitApplication()
-        {
-            Environment.Exit(1);
-        }
-
-        public void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics)
-        {
-            var toRemove = ErrorList.Errors.Where(e => Equals(e.Tag, diagnostics.Tag) && e.AssociatedFile == diagnostics.AssociatedSourceFile).ToList();
-
-            foreach (var error in toRemove)
-            {
-                ErrorList.Errors.Remove(error);
-            }
-
-            foreach (var diagnostic in diagnostics.Diagnostics)
-            {
-                if (diagnostic.Level != DiagnosticLevel.Hidden)
-                {
-                    ErrorList.Errors.InsertSorted(new ErrorViewModel(diagnostic, diagnostics.Tag, diagnostics.AssociatedSourceFile));
-                }
-            }
-        }
+        }        
 
         public async Task OpenSolutionAsync(string path)
         {
@@ -759,7 +732,7 @@ namespace AvalonStudio
 
         public IEnumerable<T> GetExtensions<T>()
         {
-            return _extensions.Where(t=>typeof(T).IsAssignableFrom(t.Value.GetType())).Select(t=>(T)t.Value);
+            return _compositionHost.GetExports<T>();            
         }
 
         public double GlobalZoomLevel

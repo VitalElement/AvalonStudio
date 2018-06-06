@@ -54,9 +54,9 @@ namespace AvalonStudio.Shell
 
         IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
 
-        IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }        
+        IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
 
-        IEnumerable<ITestFramework> TestFrameworks { get; }        
+        IEnumerable<ITestFramework> TestFrameworks { get; }
 
         IFileDocumentTabViewModel OpenDocument(ISourceFile file);
 
@@ -89,8 +89,6 @@ namespace AvalonStudio.Shell
         IEditor GetDocument(string path);
 
         void InvalidateCodeAnalysis();
-
-        void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics);        
 
         bool DebugMode { get; }
 

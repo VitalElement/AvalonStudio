@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
+using AvalonStudio.Toolchains;
 using Dock.Model;
 using Serilog;
 using System;
@@ -40,11 +41,11 @@ namespace AvalonStudio
 
                     var extensionManager = new ExtensionManager();
                     var container = CompositionRoot.CreateContainer(extensionManager);
-
+                    
                     var shellExportFactory = container.GetExport<ExportFactory<ShellViewModel>>();
                     ShellViewModel.Instance = shellExportFactory.CreateExport().Value;
 
-                    ShellViewModel.Instance.Initialise();
+                    ShellViewModel.Instance.Initialise(container);
 
                     await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
                 });
