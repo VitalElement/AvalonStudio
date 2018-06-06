@@ -17,7 +17,7 @@ namespace AvalonStudio.Projects
 
         public static IProjectType GetProjectType(this Guid projectTypeId)
         {
-            return IoC.Get<IShell>().GetInstance<IStudio>().ProjectTypes.FirstOrDefault(
+            return IoC.Get<IStudio>().ProjectTypes.FirstOrDefault(
                 type => type.Metadata.ProjectTypeGuid == projectTypeId)?.Value;
         }
 

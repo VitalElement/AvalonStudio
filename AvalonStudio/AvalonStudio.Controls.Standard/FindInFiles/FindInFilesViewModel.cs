@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.FindInFiles
 {
+    [Export(typeof(FindInFilesViewModel))]
     [ExportToolControl]
     [Shared]
     class FindInFilesViewModel : ToolViewModel, IActivatableExtension
@@ -51,7 +52,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
         public void BeforeActivation()
         {
-            IoC.RegisterConstant(this);
+            
         }
 
         public ObservableCollection<FindResultViewModel> Results

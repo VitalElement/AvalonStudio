@@ -44,9 +44,7 @@
                 var dlg = new OpenFileDialog();
                 dlg.Title = "Open Project";
 
-                var shell = IoC.Get<IShell>();
-
-                foreach (var projectType in shell.GetInstance<IStudio>().ProjectTypes)
+                foreach (var projectType in IoC.Get<IStudio>().ProjectTypes)
                 {
                     var projectTypeMetadata = projectType.Metadata;
                     var extensions = new List<string>();

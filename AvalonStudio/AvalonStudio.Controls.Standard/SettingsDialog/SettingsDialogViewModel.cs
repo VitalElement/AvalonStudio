@@ -1,12 +1,15 @@
-﻿using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
+﻿using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Settings;
 using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Composition;
 
 namespace AvalonStudio.Controls.Standard.SettingsDialog
 {
+    [Export(typeof(ISettingsManager))]
+    [Export(typeof(SettingsDialogViewModel))]
+    [Shared]
     public class SettingsDialogViewModel : DocumentTabViewModel, IActivatableExtension, ISettingsManager
     {
         private Dictionary<string, SettingsCategoryViewModel> _categories = new Dictionary<string, SettingsCategoryViewModel>();
@@ -23,9 +26,7 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
         }
 
         public void BeforeActivation()
-        {
-            IoC.RegisterConstant<ISettingsManager>(this);
-            IoC.RegisterConstant(this);
+        {            
         }
 
         public void RegisterSettingsDialog(string category, SettingsViewModel viewModel)

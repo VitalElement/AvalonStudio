@@ -357,7 +357,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             get
             {
-                var result = IoC.Get<IShell>().GetInstances<IToolchain>().FirstOrDefault(tc => tc.GetType().ToString() == ToolchainReference);
+                var result = IoC.GetInstances<IToolchain>().FirstOrDefault(tc => tc.GetType().ToString() == ToolchainReference);
 
                 return result;
             }
@@ -372,7 +372,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             get
             {
-                var result = IoC.Get<IShell>().GetInstances<IDebugger>().FirstOrDefault(tc => tc.GetType().ToString() == Debugger2Reference);
+                var result = IoC.GetInstances<IDebugger>().FirstOrDefault(tc => tc.GetType().ToString() == Debugger2Reference);
 
                 return result;
             }
@@ -387,7 +387,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             get
             {
-                var result = IoC.Get<IShell>().GetInstance<IStudio>()
+                var result = IoC.Get<IStudio>()
                     .TestFrameworks.FirstOrDefault(tf => tf.Value.GetType().ToString() == TestFrameworkReference);
 
                 return result.Value;

@@ -793,7 +793,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             var contentTypeService = ContentTypeServiceInstance.Instance;
 
-            LanguageService = _shell.GetInstance<IStudio>().LanguageServices.FirstOrDefault(
+            LanguageService = IoC.Get<IStudio>().LanguageServices.FirstOrDefault(
                 o => o.Metadata.TargetCapabilities.Any(
                     c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;
             

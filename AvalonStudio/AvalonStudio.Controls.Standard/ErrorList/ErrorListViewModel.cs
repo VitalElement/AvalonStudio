@@ -9,10 +9,10 @@ using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Composition;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.ErrorList
 {
+    [Export(typeof(IErrorList))]
     [Export(typeof(IExtension))]
     [ExportToolControl]
     [Shared]
@@ -89,8 +89,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         }
 
         public void BeforeActivation()
-        {
-            IoC.RegisterConstant(this, typeof(IErrorList));
+        {            
         }
 
         public void Activation()

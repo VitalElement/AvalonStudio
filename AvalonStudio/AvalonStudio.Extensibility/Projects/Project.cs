@@ -12,16 +12,14 @@ namespace AvalonStudio.Projects
     {
         public static Guid? GetProjectTypeGuidForProject(string fileName)
         {
-            var shell = IoC.Get<IShell>();
-
             var extension = Path.GetExtension(fileName);
 
-            var projectType = shell.GetInstance<IStudio>().ProjectTypes.FirstOrDefault(
+            var projectType = IoC.Get<IStudio>().ProjectTypes.FirstOrDefault(
                 p => extension.EndsWith(p.Metadata.DefaultExtension));
 
             if (projectType == null)
             {
-                projectType = shell.GetInstance<IStudio>().ProjectTypes.FirstOrDefault(
+                projectType = IoC.Get<IStudio>().ProjectTypes.FirstOrDefault(
                     p => p.Metadata.PossibleExtensions.Any(e => extension.EndsWith(e)));
             }
 

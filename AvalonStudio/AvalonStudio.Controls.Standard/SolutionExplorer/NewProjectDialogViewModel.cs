@@ -40,7 +40,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             var files = Directory.EnumerateFiles(path);
 
-            var ptExtensions = _shell.GetInstance<IStudio>().ProjectTypes.Select(pt => pt.Metadata.DefaultExtension);
+            var ptExtensions = IoC.Get<IStudio>().ProjectTypes.Select(pt => pt.Metadata.DefaultExtension);
 
             var result = files.Where(f => ptExtensions.Contains(Path.GetExtension(f).Replace(".", "")));
 

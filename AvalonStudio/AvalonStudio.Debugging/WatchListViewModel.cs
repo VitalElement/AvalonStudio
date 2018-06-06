@@ -13,6 +13,7 @@ namespace AvalonStudio.Debugging
     using System.Threading.Tasks;
 
     [ExportToolControl]
+    [Export(typeof(IWatchList))]
     [Export(typeof(IExtension))]
     [Shared]
     public class WatchListViewModel : ToolViewModel, IActivatableExtension, IWatchList
@@ -57,8 +58,7 @@ namespace AvalonStudio.Debugging
         }
 
         public virtual void BeforeActivation()
-        {
-            IoC.RegisterConstant(this, typeof(IWatchList));
+        {            
         }
 
         public virtual void Activation()

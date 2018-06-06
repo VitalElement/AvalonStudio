@@ -39,7 +39,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio
 {
-    [Export]
+    [Export(typeof(ShellViewModel))]
     [Export(typeof(IShell))]
     [Shared]
     internal class ShellViewModel : ViewModel, IShell
@@ -48,7 +48,6 @@ namespace AvalonStudio
         private WorkspaceTaskRunner _taskRunner;
         private double _globalZoomLevel;
         private List<KeyBinding> _keyBindings;
-        private CompositionHost _compositionHost;
 
         private IEnumerable<ToolbarViewModel> _toolbars;
         private IEnumerable<Lazy<IExtension>> _extensions;
@@ -88,12 +87,12 @@ namespace AvalonStudio
             StandardToolbar = toolbars.Single(t => t.Key == "Standard").Value;
 
             _statusBar = statusBar;
-            IoC.RegisterConstant<IStatusBar>(_statusBar.Value);            
+            //IoC.RegisterConstant<IStatusBar>(_statusBar.Value);            
 
             _keyBindings = new List<KeyBinding>();
 
-            IoC.RegisterConstant<IShell>(this);
-            IoC.RegisterConstant(this);
+            //IoC.RegisterConstant<IShell>(this);
+            //IoC.RegisterConstant(this);
 
             var factory = new DefaultLayoutFactory();
             Factory = factory;
@@ -118,10 +117,8 @@ namespace AvalonStudio
             });
         }
 
-        public void Initialise(CompositionHost compositionHost)
-        {
-            _compositionHost = compositionHost;
-
+        public void Initialise()
+        {   
             foreach (var extension in _extensions)
             {
                 if (extension.Value is IActivatableExtension activatable)
@@ -351,7 +348,7 @@ namespace AvalonStudio
 
             if (currentTab == null)
             {
-                var provider = GetInstance<IStudio>().EditorProviders.FirstOrDefault(p => p.Value.CanEdit(file))?.Value;
+                var provider = IoC.Get<IStudio>().EditorProviders.FirstOrDefault(p => p.Value.CanEdit(file))?.Value;
 
                 if (provider != null)
                 {
@@ -635,7 +632,7 @@ namespace AvalonStudio
             if (System.IO.File.Exists(path))
             {
                 var extension = System.IO.Path.GetExtension(path);
-                var solutionType = GetInstance<IStudio>().SolutionTypes.FirstOrDefault(
+                var solutionType = IoC.Get<IStudio>().SolutionTypes.FirstOrDefault(
                     s => s.Metadata.SupportedExtensions.Any(e => extension.EndsWith(e)));
 
                 if (solutionType != null)
@@ -689,26 +686,6 @@ namespace AvalonStudio
                     DocumentTabs.CloseDocument(evm);
                 }
             }
-        }
-
-        public IEnumerable<T> GetInstances<T>()
-        {
-            return _compositionHost.GetExports<T>();            
-        }
-
-        public IEnumerable<T> GetInstances<T>(string contract)
-        {
-            return _compositionHost.GetExports<T>(contract);
-        }
-
-        public T GetInstance<T> ()
-        {
-            return _compositionHost.GetExport<T>();
-        }
-
-        public T GetInstance<T>(string contract)
-        {
-            return _compositionHost.GetExport<T>(contract);
         }
 
         public double GlobalZoomLevel

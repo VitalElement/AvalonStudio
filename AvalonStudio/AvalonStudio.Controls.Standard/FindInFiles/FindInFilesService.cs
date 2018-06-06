@@ -5,6 +5,7 @@ using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using System.Collections.Generic;
+using System.Composition;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -34,6 +35,8 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
     }
 
 
+    [Export(typeof(IFindInFilesService))]
+    [Shared]
     public class FindInFilesService : IFindInFilesService, IActivatableExtension
     {
         private IEnumerable<FindResult> GetResults(ISearchStrategy strategy, ISourceFile file)
@@ -86,7 +89,6 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
         public void BeforeActivation()
         {
-            IoC.RegisterConstant<IFindInFilesService>(this);
         }
 
         public void Activation()

@@ -17,9 +17,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics
         public DiagnosticsService(Microsoft.CodeAnalysis.Diagnostics.IDiagnosticService inner)
         {
             _inner = inner;
-            inner.DiagnosticsUpdated += OnDiagnosticsUpdated;
-
-            IoC.RegisterConstant<IDiagnosticService>(this);
+            inner.DiagnosticsUpdated += OnDiagnosticsUpdated;            
         }
 
         // ReSharper disable once UnusedParameter.Local

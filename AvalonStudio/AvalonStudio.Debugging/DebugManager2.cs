@@ -10,10 +10,13 @@ namespace AvalonStudio.Debugging
     using AvalonStudio.Utils;
     using Mono.Debugging.Client;
     using System;
+    using System.Composition;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
     using System.Xml;
 
+    [Export(typeof(IDebugManager2))]
+    [Shared]
     public class DebugManager2 : IDebugManager2, IActivatableExtension
     {
         private DebuggerSession _session;
@@ -172,7 +175,6 @@ namespace AvalonStudio.Debugging
 
         public void BeforeActivation()
         {
-            IoC.RegisterConstant<IDebugManager2>(this);
         }
 
         private void OnEndSession()

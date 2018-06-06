@@ -26,15 +26,7 @@ namespace AvalonStudio.Shell
         ModalDialogViewModelBase ModalDialog { get; set; }
 
         ColorScheme CurrentColorScheme { get; set; }
-
-        IEnumerable<T> GetInstances<T>();
-
-        IEnumerable<T> GetInstances<T>(string contract);
-
-        T GetInstance<T>();
-
-        T GetInstance<T>(string contract);
-
+        
         void AddDocument(IDocumentTabViewModel document, bool temporary = true);
 
         void RemoveDocument(IDocumentTabViewModel document);

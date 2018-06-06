@@ -1,18 +1,18 @@
-﻿using Avalonia.Threading;
+﻿using Avalonia.Media;
+using Avalonia.Threading;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Theme;
+using AvalonStudio.Extensibility.Utils;
+using AvalonStudio.Projects;
+using AvalonStudio.Shell;
+using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
-using System.Reactive.Linq;
-using System.Text;
-using System.Linq;
-using AvalonStudio.Projects;
-using AvalonStudio.Utils;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
-using AvalonStudio.Extensibility.Utils;
-using Avalonia.Media;
-using AvalonStudio.Extensibility.Theme;
 
 namespace AvalonStudio.Controls
 {
@@ -23,7 +23,6 @@ namespace AvalonStudio.Controls
         private QuickCommander _instance;
         private bool _isFocused;
         private string _commandQuery;
-        private ShellViewModel _shell;
         private ObservableCollection<SearchResultViewModel> _results;
         private SearchResultViewModel _selectedResult;
         private int _selectedIndex;
@@ -63,7 +62,7 @@ namespace AvalonStudio.Controls
             EnterCommand = ReactiveCommand.Create(() =>
             {
                 var selectedResult = SelectedResult.Model;
-                _shell.OpenDocument(selectedResult);
+                IoC.Get<IShell>().OpenDocument(selectedResult);
                 IsVisible = false;
             });
 
@@ -71,13 +70,11 @@ namespace AvalonStudio.Controls
             {
                 IsVisible = false;
             });
-
-            _shell = IoC.Get<ShellViewModel>();
         }
 
         private async Task ProcessQuery(string query)
         {
-            if (_shell?.CurrentSolution == null)
+            if (IoC.Get<IShell>().CurrentSolution == null)
             {
                 return;
             }
@@ -98,7 +95,7 @@ namespace AvalonStudio.Controls
 
                 await Task.Run(() =>
                 {
-                    foreach (var project in _shell.CurrentSolution.Projects)
+                    foreach (var project in IoC.Get<IShell>().CurrentSolution.Projects)
                     {
                         project.SourceFiles?.Select(sf =>
                         {

@@ -37,8 +37,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public SolutionExplorerViewModel(
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes)
         {
-            IoC.RegisterConstant<ISolutionExplorer>(this);
-
             _shell = IoC.Get<IShell>();
             _shell.SolutionChanged += (sender, e) => { Model = _shell.CurrentSolution; };
 

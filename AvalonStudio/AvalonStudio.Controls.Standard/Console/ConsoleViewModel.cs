@@ -5,18 +5,17 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
-using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Composition;
-using System.Text.RegularExpressions;
 
 namespace AvalonStudio.Controls.Standard.Console
 {
     [ExportToolControl]
     [Export(typeof(IExtension))]
+    [Export(typeof(IConsole))]
     [Shared]
     public class ConsoleViewModel : ToolViewModel, IConsole, IActivatableExtension
     {
@@ -116,13 +115,12 @@ namespace AvalonStudio.Controls.Standard.Console
 
         public void BeforeActivation()
         {
-            IoC.RegisterConstant<IConsole>(this);
         }
 
         public void Activation()
         {
             shell = IoC.Get<IShell>();
-        }        
+        }
 
         private void ScrollToEnd()
         {

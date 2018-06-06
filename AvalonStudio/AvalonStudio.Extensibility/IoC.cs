@@ -1,34 +1,42 @@
 using Splat;
 using System;
 using System.Collections.Generic;
+using System.Composition.Hosting;
 
 namespace AvalonStudio.Extensibility
-{
+{    
     public static class IoC
     {
+        private static CompositionHost s_compositionHost;
+
         public static object Get(Type t, string contract = null)
         {
-            return Locator.CurrentMutable.GetService(t, contract);
+            return s_compositionHost.GetExport(t, contract);
         }
 
-        public static T Get<T>(string contract = null)
+        public static T Get<T>(string contract)
         {
-            return (T)Get(typeof(T), contract);
+            return s_compositionHost.GetExport<T>(contract);
         }
 
-        public static IEnumerable<T> GetServices<T>(Type t, string contract = null)
+        public static T Get<T>()
         {
-            return Locator.CurrentMutable.GetServices<T>();
+            return s_compositionHost.GetExport<T>();
         }
 
-        public static void RegisterConstant<T>(T instance, string contract = "")
+        public static IEnumerable<T> GetInstances<T>()
         {
-            RegisterConstant(instance, typeof(T), contract);
+            return s_compositionHost.GetExports<T>();
         }
 
-        public static void RegisterConstant<T>(T instance, Type type, string contract = "")
+        public static IEnumerable<T> GetInstances<T>(string contract)
         {
-            Locator.CurrentMutable.RegisterConstant(instance, type, contract);
+            return s_compositionHost.GetExports<T>(contract);
+        }
+
+        public static void Initialise (CompositionHost host)
+        {
+            s_compositionHost = host;
         }
     }
 }
