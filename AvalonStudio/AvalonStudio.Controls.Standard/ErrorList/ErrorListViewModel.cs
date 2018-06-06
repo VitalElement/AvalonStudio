@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.ErrorList
 {
-    public class ErrorListViewModel : ToolViewModel, IExtension, IErrorList
+    public class ErrorListViewModel : ToolViewModel, IActivatableExtension, IErrorList
     {
         private ObservableCollection<ErrorViewModel> errors;
 

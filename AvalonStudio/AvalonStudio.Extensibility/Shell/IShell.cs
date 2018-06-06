@@ -3,6 +3,7 @@ using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.MainMenu;
+using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
@@ -23,6 +24,24 @@ namespace AvalonStudio.Shell
 
     public interface IShell
     {
+        // Shell
+        IWorkspaceTaskRunner TaskRunner { get; }
+
+        Perspective CurrentPerspective { get; set; }
+
+        IDocumentTabViewModel SelectedDocument { get; set; }
+
+        ModalDialogViewModelBase ModalDialog { get; set; }
+
+        ColorScheme CurrentColorScheme { get; set; }
+
+        IEnumerable<T> GetExtensions<T>();
+
+        void AddDocument(IDocumentTabViewModel document, bool temporary = true);
+
+        void RemoveDocument(IDocumentTabViewModel document);
+
+        // Workspace
         ISolution CurrentSolution { get; }
 
         IObservable<ISolution> OnSolutionChanged { get; }
@@ -33,27 +52,15 @@ namespace AvalonStudio.Shell
 
         event EventHandler<BuildEventArgs> BuildCompleted;
 
-        IWorkspaceTaskRunner TaskRunner { get; }
-
-        Perspective CurrentPerspective { get; set; }
-        IDocumentTabViewModel SelectedDocument { get; set; }        
-        ModalDialogViewModelBase ModalDialog { get; set; }
-
-        ColorScheme CurrentColorScheme { get; set; }
-
         IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
 
-        IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
+        IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }        
 
-        IEnumerable<IToolchain> ToolChains { get; }
-
-        IEnumerable<IDebugger> Debugger2s { get; }
-
-        IEnumerable<ITestFramework> TestFrameworks { get; }
-
-        IEditor GetDocument(string path);
+        IEnumerable<ITestFramework> TestFrameworks { get; }        
 
         IFileDocumentTabViewModel OpenDocument(ISourceFile file);
+
+        void RemoveDocument(ISourceFile document);
 
         Task<IEditor> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true);
 
@@ -62,16 +69,6 @@ namespace AvalonStudio.Shell
         Task OpenSolutionAsync(string path);
 
         Task CloseSolutionAsync();
-
-        void AddDocument(IDocumentTabViewModel document, bool temporary = true);
-
-        void RemoveDocument(IDocumentTabViewModel document);
-
-        void RemoveDocument(ISourceFile document);
-
-        void InvalidateCodeAnalysis();
-
-        void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics);
 
         Task<bool> BuildAsync(IProject project);
 
@@ -86,6 +83,14 @@ namespace AvalonStudio.Shell
         void SaveAll();
 
         IProject GetDefaultProject();
+
+
+        // Misc?
+        IEditor GetDocument(string path);
+
+        void InvalidateCodeAnalysis();
+
+        void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics);        
 
         bool DebugMode { get; }
 

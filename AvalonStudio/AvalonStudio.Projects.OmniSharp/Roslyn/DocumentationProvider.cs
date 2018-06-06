@@ -6,7 +6,7 @@ using System.IO;
 
 namespace AvalonStudio.Projects.OmniSharp.Roslyn
 {
-    public class DocumentationProvider : IExtension
+    public class DocumentationProvider : IActivatableExtension
     {
         private readonly ConcurrentDictionary<string, Microsoft.CodeAnalysis.DocumentationProvider> _assemblyPathToDocumentationProviderMap = new ConcurrentDictionary<string, Microsoft.CodeAnalysis.DocumentationProvider>();
 

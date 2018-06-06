@@ -31,7 +31,7 @@ namespace AvalonStudio.Extensibility.Templating
         Cancelled = unchecked((int)0x80004004)
     }
 
-    public class TemplateManager : IExtension
+    public class TemplateManager : IActivatableExtension
     {
         private const string HostIdentifier = "AvalonStudio";
         private const string HostVersion = "1.0.0";

@@ -34,7 +34,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
     }
 
 
-    public class FindInFilesService : IFindInFilesService, IExtension
+    public class FindInFilesService : IFindInFilesService, IActivatableExtension
     {
         private IEnumerable<FindResult> GetResults(ISearchStrategy strategy, ISourceFile file)
         {

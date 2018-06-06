@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging
 {
-    public class LocalsViewModel : WatchListViewModel, IExtension
+    public class LocalsViewModel : WatchListViewModel, IActivatableExtension
     {
         public LocalsViewModel()
         {

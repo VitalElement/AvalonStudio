@@ -12,7 +12,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
         public string[] ExtraPaths { get; set; } = new string[0];
     }
 
-    class CustomGCCToolchainProfiles : IExtension
+    class CustomGCCToolchainProfiles : IActivatableExtension
     {
         private static string ProfilesFile = Path.Combine(Platform.SettingsDirectory, "GccProfiles.json");
 

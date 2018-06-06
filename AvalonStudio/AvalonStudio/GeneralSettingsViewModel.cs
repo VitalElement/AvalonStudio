@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace AvalonStudio
 {
-    class GeneralSettingsViewModel : SettingsViewModel, IExtension
+    class GeneralSettingsViewModel : SettingsViewModel, IActivatableExtension
     {
         private int _selectedThemeIndex;
 

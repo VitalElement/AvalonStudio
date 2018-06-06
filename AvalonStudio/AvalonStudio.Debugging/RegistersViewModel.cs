@@ -11,7 +11,7 @@ using System.Reactive.Linq;
 
 namespace AvalonStudio.Debugging
 {
-    public class RegistersViewModel : ToolViewModel<ObservableCollection<RegisterViewModel>>, IExtension
+    public class RegistersViewModel : ToolViewModel<ObservableCollection<RegisterViewModel>>, IActivatableExtension
     {
         private IDebugManager2 _debugManager;
 

@@ -17,7 +17,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     [Export(typeof(ISolutionExplorer))]
     [Export(typeof(IExtension))]
     [Shared]
-    public class SolutionExplorerViewModel : ToolViewModel, IExtension, ISolutionExplorer
+    public class SolutionExplorerViewModel : ToolViewModel, IActivatableExtension, ISolutionExplorer
     {
         public const string ToolId = "CIDSEVM00";
 

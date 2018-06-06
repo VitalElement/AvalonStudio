@@ -13,7 +13,7 @@ using AvalonStudio.Projects;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 {
-    public class SnippetManager : IExtension
+    public class SnippetManager : IActivatableExtension
     {
         public void Activation()
         {

@@ -8,7 +8,7 @@
     using System;
     using System.Linq;
 
-    public class MemoryViewModel : ToolViewModel, IExtension
+    public class MemoryViewModel : ToolViewModel, IActivatableExtension
     {
         private IDebugManager2 _debugManager;
         public const string ToolId = "CIDMEM001";

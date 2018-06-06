@@ -1,23 +1,18 @@
 using Avalonia.Input;
 using Avalonia.Threading;
 using AvalonStudio.Commands;
-using AvalonStudio.Commands.Settings;
 using AvalonStudio.Controls;
 using AvalonStudio.Controls.Standard.ErrorList;
-using AvalonStudio.Controls.Standard.SolutionExplorer;
-using AvalonStudio.Debugging;
 using AvalonStudio.Docking;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Editor;
-using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
 using AvalonStudio.MainMenu;
-using AvalonStudio.Menus.Models;
 using AvalonStudio.Menus.ViewModels;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
@@ -26,7 +21,6 @@ using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolbars;
 using AvalonStudio.Toolbars.ViewModels;
-using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using Dock.Model;
 using Dock.Model.Controls;
@@ -34,8 +28,6 @@ using Dock.Serializer;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.Composition;
 using System.Linq;
 using System.Reactive.Linq;
@@ -66,9 +58,6 @@ namespace AvalonStudio
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
         private IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> _projectTypes;
 
-        private IEnumerable<Lazy<IToolchain>> _toolChains;
-        private IEnumerable<IDebugger> _debugger2s;
-
         private IEnumerable<Lazy<ITestFramework>> _testFrameworks;
 
         private Perspective currentPerspective;
@@ -91,9 +80,7 @@ namespace AvalonStudio
             [ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
             [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
-            [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
-            [ImportMany] IEnumerable<Lazy<IToolchain>> toolChains,
-            [ImportMany] IEnumerable<IDebugger> debugger2s,
+            [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,            
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             [ImportMany] IEnumerable<Lazy<IExtension>> extensions)
         {
@@ -112,10 +99,7 @@ namespace AvalonStudio
             _languageServices = languageServices;
 
             _solutionTypes = solutionTypes;
-            _projectTypes = projectTypes;
-
-            _toolChains = toolChains;
-            _debugger2s = debugger2s;
+            _projectTypes = projectTypes;            
 
             _testFrameworks = testFrameworks;
 
@@ -151,7 +135,10 @@ namespace AvalonStudio
         {
             foreach (var extension in _extensions)
             {
-                extension.Value.BeforeActivation();
+                if (extension.Value is IActivatableExtension activatable)
+                {
+                    activatable.BeforeActivation();
+                }
             }
 
             LoadLayout();
@@ -166,7 +153,10 @@ namespace AvalonStudio
 
             foreach (var extension in _extensions)
             {
-                extension.Value.Activation();
+                if (extension.Value is IActivatableExtension activatable)
+                {
+                    activatable.Activation();
+                }                
             }
 
             foreach (var command in _commandService.GetKeyGestures())
@@ -177,7 +167,7 @@ namespace AvalonStudio
                 }
             }
 
-            foreach (var tool in _extensions.Select(e => e.Value).OfType<ToolViewModel>())
+            foreach (var tool in GetExtensions<ToolViewModel>())
             {
                 switch (tool.DefaultLocation)
                 {
@@ -335,11 +325,7 @@ namespace AvalonStudio
 
         public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes => _projectTypes;
 
-        public IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices => _languageServices;
-
-        public IEnumerable<IToolchain> ToolChains => _toolChains.Select(t => t.Value);
-
-        public IEnumerable<IDebugger> Debugger2s => _debugger2s;
+        public IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices => _languageServices;        
 
         public IEnumerable<ITestFramework> TestFrameworks
         {
@@ -769,6 +755,11 @@ namespace AvalonStudio
                     DocumentTabs.CloseDocument(evm);
                 }
             }
+        }
+
+        public IEnumerable<T> GetExtensions<T>()
+        {
+            return _extensions.Where(t=>typeof(T).IsAssignableFrom(t.Value.GetType())).Select(t=>(T)t.Value);
         }
 
         public double GlobalZoomLevel

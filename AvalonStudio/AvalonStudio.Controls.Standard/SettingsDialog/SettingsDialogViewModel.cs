@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Controls.Standard.SettingsDialog
 {
-    public class SettingsDialogViewModel : DocumentTabViewModel, IExtension, ISettingsManager
+    public class SettingsDialogViewModel : DocumentTabViewModel, IActivatableExtension, ISettingsManager
     {
         private Dictionary<string, SettingsCategoryViewModel> _categories = new Dictionary<string, SettingsCategoryViewModel>();
         private ObservableCollection<SettingsCategoryViewModel> _categoryViewModels = new ObservableCollection<SettingsCategoryViewModel>();

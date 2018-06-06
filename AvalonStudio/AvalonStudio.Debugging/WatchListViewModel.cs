@@ -11,7 +11,7 @@ namespace AvalonStudio.Debugging
     using System.Linq;
     using System.Threading.Tasks;
 
-    public class WatchListViewModel : ToolViewModel, IExtension, IWatchList
+    public class WatchListViewModel : ToolViewModel, IActivatableExtension, IWatchList
     {
         protected IDebugManager2 DebugManager { get; set; }
 

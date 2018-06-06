@@ -355,7 +355,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             get
             {
-                var result = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == ToolchainReference);
+                var result = IoC.Get<IShell>().GetExtensions<IToolchain>().FirstOrDefault(tc => tc.GetType().ToString() == ToolchainReference);
 
                 return result;
             }
@@ -370,7 +370,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             get
             {
-                var result = IoC.Get<IShell>().Debugger2s.FirstOrDefault(tc => tc.GetType().ToString() == Debugger2Reference);
+                var result = IoC.Get<IShell>().GetExtensions<IDebugger>().FirstOrDefault(tc => tc.GetType().ToString() == Debugger2Reference);
 
                 return result;
             }

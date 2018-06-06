@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.WelcomeScreen
 {
-    public class WelcomeScreenViewModel : DocumentTabViewModel, IExtension
+    public class WelcomeScreenViewModel : DocumentTabViewModel, IActivatableExtension
     {
         private ISolutionExplorer _solutionExplorer;
 

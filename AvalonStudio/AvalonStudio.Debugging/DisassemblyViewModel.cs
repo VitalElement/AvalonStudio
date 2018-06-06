@@ -17,7 +17,7 @@ using System.Linq;
 
 namespace AvalonStudio.Debugging
 {
-    public class DisassemblyViewModel : ToolViewModel, IExtension
+    public class DisassemblyViewModel : ToolViewModel, IActivatableExtension
     {
         private IDebugManager2 _debugManager;
 

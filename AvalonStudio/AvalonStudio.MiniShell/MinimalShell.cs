@@ -48,7 +48,7 @@ namespace AvalonStudio.Shell
             [ImportMany] IEnumerable<Lazy<IToolchain>> toolChains,
             [ImportMany] IEnumerable<IDebugger> debugger2s,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
-            [ImportMany] IEnumerable<IExtension> extensions)
+            [ImportMany] IEnumerable<IActivatable> extensions)
         {
             _languageServices = languageServices;
 

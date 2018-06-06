@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 
 namespace AvalonStudio.Controls.Standard.Console
 {
-    public class ConsoleViewModel : ToolViewModel, IConsole, IPlugin
+    public class ConsoleViewModel : ToolViewModel, IConsole, IActivatableExtension
     {
         private ObservableCollection<IBackgroundRenderer> backgroundRenderers;
 
@@ -118,22 +118,7 @@ namespace AvalonStudio.Controls.Standard.Console
         public void Activation()
         {
             shell = IoC.Get<IShell>();
-        }
-
-        public string Name
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public Version Version
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public string Description
-        {
-            get { throw new NotImplementedException(); }
-        }
+        }        
 
         private void ScrollToEnd()
         {

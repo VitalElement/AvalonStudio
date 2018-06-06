@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.FindInFiles
 {
-    class FindInFilesViewModel : ToolViewModel, IExtension
+    class FindInFilesViewModel : ToolViewModel, IActivatableExtension
     {
         private string _searchTerm;
         private ObservableCollection<FindResultViewModel> _results;

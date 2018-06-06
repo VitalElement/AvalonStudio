@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace AvalonStudio.Extensibility.Theme
 {
-    public class DefaultColorThemes : IExtension
+    public class DefaultColorThemes : IActivatableExtension
     {
         public void Activation()
         {

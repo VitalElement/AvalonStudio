@@ -2,11 +2,6 @@ using ReactiveUI;
 
 namespace AvalonStudio.MVVM
 {
-    public interface IActivatable
-    {
-        void Activate();
-    }
-
     public enum Location
     {
         Left,

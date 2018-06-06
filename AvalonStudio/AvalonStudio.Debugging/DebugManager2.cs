@@ -14,7 +14,7 @@ namespace AvalonStudio.Debugging
     using System.Threading.Tasks;
     using System.Xml;
 
-    public class DebugManager2 : IDebugManager2, IExtension
+    public class DebugManager2 : IDebugManager2, IActivatableExtension
     {
         private DebuggerSession _session;
         private object _sessionLock = new object();

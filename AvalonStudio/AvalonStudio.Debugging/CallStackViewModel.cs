@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Debugging
 {
-    public class CallStackViewModel : ToolViewModel, IExtension
+    public class CallStackViewModel : ToolViewModel, IActivatableExtension
     {
         private IDebugManager2 _debugManager;
 

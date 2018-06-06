@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
-    public class EditorSettingsViewModel : SettingsViewModel, IExtension
+    public class EditorSettingsViewModel : SettingsViewModel, IActivatableExtension
     {
         private bool _removeTrailingWhiteSpaceOnSave;
         private bool _autoFormat;
