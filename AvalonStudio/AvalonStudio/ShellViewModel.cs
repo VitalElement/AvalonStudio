@@ -154,10 +154,7 @@ namespace AvalonStudio
             _leftPane = (Factory as DefaultLayoutFactory).LeftDock;
             _documentDock = (Factory as DefaultLayoutFactory).DocumentDock;
             _rightPane = (Factory as DefaultLayoutFactory).RightDock;
-            _bottomPane = (Factory as DefaultLayoutFactory).BottomDock;            
-
-            Console = IoC.Get<IConsole>();
-            ErrorList = IoC.Get<IErrorList>();
+            _bottomPane = (Factory as DefaultLayoutFactory).BottomDock;                        
 
             foreach (var extension in _extensions)
             {
@@ -323,11 +320,7 @@ namespace AvalonStudio
 
         public IEnumerable<KeyBinding> KeyBindings => _keyBindings;
 
-        public DocumentTabControlViewModel DocumentTabs { get; }
-
-        public IConsole Console { get; private set; }
-
-        public IErrorList ErrorList { get; private set; }
+        public DocumentTabControlViewModel DocumentTabs { get; }        
 
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
 
@@ -498,7 +491,7 @@ namespace AvalonStudio
 
                 TaskRunner.RunTask(() =>
                 {
-                    project.ToolChain.Clean(Console, project).Wait();
+                    project.ToolChain.Clean(IoC.Get<IConsole>(), project).Wait();
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
@@ -526,7 +519,7 @@ namespace AvalonStudio
 
                 await TaskRunner.RunTask(() =>
                 {
-                    result = project.ToolChain.BuildAsync(Console, project).Result;
+                    result = project.ToolChain.BuildAsync(IoC.Get<IConsole>(), project).Result;
                 });
 
                 Dispatcher.UIThread.Post(() =>
@@ -698,7 +691,7 @@ namespace AvalonStudio
 
         public async Task CloseSolutionAsync()
         {
-            ErrorList.Errors.Clear();
+            IoC.Get<IErrorList>().Errors.Clear();
 
             var documentsToClose = DocumentTabs.Documents.ToList();
 
