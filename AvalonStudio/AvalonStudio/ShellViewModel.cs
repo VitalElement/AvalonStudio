@@ -129,6 +129,18 @@ namespace AvalonStudio
 
             LoadLayout();
 
+            Layout.WhenAnyValue(l => l.FocusedView).Subscribe(focused =>
+            {
+                if(focused is IDocumentTabViewModel doc)
+                {
+                    SelectedDocument = doc;
+                }
+                else
+                {
+                    SelectedDocument = null;
+                }
+            });
+
             _leftPane = (Factory as DefaultLayoutFactory).LeftDock;
             _documentDock = (Factory as DefaultLayoutFactory).DocumentDock;
             _rightPane = (Factory as DefaultLayoutFactory).RightDock;
@@ -239,7 +251,7 @@ namespace AvalonStudio
         public event EventHandler<BuildEventArgs> BuildCompleted;
 
         private IDockFactory _factory;
-        private IView _layout;
+        private IDock _layout;
 
         public IDockFactory Factory
         {
@@ -247,7 +259,7 @@ namespace AvalonStudio
             set => this.RaiseAndSetIfChanged(ref _factory, value);
         }
 
-        public IView Layout
+        public IDock Layout
         {
             get => _layout;
             set => this.RaiseAndSetIfChanged(ref _layout, value);
@@ -412,7 +424,7 @@ namespace AvalonStudio
 
         public void Save()
         {
-            if (SelectedDocument is IFileDocumentTabViewModel document)
+            if (Layout.FocusedView is IFileDocumentTabViewModel document)
             {
                 document.Editor.Save();
             }
@@ -596,6 +608,8 @@ namespace AvalonStudio
                 {
                     DocumentTabs.SelectedDocument = value;
                 }
+
+                this.RaisePropertyChanged(nameof(SelectedDocument));
             }
         }
 
