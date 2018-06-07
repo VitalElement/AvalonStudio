@@ -6,11 +6,13 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Composition;
 using System.Linq;
 using System.Reactive.Linq;
 
 namespace AvalonStudio.Debugging
 {
+    [ExportToolControl, Export(typeof(IExtension)), Shared]
     public class RegistersViewModel : ToolViewModel<ObservableCollection<RegisterViewModel>>, IActivatableExtension
     {
         private IDebugManager2 _debugManager;

@@ -15,8 +15,7 @@ namespace AvalonStudio.Debugging
     using System.Threading.Tasks;
     using System.Xml;
 
-    [Export(typeof(IDebugManager2))]
-    [Shared]
+    [Export(typeof(IExtension)), Export(typeof(IDebugManager2)), Shared]
     public class DebugManager2 : IDebugManager2, IActivatableExtension
     {
         private DebuggerSession _session;

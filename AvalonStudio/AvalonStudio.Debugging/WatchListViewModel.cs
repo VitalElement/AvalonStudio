@@ -54,7 +54,7 @@ namespace AvalonStudio.Debugging
 
         public override Location DefaultLocation
         {
-            get { return Location.RightMiddle; }
+            get { return Location.Bottom; }
         }
 
         public virtual void BeforeActivation()
