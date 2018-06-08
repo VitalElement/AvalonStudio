@@ -2,6 +2,7 @@
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.MainMenu;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using Dock.Model;
@@ -38,20 +39,20 @@ namespace AvalonStudio.Controls
             {
                 var definition = await Editor.LanguageService?.GotoDefinition(Editor, 1);
 
-                var shell = IoC.Get<IShell>();
+                var studio = IoC.Get<IStudio>();
 
                 if (definition.MetaDataFile == null)
                 {
-                    var document = shell.CurrentSolution.FindFile(definition.FileName);
+                    var document = studio.CurrentSolution.FindFile(definition.FileName);
 
                     if (document != null)
                     {
-                        await shell.OpenDocumentAsync(document, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
+                        await studio.OpenDocumentAsync(document, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
                     }
                 }
                 else
                 {
-                    await shell.OpenDocumentAsync(definition.MetaDataFile, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
+                    await studio.OpenDocumentAsync(definition.MetaDataFile, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
                 }
             });
 
@@ -157,7 +158,7 @@ namespace AvalonStudio.Controls
         {
             base.Close();
 
-            Editor.Dispose();            
+            Editor.Dispose();
         }
 
         /// <summary>

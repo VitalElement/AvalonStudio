@@ -31,7 +31,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         private ITemplate selectedTemplate;
         private ISolutionFolder _solutionFolder;
 
-        private IShell _shell;
+        private IStudio _studio;        
         private TemplateManager _templateManager;
 
         private string solutionName;
@@ -67,7 +67,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public NewProjectDialogViewModel()
             : base("New Project", true, true)
         {
-            _shell = IoC.Get<IShell>();
+            _studio = IoC.Get<IStudio>();
             _templateManager = IoC.Get<TemplateManager>();
 
             _allProjectTemplates = new Lazy<IDictionary<string, IEnumerable<ITemplate>>>(_templateManager.GetProjectTemplates);
@@ -161,7 +161,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (loadNewSolution)
                 {
-                    await _shell.OpenSolutionAsync(_solutionFolder.Solution.Location);
+                    await _studio.OpenSolutionAsync(_solutionFolder.Solution.Location);
                 }
                 else
                 {

@@ -1,10 +1,10 @@
 ﻿using Avalonia.Media;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Projects;
-using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
@@ -62,7 +62,7 @@ namespace AvalonStudio.Controls
             EnterCommand = ReactiveCommand.Create(() =>
             {
                 var selectedResult = SelectedResult.Model;
-                IoC.Get<IShell>().OpenDocument(selectedResult);
+                IoC.Get<IStudio>().OpenDocument(selectedResult);
                 IsVisible = false;
             });
 
@@ -74,7 +74,7 @@ namespace AvalonStudio.Controls
 
         private async Task ProcessQuery(string query)
         {
-            if (IoC.Get<IShell>().CurrentSolution == null)
+            if (IoC.Get<IStudio>().CurrentSolution == null)
             {
                 return;
             }
@@ -95,7 +95,7 @@ namespace AvalonStudio.Controls
 
                 await Task.Run(() =>
                 {
-                    foreach (var project in IoC.Get<IShell>().CurrentSolution.Projects)
+                    foreach (var project in IoC.Get<IStudio>().CurrentSolution.Projects)
                     {
                         project.SourceFiles?.Select(sf =>
                         {

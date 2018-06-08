@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -11,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
+using System.Reactive.Linq;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -22,13 +24,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     {
         public const string ToolId = "CIDSEVM00";
 
-        private ISolution model;
-
         private ViewModel selectedItem;
 
         private IProject selectedProject;
         private IShell _shell;
 
+        private ISolution model;
         private SolutionViewModel solution;
 
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
@@ -38,7 +39,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes)
         {
             _shell = IoC.Get<IShell>();
-            _shell.SolutionChanged += (sender, e) => { Model = _shell.CurrentSolution; };
 
             _solutionTypes = solutionTypes;
 
@@ -62,7 +62,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 }
 
                 SelectedProject = null;
-                
+
                 model = value;
 
                 if (Model != null)
@@ -84,11 +84,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        internal void OnKeyDown (Key key, InputModifiers modifiers)
+        internal void OnKeyDown(Key key, InputModifiers modifiers)
         {
-            if(key == Key.Delete && modifiers == InputModifiers.None)
+            if (key == Key.Delete && modifiers == InputModifiers.None)
             {
-                if(SelectedItem?.Model is IDeleteable deletable)
+                if (SelectedItem?.Model is IDeleteable deletable)
                 {
                     deletable.Delete();
                 }
@@ -125,7 +125,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (value is SourceFileViewModel sourceFile)
                 {
-                    _shell.OpenDocument((ISourceFile)sourceFile.Model);
+                    IoC.Get<IStudio>().OpenDocument((ISourceFile)sourceFile.Model);
                 }
             }
         }
@@ -143,10 +143,12 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public async void OpenSolution()
         {
-            var dlg = new OpenFileDialog();
-            dlg.Title = "Open Solution";
+            var dlg = new OpenFileDialog
+            {
+                Title = "Open Solution",
 
-            dlg.InitialDirectory = Platform.ProjectDirectory;
+                InitialDirectory = Platform.ProjectDirectory
+            };
 
             var allExtensions = new List<string>();
 
@@ -171,16 +173,22 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                     Extensions = solutionType.Metadata.SupportedExtensions.ToList()
                 });
             }
-            
+
             var result = await dlg.ShowAsync();
 
             if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
             {
-                await _shell.OpenSolutionAsync(result[0]);
+                await IoC.Get<IStudio>().OpenSolutionAsync(result[0]);
             }
         }
 
-        public void BeforeActivation() { }
-        public void Activation() { }
+        public void BeforeActivation()
+        {
+        }
+
+        public void Activation()
+        {
+            _shell = IoC.Get<IShell>();
+        }
     }
 }

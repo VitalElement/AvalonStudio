@@ -1,6 +1,7 @@
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
@@ -21,7 +22,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         private ObservableCollection<ErrorViewModel> errors;
 
         private ErrorViewModel selectedError;
-        private IShell shell;
+        private IStudio studio;
 
         public ErrorListViewModel()
         {
@@ -43,11 +44,11 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                 {
                     if (value != null)
                     {
-                        var currentDocument = shell.CurrentSolution.FindFile(value.Model.File);
+                        var currentDocument = studio.CurrentSolution.FindFile(value.Model.File);
 
                         if (currentDocument != null)
                         {
-                            var document = await shell.OpenDocumentAsync(currentDocument, value.Line);
+                            var document = await studio.OpenDocumentAsync(currentDocument, value.Line);
 
                             if (document != null)
                             {
@@ -89,12 +90,12 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         }
 
         public void BeforeActivation()
-        {            
+        {
         }
 
         public void Activation()
         {
-            shell = IoC.Get<IShell>();
+            studio = IoC.Get<IStudio>();
         }
     }
 }

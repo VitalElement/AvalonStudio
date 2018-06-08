@@ -1,6 +1,6 @@
 ﻿using AvalonStudio.Commands;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Shell;
+using AvalonStudio.Extensibility.Studio;
 using ReactiveUI;
 using System.Composition;
 using System.Reactive.Linq;
@@ -20,13 +20,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
         [ExportCommandDefinition("File.CloseSolution")]
         public CommandDefinition CloseSolutionCommand { get; }
 
-        private readonly IShell _shell;
+        private readonly IStudio _studio;
         private readonly ISolutionExplorer _solutionExplorer;
 
         [ImportingConstructor]
         public SolutionExplorerCommands(ISolutionExplorer solutionExplorer)
         {
-            _shell = IoC.Get<IShell>();
+            _studio = IoC.Get<IStudio>();
             _solutionExplorer = solutionExplorer;
 
             NewSolutionCommand = new CommandDefinition(
@@ -37,7 +37,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
 
             CloseSolutionCommand = new CommandDefinition(
                 "Close Solution", null, ReactiveCommand.Create(
-                    _shell.CloseSolutionAsync, _shell.OnSolutionChanged.Select(s => s != null)));
+                    _studio.CloseSolutionAsync, _studio.OnSolutionChanged.Select(s => s != null)));
         }
     }
 }
