@@ -20,13 +20,14 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     [Export(typeof(IExtension))]
     [ExportToolControl]
     [Shared]
-    public class SolutionExplorerViewModel : ToolViewModel, IActivatableExtension, ISolutionExplorer
+    public class SolutionExplorerViewModel : ToolViewModel, IExtension, ISolutionExplorer
     {
         public const string ToolId = "CIDSEVM00";
 
         private ViewModel selectedItem;
 
         private IProject selectedProject;
+        private IStudio _studio;
         private IShell _shell;
 
         private ISolution model;
@@ -39,6 +40,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes)
         {
             _shell = IoC.Get<IShell>();
+            _studio = IoC.Get<IStudio>();
+
+            _studio.SolutionChanged += (sender, e) => { Model = _studio.CurrentSolution; };
 
             _solutionTypes = solutionTypes;
 
@@ -180,15 +184,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 await IoC.Get<IStudio>().OpenSolutionAsync(result[0]);
             }
-        }
-
-        public void BeforeActivation()
-        {
-        }
-
-        public void Activation()
-        {
-            _shell = IoC.Get<IShell>();
         }
     }
 }

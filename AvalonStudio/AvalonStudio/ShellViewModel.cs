@@ -283,6 +283,8 @@ namespace AvalonStudio
 
         public MenuViewModel MainMenu { get; }
 
+        public StatusBarViewModel StatusBar => _statusBar.Value;
+
         public IEnumerable<ToolbarViewModel> Toolbars => _toolbars;
 
         private ToolbarViewModel StandardToolbar { get; }
