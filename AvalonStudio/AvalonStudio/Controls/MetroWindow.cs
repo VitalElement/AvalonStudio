@@ -113,12 +113,10 @@ namespace AvalonStudio.Controls
             {
                 case WindowState.Maximized:
                     WindowState = WindowState.Normal;
-                    ToolTip.SetTip(restoreButton, "Maximize");
                     break;
 
                 case WindowState.Normal:
                     WindowState = WindowState.Maximized;
-                    ToolTip.SetTip(restoreButton, "Restore");
                     break;
             }
         }
