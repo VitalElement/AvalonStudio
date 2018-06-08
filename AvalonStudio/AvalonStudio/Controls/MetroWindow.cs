@@ -94,9 +94,9 @@ namespace AvalonStudio.Controls
 
         protected override void OnPointerMoved(PointerEventArgs e)
         {
-            if (titleBar.IsPointerOver && mouseDown)
+            if ((titleBar.IsPointerOver || topHorizontalGrip.IsPointerOver) && mouseDown)
             {
-                if (mouseDownPosition.DistanceTo(e.GetPosition(this)) > 12)
+                if (mouseDownPosition.DistanceTo(e.GetPosition(this)) > 2)
                 {
                     WindowState = WindowState.Normal;
                     BeginMoveDrag();
