@@ -1,9 +1,6 @@
 using Avalonia.Input;
-using Avalonia.Threading;
 using AvalonStudio.Commands;
 using AvalonStudio.Controls;
-using AvalonStudio.Controls.Standard.ErrorList;
-using AvalonStudio.Controls.Standard.Studio;
 using AvalonStudio.Docking;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
@@ -11,19 +8,15 @@ using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Shell;
-using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
 using AvalonStudio.MainMenu;
 using AvalonStudio.Menus.ViewModels;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
-using AvalonStudio.Projects;
 using AvalonStudio.Shell;
-using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolbars;
 using AvalonStudio.Toolbars.ViewModels;
-using AvalonStudio.Utils;
 using Dock.Model;
 using Dock.Model.Controls;
 using Dock.Serializer;
@@ -31,11 +24,9 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Composition;
-using System.Composition.Hosting;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace AvalonStudio
 {

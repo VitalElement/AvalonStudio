@@ -1,6 +1,4 @@
 ﻿using Avalonia.Threading;
-using AvalonStudio.Controls.Standard.ErrorList;
-using AvalonStudio.Controls.Standard.SolutionExplorer;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
@@ -382,7 +380,8 @@ namespace AvalonStudio.Controls.Standard.Studio
 
         public async Task CloseSolutionAsync()
         {
-            IoC.Get<IErrorList>().Errors.Clear();
+            // TODO clear error list?
+            //IoC.Get<IErrorList>().Errors.Clear();
 
             if (CurrentSolution != null)
             {
