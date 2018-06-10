@@ -43,6 +43,7 @@ namespace AvalonStudio
         private IEnumerable<Lazy<IExtension>> _extensions;
         private IEnumerable<Lazy<ToolViewModel>> _toolControls;
         private CommandService _commandService;
+        private List<IDocumentTabViewModel> _documents;
 
         private Lazy<StatusBarViewModel> _statusBar;
 
@@ -87,9 +88,7 @@ namespace AvalonStudio
             //IoC.RegisterConstant(this);
 
             var factory = new DefaultLayoutFactory();
-            Factory = factory;            
-
-            DocumentTabs = new DocumentTabControlViewModel();
+            Factory = factory;
 
             ModalDialog = new ModalDialogViewModelBase("Dialog");
 
@@ -102,7 +101,7 @@ namespace AvalonStudio
                 DebugMode = !DebugMode;
             });
 
-            Documents = new List<IDocumentTabViewModel>();
+            _documents = new List<IDocumentTabViewModel>();
         }
 
         public void Initialise()
@@ -196,7 +195,7 @@ namespace AvalonStudio
 
             this.WhenAnyValue(x => x.GlobalZoomLevel).Subscribe(zoomLevel =>
             {
-                foreach (var document in DocumentTabs.Documents.OfType<EditorViewModel>())
+                foreach (var document in Documents.OfType<EditorViewModel>())
                 {
                     document.ZoomLevel = zoomLevel;
                 }
@@ -227,7 +226,7 @@ namespace AvalonStudio
             Factory.Select(view);
         }
 
-        public IReadOnlyList<IDocumentTabViewModel> Documents { get; }
+        public IReadOnlyList<IDocumentTabViewModel> Documents => _documents.AsReadOnly();
 
         public ReactiveCommand EnableDebugModeCommand { get; }
 
@@ -282,17 +281,14 @@ namespace AvalonStudio
 
         public IEnumerable<KeyBinding> KeyBindings => _keyBindings;
 
-        public DocumentTabControlViewModel DocumentTabs { get; }
-
         public CancellationTokenSource ProcessCancellationToken { get; private set; }
-
 
 
         public void AddDocument(IDocumentTabViewModel document, bool temporary = false)
         {
-            DockView(_documentDock, document, !DocumentTabs.Documents.Contains(document));
+            DockView(_documentDock, document, !Documents.Contains(document));
 
-            DocumentTabs.OpenDocument(document, temporary);
+            _documents.Add(document);
         }
 
         public void RemoveDocument(IDocumentTabViewModel document)
@@ -313,7 +309,7 @@ namespace AvalonStudio
                 Factory.Update(document, document, dock);
             }
 
-            DocumentTabs.CloseDocument(document);
+            _documents.Remove(document);
         }
 
 
@@ -333,7 +329,7 @@ namespace AvalonStudio
         {
             get { return _quickCommander; }
             set { this.RaiseAndSetIfChanged(ref _quickCommander, value); }
-        }        
+        }
 
         private ColorScheme _currentColorScheme;
 
@@ -345,7 +341,7 @@ namespace AvalonStudio
             {
                 this.RaiseAndSetIfChanged(ref _currentColorScheme, value);
 
-                foreach (var document in DocumentTabs.Documents.OfType<AvalonStudio.Controls.EditorViewModel>())
+                foreach (var document in Documents.OfType<EditorViewModel>())
                 {
                     document.ColorScheme = value;
                 }
@@ -354,15 +350,12 @@ namespace AvalonStudio
 
         public IDocumentTabViewModel SelectedDocument
         {
-            get
-            {
-                return DocumentTabs?.SelectedDocument;
-            }
+            get => Layout.FocusedView as IDocumentTabViewModel;
             set
             {
-                if (DocumentTabs != null)
+                if (value != null)
                 {
-                    DocumentTabs.SelectedDocument = value;
+                    Factory.Select(value);
                 }
 
                 this.RaisePropertyChanged(nameof(SelectedDocument));

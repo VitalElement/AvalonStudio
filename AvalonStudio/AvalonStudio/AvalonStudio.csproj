@@ -106,6 +106,8 @@
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.OmniSharp\AvalonStudio.Projects.OmniSharp.csproj" />
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Shell\AvalonStudio.Shell.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Studio\AvalonStudio.Studio.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.PublishedGCC\AvalonStudio.Toolchains.PublishedGCC.csproj" />
