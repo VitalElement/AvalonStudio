@@ -1,6 +1,5 @@
 ﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Projects;
-using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using Microsoft.DotNet.Cli.Sln.Internal;
 using System;
@@ -57,8 +56,7 @@ namespace AvalonStudio.Projects
         }
 
         private VisualStudioSolution(SlnFile solutionModel)
-        {
-            var shell = IoC.Get<IShell>();
+        {            
             _solutionModel = solutionModel;
             _solutionItems = new Dictionary<Guid, ISolutionItem>();
 
