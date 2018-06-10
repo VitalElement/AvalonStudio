@@ -90,8 +90,7 @@ Program.main();
             Project = this;
 
             var tsContext = new TypeScriptContext();
-            tsContext.LoadComponents();
-            IoC.RegisterConstant(tsContext, typeof(TypeScriptContext));
+            tsContext.LoadComponents();            
             TypeScriptContext = tsContext;
         }
 
@@ -163,7 +162,7 @@ Program.main();
         [JsonIgnore]
         public override IToolchain ToolChain
         {
-            get => IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType() == typeof(TypeScriptToolchain));
+            get => IoC.GetInstances<IToolchain>().FirstOrDefault(tc => tc.GetType() == typeof(TypeScriptToolchain));
             set { throw new NotSupportedException(); }
         }
 

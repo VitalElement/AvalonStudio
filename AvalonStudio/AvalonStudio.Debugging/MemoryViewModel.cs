@@ -6,9 +6,13 @@
     using MVVM;    
     using ReactiveUI;
     using System;
+    using System.Composition;
     using System.Linq;
 
-    public class MemoryViewModel : ToolViewModel, IExtension
+    [ExportToolControl]
+    [Export(typeof(IExtension))]    
+    [Shared]
+    public class MemoryViewModel : ToolViewModel, IActivatableExtension
     {
         private IDebugManager2 _debugManager;
         public const string ToolId = "CIDMEM001";

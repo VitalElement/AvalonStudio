@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Toolchains.CustomGCC
 {
-    class GccProfilesSettingsViewModel : SettingsViewModel, IExtension
+    class GccProfilesSettingsViewModel : SettingsViewModel, IActivatableExtension
     {
         private CustomGCCToolchainProfiles _settings;
         private ObservableCollection<string> _profiles;

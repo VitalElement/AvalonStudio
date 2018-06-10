@@ -1,4 +1,5 @@
 ﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Shell;
 using System;
 using System.IO;
@@ -11,16 +12,14 @@ namespace AvalonStudio.Projects
     {
         public static Guid? GetProjectTypeGuidForProject(string fileName)
         {
-            var shell = IoC.Get<IShell>();
-
             var extension = Path.GetExtension(fileName);
 
-            var projectType = shell.ProjectTypes.FirstOrDefault(
+            var projectType = IoC.Get<IStudio>().ProjectTypes.FirstOrDefault(
                 p => extension.EndsWith(p.Metadata.DefaultExtension));
 
             if (projectType == null)
             {
-                projectType = shell.ProjectTypes.FirstOrDefault(
+                projectType = IoC.Get<IStudio>().ProjectTypes.FirstOrDefault(
                     p => p.Metadata.PossibleExtensions.Any(e => extension.EndsWith(e)));
             }
 

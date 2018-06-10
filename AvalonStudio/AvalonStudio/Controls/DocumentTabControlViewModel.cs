@@ -51,7 +51,7 @@ namespace AvalonStudio.Controls
                 {
                     CloseDocument(TemporaryDocument);
                 }
-                
+
                 Documents.Add(document);
                 SelectedDocument = document;
 
@@ -108,7 +108,7 @@ namespace AvalonStudio.Controls
                         newSelectedTab = Documents[index];
                         break;
                     }
-                    else if(index != current)
+                    else if (index != current)
                     {
                         break;
                     }

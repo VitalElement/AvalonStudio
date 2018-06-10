@@ -18,10 +18,12 @@ using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
 using AvalonStudio.Controls.Standard.CodeEditor.Highlighting;
 using AvalonStudio.Controls.Standard.CodeEditor.Refactoring;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
+using AvalonStudio.Controls.Standard.ErrorList;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
@@ -791,7 +793,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             var contentTypeService = ContentTypeServiceInstance.Instance;
 
-            LanguageService = _shell.LanguageServices.FirstOrDefault(
+            LanguageService = IoC.Get<IStudio>().LanguageServices.FirstOrDefault(
                 o => o.Metadata.TargetCapabilities.Any(
                     c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;
             
@@ -883,7 +885,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _contextActionsRenderer.OnDiagnosticsUpdated();
             }
 
-            _shell.UpdateDiagnostics(e);
+            IoC.Get<IErrorList>().UpdateDiagnostics(e);
 
             TextArea.TextView.Redraw();
         }
@@ -965,6 +967,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             if (LanguageService != null)
             {
                 LanguageService.UnregisterSourceFile(DocumentAccessor);
+                LanguageService = null;
             }
 
             Document.TextChanged -= TextDocument_TextChanged;
@@ -1263,11 +1266,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
+            Close();
+
+            base.OnDetachedFromVisualTree(e);
+        }
+
+        internal void Close()
+        {
             UnRegisterLanguageService();
 
             _disposables.Dispose();
 
-            DocumentAccessor?.Dispose();
+            //DocumentAccessor?.Dispose();
 
             TextArea.TextView.BackgroundRenderers.Clear();
             TextArea.TextView.LineTransformers.Clear();
@@ -1275,8 +1285,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _breakpointMargin.Dispose();
             _lineNumberMargin.Dispose();
-
-            base.OnDetachedFromVisualTree(e);
         }
     }
 }

@@ -7,6 +7,10 @@ namespace AvalonStudio.Extensibility.Plugin
 {
     public interface IExtension
     {
+    }
+
+    public interface IActivatableExtension : IExtension
+    {
         void BeforeActivation();
 
         void Activation();
@@ -15,12 +19,5 @@ namespace AvalonStudio.Extensibility.Plugin
     public interface IInstallable
     {
         Task<bool> InstallAsync(IConsole console, IProject project);
-    }
-
-    public interface IPlugin : IExtension
-    {
-        string Name { get; }
-        Version Version { get; }
-        string Description { get; }
     }
 }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Packages
 {
-    public interface IPackageAssetLoader : IExtension
+    public interface IPackageAssetLoader : IActivatableExtension
     {
         Task LoadAssetsAsync(string package, string version, IEnumerable<string> files);
     }

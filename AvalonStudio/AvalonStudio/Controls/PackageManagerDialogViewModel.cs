@@ -1,5 +1,7 @@
 using Avalonia.Threading;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Dialogs;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
@@ -67,9 +69,9 @@ namespace AvalonStudio.Controls
                 }
             });
 
-            OKCommand = ReactiveCommand.Create(()=>
+            OKCommand = ReactiveCommand.Create(() =>
             {
-                ShellViewModel.Instance.InvalidateCodeAnalysis();
+                IoC.Get<IStudio>().InvalidateCodeAnalysis();
                 Close();
             },
             this.WhenAnyValue(x => x.EnableInterface));

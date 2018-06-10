@@ -2,6 +2,7 @@
 using AvalonStudio.Controls.Standard.SolutionExplorer;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using ReactiveUI;
@@ -16,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.WelcomeScreen
 {
-    public class WelcomeScreenViewModel : DocumentTabViewModel, IExtension
+    public class WelcomeScreenViewModel : DocumentTabViewModel, IActivatableExtension
     {
         private ISolutionExplorer _solutionExplorer;
 
@@ -50,11 +51,12 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
         public void Activation()
         {
             var shell = IoC.Get<IShell>();
+            var studio = IoC.Get<IStudio>();
             shell.AddDocument(this, false);
 
             _disposables = new CompositeDisposable
             {
-                Observable.FromEventPattern<SolutionChangedEventArgs>(shell, nameof(shell.SolutionChanged)).Subscribe(o => ShellOnSolutionChanged(o.Sender, o.EventArgs))
+                Observable.FromEventPattern<SolutionChangedEventArgs>(studio, nameof(studio.SolutionChanged)).Subscribe(o => ShellOnSolutionChanged(o.Sender, o.EventArgs))
             };
             //shell.SolutionChanged += ShellOnSolutionChanged;
 

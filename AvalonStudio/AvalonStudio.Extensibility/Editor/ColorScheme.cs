@@ -10,7 +10,7 @@ using System;
 
 namespace AvalonStudio.Extensibility.Editor
 {
-    public class DefaultColorSchemes : IExtension
+    public class DefaultColorSchemes : IActivatableExtension
     {
         public void Activation()
         {

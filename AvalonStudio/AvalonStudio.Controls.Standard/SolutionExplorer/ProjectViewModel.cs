@@ -1,6 +1,7 @@
 using Avalonia.Media;
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -12,6 +13,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     public abstract class ProjectViewModel : SolutionItemViewModel<IProject>
     {
+        private readonly IStudio studio;
         private readonly IShell shell;
         private ProjectConfigurationDialogViewModel configuration;
         private bool _isExpanded;
@@ -20,6 +22,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ProjectViewModel(ISolutionParentViewModel parent, IProject model)
             : base(parent, model)
         {
+            studio = IoC.Get<IStudio>();
             shell = IoC.Get<IShell>();
 
             Items = new ObservableCollection<ProjectItemViewModel>();
@@ -49,9 +52,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 //shell.Debug(model);
             });
 
-            BuildCommand = ReactiveCommand.Create(async () => await shell.BuildAsync(model));
+            BuildCommand = ReactiveCommand.Create(async () => await studio.BuildAsync(model));
 
-            CleanCommand = ReactiveCommand.Create(() => shell.Clean(model));
+            CleanCommand = ReactiveCommand.Create(() => studio.Clean(model));
 
             ManageReferencesCommand = ReactiveCommand.Create(() => { });
 
@@ -60,7 +63,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 model.Solution.StartupProject = model;
                 model.Solution.Save();
 
-                shell.InvalidateCodeAnalysis();
+                studio.InvalidateCodeAnalysis();
 
                 var root = this.FindRoot();
 
@@ -84,7 +87,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             RemoveCommand = ReactiveCommand.Create(() =>
             {
-                shell.CloseDocumentsForProject(Model);
+                studio.CloseDocumentsForProject(Model);
                 Model.Solution.RemoveItem(Model);
                 Model.Solution.Save();
             });

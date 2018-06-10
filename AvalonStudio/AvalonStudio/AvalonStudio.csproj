@@ -14,15 +14,69 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemGroup>
-    <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <EmbeddedResource Include="Controls\QuickCommander.xaml" />
+    <EmbeddedResource Include="Controls\SearchResult.xaml" />
+    <EmbeddedResource Include="GeneralSettingsView.xaml" />
+    <EmbeddedResource Include="Icons\Icons.xaml" />
+    <EmbeddedResource Include="Styles\GlobalStyles.xaml" />
+    <EmbeddedResource Include="Themes\Accents\DarkAccent.xaml" />
+    <EmbeddedResource Include="Themes\BaseDark.xaml" />
+    <EmbeddedResource Include="Themes\Scrollbar.xaml" />
+    <EmbeddedResource Include="Themes\Theme.xaml" />
+    <EmbeddedResource Include="Assets\icon.ico" />
+    <EmbeddedResource Include="Assets\icon.png" />
+    <EmbeddedResource Include="Assets\logo-256.png" />
+    <EmbeddedResource Include="Assets\logo-65.png" />
+    <EmbeddedResource Include="Assets\logo20x20.png" />
+    <EmbeddedResource Include="Assets\selawk.ttf" />
+    <EmbeddedResource Include="Assets\selawkb.ttf" />
+    <EmbeddedResource Include="Assets\selawkl.ttf" />
+    <EmbeddedResource Include="Assets\selawksb.ttf" />
+    <EmbeddedResource Include="Assets\selawksl.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-Black.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-BlackIt.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-Bold.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-BoldIt.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-ExtraLight.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-ExtraLightIt.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-It.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-Light.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-LightIt.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-Medium.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-MediumIt.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-Regular.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-Semibold.ttf" />
+    <EmbeddedResource Include="Assets\SourceCodePro-SemiboldIt.ttf" />
+    <EmbeddedResource Include="Assets\SourceSansPro-Black.ttf" />
+    <EmbeddedResource Include="Assets\SourceSansPro-BlackIt.ttf" />
+    <EmbeddedResource Include="Assets\SourceSansPro-Bold.ttf" />
+    <EmbeddedResource Include="Assets\SourceSansPro-BoldIt.ttf" />
+    <EmbeddedResource Include="Assets\SourceSansPro-ExtraLight.ttf" />
+    <EmbeddedResource Include="Assets\SourceSansPro-ExtraLightIt.ttf" />
+    <EmbeddedResource Include="Assets\SourceSansPro-It.ttf" />
+    <EmbeddedResource Include="Assets\SourceSansPro-Light.ttf" />
+    <EmbeddedResource Include="Assets\SourceSansPro-LightIt.ttf" />
+    <EmbeddedResource Include="Assets\SourceSansPro-Regular.ttf" />
+    <EmbeddedResource Include="Assets\SourceSansPro-Semibold.ttf" />
+    <EmbeddedResource Include="Assets\SourceSansPro-SemiboldIt.ttf" />
+    <EmbeddedResource Include="App.paml" />
+    <EmbeddedResource Include="Controls\DebugHoverProbeView.paml" />
+    <EmbeddedResource Include="Controls\MetroWindow.paml" />
+    <EmbeddedResource Include="Controls\MetroWindowControlsTheme.paml" />
+    <EmbeddedResource Include="Controls\MetroWindowTheme.paml" />
+    <EmbeddedResource Include="Controls\ModalDialog.paml" />
+    <EmbeddedResource Include="Controls\PackageManagerDialogView.paml" />
+    <EmbeddedResource Include="Controls\StatusBar.paml" />
+    <EmbeddedResource Include="Controls\ToolBar.paml" />
+    <EmbeddedResource Include="MainWindow.paml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.2-build5340-beta" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.6.2-build5340-beta" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.6.2-build5340-beta" />
+    <PackageReference Include="Avalonia" Version="0.6.2-build5392-beta" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.6.2-build5392-beta" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.6.2-build5392-beta" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.60.0.1" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.6.2-build515-alpha" />
-    <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="0.6.2-build515-alpha" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.6.2-build518-alpha" />
+    <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="0.6.2-build518-alpha" />
     <PackageReference Include="GitInfo" Version="2.0.10" />
     <PackageReference Include="reactiveui" Version="8.0.1" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
@@ -36,6 +90,7 @@
     <ProjectReference Include="..\..\Dock\src\Dock.Avalonia\Dock.Avalonia.csproj" />
     <ProjectReference Include="..\..\Dock\src\Dock.Model.ReactiveUI\Dock.Model.ReactiveUI.csproj" />
     <ProjectReference Include="..\..\Dock\src\Dock.Model\Dock.Model.csproj" />
+    <ProjectReference Include="..\..\Dock\src\Dock.Serializer\Dock.Serializer.csproj" />
     <ProjectReference Include="..\Avalonia.Ide\src\Avalonia.Ide.LanguageServer.MSBuild\Avalonia.Ide.LanguageServer.MSBuild.csproj" />
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj" />
@@ -51,6 +106,8 @@
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.OmniSharp\AvalonStudio.Projects.OmniSharp.csproj" />
     <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Shell\AvalonStudio.Shell.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Studio\AvalonStudio.Studio.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.PublishedGCC\AvalonStudio.Toolchains.PublishedGCC.csproj" />

@@ -1,5 +1,6 @@
 using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Shell;
@@ -11,6 +12,7 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Composition;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
@@ -27,7 +29,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
         private static Dictionary<string, Tuple<string, string>> passwordCache =
             new Dictionary<string, Tuple<string, string>>();
-
+        
         public CPlusPlusProject() : this(true)
         {
         }
@@ -355,7 +357,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             get
             {
-                var result = IoC.Get<IShell>().ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == ToolchainReference);
+                var result = IoC.GetInstances<IToolchain>().FirstOrDefault(tc => tc.GetType().ToString() == ToolchainReference);
 
                 return result;
             }
@@ -370,7 +372,7 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             get
             {
-                var result = IoC.Get<IShell>().Debugger2s.FirstOrDefault(tc => tc.GetType().ToString() == Debugger2Reference);
+                var result = IoC.GetInstances<IDebugger>().FirstOrDefault(tc => tc.GetType().ToString() == Debugger2Reference);
 
                 return result;
             }
@@ -385,10 +387,10 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             get
             {
-                var result = IoC.Get<IShell>()
-                    .TestFrameworks.FirstOrDefault(tf => tf.GetType().ToString() == TestFrameworkReference);
+                var result = IoC.Get<IStudio>()
+                    .TestFrameworks.FirstOrDefault(tf => tf.Value.GetType().ToString() == TestFrameworkReference);
 
-                return result;
+                return result.Value;
             }
             set
             {

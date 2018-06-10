@@ -14,10 +14,14 @@ using System.IO;
 using System.Reactive.Linq;
 using System.Text;
 using System.Linq;
+using System.Composition;
 
 namespace AvalonStudio.Debugging
 {
-    public class DisassemblyViewModel : ToolViewModel, IExtension
+    [ExportToolControl]
+    [Export(typeof(IExtension))]
+    [Shared]
+    public class DisassemblyViewModel : ToolViewModel, IActivatableExtension
     {
         private IDebugManager2 _debugManager;
 
