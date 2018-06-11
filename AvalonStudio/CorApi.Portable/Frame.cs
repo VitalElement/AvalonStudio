@@ -42,7 +42,11 @@ namespace CorApi.Portable
                 mappingResult = CorDebugMappingResult.MappingNoInfo;
             }
             else
-                ilframe.GetIP(out offset, out mappingResult);
+            {
+
+                ilframe.GetIP(out uint uoffset, out mappingResult);
+                offset = (int)uoffset;
+            }
         }
 
         public void SetIP(int offset)
