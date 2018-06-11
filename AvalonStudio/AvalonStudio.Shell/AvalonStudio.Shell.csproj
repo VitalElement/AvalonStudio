@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.6.2-build5409-beta" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.6.2-build5392-beta" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.6.2-build518-alpha" />
     <PackageReference Include="Avalonia.Xaml.Interactions.Custom" Version="0.6.2-build518-alpha" />
     <PackageReference Include="reactiveui" Version="8.0.1" />

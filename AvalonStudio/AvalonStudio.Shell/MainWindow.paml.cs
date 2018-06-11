@@ -1,10 +1,10 @@
 using Avalonia;
 using Avalonia.Markup.Xaml;
-using AvalonStudio.Controls;
 using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.GlobalSettings;
+using AvalonStudio.Shell.Controls;
 
-namespace AvalonStudio
+namespace AvalonStudio.Shell
 {
     public class MainWindow : MetroWindow
     {

@@ -2,11 +2,9 @@
 using Avalonia.Controls;
 using Avalonia.Xaml.Interactivity;
 using System;
-using System.Collections.Generic;
 using System.Reactive.Disposables;
-using System.Text;
 
-namespace AvalonStudio.Behaviors
+namespace AvalonStudio.Shell.Behaviors
 {
     class FocusOnVisibleBehavior : Behavior<Control>
     {

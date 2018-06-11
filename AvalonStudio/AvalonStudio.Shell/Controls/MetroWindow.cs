@@ -6,7 +6,7 @@ using Avalonia.Styling;
 using AvalonStudio.Utils;
 using System;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Shell.Controls
 {
     public class MetroWindow : Window, IStyleable
     {

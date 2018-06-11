@@ -14,7 +14,7 @@ using AvalonStudio.MainMenu;
 using AvalonStudio.Menus.ViewModels;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
-using AvalonStudio.Shell;
+using AvalonStudio.Shell.Controls;
 using AvalonStudio.Toolbars;
 using AvalonStudio.Toolbars.ViewModels;
 using Dock.Model;
@@ -28,7 +28,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading;
 
-namespace AvalonStudio
+namespace AvalonStudio.Shell
 {
     [Export(typeof(ShellViewModel))]
     [Export(typeof(IShell))]
@@ -77,7 +77,7 @@ namespace AvalonStudio
             MainMenu = mainMenuService.GetMainMenu();
 
             var toolbars = toolbarService.GetToolbars();
-            StandardToolbar = toolbars.Single(t => t.Key == "Standard").Value;
+            //StandardToolbar = toolbars.Single(t => t.Key == "Standard").Value;
 
             _statusBar = statusBar;
             //IoC.RegisterConstant<IStatusBar>(_statusBar.Value);            

@@ -3,7 +3,7 @@ using AvalonStudio.MVVM;
 using ReactiveUI;
 using System.Composition;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Shell.Controls
 {
     [Export]
     [Export(typeof(IStatusBar))]

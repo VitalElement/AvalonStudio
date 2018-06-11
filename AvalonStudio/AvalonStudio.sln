@@ -122,9 +122,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dock.Model.ReactiveUI", "..
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dock.Serializer", "..\Dock\src\Dock.Serializer\Dock.Serializer.csproj", "{B3E1C13E-AAE7-4460-94B4-1E7FBA8C0819}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Shell", "AvalonStudio.Shell\AvalonStudio.Shell.csproj", "{9A230205-06D5-40A9-9ED8-212459C2B31E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Shell", "AvalonStudio.Shell\AvalonStudio.Shell.csproj", "{9A230205-06D5-40A9-9ED8-212459C2B31E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Studio", "AvalonStudio.Studio\AvalonStudio.Studio.csproj", "{4302F347-61C4-4D10-9A34-50B19C3C1AA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Studio", "AvalonStudio.Studio\AvalonStudio.Studio.csproj", "{4302F347-61C4-4D10-9A34-50B19C3C1AA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShellExampleApp", "ShellExampleApp\ShellExampleApp.csproj", "{B543316C-D936-47B2-83E3-11BC25362AE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -986,6 +988,22 @@ Global
 		{4302F347-61C4-4D10-9A34-50B19C3C1AA8}.Release|x64.Build.0 = Release|Any CPU
 		{4302F347-61C4-4D10-9A34-50B19C3C1AA8}.Release|x86.ActiveCfg = Release|Any CPU
 		{4302F347-61C4-4D10-9A34-50B19C3C1AA8}.Release|x86.Build.0 = Release|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Debug|ARM.Build.0 = Debug|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Debug|x64.Build.0 = Debug|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Debug|x86.Build.0 = Debug|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Release|ARM.ActiveCfg = Release|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Release|ARM.Build.0 = Release|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Release|x64.ActiveCfg = Release|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Release|x64.Build.0 = Release|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Release|x86.ActiveCfg = Release|Any CPU
+		{B543316C-D936-47B2-83E3-11BC25362AE7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

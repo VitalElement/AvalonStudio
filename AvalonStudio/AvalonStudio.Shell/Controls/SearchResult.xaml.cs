@@ -8,7 +8,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Media;
 using System.Collections.Generic;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Shell.Controls
 {
     public class SearchResult : UserControl
     {

@@ -1,5 +1,5 @@
-﻿<Controls:MetroWindow xmlns="https://github.com/avaloniaui"
-                      xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+﻿<cont:MetroWindow xmlns="https://github.com/avaloniaui"
+                      xmlns:cont="clr-namespace:AvalonStudio.Shell.Controls;assembly=AvalonStudio.Shell"
                       xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.Views;assembly=AvalonStudio.Extensibility"
                       xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
                       xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
@@ -7,23 +7,22 @@
                       xmlns:idc="clr-namespace:Dock.Avalonia.Controls;assembly=Dock.Avalonia"
                       xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      Icon="resm:AvalonStudio.Assets.logo-256.png?assembly=AvalonStudio"
+                      Icon="resm:AvalonStudio.Shell.Assets.logo-256.png?assembly=AvalonStudio.Shell"
                       Title="AvalonStudio" BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}"
-                      FontFamily="{DynamicResource UiFont}" FontSize="14"
-                      xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+                      FontFamily="{DynamicResource UiFont}" FontSize="14"                      
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized">
-  <Controls:MetroWindow.TitleBarContent>
-  </Controls:MetroWindow.TitleBarContent>
+  <cont:MetroWindow.TitleBarContent>
+  </cont:MetroWindow.TitleBarContent>
 
-  <Controls:MetroWindow.Resources>
+  <cont:MetroWindow.Resources>
     <id:DockDropHandler x:Key="DockDropHandler0" Id="0"/>
-  </Controls:MetroWindow.Resources>
+  </cont:MetroWindow.Resources>
 
   <i:Interaction.Behaviors>
     <beh:OpenCloseWindowBehavior DataContext="{Binding ModalDialog}" WindowType="{x:Type cont:ModalDialog}" IsOpen="{Binding ModalDialog.IsVisible}" />
   </i:Interaction.Behaviors>
 
-  <Controls:MetroWindow.Styles>
+  <cont:MetroWindow.Styles>
     <Style Selector="ListBoxItem:selected">
       <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
     </Style>
@@ -73,10 +72,10 @@
         </ControlTemplate>
       </Setter>
     </Style>
-  </Controls:MetroWindow.Styles>
-  <Controls:MetroWindow.KeyBindings>
+  </cont:MetroWindow.Styles>
+  <cont:MetroWindow.KeyBindings>
     <KeyBinding Command="{Binding EnableDebugModeCommand}" Gesture="CTRL+SHIFT+D"/>
-  </Controls:MetroWindow.KeyBindings>
+  </cont:MetroWindow.KeyBindings>
   <Grid RowDefinitions="Auto,*,25">
     <i:Interaction.Behaviors>
       <id:DropBehavior Context="{Binding Layout}" Handler="{StaticResource DockDropHandler0}"/>
@@ -86,7 +85,7 @@
       <Grid RowDefinitions="Auto, Auto">
         <menu:MainMenuView DataContext="{Binding MainMenu}" Margin="5 4 0 0"  Foreground="{DynamicResource ThemeForegroundBrush}" />
 
-        <Controls:ToolBar DataContext="{Binding StandardToolbar}" Grid.Row="1" Margin="15 4 0 4" />
+        <cont:ToolBar DataContext="{Binding StandardToolbar}" Grid.Row="1" Margin="15 4 0 4" />
       </Grid>
     </Grid>
 
@@ -95,9 +94,9 @@
     </Grid>
 
     <Grid Grid.Row="2" Grid.ColumnSpan="5">
-      <Controls:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
+      <cont:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
     </Grid>
 
-    <Controls:QuickCommander Grid.RowSpan="3" Grid.ColumnSpan="5" Width="450" MaxHeight="500" DataContext="{Binding QuickCommander}" VerticalAlignment="Top" />
+    <cont:QuickCommander Grid.RowSpan="3" Grid.ColumnSpan="5" Width="450" MaxHeight="500" DataContext="{Binding QuickCommander}" VerticalAlignment="Top" />
   </Grid>
-</Controls:MetroWindow>
+</cont:MetroWindow>

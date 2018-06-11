@@ -4,7 +4,7 @@ using Avalonia.Xaml.Interactivity;
 using System;
 using System.Reactive.Disposables;
 
-namespace AvalonStudio.Behaviors
+namespace AvalonStudio.Shell.Behaviors
 {
     class HideOnLostFocusBehavior : Behavior<Control>
     {

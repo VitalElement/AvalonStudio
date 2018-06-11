@@ -1,5 +1,6 @@
-﻿<Styles xmlns="https://github.com/avaloniaui" xmlns:local="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
-        xmlns:convert="clr-namespace:AvalonStudio.Converters;assembly=AvalonStudio"
+﻿<Styles xmlns="https://github.com/avaloniaui" 
+        xmlns:local="clr-namespace:AvalonStudio.Shell.Controls;assembly=AvalonStudio.Shell"
+        xmlns:convert="clr-namespace:AvalonStudio.Shell.Converters;assembly=AvalonStudio.Shell"
          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Style Selector="local|MetroWindow">
     <Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}" />
@@ -25,7 +26,7 @@
                       <ContentPresenter Grid.Column="1" Grid.ColumnSpan="1" Content="{TemplateBinding TitleBarContent}" Margin="0" />
                       <Grid Grid.Column="2" HorizontalAlignment="Right" Margin="0">
                         <Grid.Styles>
-                          <StyleInclude Source="resm:AvalonStudio.Controls.MetroWindowControlsTheme.paml?assembly=AvalonStudio" />
+                          <StyleInclude Source="resm:AvalonStudio.Shell.Controls.MetroWindowControlsTheme.paml?assembly=AvalonStudio.Shell" />
                         </Grid.Styles>
                         <StackPanel Orientation="Horizontal">
                           <Button Background="Transparent" BorderThickness="0" Name="minimiseButton" ToolTip.Tip="Minimize">

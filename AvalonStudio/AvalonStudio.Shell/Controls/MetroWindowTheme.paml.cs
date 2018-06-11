@@ -1,7 +1,7 @@
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Shell.Controls
 {
     public class MetroWindowTheme : Styles
     {

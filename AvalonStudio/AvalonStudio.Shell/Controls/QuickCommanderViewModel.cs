@@ -14,7 +14,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-namespace AvalonStudio.Controls
+namespace AvalonStudio.Shell.Controls
 {
     public class QuickCommanderViewModel : ReactiveObject
     {

@@ -1,7 +1,4 @@
 ﻿using AvalonStudio.Extensibility.Theme;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AvalonStudio
 {
