@@ -2,8 +2,7 @@ namespace AvalonStudio.Debugging
 {
     using Avalonia.Threading;
     using AvalonStudio.Documents;
-    using AvalonStudio.Extensibility;
-    using AvalonStudio.Extensibility.Plugin;
+    using AvalonStudio.Extensibility;    
     using AvalonStudio.Extensibility.Studio;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;

@@ -1,7 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;

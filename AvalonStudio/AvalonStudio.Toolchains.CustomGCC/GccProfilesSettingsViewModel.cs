@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Settings;
 using ReactiveUI;
 using System.Collections.ObjectModel;

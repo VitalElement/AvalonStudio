@@ -1,9 +1,7 @@
 using Avalonia;
 using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
-using AvalonStudio.Extensibility;
 using AvalonStudio.Packages;
-using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
 using AvalonStudio.Shell;
 using Serilog;
@@ -33,16 +31,16 @@ namespace AvalonStudio
                     throw new ArgumentNullException(nameof(args));
                 }
 
-                var builder = BuildAvaloniaApp().BuildShellApp().AfterSetup(async _ =>
+                BuildAvaloniaApp().AfterSetup(async _ =>
                 {
+                    InitializeLogging();
+
                     PackageSources.InitialisePackageSources();
 
                     await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
-                });
+                }).StartShellApp("AvalonStudio");
 
-                InitializeLogging();
-
-                builder.StartAvalonShellApp();
+                
             }
             catch (Exception e)
             {

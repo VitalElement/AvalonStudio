@@ -191,7 +191,7 @@ namespace AvalonStudio.Toolchains.GCC
             },
             false, "", false, RunWithSystemPaths, ExtraPaths);
 
-            if (Shell.DebugMode)
+            if (Studio.DebugMode)
             {
                 console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
             }
@@ -307,7 +307,7 @@ namespace AvalonStudio.Toolchains.GCC
                 }
             }, false, project.Solution.CurrentDirectory, false, RunWithSystemPaths, ExtraPaths);
 
-            if (Shell.DebugMode)
+            if (Studio.DebugMode)
             {
                 console.WriteLine(Path.GetFileNameWithoutExtension(commandName) + " " + arguments);
             }

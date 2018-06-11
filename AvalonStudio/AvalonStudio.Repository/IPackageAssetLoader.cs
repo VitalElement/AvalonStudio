@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Extensibility.Plugin;
+﻿using AvalonStudio.Extensibility;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

@@ -10,9 +10,9 @@ namespace AvalonStudio.Shell.MainMenu
         [DefaultOrder(0)]
         public IMenuItem Edit => _menuItemFactory.CreateHeaderMenuItem("Edit", null);
 
-        [ExportMainMenuItem("Edit", "Show Command Bar")]
-        [DefaultOrder(0)]        
-        public IMenuItem ShowCommandBar => _menuItemFactory.CreateCommandMenuItem("Edit.ShowQuickCommander");
+        //[ExportMainMenuItem("Edit", "Show Command Bar")]
+        //[DefaultOrder(0)]        
+        //public IMenuItem ShowCommandBar => _menuItemFactory.CreateCommandMenuItem("Edit.ShowQuickCommander");
 
         [ExportMainMenuItem("Edit", "Undo")]
         [DefaultOrder(0)]

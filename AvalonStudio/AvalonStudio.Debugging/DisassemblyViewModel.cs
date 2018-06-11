@@ -2,7 +2,6 @@ using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using AvalonStudio.TextEditor.Rendering;
 using Mono.Debugging.Client;

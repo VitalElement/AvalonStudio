@@ -5,7 +5,6 @@ using Newtonsoft.Json;
 using Avalonia.Media;
 using System.Collections.Generic;
 using Avalonia;
-using AvalonStudio.Extensibility.Plugin;
 using System;
 
 namespace AvalonStudio.Extensibility.Editor

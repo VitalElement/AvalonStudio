@@ -1,6 +1,5 @@
 ﻿using AvaloniaEdit.Snippets;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Languages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;

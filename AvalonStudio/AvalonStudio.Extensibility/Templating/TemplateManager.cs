@@ -16,7 +16,6 @@ using System.Globalization;
 using Microsoft.TemplateEngine.Orchestrator.RunnableProjects;
 using Microsoft.TemplateEngine.Orchestrator.RunnableProjects.Config;
 using Microsoft.TemplateEngine.Edge.TemplateUpdates;
-using AvalonStudio.Extensibility.Plugin;
 using System.Composition;
 
 namespace AvalonStudio.Extensibility.Templating

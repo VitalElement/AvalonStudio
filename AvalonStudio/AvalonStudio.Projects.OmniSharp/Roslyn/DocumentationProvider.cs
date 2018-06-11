@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Extensibility.Plugin;
+﻿using AvalonStudio.Extensibility;
 using Microsoft.CodeAnalysis;
 using System.Collections.Concurrent;
 using System.Composition;

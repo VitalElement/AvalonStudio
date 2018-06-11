@@ -1,7 +1,6 @@
 ﻿using AvaloniaEdit.Document;
 using AvaloniaEdit.Search;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Projects;
 using System.Collections.Generic;

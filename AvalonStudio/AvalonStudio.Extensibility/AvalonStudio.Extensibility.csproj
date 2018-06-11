@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Edge\Microsoft.TemplateEngine.Edge.csproj" />
     <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Orchestrator.RunnableProjects\Microsoft.TemplateEngine.Orchestrator.RunnableProjects.csproj" />
     <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Utils\Microsoft.TemplateEngine.Utils.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Shell.Extensibility\AvalonStudio.Shell.Extensibility.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Projects\MSBuildSolution\LocalizableStrings.Designer.cs">

@@ -1,7 +1,6 @@
 ﻿using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
-using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
@@ -20,12 +19,12 @@ namespace AvalonStudio.Controls
         private string _zoomLevelText;
         private double _fontSize;
         private double _zoomLevel;
-        private double _visualFontSize;
-        private IShell _shell;
+        private double _visualFontSize;        
+        private IStudio _studio;
 
         public EditorViewModel(ISourceFile file)
-        {
-            _shell = IoC.Get<IShell>();
+        {            
+            _studio = IoC.Get<IStudio>();
             _visualFontSize = _fontSize = 14;
             _zoomLevel = 1;
 
@@ -61,7 +60,7 @@ namespace AvalonStudio.Controls
                 Editor.RenameSymbol(Editor.CaretOffset);
             });
 
-            ZoomLevel = _shell.GlobalZoomLevel;
+            ZoomLevel = _studio.GlobalZoomLevel;
         }
 
         ~EditorViewModel()
@@ -79,7 +78,7 @@ namespace AvalonStudio.Controls
                 if (value != _zoomLevel)
                 {
                     _zoomLevel = value;
-                    _shell.GlobalZoomLevel = value;
+                    _studio.GlobalZoomLevel = value;
                     InvalidateVisualFontSize();
 
                     ZoomLevelText = $"{ZoomLevel:0} %";

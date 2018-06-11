@@ -2,15 +2,14 @@
 {
     using Avalonia.Threading;
     using Extensibility;
-    using Extensibility.Plugin;
-    using MVVM;    
+    using MVVM;
     using ReactiveUI;
     using System;
     using System.Composition;
     using System.Linq;
 
     [ExportToolControl]
-    [Export(typeof(IExtension))]    
+    [Export(typeof(IExtension))]
     [Shared]
     public class MemoryViewModel : ToolViewModel, IActivatableExtension
     {
@@ -23,7 +22,7 @@
             Address = "0";
             IsVisible = false;
         }
-        
+
         private IDebugger2 debugger;
 
         public void SetDebugger(IDebugger2 debugger)
@@ -40,7 +39,7 @@
 
             this.debugger = debugger;
 
-           // dataProvider.SetDebugger(debugger);
+            // dataProvider.SetDebugger(debugger);
         }
 
         private bool enabled;

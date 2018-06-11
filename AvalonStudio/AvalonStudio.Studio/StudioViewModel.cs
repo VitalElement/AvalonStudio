@@ -1,6 +1,8 @@
 ﻿using Avalonia.Threading;
+using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
@@ -21,7 +23,7 @@ namespace AvalonStudio.Controls.Standard.Studio
 {
     [Export(typeof(IStudio))]
     [Shared]
-    class StudioViewModel : ReactiveObject, IStudio
+    public class StudioViewModel : ReactiveObject, IStudio
     {
         private WorkspaceTaskRunner _taskRunner;
         private Perspective currentPerspective;
@@ -55,7 +57,7 @@ namespace AvalonStudio.Controls.Standard.Studio
 
             this.WhenAnyValue(x => x.GlobalZoomLevel).Subscribe(zoomLevel =>
             {
-                foreach (var document in Documents.OfType<EditorViewModel>())
+                foreach (var document in IoC.Get<IShell>().Documents.OfType<EditorViewModel>())
                 {
                     document.ZoomLevel = zoomLevel;
                 }
@@ -70,9 +72,7 @@ namespace AvalonStudio.Controls.Standard.Studio
                 Settings.SetSettings(settings);
             });
 
-            QuickCommander = new QuickCommanderViewModel();
-
-            ProcessCancellationToken = new CancellationTokenSource();
+            QuickCommander = new QuickCommanderViewModel();            
 
             EnableDebugModeCommand = ReactiveCommand.Create(() =>
             {
@@ -169,7 +169,7 @@ namespace AvalonStudio.Controls.Standard.Studio
             {
                 this.RaiseAndSetIfChanged(ref _currentColorScheme, value);
 
-                foreach (var document in Documents.OfType<EditorViewModel>())
+                foreach (var document in IoC.Get<IShell>().Documents.OfType<EditorViewModel>())
                 {
                     document.ColorScheme = value;
                 }

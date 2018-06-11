@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
@@ -95,7 +96,7 @@ namespace AvalonStudio.Debugging.GDB
             _detectAsync = detectAsync;
             _waitForStopBeforeRunning = waitForStopBeforeRunning;
 
-            logGdb = IoC.Get<IShell>().DebugMode;
+            logGdb = IoC.Get<IStudio>().DebugMode;
         }
 
         protected override void OnRun(DebuggerStartInfo startInfo)

@@ -1,7 +1,7 @@
 ﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Settings;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Shell;
 using ReactiveUI;
@@ -93,7 +93,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     Save();
 
-                    IoC.Get<IShell>().CurrentColorScheme = loadedScheme;
+                    IoC.Get<IStudio>().CurrentColorScheme = loadedScheme;
                 }
             }
         }

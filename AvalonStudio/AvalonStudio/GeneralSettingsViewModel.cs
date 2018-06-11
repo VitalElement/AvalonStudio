@@ -1,5 +1,4 @@
 ﻿using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Settings;
 using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.GlobalSettings;

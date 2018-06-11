@@ -1,6 +1,5 @@
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;

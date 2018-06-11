@@ -1,8 +1,7 @@
 namespace AvalonStudio.Debugging
 {
     using Avalonia.Threading;
-    using AvalonStudio.Extensibility;
-    using AvalonStudio.Extensibility.Plugin;
+    using AvalonStudio.Extensibility;    
     using AvalonStudio.MVVM;
     using Mono.Debugging.Client;
     using ReactiveUI;

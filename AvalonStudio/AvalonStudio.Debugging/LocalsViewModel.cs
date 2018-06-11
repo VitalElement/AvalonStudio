@@ -1,6 +1,5 @@
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using Mono.Debugging.Client;
 using System.Composition;

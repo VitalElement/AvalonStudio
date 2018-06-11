@@ -1,7 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using AvalonStudio.Controls.Standard.SolutionExplorer;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Shell;

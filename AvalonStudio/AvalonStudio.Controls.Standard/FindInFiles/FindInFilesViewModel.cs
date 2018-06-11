@@ -1,5 +1,4 @@
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System;

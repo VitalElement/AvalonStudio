@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Extensibility.Plugin;
+﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Settings;
 using ReactiveUI;
 using System.Collections.Generic;
