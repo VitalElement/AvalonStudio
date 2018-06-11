@@ -3,7 +3,7 @@
              xmlns:id="clr-namespace:Dock.Model;assembly=Dock.Model"
              xmlns:Documents="clr-namespace:AvaloniaDemo.ViewModels.Documents;assembly=AvalonStudio"
              xmlns:Tools="clr-namespace:AvaloniaDemo.ViewModels.Tools;assembly=AvalonStudio"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Shell.Extensibility"
              xmlns:Views="clr-namespace:AvaloniaDemo.ViewModels.Views;assembly=AvalonStudio.Shell">
   <Application.Styles>
     <StyleInclude Source="resm:Avalonia.Themes.Default.DefaultTheme.xaml?assembly=Avalonia.Themes.Default"/>
