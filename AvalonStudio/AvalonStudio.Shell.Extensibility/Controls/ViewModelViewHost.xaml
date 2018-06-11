@@ -1,4 +1,4 @@
-<Style xmlns="https://github.com/avaloniaui" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility" 
+<Style xmlns="https://github.com/avaloniaui" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Shell.Extensibility" 
        Selector="cont|ViewModelViewHost">
   <Setter Property="Template">
     <ControlTemplate>

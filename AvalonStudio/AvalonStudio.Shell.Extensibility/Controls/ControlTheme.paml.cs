@@ -1,6 +1,6 @@
 using Avalonia.Styling;
 
-namespace AvalonStudio.Extensibility.Controls
+namespace AvalonStudio.Shell.Extensibility.Controls
 {
     public class ControlTheme : Styles
     {
