@@ -33,9 +33,9 @@ namespace AvalonStudio
     [Export(typeof(ShellViewModel))]
     [Export(typeof(IShell))]
     [Shared]
-    internal class ShellViewModel : ViewModel, IShell
+    public class ShellViewModel : ViewModel, IShell
     {
-        public static ShellViewModel Instance { get; internal set; }
+        public static ShellViewModel Instance { get; set; }
         private double _globalZoomLevel;
         private List<KeyBinding> _keyBindings;
 

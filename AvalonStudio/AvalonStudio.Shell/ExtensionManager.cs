@@ -9,7 +9,7 @@ namespace AvalonStudio
 {
     [Export(typeof(IExtensionManager))]
     [Shared]
-    internal class ExtensionManager : IExtensionManager
+    public class ExtensionManager : IExtensionManager
     {
         private const string ExtensionManifestFilename = "extension.json";
 

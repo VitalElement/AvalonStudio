@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace AvalonStudio
 {
-    internal static class CompositionRoot
+    public static class CompositionRoot
     {
         public static CompositionHost CreateContainer(ExtensionManager extensionManager)
         {
