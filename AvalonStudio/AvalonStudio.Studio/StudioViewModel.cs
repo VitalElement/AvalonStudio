@@ -1,12 +1,12 @@
 ﻿using Avalonia.Threading;
-using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
-using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.Studio;
+using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
+using AvalonStudio.Shell.Controls;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Utils;
 using ReactiveUI;
@@ -26,13 +26,16 @@ namespace AvalonStudio.Controls.Standard.Studio
         private WorkspaceTaskRunner _taskRunner;
         private Perspective currentPerspective;
         private bool debugControlsVisible;
+        private QuickCommanderViewModel _quickCommander;
+        private double _globalZoomLevel;
 
         [ImportingConstructor]
         public StudioViewModel([ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
             [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
-            [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks)
+            [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
+            IContentTypeService contentTypeService)
         {
             EditorProviders = editorProviders;
             LanguageServices = languageServices;
@@ -45,7 +48,39 @@ namespace AvalonStudio.Controls.Standard.Studio
             OnSolutionChanged = Observable.FromEventPattern<SolutionChangedEventArgs>(this, nameof(SolutionChanged)).Select(s => s.EventArgs.NewValue);
 
             CurrentPerspective = Perspective.Editor;
+
+            var editorSettings = Settings.GetSettings<EditorSettings>();
+
+            _globalZoomLevel = editorSettings.GlobalZoomLevel;
+
+            this.WhenAnyValue(x => x.GlobalZoomLevel).Subscribe(zoomLevel =>
+            {
+                foreach (var document in Documents.OfType<EditorViewModel>())
+                {
+                    document.ZoomLevel = zoomLevel;
+                }
+            });
+
+            this.WhenAnyValue(x => x.GlobalZoomLevel).Throttle(TimeSpan.FromSeconds(2)).Subscribe(zoomLevel =>
+            {
+                var settings = Settings.GetSettings<EditorSettings>();
+
+                settings.GlobalZoomLevel = zoomLevel;
+
+                Settings.SetSettings(settings);
+            });
+
+            QuickCommander = new QuickCommanderViewModel();
+
+            ProcessCancellationToken = new CancellationTokenSource();
+
+            EnableDebugModeCommand = ReactiveCommand.Create(() =>
+            {
+                DebugMode = !DebugMode;
+            });
         }
+
+        public ReactiveCommand EnableDebugModeCommand { get; }
 
         public IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> SolutionTypes { get; }
 
@@ -110,6 +145,34 @@ namespace AvalonStudio.Controls.Standard.Studio
                 this.RaiseAndSetIfChanged(ref currentSolution, value);
 
                 SolutionChanged?.Invoke(this, new SolutionChangedEventArgs() { OldValue = oldValue, NewValue = currentSolution });
+            }
+        }
+
+        public void ShowQuickCommander()
+        {
+            this._quickCommander.IsVisible = true;
+        }
+
+        public QuickCommanderViewModel QuickCommander
+        {
+            get { return _quickCommander; }
+            set { this.RaiseAndSetIfChanged(ref _quickCommander, value); }
+        }
+
+        private ColorScheme _currentColorScheme;
+
+        public ColorScheme CurrentColorScheme
+        {
+            get { return _currentColorScheme; }
+
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _currentColorScheme, value);
+
+                foreach (var document in Documents.OfType<EditorViewModel>())
+                {
+                    document.ColorScheme = value;
+                }
             }
         }
 
@@ -397,5 +460,13 @@ namespace AvalonStudio.Controls.Standard.Studio
                 CurrentSolution = null;
             }
         }
+
+        public double GlobalZoomLevel
+        {
+            get { return _globalZoomLevel; }
+            set { this.RaiseAndSetIfChanged(ref _globalZoomLevel, value); }
+        }
+
+        public bool DebugMode { get; set; }
     }
 }

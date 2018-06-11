@@ -1,6 +1,6 @@
 ﻿<cont:MetroWindow xmlns="https://github.com/avaloniaui"
                       xmlns:cont="clr-namespace:AvalonStudio.Shell.Controls;assembly=AvalonStudio.Shell"
-                      xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.Views;assembly=AvalonStudio.Extensibility"
+                      xmlns:menu="clr-namespace:AvalonStudio.Shell.Extensibility.MainMenu.Views;assembly=AvalonStudio.Shell.Extensibility"
                       xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
                       xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
                       xmlns:id="clr-namespace:Dock.Avalonia;assembly=Dock.Avalonia"
@@ -97,6 +97,9 @@
       <cont:StatusBar Margin="0 2 0 0" DataContext="{Binding StatusBar}" />
     </Grid>
 
-    <cont:QuickCommander Grid.RowSpan="3" Grid.ColumnSpan="5" Width="450" MaxHeight="500" DataContext="{Binding QuickCommander}" VerticalAlignment="Top" />
+    <Grid Grid.RowSpan="3" Grid.ColumnSpan="5" Name="PART_ExtensibleOverlay">
+      
+    </Grid>
+    <!--<cont:QuickCommander Width="450" MaxHeight="500" DataContext="{Binding QuickCommander}" VerticalAlignment="Top" />-->
   </Grid>
 </cont:MetroWindow>

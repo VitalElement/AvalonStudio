@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AvalonStudio.Documents;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
@@ -9,6 +10,12 @@ using AvalonStudio.TestFrameworks;
 
 namespace AvalonStudio.Extensibility.Studio
 {
+    public enum Perspective
+    {
+        Editor,
+        Debug
+    }
+
     public interface IStudio
     {
         IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
@@ -16,6 +23,8 @@ namespace AvalonStudio.Extensibility.Studio
         IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
         IEnumerable<Lazy<IEditorProvider>> EditorProviders { get; }
         IEnumerable<Lazy<ITestFramework>> TestFrameworks { get; }
+
+        ColorScheme CurrentColorScheme { get; set; }
 
         Perspective CurrentPerspective { get; set; }
 
@@ -60,5 +69,9 @@ namespace AvalonStudio.Extensibility.Studio
         IProject GetDefaultProject();
 
         void InvalidateCodeAnalysis();
+
+        bool DebugMode { get; }
+
+        double GlobalZoomLevel { get; set; }
     }
 }

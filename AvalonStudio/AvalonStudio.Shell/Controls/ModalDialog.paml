@@ -1,6 +1,6 @@
 ﻿<controls:MetroWindow xmlns="https://github.com/avaloniaui"
               xmlns:controls="clr-namespace:AvalonStudio.Shell.Controls;assembly=AvalonStudio.Shell"                            
-              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"              
+              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Shell.Extensibility"              
               Background="{DynamicResource ThemeControlDarkBrush}"
               Icon="resm:AvalonStudio.Shell.Assets.logo-256.png?assembly=AvalonStudio.Shell"
               Title="{Binding Title}" BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}"

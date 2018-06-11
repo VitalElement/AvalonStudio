@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Styling;
-using AvalonStudio.Utils;
+using AvalonStudio.Extensibility.Utils;
 using System;
 
 namespace AvalonStudio.Shell.Controls

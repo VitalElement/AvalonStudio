@@ -1,5 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:mod="clr-namespace:AvalonStudio.Menus.Models;assembly=AvalonStudio.Extensibility">
+             xmlns:mod="clr-namespace:AvalonStudio.Menus.Models;assembly=AvalonStudio.Shell.Extensibility">
   <UserControl.Styles>
     <Style Selector="Button /template/ ContentPresenter">
       <Setter Property="BorderThickness" Value="0"/>

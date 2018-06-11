@@ -1,5 +1,5 @@
 ﻿using AvalonStudio.Extensibility;
-using AvalonStudio.Platforms;
+using AvalonStudio.Shell.Extensibility.Platforms;
 using System;
 using System.Collections.Generic;
 using System.Composition;

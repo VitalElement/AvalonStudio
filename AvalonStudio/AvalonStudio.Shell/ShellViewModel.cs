@@ -1,20 +1,15 @@
 using Avalonia.Input;
 using AvalonStudio.Commands;
-using AvalonStudio.Controls;
 using AvalonStudio.Docking;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Dialogs;
-using AvalonStudio.Extensibility.Editor;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Shell;
-using AvalonStudio.GlobalSettings;
-using AvalonStudio.Languages;
 using AvalonStudio.MainMenu;
 using AvalonStudio.Menus.ViewModels;
 using AvalonStudio.MVVM;
-using AvalonStudio.Platforms;
 using AvalonStudio.Shell.Controls;
+using AvalonStudio.Shell.Extensibility.Platforms;
 using AvalonStudio.Toolbars;
 using AvalonStudio.Toolbars.ViewModels;
 using Dock.Model;
@@ -35,8 +30,7 @@ namespace AvalonStudio.Shell
     [Shared]
     public class ShellViewModel : ViewModel, IShell
     {
-        public static ShellViewModel Instance { get; set; }
-        private double _globalZoomLevel;
+        public static ShellViewModel Instance { get; set; }        
         private List<KeyBinding> _keyBindings;
 
         private IEnumerable<ToolbarViewModel> _toolbars;
@@ -49,7 +43,7 @@ namespace AvalonStudio.Shell
 
         private ModalDialogViewModelBase modalDialog;
 
-        private QuickCommanderViewModel _quickCommander;
+        
 
         private DocumentDock _documentDock;
         private ToolDock _leftPane;
@@ -62,8 +56,7 @@ namespace AvalonStudio.Shell
         [ImportingConstructor]
         public ShellViewModel(
             CommandService commandService,
-            Lazy<StatusBarViewModel> statusBar,
-            IContentTypeService contentTypeService,
+            Lazy<StatusBarViewModel> statusBar,            
             MainMenuService mainMenuService,
             ToolbarService toolbarService,
             [ImportMany] IEnumerable<Lazy<IExtension>> extensions,
@@ -79,27 +72,14 @@ namespace AvalonStudio.Shell
             var toolbars = toolbarService.GetToolbars();
             //StandardToolbar = toolbars.Single(t => t.Key == "Standard").Value;
 
-            _statusBar = statusBar;
-            //IoC.RegisterConstant<IStatusBar>(_statusBar.Value);            
+            _statusBar = statusBar;            
 
-            _keyBindings = new List<KeyBinding>();
-
-            //IoC.RegisterConstant<IShell>(this);
-            //IoC.RegisterConstant(this);
+            _keyBindings = new List<KeyBinding>();            
 
             var factory = new DefaultLayoutFactory();
             Factory = factory;
 
-            ModalDialog = new ModalDialogViewModelBase("Dialog");
-
-            QuickCommander = new QuickCommanderViewModel();
-
-            ProcessCancellationToken = new CancellationTokenSource();
-
-            EnableDebugModeCommand = ReactiveCommand.Create(() =>
-            {
-                DebugMode = !DebugMode;
-            });
+            ModalDialog = new ModalDialogViewModelBase("Dialog");            
 
             _documents = new List<IDocumentTabViewModel>();
         }
@@ -187,28 +167,7 @@ namespace AvalonStudio.Shell
                 }
             }
 
-            IoC.Get<IStatusBar>().ClearText();
-
-            var editorSettings = Settings.GetSettings<EditorSettings>();
-
-            _globalZoomLevel = editorSettings.GlobalZoomLevel;
-
-            this.WhenAnyValue(x => x.GlobalZoomLevel).Subscribe(zoomLevel =>
-            {
-                foreach (var document in Documents.OfType<EditorViewModel>())
-                {
-                    document.ZoomLevel = zoomLevel;
-                }
-            });
-
-            this.WhenAnyValue(x => x.GlobalZoomLevel).Throttle(TimeSpan.FromSeconds(2)).Subscribe(zoomLevel =>
-            {
-                var settings = Settings.GetSettings<EditorSettings>();
-
-                settings.GlobalZoomLevel = zoomLevel;
-
-                Settings.SetSettings(settings);
-            });
+            IoC.Get<IStatusBar>().ClearText();            
         }
 
         private void DockView(IDock dock, IView view, bool add = true)
@@ -227,10 +186,6 @@ namespace AvalonStudio.Shell
         }
 
         public IReadOnlyList<IDocumentTabViewModel> Documents => _documents.AsReadOnly();
-
-        public ReactiveCommand EnableDebugModeCommand { get; }
-
-
 
         public IDockFactory Factory
         {
@@ -279,10 +234,7 @@ namespace AvalonStudio.Shell
 
         private ToolbarViewModel StandardToolbar { get; }
 
-        public IEnumerable<KeyBinding> KeyBindings => _keyBindings;
-
-        public CancellationTokenSource ProcessCancellationToken { get; private set; }
-
+        public IEnumerable<KeyBinding> KeyBindings => _keyBindings;        
 
         public void AddDocument(IDocumentTabViewModel document, bool temporary = false)
         {
@@ -298,10 +250,7 @@ namespace AvalonStudio.Shell
                 return;
             }
 
-            if (document is EditorViewModel doc)
-            {
-                doc.Editor?.Save();
-            }
+            // TODO implement save on close.
 
             if (document.Parent is IDock dock)
             {
@@ -310,43 +259,13 @@ namespace AvalonStudio.Shell
             }
 
             _documents.Remove(document);
-        }
-
-
-
-        public void ShowQuickCommander()
-        {
-            this._quickCommander.IsVisible = true;
-        }
+        }        
 
         public ModalDialogViewModelBase ModalDialog
         {
             get { return modalDialog; }
             set { this.RaiseAndSetIfChanged(ref modalDialog, value); }
-        }
-
-        public QuickCommanderViewModel QuickCommander
-        {
-            get { return _quickCommander; }
-            set { this.RaiseAndSetIfChanged(ref _quickCommander, value); }
-        }
-
-        private ColorScheme _currentColorScheme;
-
-        public ColorScheme CurrentColorScheme
-        {
-            get { return _currentColorScheme; }
-
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _currentColorScheme, value);
-
-                foreach (var document in Documents.OfType<EditorViewModel>())
-                {
-                    document.ColorScheme = value;
-                }
-            }
-        }
+        }        
 
         public IDocumentTabViewModel SelectedDocument
         {
@@ -361,13 +280,5 @@ namespace AvalonStudio.Shell
                 this.RaisePropertyChanged(nameof(SelectedDocument));
             }
         }
-
-        public double GlobalZoomLevel
-        {
-            get { return _globalZoomLevel; }
-            set { this.RaiseAndSetIfChanged(ref _globalZoomLevel, value); }
-        }
-
-        public bool DebugMode { get; set; }
     }
 }

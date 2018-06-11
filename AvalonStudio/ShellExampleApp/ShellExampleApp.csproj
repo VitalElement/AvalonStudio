@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Shell.Extensibility\AvalonStudio.Shell.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Shell\AvalonStudio.Shell.csproj" />
   </ItemGroup>
 

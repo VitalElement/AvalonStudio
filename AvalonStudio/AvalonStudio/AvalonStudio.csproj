@@ -13,7 +13,11 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>  
   <ItemGroup>
-    <EmbeddedResource Include="**\*.xshd;**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <EmbeddedResource Include="GeneralSettingsView.xaml" />
+    <EmbeddedResource Include="Assets\icon.ico" />
+    <EmbeddedResource Include="App.paml" />
+    <EmbeddedResource Include="Controls\DebugHoverProbeView.paml" />
+    <EmbeddedResource Include="Controls\PackageManagerDialogView.paml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.6.2-build5392-beta" />
