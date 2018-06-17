@@ -44,6 +44,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             _solutionTypes = solutionTypes;
 
             Title = "Solution Explorer";
+
+            Id = ToolId;
         }
 
         public new ISolution Model

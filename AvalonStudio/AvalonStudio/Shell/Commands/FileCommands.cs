@@ -29,7 +29,7 @@ namespace AvalonStudio.Shell.Commands
             SaveCommand = new CommandDefinition(
                 "Save",
                 commandIconService.GetCompletionKindImage("Save"),
-                ReactiveCommand.Create(Save));
+                ReactiveCommand.Create(Save, _shell.WhenAnyValue<IShell, bool, Documents.IDocumentTabViewModel>(shell => shell.SelectedDocument, selected => selected != null)));
 
             SaveAllCommand = new CommandDefinition(
                 "Save All",

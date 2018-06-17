@@ -156,16 +156,20 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public event EventHandler<TextInputEventArgs> TextEntered;
 
         public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
-        public event EventHandler LostFocus;
+        public event EventHandler LostFocus;        
 
         public void Dispose()
         {
-            _codeEditor.TextArea.TextEntering -= TextEntering;
-            _codeEditor.TextArea.TextEntered -= TextEntered;
-            _codeEditor.LostFocus -= _codeEditor_LostFocus;
-            _codeEditor = null;
+            if (_codeEditor != null)
+            {
+                _codeEditor.Close();
+                _codeEditor.TextArea.TextEntering -= TextEntering;
+                _codeEditor.TextArea.TextEntered -= TextEntered;
+                _codeEditor.LostFocus -= _codeEditor_LostFocus;
+                _codeEditor = null;
+            }
 
-            _document.Dispose();
+            _document?.Dispose();
             _document = null;
         }
 

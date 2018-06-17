@@ -4,6 +4,7 @@ using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.MainMenu;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
+using Dock.Model;
 using ReactiveUI;
 using System;
 using System.Threading.Tasks;
@@ -151,5 +152,38 @@ namespace AvalonStudio.Controls
         public abstract IEditor Editor { get; }
 
         public abstract Task WaitForEditorToLoadAsync();
+
+        public override void Close()
+        {
+            base.Close();
+
+            Editor.Dispose();            
+        }
+
+        /// <summary>
+        /// Gets or sets view id.
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets view context.
+        /// </summary>
+        public object Context { get; set; }
+
+        /// <summary>
+        /// Gets or sets view width.
+        /// </summary>
+        public double Width { get; set; }
+
+        /// <summary>
+        /// Gets or sets view height.
+        /// </summary>
+        public double Height { get; set; }
+
+        /// <summary>
+        /// Gets or sets view parent.
+        /// </summary>
+        /// <remarks>If parrent is <see cref="null"/> than view is root.</remarks>
+        public IView Parent { get; set; }
     }
 }

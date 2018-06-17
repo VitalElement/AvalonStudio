@@ -944,24 +944,28 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             ShutdownBackgroundWorkers();
 
-            UnsavedFile unsavedFile = null;
-
-            lock (UnsavedFiles)
+            if (SourceFile != null)
             {
-                unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
-            }
+                UnsavedFile unsavedFile = null;
 
-            if (unsavedFile != null)
-            {
                 lock (UnsavedFiles)
                 {
-                    UnsavedFiles.Remove(unsavedFile);
+                    unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
+                }
+
+                if (unsavedFile != null)
+                {
+                    lock (UnsavedFiles)
+                    {
+                        UnsavedFiles.Remove(unsavedFile);
+                    }
                 }
             }
 
             if (LanguageService != null)
             {
                 LanguageService.UnregisterSourceFile(DocumentAccessor);
+                LanguageService = null;
             }
 
             Document.TextChanged -= TextDocument_TextChanged;
@@ -1260,11 +1264,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
+            Close();
+
+            base.OnDetachedFromVisualTree(e);
+        }
+
+        internal void Close()
+        {
             UnRegisterLanguageService();
 
             _disposables.Dispose();
 
-            DocumentAccessor?.Dispose();
+            //DocumentAccessor?.Dispose();
 
             TextArea.TextView.BackgroundRenderers.Clear();
             TextArea.TextView.LineTransformers.Clear();
@@ -1272,8 +1283,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _breakpointMargin.Dispose();
             _lineNumberMargin.Dispose();
-
-            base.OnDetachedFromVisualTree(e);
         }
     }
 }

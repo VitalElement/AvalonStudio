@@ -11,10 +11,10 @@ namespace AvalonStudio.Controls
         static DocumentTabItem()
         {
             PseudoClass(IsFocusedProperty, o => o, ":focused");
-            PseudoClass(DockPanel.DockProperty, o => o == Dock.Right, ":dockright");
-            PseudoClass(DockPanel.DockProperty, o => o == Dock.Left, ":dockleft");
-            PseudoClass(DockPanel.DockProperty, o => o == Dock.Top, ":docktop");
-            PseudoClass(DockPanel.DockProperty, o => o == Dock.Bottom, ":dockbottom");
+            PseudoClass(DockPanel.DockProperty, o => o == Avalonia.Controls.Dock.Right, ":dockright");
+            PseudoClass(DockPanel.DockProperty, o => o == Avalonia.Controls.Dock.Left, ":dockleft");
+            PseudoClass(DockPanel.DockProperty, o => o == Avalonia.Controls.Dock.Top, ":docktop");
+            PseudoClass(DockPanel.DockProperty, o => o == Avalonia.Controls.Dock.Bottom, ":dockbottom");
         }
 
         public DocumentTabItem()
@@ -26,7 +26,7 @@ namespace AvalonStudio.Controls
         }
 
         public static readonly AvaloniaProperty<string> TitleProprty =
-            AvaloniaProperty.Register<ToolControl, string>(nameof(Title));
+            AvaloniaProperty.Register<DocumentTabItem, string>(nameof(Title));
 
         public string Title
         {
@@ -35,7 +35,7 @@ namespace AvalonStudio.Controls
         }
 
         public static readonly AvaloniaProperty<IBrush> HeaderBackgroundProperty =
-            AvaloniaProperty.Register<ToolControl, IBrush>(nameof(HeaderBackground), defaultValue: Brushes.WhiteSmoke);
+            AvaloniaProperty.Register<DocumentTabItem, IBrush>(nameof(HeaderBackground), defaultValue: Brushes.WhiteSmoke);
 
         public IBrush HeaderBackground
         {
