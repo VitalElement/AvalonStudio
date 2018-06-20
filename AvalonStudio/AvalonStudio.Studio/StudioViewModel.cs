@@ -72,7 +72,7 @@ namespace AvalonStudio.Controls.Standard.Studio
                 Settings.SetSettings(settings);
             });
 
-            QuickCommander = new QuickCommanderViewModel();            
+            QuickCommander = new QuickCommanderViewModel();
 
             EnableDebugModeCommand = ReactiveCommand.Create(() =>
             {
@@ -95,10 +95,13 @@ namespace AvalonStudio.Controls.Standard.Studio
         public IWorkspaceTaskRunner TaskRunner => _taskRunner;
 
         public event EventHandler<BuildEventArgs> BuildStarting;
+
         public event EventHandler<BuildEventArgs> BuildCompleted;
 
         private ISolution currentSolution;
+
         public event EventHandler<SolutionChangedEventArgs> SolutionChanged;
+
         public IObservable<ISolution> OnSolutionChanged { get; }
 
         public bool DebugVisible
@@ -344,7 +347,7 @@ namespace AvalonStudio.Controls.Standard.Studio
 
                 if (focus)
                 {
-                    shell.Layout.Factory.Select(fileTab);
+                    shell.Layout.Factory.SetCurrentView(fileTab);
                     fileTab.Editor.Focus();
                 }
 

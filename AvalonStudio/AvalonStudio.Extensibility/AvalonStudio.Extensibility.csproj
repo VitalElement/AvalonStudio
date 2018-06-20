@@ -20,13 +20,14 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\AvaloniaEdit\src\AvaloniaEdit\AvaloniaEdit.csproj" />  
+    <ProjectReference Include="..\..\AvaloniaEdit\src\AvaloniaEdit\AvaloniaEdit.csproj" />
+    <ProjectReference Include="..\..\AvalonStudio.Shell\Dock\src\Dock.Model\Dock.Model.csproj" />
+    <ProjectReference Include="..\..\AvalonStudio.Shell\src\AvalonStudio.Shell.Extensibility\AvalonStudio.Shell.Extensibility.csproj" />  
     <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Abstractions\Microsoft.TemplateEngine.Abstractions.csproj" />
     <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Cli\Microsoft.TemplateEngine.Cli.csproj" />
     <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Edge\Microsoft.TemplateEngine.Edge.csproj" />
     <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Orchestrator.RunnableProjects\Microsoft.TemplateEngine.Orchestrator.RunnableProjects.csproj" />
-    <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Utils\Microsoft.TemplateEngine.Utils.csproj" />
-    <ProjectReference Include="..\AvalonStudio.Shell.Extensibility\AvalonStudio.Shell.Extensibility.csproj" />
+    <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Utils\Microsoft.TemplateEngine.Utils.csproj" />    
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Projects\MSBuildSolution\LocalizableStrings.Designer.cs">
