@@ -1,6 +1,0 @@
-﻿<Styles xmlns="https://github.com/avaloniaui">  
-  <StyleInclude Source="resm:AvalonStudio.Shell.Extensibility.Controls.DocumentTabControl.xaml?assembly=AvalonStudio.Shell.Extensibility"/>
-  <StyleInclude Source="resm:AvalonStudio.Shell.Extensibility.Controls.DocumentTabItem.xaml?assembly=AvalonStudio.Shell.Extensibility"/>
-  <StyleInclude Source="resm:AvalonStudio.Shell.Extensibility.Controls.ViewModelViewHost.xaml?assembly=AvalonStudio.Shell.Extensibility"/>
-  <StyleInclude Source="resm:AvalonStudio.Shell.Extensibility.Controls.EditableTextBlock.xaml?assembly=AvalonStudio.Shell.Extensibility"/>
-</Styles>
