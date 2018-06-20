@@ -11,7 +11,6 @@ namespace AvalonStudio.Docking
     /// <inheritdoc/>
     public class DefaultLayoutFactory : DockFactory
     {
-
         public DocumentDock DocumentDock { get; private set; }
         public ToolDock LeftDock { get; private set; }
         public ToolDock RightDock { get; private set; }
@@ -195,13 +194,13 @@ namespace AvalonStudio.Docking
 
             this.Update(layout, context, null);
 
-            if (layout is IWindowsHost layoutWindowsHost)
+            if (layout is IDock layoutWindowsHost)
             {
                 layoutWindowsHost.ShowWindows();
-                if (layout is IViewsHost layoutViewsHost)
+                if (layout is IDock layoutViewsHost)
                 {
                     layoutViewsHost.CurrentView = layoutViewsHost.DefaultView;
-                    if (layoutViewsHost.CurrentView is IWindowsHost currentViewWindowsHost)
+                    if (layoutViewsHost.CurrentView is IDock currentViewWindowsHost)
                     {
                         currentViewWindowsHost.ShowWindows();
                     }

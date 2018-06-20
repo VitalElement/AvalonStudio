@@ -66,8 +66,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Dock\src\Dock.Avalonia\Dock.Avalonia.csproj" />
     <ProjectReference Include="..\..\Dock\src\Dock.Model.ReactiveUI\Dock.Model.ReactiveUI.csproj" />
-    <ProjectReference Include="..\..\Dock\src\Dock.Model\Dock.Model.csproj" />
-    <ProjectReference Include="..\..\Dock\src\Dock.Serializer\Dock.Serializer.csproj" />
+    <ProjectReference Include="..\..\Dock\src\Dock.Model\Dock.Model.csproj" />    
     <ProjectReference Include="..\AvalonStudio.Shell.Extensibility\AvalonStudio.Shell.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Utils\AvalonStudio.Utils.csproj" />
   </ItemGroup>

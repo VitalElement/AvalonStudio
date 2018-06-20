@@ -14,7 +14,6 @@ using AvalonStudio.Toolbars;
 using AvalonStudio.Toolbars.ViewModels;
 using Dock.Model;
 using Dock.Model.Controls;
-using Dock.Serializer;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -30,7 +29,7 @@ namespace AvalonStudio.Shell
     [Shared]
     public class ShellViewModel : ViewModel, IShell
     {
-        public static ShellViewModel Instance { get; set; }        
+        public static ShellViewModel Instance { get; set; }
         private List<KeyBinding> _keyBindings;
 
         private IEnumerable<ToolbarViewModel> _toolbars;
@@ -43,8 +42,6 @@ namespace AvalonStudio.Shell
 
         private ModalDialogViewModelBase modalDialog;
 
-        
-
         private DocumentDock _documentDock;
         private ToolDock _leftPane;
         private ToolDock _rightPane;
@@ -56,7 +53,7 @@ namespace AvalonStudio.Shell
         [ImportingConstructor]
         public ShellViewModel(
             CommandService commandService,
-            Lazy<StatusBarViewModel> statusBar,            
+            Lazy<StatusBarViewModel> statusBar,
             MainMenuService mainMenuService,
             ToolbarService toolbarService,
             [ImportMany] IEnumerable<Lazy<IExtension>> extensions,
@@ -72,14 +69,14 @@ namespace AvalonStudio.Shell
             var toolbars = toolbarService.GetToolbars();
             //StandardToolbar = toolbars.Single(t => t.Key == "Standard").Value;
 
-            _statusBar = statusBar;            
+            _statusBar = statusBar;
 
-            _keyBindings = new List<KeyBinding>();            
+            _keyBindings = new List<KeyBinding>();
 
             var factory = new DefaultLayoutFactory();
             Factory = factory;
 
-            ModalDialog = new ModalDialogViewModelBase("Dialog");            
+            ModalDialog = new ModalDialogViewModelBase("Dialog");
 
             _documents = new List<IDocumentTabViewModel>();
         }
@@ -167,7 +164,7 @@ namespace AvalonStudio.Shell
                 }
             }
 
-            IoC.Get<IStatusBar>().ClearText();            
+            IoC.Get<IStatusBar>().ClearText();
         }
 
         private void DockView(IDock dock, IView view, bool add = true)
@@ -182,7 +179,7 @@ namespace AvalonStudio.Shell
                 Factory.Update(view, view, view.Parent);
             }
 
-            Factory.Select(view);
+            Factory.SetCurrentView(view);
         }
 
         public IReadOnlyList<IDocumentTabViewModel> Documents => _documents.AsReadOnly();
@@ -201,12 +198,12 @@ namespace AvalonStudio.Shell
 
         public void LoadLayout()
         {
-            string path = System.IO.Path.Combine(Platform.SettingsDirectory, "Layout.json");
+            //string path = System.IO.Path.Combine(Platform.SettingsDirectory, "Layout.json");
 
-            if (DockSerializer.Exists(path))
-            {
-                //Layout = DockSerializer.Load<RootDock>(path);
-            }
+            //if (DockSerializer.Exists(path))
+            //{
+            //    //Layout = DockSerializer.Load<RootDock>(path);
+            //}
 
             if (Layout == null)
             {
@@ -222,8 +219,8 @@ namespace AvalonStudio.Shell
 
         public void SaveLayout()
         {
-            string path = System.IO.Path.Combine(Platform.SettingsDirectory, "Layout.json");
-            DockSerializer.Save(path, Layout);
+            //string path = System.IO.Path.Combine(Platform.SettingsDirectory, "Layout.json");
+            //DockSerializer.Save(path, Layout);
         }
 
         public MenuViewModel MainMenu { get; }
@@ -234,7 +231,7 @@ namespace AvalonStudio.Shell
 
         private ToolbarViewModel StandardToolbar { get; }
 
-        public IEnumerable<KeyBinding> KeyBindings => _keyBindings;        
+        public IEnumerable<KeyBinding> KeyBindings => _keyBindings;
 
         public void AddDocument(IDocumentTabViewModel document, bool temporary = false)
         {
@@ -259,13 +256,13 @@ namespace AvalonStudio.Shell
             }
 
             _documents.Remove(document);
-        }        
+        }
 
         public ModalDialogViewModelBase ModalDialog
         {
             get { return modalDialog; }
             set { this.RaiseAndSetIfChanged(ref modalDialog, value); }
-        }        
+        }
 
         public IDocumentTabViewModel SelectedDocument
         {
@@ -274,7 +271,7 @@ namespace AvalonStudio.Shell
             {
                 if (value != null)
                 {
-                    Factory.Select(value);
+                    Factory.SetCurrentView(value);
                 }
 
                 this.RaisePropertyChanged(nameof(SelectedDocument));

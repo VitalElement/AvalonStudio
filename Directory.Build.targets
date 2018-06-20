@@ -1,8 +1,8 @@
 <Project>
 
   <PropertyGroup>
-    <AvaloniaVersion>0.6.2-build5392-beta</AvaloniaVersion>
-    <AvaloniaBehaviorsVersion>0.6.2-build518-alpha</AvaloniaBehaviorsVersion>
+    <AvaloniaVersion>0.6.2-build5435-beta</AvaloniaVersion>
+    <AvaloniaBehaviorsVersion>0.6.2-build520-alpha</AvaloniaBehaviorsVersion>
     <GitInfoVersion>2.0.10</GitInfoVersion>
     <MicrosoftExtensionsDependencyModelVersion>2.0.4</MicrosoftExtensionsDependencyModelVersion>
     <NewtonsoftJsonVersion>10.0.3</NewtonsoftJsonVersion>
@@ -22,6 +22,7 @@
     <PackageReference Update="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
     <PackageReference Update="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
     <PackageReference Update="Avalonia.Xaml.Behaviors" Version="$(AvaloniaBehaviorsVersion)" />
+    <PackageReference Update="Avalonia.Xaml.Interactions" Version="$(AvaloniaBehaviorsVersion)" />
     <PackageReference Update="Avalonia.Xaml.Interactions.Custom" Version="$(AvaloniaBehaviorsVersion)" />
     <PackageReference Update="GitInfo" Version="$(GitInfoVersion)" />
     <PackageReference Update="Microsoft.CodeAnalysis" Version="$(RoslynVersion)" />
