@@ -10,9 +10,6 @@
 [submodule "templating"]
 	path = templating
 	url = https://github.com/VitalElement/templating.git
-[submodule "Dock"]
-	path = Dock
-	url = https://github.com/wieslawsoltes/Dock.git
 [submodule "AvalonStudio.Shell"]
 	path = AvalonStudio.Shell
 	url = https://github.com/VitalElement/AvalonStudio.Shell.git
