@@ -33,7 +33,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             NewItemCommand = ReactiveCommand.Create(() =>
             {
                 _shell.ModalDialog = new NewItemDialogViewModel(model);
-                _shell.ModalDialog.ShowDialog();
+                _shell.ModalDialog.ShowDialogAsync();
             });
 
             NewFileCommand = ReactiveCommand.Create(async () =>

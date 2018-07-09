@@ -3,6 +3,7 @@ using System;
 using System.Composition;
 using ReactiveUI;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 
 namespace AvalonStudio.Shell.Commands
 {
@@ -19,11 +20,13 @@ namespace AvalonStudio.Shell.Commands
         [DefaultKeyGestures("ALT+F4")]
         public CommandDefinition ExitCommand { get; }
 
+        private readonly IStudio _studio;
         private readonly IShell _shell;
 
         [ImportingConstructor]
         public FileCommands(CommandIconService commandIconService)
         {
+            _studio = IoC.Get<IStudio>();
             _shell = IoC.Get<IShell>();
 
             SaveCommand = new CommandDefinition(
@@ -39,8 +42,8 @@ namespace AvalonStudio.Shell.Commands
             ExitCommand = new CommandDefinition("Exit", null, ReactiveCommand.Create(Exit));
         }
 
-        private void Save() => _shell.Save();
-        private void SaveAll() => _shell.SaveAll();
+        private void Save() => _studio.Save();
+        private void SaveAll() => _studio.SaveAll();
 
         private void Exit() => Environment.Exit(0);
     }

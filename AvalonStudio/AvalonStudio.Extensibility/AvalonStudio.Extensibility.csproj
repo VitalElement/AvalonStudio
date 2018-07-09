@@ -7,14 +7,9 @@
   <ItemGroup>
     <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="**\*.resx" GenerateSource="true" />
-  </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.2-build5373-beta" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
+    <PackageReference Include="Avalonia" Version="0.6.2-build5392-beta" />    
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="reactiveui" Version="8.0.1" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
@@ -26,12 +21,13 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AvaloniaEdit\src\AvaloniaEdit\AvaloniaEdit.csproj" />
-    <ProjectReference Include="..\..\Dock\src\Dock.Model\Dock.Model.csproj" />
+    <ProjectReference Include="..\..\AvalonStudio.Shell\Dock\src\Dock.Model\Dock.Model.csproj" />
+    <ProjectReference Include="..\..\AvalonStudio.Shell\src\AvalonStudio.Shell.Extensibility\AvalonStudio.Shell.Extensibility.csproj" />  
     <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Abstractions\Microsoft.TemplateEngine.Abstractions.csproj" />
     <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Cli\Microsoft.TemplateEngine.Cli.csproj" />
     <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Edge\Microsoft.TemplateEngine.Edge.csproj" />
     <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Orchestrator.RunnableProjects\Microsoft.TemplateEngine.Orchestrator.RunnableProjects.csproj" />
-    <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Utils\Microsoft.TemplateEngine.Utils.csproj" />
+    <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Utils\Microsoft.TemplateEngine.Utils.csproj" />    
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Projects\MSBuildSolution\LocalizableStrings.Designer.cs">

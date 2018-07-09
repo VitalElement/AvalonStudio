@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
-using AvalonStudio.Commands;
+﻿using AvalonStudio.Commands;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Shell;
+using AvalonStudio.Extensibility.Studio;
 using ReactiveUI;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.Commands
 {
@@ -17,20 +17,20 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Commands
         {
             var definition = await editor.LanguageService?.GotoDefinition(editor, 1);
 
-            var shell = IoC.Get<IShell>();
+            var studio = IoC.Get<IStudio>();
 
             if (definition.MetaDataFile == null)
             {
-                var document = shell.CurrentSolution.FindFile(definition.FileName);
+                var document = studio.CurrentSolution.FindFile(definition.FileName);
 
                 if (document != null)
                 {
-                    await shell.OpenDocumentAsync(document, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
+                    await studio.OpenDocumentAsync(document, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
                 }
             }
             else
             {
-                await shell.OpenDocumentAsync(definition.MetaDataFile, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
+                await studio.OpenDocumentAsync(definition.MetaDataFile, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
             }
         }
     }

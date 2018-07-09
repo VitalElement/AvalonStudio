@@ -1,6 +1,7 @@
 ﻿using AvalonStudio.Commands;
 using AvalonStudio.Controls.Standard.SolutionExplorer;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using ReactiveUI;
 using System.Composition;
 
@@ -15,7 +16,7 @@ namespace AvalonStudio.Shell.Commands
         [ExportCommandDefinition("Build.Clean")]
         public CommandDefinition CleanCommand { get; }
 
-        private readonly IShell _shell;
+        private readonly IStudio _studio;
         private readonly ISolutionExplorer _solutionExplorer;
 
         [ImportingConstructor]
@@ -23,20 +24,20 @@ namespace AvalonStudio.Shell.Commands
             ISolutionExplorer solutionExplorer,
             CommandIconService commandIconService)
         {
-            _shell = IoC.Get<IShell>();
+            _studio = IoC.Get<IStudio>();
             _solutionExplorer = solutionExplorer;
 
-            var shellCanRunTask = _shell.CanRunTask();
+            var shellCanRunTask = _studio.CanRunTask();
 
             BuildCommand = new CommandDefinition(
                 "Build",
                 commandIconService.GetCompletionKindImage("Build"),
-                ReactiveCommand.Create(_shell.Build, shellCanRunTask));
+                ReactiveCommand.Create(_studio.Build, shellCanRunTask));
 
             CleanCommand = new CommandDefinition(
                 "Clean",
                 commandIconService.GetCompletionKindImage("Clean"),
-                ReactiveCommand.Create(_shell.Clean, shellCanRunTask));
+                ReactiveCommand.Create(_studio.Clean, shellCanRunTask));
         }
     }
 }

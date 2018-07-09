@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -11,23 +11,25 @@ using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
+using System.Reactive.Linq;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     [Export(typeof(ISolutionExplorer))]
     [Export(typeof(IExtension))]
+    [ExportToolControl]
     [Shared]
     public class SolutionExplorerViewModel : ToolViewModel, IExtension, ISolutionExplorer
     {
         public const string ToolId = "CIDSEVM00";
 
-        private ISolution model;
-
         private ViewModel selectedItem;
 
         private IProject selectedProject;
+        private IStudio _studio;
         private IShell _shell;
 
+        private ISolution model;
         private SolutionViewModel solution;
 
         private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
@@ -36,10 +38,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public SolutionExplorerViewModel(
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes)
         {
-            IoC.RegisterConstant<ISolutionExplorer>(this);
-
             _shell = IoC.Get<IShell>();
-            _shell.SolutionChanged += (sender, e) => { Model = _shell.CurrentSolution; };
+            _studio = IoC.Get<IStudio>();
+
+            _studio.SolutionChanged += (sender, e) => { Model = _studio.CurrentSolution; };
 
             _solutionTypes = solutionTypes;
 
@@ -63,7 +65,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 }
 
                 SelectedProject = null;
-                
+
                 model = value;
 
                 if (Model != null)
@@ -85,11 +87,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        internal void OnKeyDown (Key key, InputModifiers modifiers)
+        internal void OnKeyDown(Key key, InputModifiers modifiers)
         {
-            if(key == Key.Delete && modifiers == InputModifiers.None)
+            if (key == Key.Delete && modifiers == InputModifiers.None)
             {
-                if(SelectedItem?.Model is IDeleteable deletable)
+                if (SelectedItem?.Model is IDeleteable deletable)
                 {
                     deletable.Delete();
                 }
@@ -126,7 +128,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
                 if (value is SourceFileViewModel sourceFile)
                 {
-                    _shell.OpenDocument((ISourceFile)sourceFile.Model);
+                    IoC.Get<IStudio>().OpenDocument((ISourceFile)sourceFile.Model);
                 }
             }
         }
@@ -139,15 +141,17 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public void NewSolution()
         {
             _shell.ModalDialog = new NewProjectDialogViewModel();
-            _shell.ModalDialog.ShowDialog();
+            _shell.ModalDialog.ShowDialogAsync();
         }
 
         public async void OpenSolution()
         {
-            var dlg = new OpenFileDialog();
-            dlg.Title = "Open Solution";
+            var dlg = new OpenFileDialog
+            {
+                Title = "Open Solution",
 
-            dlg.InitialDirectory = Platform.ProjectDirectory;
+                InitialDirectory = Platform.ProjectDirectory
+            };
 
             var allExtensions = new List<string>();
 
@@ -172,16 +176,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                     Extensions = solutionType.Metadata.SupportedExtensions.ToList()
                 });
             }
-            
+
             var result = await dlg.ShowAsync();
 
             if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
             {
-                await _shell.OpenSolutionAsync(result[0]);
+                await IoC.Get<IStudio>().OpenSolutionAsync(result[0]);
             }
         }
-
-        public void BeforeActivation() { }
-        public void Activation() { }
     }
 }

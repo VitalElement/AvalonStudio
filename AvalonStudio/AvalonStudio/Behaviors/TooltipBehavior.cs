@@ -1,4 +1,4 @@
-namespace AvalonStudio.Behaviors
+namespace AvalonStudio.Shell.Behaviors
 {
     using Avalonia;
     using Avalonia.Controls;

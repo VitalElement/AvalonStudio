@@ -1,0 +1,45 @@
+<Project>
+
+  <PropertyGroup>
+    <AvaloniaVersion>0.6.2-build5654-beta</AvaloniaVersion>
+    <AvaloniaBehaviorsVersion>0.6.2-build520-alpha</AvaloniaBehaviorsVersion>
+    <GitInfoVersion>2.0.10</GitInfoVersion>
+    <MicrosoftExtensionsDependencyModelVersion>2.0.4</MicrosoftExtensionsDependencyModelVersion>
+    <NewtonsoftJsonVersion>10.0.3</NewtonsoftJsonVersion>
+    <ReactiveUIVersion>8.0.1</ReactiveUIVersion>
+    <RoslynVersion>2.8.0</RoslynVersion>
+    <SystemCompositionVersion>1.2.0</SystemCompositionVersion>
+    <SystemDiagnosticsProcessVersion>4.3.0</SystemDiagnosticsProcessVersion>
+    <SystemDrawingCommonVersion>4.5.0</SystemDrawingCommonVersion>
+    <SystemNetPrimitivesVersion>4.3.0</SystemNetPrimitivesVersion>
+    <SystemRuntimeInteropServicesRuntimeInformationVersion>4.3.0</SystemRuntimeInteropServicesRuntimeInformationVersion>
+    <SystemSecurityPrincipalVersion>4.3.0</SystemSecurityPrincipalVersion>
+    <SystemXmlXmlDocumentVersion>4.3.0</SystemXmlXmlDocumentVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Avalonia" Version="$(AvaloniaVersion)" />
+    <PackageReference Update="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+    <PackageReference Update="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
+    <PackageReference Update="Avalonia.Xaml.Behaviors" Version="$(AvaloniaBehaviorsVersion)" />
+    <PackageReference Update="Avalonia.Xaml.Interactions" Version="$(AvaloniaBehaviorsVersion)" />
+    <PackageReference Update="Avalonia.Xaml.Interactions.Custom" Version="$(AvaloniaBehaviorsVersion)" />
+    <PackageReference Update="GitInfo" Version="$(GitInfoVersion)" />
+    <PackageReference Update="Microsoft.CodeAnalysis" Version="$(RoslynVersion)" />
+    <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Features" Version="$(RoslynVersion)" />
+    <PackageReference Update="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="$(RoslynVersion)" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Features" Version="$(RoslynVersion)" />
+    <PackageReference Update="Microsoft.CodeAnalysis.Workspaces.Common" Version="$(RoslynVersion)" />
+    <PackageReference Update="Microsoft.Extensions.DependencyModel" Version="$(MicrosoftExtensionsDependencyModelVersion)" />
+    <PackageReference Update="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+    <PackageReference Update="ReactiveUI" Version="$(ReactiveUIVersion)" />
+    <PackageReference Update="System.Composition" Version="$(SystemCompositionVersion)" />
+    <PackageReference Update="System.Diagnostics.Process" Version="$(SystemDiagnosticsProcessVersion)" />
+    <PackageReference Update="System.Drawing.Common" Version="$(SystemDrawingCommonVersion)" />
+    <PackageReference Update="System.Net.Primitives" Version="$(SystemNetPrimitivesVersion)" />
+    <PackageReference Update="System.Runtime.InteropServices.RuntimeInformation" Version="$(SystemRuntimeInteropServicesRuntimeInformationVersion)" />
+    <PackageReference Update="System.Security.Principal" Version="$(SystemSecurityPrincipalVersion)" />
+    <PackageReference Update="System.Xml.XmlDocument" Version="$(SystemXmlXmlDocumentVersion)" />
+  </ItemGroup>
+
+</Project>

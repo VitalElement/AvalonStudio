@@ -5,12 +5,11 @@ using Newtonsoft.Json;
 using Avalonia.Media;
 using System.Collections.Generic;
 using Avalonia;
-using AvalonStudio.Extensibility.Plugin;
 using System;
 
 namespace AvalonStudio.Extensibility.Editor
 {
-    public class DefaultColorSchemes : IExtension
+    public class DefaultColorSchemes : IActivatableExtension
     {
         public void Activation()
         {

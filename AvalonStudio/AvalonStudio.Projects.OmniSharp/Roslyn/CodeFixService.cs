@@ -56,8 +56,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
         [ImportingConstructor]
         public CodeFixService(Internal.CodeFixService inner)
         {
-            _inner = inner;
-            AvalonStudio.Extensibility.IoC.RegisterConstant<ICodeFixService>(this);
+            _inner = inner;            
         }
 
         public async Task<IEnumerable<CodeFixCollection>> GetFixesAsync(Document document, TextSpan textSpan, bool includeSuppressionFixes,

@@ -8,9 +8,9 @@ namespace AvalonStudio.Shell.Commands
 {
     internal class EditCommands
     {
-        [ExportCommandDefinition("Edit.ShowQuickCommander")]
-        [DefaultKeyGestures("CTRL+P")]
-        public CommandDefinition ShowQuickCommanderCommand { get; }
+        //[ExportCommandDefinition("Edit.ShowQuickCommander")]
+        //[DefaultKeyGestures("CTRL+P")]
+        //public CommandDefinition ShowQuickCommanderCommand { get; }
 
         [ExportCommandDefinition("Edit.Undo")]
         [DefaultKeyGestures("CTRL+Z")]
@@ -26,15 +26,15 @@ namespace AvalonStudio.Shell.Commands
         [ExportCommandDefinition("Edit.Uncomment")]
         public CommandDefinition UncommentCommand { get; }
 
-        private readonly ShellViewModel _shell;
+        private readonly IShell _shell;
 
         [ImportingConstructor]
         public EditCommands(CommandIconService commandIconService)
         {
-            _shell = IoC.Get<ShellViewModel>();
+            _shell = IoC.Get<IShell>();
 
-            ShowQuickCommanderCommand = new CommandDefinition(
-                "Show Quick Commander", null, ReactiveCommand.Create(ShowQuickCommander));
+            //ShowQuickCommanderCommand = new CommandDefinition(
+              //  "Show Quick Commander", null, ReactiveCommand.Create(ShowQuickCommander));
 
             UndoCommand = new CommandDefinition(
                 "Undo",
@@ -57,7 +57,7 @@ namespace AvalonStudio.Shell.Commands
                 ReactiveCommand.Create(Uncomment));
         }
 
-        private void ShowQuickCommander() => _shell.ShowQuickCommander();
+        //private void ShowQuickCommander() => _shell.ShowQuickCommander();
 
         private void Undo() => GetSelectedDocumentEditor()?.Undo();
         private void Redo() => GetSelectedDocumentEditor()?.Redo();

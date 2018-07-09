@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Extensibility.Plugin;
+﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Projects;
 
 namespace AvalonStudio.Debugging
@@ -6,7 +6,7 @@ namespace AvalonStudio.Debugging
     /// <summary>
     /// Provides method for dealing with managing debuggers.
     /// </summary>
-    public interface IDebugger : IInstallable
+    public interface IDebugger : IInstallable, IExtension
     {
         object GetSettingsControl(IProject project);
 

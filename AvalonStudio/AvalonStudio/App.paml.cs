@@ -4,10 +4,9 @@ using Avalonia.Markup.Xaml;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
-using Dock.Model;
+using AvalonStudio.Shell;
 using Serilog;
 using System;
-using System.Composition;
 
 namespace AvalonStudio
 {
@@ -33,25 +32,17 @@ namespace AvalonStudio
                     throw new ArgumentNullException(nameof(args));
                 }
 
-                var builder = BuildAvaloniaApp().AfterSetup(async _ =>
+                BuildAvaloniaApp().AfterSetup(async _ =>
                 {
+                    InitializeLogging();
+
                     Platform.Initialise();
+
                     PackageSources.InitialisePackageSources();
 
-                    var extensionManager = new ExtensionManager();
-                    var container = CompositionRoot.CreateContainer(extensionManager);
-
-                    var shellExportFactory = container.GetExport<ExportFactory<ShellViewModel>>();
-                    ShellViewModel.Instance = shellExportFactory.CreateExport().Value;
-
-                    ShellViewModel.Instance.Initialise();
-
                     await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
-                });
-
-                InitializeLogging();
-
-                builder.Start<MainWindow>();
+                })
+                .StartShellApp<AppBuilder, MainWindow>("AvalonStudio", null, ()=>new MainWindowViewModel());
             }
             catch (Exception e)
             {
@@ -59,14 +50,12 @@ namespace AvalonStudio
             }
             finally
             {
-                ShellViewModel.Instance.SaveLayout();
-
                 Application.Current.Exit();                
             }
         }
 
         public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>().UsePlatformDetect().UseSkia().UseReactiveUI();
+            => AppBuilder.Configure<App>().UsePlatformDetect();
 
         public override void Initialize()
         {
@@ -81,24 +70,6 @@ namespace AvalonStudio
                 .WriteTo.Trace(outputTemplate: "{Area}: {Message}")
                 .CreateLogger());
 #endif
-        }
-    }
-
-    public static class AppBuilderExtensions
-    {
-        public static AppBuilder AvalonStudioPlatformDetect(this AppBuilder builder)
-        {
-            switch (Platform.PlatformIdentifier)
-            {
-                case Platforms.PlatformID.Win32NT:
-                    return builder.UseWin32().UseSkia();
-
-                case Platforms.PlatformID.Unix:
-                    return builder.UseGtk3().UseSkia();
-
-                default:
-                    return builder.UsePlatformDetect();
-            }
         }
     }
 }

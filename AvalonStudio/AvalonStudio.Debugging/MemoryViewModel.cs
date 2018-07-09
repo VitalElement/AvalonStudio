@@ -2,13 +2,16 @@
 {
     using Avalonia.Threading;
     using Extensibility;
-    using Extensibility.Plugin;
-    using MVVM;    
+    using MVVM;
     using ReactiveUI;
     using System;
+    using System.Composition;
     using System.Linq;
 
-    public class MemoryViewModel : ToolViewModel, IExtension
+    [ExportToolControl]
+    [Export(typeof(IExtension))]
+    [Shared]
+    public class MemoryViewModel : ToolViewModel, IActivatableExtension
     {
         private IDebugManager2 _debugManager;
         public const string ToolId = "CIDMEM001";
@@ -19,7 +22,7 @@
             Address = "0";
             IsVisible = false;
         }
-        
+
         private IDebugger2 debugger;
 
         public void SetDebugger(IDebugger2 debugger)
@@ -36,7 +39,7 @@
 
             this.debugger = debugger;
 
-           // dataProvider.SetDebugger(debugger);
+            // dataProvider.SetDebugger(debugger);
         }
 
         private bool enabled;
