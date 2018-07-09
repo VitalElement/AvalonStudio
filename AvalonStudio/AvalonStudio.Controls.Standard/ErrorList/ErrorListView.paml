@@ -1,4 +1,5 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility" xmlns:vm="clr-namespace:AvalonStudio.Controls.Standard.ErrorList;assembly=AvalonStudio.Controls.Standard">
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:vm="clr-namespace:AvalonStudio.Controls.Standard.ErrorList;assembly=AvalonStudio.Controls.Standard">
   <ListBox  Items="{Binding Errors}" SelectedItem="{Binding SelectedError, Mode=TwoWay}" BorderThickness="0" Background="{DynamicResource ThemeControlBackgroundBrush}">
     <ListBox.Styles>
       <Style Selector="TextBlock">

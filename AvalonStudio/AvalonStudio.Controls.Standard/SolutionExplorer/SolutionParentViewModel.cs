@@ -102,7 +102,7 @@
 
                 shell.ModalDialog = new NewProjectDialogViewModel(Model);
 
-                if (await shell.ModalDialog.ShowDialog())
+                if (await shell.ModalDialog.ShowDialogAsync())
                 {
                     var observable = Items.ObserveNewItems().OfType<SolutionItemViewModel>().FirstOrDefaultAsync();
 

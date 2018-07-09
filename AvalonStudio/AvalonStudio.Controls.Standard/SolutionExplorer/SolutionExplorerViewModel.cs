@@ -141,7 +141,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public void NewSolution()
         {
             _shell.ModalDialog = new NewProjectDialogViewModel();
-            _shell.ModalDialog.ShowDialog();
+            _shell.ModalDialog.ShowDialogAsync();
         }
 
         public async void OpenSolution()

@@ -28,10 +28,10 @@
     <PackageReference Include="System.Composition" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\AvalonStudio.Shell\src\AvalonStudio.Utils\AvalonStudio.Utils.csproj" />
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
-    <ProjectReference Include="..\AvalonStudio.Utils\AvalonStudio.Utils.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="SolutionExplorer\TemplateView.xaml">

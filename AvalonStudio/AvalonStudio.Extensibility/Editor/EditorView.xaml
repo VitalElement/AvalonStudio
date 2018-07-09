@@ -1,7 +1,4 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
-             xmlns:econt="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
-             xmlns:dcont="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging"
              xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
