@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup>
-    <AvaloniaVersion>0.6.2-build5435-beta</AvaloniaVersion>
+    <AvaloniaVersion>0.6.2-build5646-beta</AvaloniaVersion>
     <AvaloniaBehaviorsVersion>0.6.2-build520-alpha</AvaloniaBehaviorsVersion>
     <GitInfoVersion>2.0.10</GitInfoVersion>
     <MicrosoftExtensionsDependencyModelVersion>2.0.4</MicrosoftExtensionsDependencyModelVersion>

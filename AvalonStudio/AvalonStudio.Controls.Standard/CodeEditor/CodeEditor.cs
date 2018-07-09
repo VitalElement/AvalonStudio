@@ -367,17 +367,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 await DoCodeAnalysisAsync();
             }),
 
-             this.GetObservableWithHistory(SourceFileProperty).Subscribe((file) =>
+             this.GetPropertyChangedObservable(SourceFileProperty).Subscribe((file) =>
             {
-                if (file.Item1 != file.Item2)
+                if (file.OldValue != file.NewValue)
                 {
-                    using (var fs = file.Item2.OpenText())
+                    using (var fs = (file.NewValue as ISourceFile).OpenText())
                     {
                         using (var reader = new StreamReader(fs))
                         {
                             Document = new TextDocument(reader.ReadToEnd())
                             {
-                                FileName = file.Item2.Location
+                                FileName = (file.NewValue as ISourceFile).Location
                             };
                         }
                     }
@@ -386,7 +386,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     _isLoaded = true;
 
-                    RegisterLanguageService(file.Item2);
+                    RegisterLanguageService(file.NewValue as ISourceFile);
 
                     TextArea.TextView.Redraw();
 
