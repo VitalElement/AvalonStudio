@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Packages;
+using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
 using AvalonStudio.Shell;
 using Serilog;
@@ -34,6 +35,8 @@ namespace AvalonStudio
                 BuildAvaloniaApp().AfterSetup(async _ =>
                 {
                     InitializeLogging();
+
+                    Platform.Initialise();
 
                     PackageSources.InitialisePackageSources();
 
