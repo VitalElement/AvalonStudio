@@ -5,6 +5,7 @@ using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Projects;
+using AvalonStudio.Studio;
 using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
@@ -14,7 +15,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-namespace AvalonStudio.Shell.Controls
+namespace AvalonStudio.Studio
 {
     public class QuickCommanderViewModel : ReactiveObject
     {

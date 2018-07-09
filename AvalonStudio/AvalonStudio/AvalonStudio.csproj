@@ -11,14 +11,15 @@
     <NoWarn>NU1701</NoWarn>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>  
+  </PropertyGroup>
+
   <ItemGroup>
-    <EmbeddedResource Include="GeneralSettingsView.xaml" />
-    <EmbeddedResource Include="Assets\icon.ico" />
-    <EmbeddedResource Include="App.paml" />
-    <EmbeddedResource Include="Controls\DebugHoverProbeView.paml" />
-    <EmbeddedResource Include="Controls\PackageManagerDialogView.paml" />
+    <Compile Update="**\*.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="**\*.xaml;**\*.paml;Assets\*" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.6.2-build5392-beta" />
     <PackageReference Include="Avalonia.Desktop" Version="0.6.2-build5392-beta" />

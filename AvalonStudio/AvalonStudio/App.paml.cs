@@ -41,9 +41,8 @@ namespace AvalonStudio
                     PackageSources.InitialisePackageSources();
 
                     await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
-                }).StartShellApp("AvalonStudio");
-
-                
+                })
+                .StartShellApp<AppBuilder, MainWindow>("AvalonStudio", null, ()=>new MainWindowViewModel());
             }
             catch (Exception e)
             {

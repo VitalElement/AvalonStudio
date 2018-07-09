@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace AvalonStudio.Shell.Controls
+namespace AvalonStudio.Studio
 {
     public class QuickCommander : UserControl
     {

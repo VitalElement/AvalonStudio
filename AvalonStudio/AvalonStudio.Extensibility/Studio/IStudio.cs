@@ -54,6 +54,8 @@ namespace AvalonStudio.Extensibility.Studio
 
         void CloseDocumentsForProject(IProject project);
 
+        void ShowQuickCommander();
+
         Task<bool> BuildAsync(IProject project);
 
         void Clean(IProject project);

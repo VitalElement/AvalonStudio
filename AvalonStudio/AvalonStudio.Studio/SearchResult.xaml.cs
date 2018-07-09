@@ -1,14 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
-using System.Reactive.Disposables;
-using System;
-using Avalonia;
-using System.Reactive.Linq;
-using Avalonia.Controls.Primitives;
-using Avalonia.Media;
-using System.Collections.Generic;
 
-namespace AvalonStudio.Shell.Controls
+namespace AvalonStudio.Studio
 {
     public class SearchResult : UserControl
     {

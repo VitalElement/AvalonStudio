@@ -6,7 +6,7 @@ using System;
 using Avalonia.Media;
 using System.Collections.Generic;
 
-namespace AvalonStudio.Shell.Controls
+namespace AvalonStudio.Studio
 {
     public class SearchResultViewModel : ViewModel<ISourceFile>, IComparable<SearchResultViewModel>
     {

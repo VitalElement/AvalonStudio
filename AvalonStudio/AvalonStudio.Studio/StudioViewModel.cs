@@ -1,4 +1,5 @@
 ﻿using Avalonia.Threading;
+using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
@@ -8,7 +9,6 @@ using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
-using AvalonStudio.Shell.Controls;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Utils;
 using ReactiveUI;
@@ -19,7 +19,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-namespace AvalonStudio.Controls.Standard.Studio
+namespace AvalonStudio.Studio
 {
     [Export(typeof(IStudio))]
     [Shared]
