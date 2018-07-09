@@ -157,111 +157,23 @@ namespace AvalonStudio.Toolchains.MSBuild
 
         public async Task<bool> BuildAsync(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
-            var builtProjects = new List<IProject>();
-
-            var cancellationSouce = new CancellationTokenSource();
-
-            IEnumerable<IProject> projects = new List<IProject> { project };
-
-            projects = projects.Flatten(p => p.References);
-
-            var toBuild = projects.ToList();
-
-            using (var buildRunner = new BuildRunner())
+            return await Task.Factory.StartNew(() =>
             {
-                console.WriteLine($"Creating: {Environment.ProcessorCount} build nodes.");
-                await buildRunner.InitialiseAsync();
-
-                var startTime = DateTime.Now;
-
-                buildRunner.Start(cancellationSouce.Token, (node, proj) =>
+                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"build {Path.GetFileName(project.Location)}", (s, e) =>
                 {
-                    var netProject = proj as OmniSharpProject;
-
-                    if (netProject.RestoreRequired)
+                    console.WriteLine(e.Data);
+                }, (s, e) =>
+                {
+                    if (e.Data != null)
                     {
-                        var buildResult = netProject.Restore(console).GetAwaiter().GetResult();
-
-                        if (!buildResult)
-                        {
-                            return false;
-                        }
-
-                        netProject.MarkRestored();
-                    }
-
-                    if (RequiresBuilding(proj))
-                    {
-                        var result = node.BuildProject(proj).GetAwaiter().GetResult();
-
                         console.WriteLine();
-                        console.WriteLine($"[{proj.Name}] Node = {node.Id}");
-
-                        console.Write(result.consoleOutput);
-
-                        if (result.result)
-                        {
-                            foreach (var output in result.outputAssemblies)
-                            {
-                                console.WriteLine($"{proj.Name} -> {output}");
-                            }
-                        }
-
-                        return result.result;
+                        console.WriteLine(e.Data);
                     }
+                },
+                false, project.CurrentDirectory, false);
 
-                    console.WriteLine($"[Skipped] {proj.Name} -> {proj.Executable}");
-
-                    return true;
-                });
-
-                var buildTasks = QueueItems(toBuild, builtProjects, buildRunner);
-
-                bool canContinue = true;
-
-                while (true)
-                {
-                    var result = await Task.WhenAny(buildTasks);
-
-                    canContinue = result.Result.result;
-
-                    buildTasks.Remove(result);
-
-                    builtProjects.Add(result.Result.project);
-
-                    if (canContinue)
-                    {
-                        if (toBuild.Count > 0)
-                        {
-                            buildTasks = buildTasks.Concat(QueueItems(toBuild, builtProjects, buildRunner)).ToList();
-                        }
-
-                        if (toBuild.Count == 0 && buildTasks.Count == 0)
-                        {
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                cancellationSouce.Cancel();
-
-                var duration = DateTime.Now - startTime;
-
-                if (canContinue)
-                {
-                    console.WriteLine($"Build Successful - {duration.ToString()}");
-                    return true;
-                }
-                else
-                {
-                    console.WriteLine($"Build Failed - {duration.ToString()}");
-                    return false;
-                }
-            }
+                return exitCode == 0;
+            });
         }
 
         public bool CanHandle(IProject project)
