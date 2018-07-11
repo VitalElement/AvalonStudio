@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Threading;
 using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Packages;
@@ -43,12 +44,15 @@ namespace AvalonStudio
                     var shellExportFactory = container.GetExport<ExportFactory<ShellViewModel>>();
                     ShellViewModel.Instance = shellExportFactory.CreateExport().Value;
 
-                    await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
+                    Dispatcher.UIThread.Post (async () =>
+                    {
+				        await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
+			        });
                 });
 
                 InitializeLogging();
 
-                builder.Start<MainWindow>();                
+                builder.Start<MainWindow>();
             }
             catch (Exception e)
             {

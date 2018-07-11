@@ -21,7 +21,7 @@ namespace AvalonStudio.Toolchains.GCC
 
         public virtual string GDBExecutable => "gdb";
 
-        public virtual string LibraryQueryCommand => "gcc";
+        public virtual string LibraryQueryCommand => CCExecutable;
 
         public abstract string GetBaseLibraryArguments(IStandardProject superProject);
 
