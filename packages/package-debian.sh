@@ -1,4 +1,5 @@
 BUILD_DIR=$(pwd)/../AvalonStudio/AvalonStudio
+LOGO_DIR=$(pwd)/../AvalonStudio.Shell/src/AvalonStudio.Shell
 PACK_DIR=$(pwd)/deb-build
 BUILD_VERSION_TMP=$(git describe --tags)
 BUILD_VERSION=${BUILD_VERSION_TMP#v}
@@ -21,6 +22,6 @@ sed -i -e "s/{VERSION}/$BUILD_VERSION/g" $PACK_DIR/avalon-studio_$BUILD_VERSION/
 chmod +x $TARG_DIR/native/unix/clang-format
 
 mkdir -p $PACK_DIR/avalon-studio_$BUILD_VERSION/usr/share/pixmaps/
-cp $BUILD_DIR/Assets/logo-256.png $PACK_DIR/avalon-studio_$BUILD_VERSION/usr/share/pixmaps/avalon-studio.png
+cp $LOGO_DIR/Assets/logo-256.png $PACK_DIR/avalon-studio_$BUILD_VERSION/usr/share/pixmaps/avalon-studio.png
 dpkg-deb --build $PACK_DIR/avalon-studio_$BUILD_VERSION
 

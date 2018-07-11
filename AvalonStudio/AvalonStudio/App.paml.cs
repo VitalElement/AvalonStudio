@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Threading;
 using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Packages;
@@ -40,7 +41,10 @@ namespace AvalonStudio
 
                     PackageSources.InitialisePackageSources();
 
-                    await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
+                    Dispatcher.UIThread.Post (async () =>
+                    {
+                        await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
+			        });
                 })
                 .StartShellApp<AppBuilder, MainWindow>("AvalonStudio", null, ()=>new MainWindowViewModel());
             }
