@@ -12,18 +12,18 @@
           <Separator />
           <MenuItem Header="Add">
             <MenuItem Header="New Project..." Command="{Binding Solution.AddNewProjectCommand}" />
-            <MenuItem Header="Existing Project..."  Command="{Binding Solution.AddExistingProjectCommand}"/>
+            <MenuItem Header="Existing Project..."  Command="{Binding Solution.AddExistingProjectCommand}" />
             <MenuItem Header="New Solution Folder..." Command="{Binding Solution.AddNewFolderCommand}" />
           </MenuItem>
           <Separator />
-          <MenuItem Header="Open Containing Folder"  Command="{Binding Solution.OpenInExplorerCommand}"/>
+          <MenuItem Header="Open Containing Folder"  Command="{Binding Solution.OpenInExplorerCommand}" />
         </ContextMenu>
       </StackPanel.ContextMenu>
       <DrawingPresenter Width="16" Height="16" Drawing="{Binding Solution.Icon}" />
       <Controls:EditableTextBlock Text="{Binding Solution.Title}" InEditMode="{Binding Solution.InEditMode}" />
     </StackPanel>
 
-    <TreeView BorderThickness="0" Items="{Binding Path=Solution.Items}" SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}">
+    <TreeView BorderThickness="0" Items="{Binding Solution.Items}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
       <TreeView.Styles>
         <Style Selector="TreeViewItem">
           <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -39,11 +39,11 @@
               <ContextMenu>
                 <MenuItem Header="Add">
                   <MenuItem Header="New Project..." Command="{Binding AddNewProjectCommand}" />
-                  <MenuItem Header="Existing Project..."  Command="{Binding AddExistingProjectCommand}"/>
+                  <MenuItem Header="Existing Project..."  Command="{Binding AddExistingProjectCommand}" />
                   <MenuItem Header="New Solution Folder..." Command="{Binding AddNewFolderCommand}" />
                 </MenuItem>
                 <Separator />
-                <MenuItem Header="Remove"  Command="{Binding RemoveCommand}"/>
+                <MenuItem Header="Remove"  Command="{Binding RemoveCommand}" />
               </ContextMenu>
             </StackPanel.ContextMenu>
             <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
@@ -55,9 +55,9 @@
           <StackPanel Orientation="Horizontal" IsVisible="{Binding IsVisible}" Gap="4">
             <StackPanel.ContextMenu>
               <ContextMenu>
-                <MenuItem Header="Configure" Command="{Binding ConfigureCommand}"/>
+                <MenuItem Header="Configure" Command="{Binding ConfigureCommand}" />
                 <MenuItem Header="Build" Command="{Binding BuildCommand}" />
-                <MenuItem Header="Debug" Command="{Binding DebugCommand}"/>
+                <MenuItem Header="Debug" Command="{Binding DebugCommand}" />
                 <MenuItem Header="Clean" Command="{Binding CleanCommand}" />
                 <MenuItem Header="Set as Default Project" Command="{Binding SetProjectCommand}" />
                 <MenuItem Header="Manage References" />
