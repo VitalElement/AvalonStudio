@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <OutputType>exe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-    <OutputTypeEx>exe</OutputTypeEx>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <RuntimeIdentifiers>win7-x64;ubuntu.14.04-x64;debian.8-x64;osx.10.12-x64</RuntimeIdentifiers>
     <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
@@ -14,25 +13,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="**\*.xaml.cs">
-      <DependentUpon>%(Filename)</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="**\*.xaml;**\*.paml;Assets\*" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <EmbeddedResource Include="Assets\**" Exclude="@(EmbeddedResource)" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.6.2-build5392-beta" />
     <PackageReference Include="Avalonia.Desktop" Version="0.6.2-build5392-beta" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.6.2-build5392-beta" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.60.0.1" />    
     <PackageReference Include="GitInfo" Version="2.0.10" />
-    <PackageReference Include="reactiveui" Version="8.0.1" />
+    <PackageReference Include="ReactiveUI" Version="8.0.1" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.0-preview1-26216-02" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Security.Principal" Version="4.3.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\AvalonStudio.Shell\src\AvalonStudio.Shell\AvalonStudio.Shell.csproj" />
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />   
@@ -58,5 +55,6 @@
     <ProjectReference Include="..\AvalonStudio.Toolchains.CustomGCC\AvalonStudio.Toolchains.CustomGCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj" />
     <ProjectReference Include="..\PortableCom\PortableCom.csproj" />
-  </ItemGroup>  
+  </ItemGroup>
+
 </Project>
