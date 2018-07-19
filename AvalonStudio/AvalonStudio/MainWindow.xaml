@@ -7,7 +7,7 @@
                       xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       Icon="resm:AvalonStudio.Shell.Assets.logo-256.png?assembly=AvalonStudio.Shell"
-                      Title="AvalonStudio"
+                      Title="AvalonStudio" MinWidth="400" MinHeight="200"
                       BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}"
                       FontFamily="{DynamicResource UiFont}" FontSize="14"
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized">
