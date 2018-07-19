@@ -7,6 +7,7 @@ using AvalonStudio.Projects.OmniSharp.Toolchain;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading;

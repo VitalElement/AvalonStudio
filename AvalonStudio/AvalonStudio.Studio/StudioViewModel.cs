@@ -259,9 +259,9 @@ namespace AvalonStudio.Studio
             {
                 BuildStarting?.Invoke(this, new BuildEventArgs(BuildType.Build, project));
 
-                await TaskRunner.RunTask(() =>
+                await TaskRunner.RunTask(async () =>
                 {
-                    result = project.ToolChain.BuildAsync(IoC.Get<IConsole>(), project).Result;
+                    result = await project.ToolChain.BuildAsync(IoC.Get<IConsole>(), project);
                 });
 
                 Dispatcher.UIThread.Post(() =>
