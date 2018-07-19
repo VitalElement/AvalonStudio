@@ -83,11 +83,16 @@ namespace AvalonStudio.Toolchains.CustomGCC
             set { }
         }
 
-        private string ResolveCommand (string prefix, string name)
+        private string ResolveCommand(string prefix, string name)
         {
             var settings = CustomGCCToolchainProfiles.Instance;
 
-            var basePath = settings.Profiles[InstanceName].BasePath;
+            string basePath = "";
+
+            if (settings.Profiles.ContainsKey(InstanceName))
+            {
+                basePath = settings.Profiles[InstanceName].BasePath;
+            }
 
             if (!string.IsNullOrEmpty(prefix))
             {
