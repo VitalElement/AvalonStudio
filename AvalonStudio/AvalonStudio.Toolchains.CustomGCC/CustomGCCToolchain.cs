@@ -15,11 +15,11 @@ using System.Threading.Tasks;
 namespace AvalonStudio.Toolchains.CustomGCC
 {
     [ExportToolchain]
+    [Shared]
     public class CustomGCCToolchain : GCCToolchain
     {
         private string _executableExtension;
         private string _staticLibraryExtension;
-        private string _binDirectory;
         private CustomGCCToolchainProjectSettings _settings;
 
         public override string ExecutableExtension => _executableExtension;
@@ -30,7 +30,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public override string Description => "Allows developer to specify any GCC compatible toolchain to use.";
 
-        public override string BinDirectory => _binDirectory;
+        public override string BinDirectory => _settings.BasePath;
 
         public override string CCExecutable => _settings.CCExecutable;
 
@@ -383,8 +383,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
             _settings = project.GetToolchainSettings<CustomGCCToolchainProjectSettings>();
 
             _staticLibraryExtension = _settings.StaticLibraryExtension;
-            _executableExtension = _settings.ExecutableExtension;
-            _binDirectory = _settings.BasePath;            
+            _executableExtension = _settings.ExecutableExtension;       
 
             return await base.InstallAsync(console, project);
         }

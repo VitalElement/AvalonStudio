@@ -57,6 +57,7 @@ namespace AvalonStudio.Toolchains.MSBuild
     }
 
     [ExportToolchain]
+    [Shared]
     public class MSBuildToolchain : IToolchain
     {
         public string BinDirectory => Path.Combine(Platform.ReposDirectory, "AvalonStudio.Languages.CSharp", "coreclr");
