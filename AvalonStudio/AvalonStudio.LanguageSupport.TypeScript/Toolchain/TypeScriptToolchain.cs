@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain
 {
     [ExportToolchain]
+    [Shared]
     public class TypeScriptToolchain : IToolchain
     {
         /// <summary>

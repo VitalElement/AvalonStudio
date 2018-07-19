@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 namespace AvalonStudio.Toolchains.STM32
 {
     [ExportToolchain]
+    [Shared]
     public class STM32GCCToolchain : GCCToolchain
     {
         private static string _contentDirectory;

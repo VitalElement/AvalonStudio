@@ -81,6 +81,12 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         private void Save()
         {
+            if(!_settings.Profiles.ContainsKey(InstanceName))
+            {
+                _settings.Profiles[InstanceName] = new CustomGCCToolchainProfile();
+                Profiles.Add(InstanceName);
+            }
+
             _settings.Profiles[InstanceName].BasePath = BasePath;
 
             _settings.Save();

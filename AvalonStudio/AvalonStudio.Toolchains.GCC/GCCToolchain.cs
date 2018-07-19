@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.GCC
 {
-    [ExportToolchain]
     public abstract class GCCToolchain : StandardToolchain
     {
         protected virtual bool RunWithSystemPaths => false;
