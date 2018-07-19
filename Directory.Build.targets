@@ -42,4 +42,10 @@
     <PackageReference Update="System.Xml.XmlDocument" Version="$(SystemXmlXmlDocumentVersion)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="**\*.xaml.cs;**\*.paml.cs" DependentUpon="%(Filename)" />
+    <EmbeddedResource Include="**\*.xaml;**\*.paml" Exclude="@(EmbeddedResource)" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
 </Project>

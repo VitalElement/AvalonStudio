@@ -5,16 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="QuickCommander.xaml" />
-    <None Remove="SearchResult.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="QuickCommander.xaml" />
-    <EmbeddedResource Include="SearchResult.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="ReactiveUI" Version="8.2.1" />
   </ItemGroup>
 
