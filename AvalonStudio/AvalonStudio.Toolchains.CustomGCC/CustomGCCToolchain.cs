@@ -96,6 +96,17 @@ namespace AvalonStudio.Toolchains.CustomGCC
             return result;
         }
 
+        public override bool ValidateToolchainExecutables(IConsole console)
+        {
+            if (!CustomGCCToolchainProfiles.Instance.Profiles.ContainsKey(_settings.InstanceName))
+            {
+                console.WriteLine($"Toolchain profile: {_settings.InstanceName} doesnt exist.");
+                return false;
+            }
+
+            return base.ValidateToolchainExecutables(console);
+        }
+
         public override string GetCompilerArguments(IStandardProject superProject, IStandardProject project, ISourceFile file)
         {
             var result = string.Empty;
