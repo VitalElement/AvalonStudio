@@ -1,6 +1,5 @@
-using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Utils;
-using AvalonStudio.Projects;
 using System.Composition.Convention;
 using System.Composition.Hosting;
 using System.IO;
