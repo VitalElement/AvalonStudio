@@ -8,10 +8,10 @@
     using AvalonStudio.Documents;
     using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+    using AvalonStudio.Extensibility.Studio;
     using AvalonStudio.Extensibility.Threading;
     using AvalonStudio.Languages;
     using AvalonStudio.Projects;
-    using AvalonStudio.Shell;
     using AvalonStudio.Utils;
     using System;
     using System.Collections.Generic;
@@ -20,8 +20,8 @@
     using System.Threading.Tasks;
 
     internal class IntellisenseManager : IDisposable
-    {
-        private IShell _shell;
+    {        
+        private IStudio _studio;
         private IConsole _console;
         private readonly ILanguageService languageService;
         private readonly ISourceFile file;
@@ -92,7 +92,7 @@
             this.editor.LostFocus += Editor_LostFocus;
             _hidden = true;
 
-            _shell = IoC.Get<IShell>();
+            _studio = IoC.Get<IStudio>();
             _console = IoC.Get<IConsole>();
 
             var snippetManager = IoC.Get<SnippetManager>();
@@ -123,7 +123,7 @@
 
         private void SetCompletionData(CodeCompletionResults completionData)
         {
-            if (_shell.DebugMode)
+            if (_studio.DebugMode)
             {
                 _console.WriteLine(completionData.Contexts.ToString());
             }
@@ -172,7 +172,7 @@
             {
                 _hidden = false;
 
-                if (_shell.DebugMode)
+                if (_studio.DebugMode)
                 {
                     _console.WriteLine($"Open Intellisense {caretIndex}");
                 }
@@ -181,7 +181,7 @@
             }
             else
             {
-                if (_shell.DebugMode)
+                if (_studio.DebugMode)
                 {
                     _console.WriteLine($"Reopen Intellisense {caretIndex}");
                 }
@@ -205,7 +205,7 @@
 
             if (!_requestingData)
             {
-                if (_shell.DebugMode)
+                if (_studio.DebugMode)
                 {
                     _console.WriteLine("Filtering");
                 }
@@ -227,7 +227,7 @@
                     currentFilter = string.Empty;
                 }
 
-                if (_shell.DebugMode)
+                if (_studio.DebugMode)
                 {
                     _console.WriteLine($"Filter: {currentFilter}");
                 }
@@ -528,7 +528,7 @@
                 {
                     unfilteredCompletions.Clear();
 
-                    if (_shell.DebugMode)
+                    if (_studio.DebugMode)
                     {
                         _console.WriteLine("Set Cursor");
                     }
@@ -547,7 +547,7 @@
                         CodeCompletionResults result = null;
                         intellisenseJobRunner.InvokeAsync(() =>
                         {
-                            if (_shell.DebugMode)
+                            if (_studio.DebugMode)
                             {
                                 _console.WriteLine($"Query Language Service {index}, {line}, {column}");
                             }
@@ -562,7 +562,7 @@
                         {
                             Dispatcher.UIThread.InvokeAsync(() =>
                             {
-                                if (_shell.DebugMode)
+                                if (_studio.DebugMode)
                                 {
                                     _console.WriteLine($"Set Completion Data {_hidden}");
                                 }

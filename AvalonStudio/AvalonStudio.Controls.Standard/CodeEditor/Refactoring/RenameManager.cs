@@ -2,8 +2,8 @@
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Languages;
-using AvalonStudio.Shell;
 using System.Collections.Generic;
 using System.IO;
 
@@ -74,7 +74,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                 }
                 else
                 {
-                    var currentTab = IoC.Get<IShell>().GetDocument(location.FileName);
+                    var currentTab = IoC.Get<IStudio>().GetDocument(location.FileName);
 
                     if(currentTab is EditorAdaptor adaptor)
                     {
@@ -143,7 +143,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
             {
                 if (CodeEditor.SourceFile.CompareTo(location.FileName) != 0)
                 {
-                    var currentTab = IoC.Get<IShell>().GetDocument(location.FileName);
+                    var currentTab = IoC.Get<IStudio>().GetDocument(location.FileName);
 
                     if(currentTab == null) //then the file wasnt already opened and changes havent been applied yet.
                     {

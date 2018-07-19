@@ -42,7 +42,7 @@ namespace AvalonStudio.Shell.Commands
         private void ShowPackagesDialog()
         {
             _shell.ModalDialog = new PackageManagerDialogViewModel();
-            _shell.ModalDialog.ShowDialog();
+            _shell.ModalDialog.ShowDialogAsync();
         }
 
         private void ShowExtensionsPage() =>

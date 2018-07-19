@@ -5,6 +5,7 @@ using AvalonStudio.Toolchains;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain

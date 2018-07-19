@@ -1,6 +1,5 @@
 ﻿using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
 using AvalonStudio.Documents;
-using AvalonStudio.Extensibility;
 using AvalonStudio.Projects.OmniSharp.Roslyn;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Text;
@@ -19,9 +18,11 @@ namespace AvalonStudio.Languages.CSharp
         private static readonly ImmutableArray<string> ExcludedRefactoringProviders = ImmutableArray.Create("ExtractInterface", "GenerateOverrides");
 
         private Microsoft.CodeAnalysis.Workspace _workspace;
+        private ICodeFixService _codeFixService;
 
-        public RoslynContextActionProvider(Microsoft.CodeAnalysis.Workspace workspace)
+        public RoslynContextActionProvider(Microsoft.CodeAnalysis.Workspace workspace, ICodeFixService codeFixService)
         {
+            _codeFixService = codeFixService;
             _workspace = workspace;
         }
 
@@ -37,9 +38,7 @@ namespace AvalonStudio.Languages.CSharp
 
             if (textSpan.End >= text.Length) return Array.Empty<CodeFix>();
 
-            var codeFixService = IoC.Get<ICodeFixService>();
-
-            var fixes = (await codeFixService.GetFixesAsync(document, textSpan, true, cancellationToken))
+            var fixes = (await _codeFixService.GetFixesAsync(document, textSpan, true, cancellationToken))
                 .SelectMany(f => f.Fixes)
                 .GroupBy(f => f.Action.EquivalenceKey)
                 .Select(group => group.First()).Select(fix => new CodeFix { Action = new RoslynCodeAction(fix.Action) });

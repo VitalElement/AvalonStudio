@@ -2,25 +2,27 @@ namespace AvalonStudio.Debugging
 {
     using Avalonia.Threading;
     using AvalonStudio.Documents;
-    using AvalonStudio.Extensibility;
-    using AvalonStudio.Extensibility.Plugin;
+    using AvalonStudio.Extensibility;    
+    using AvalonStudio.Extensibility.Studio;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
     using AvalonStudio.Shell;
     using AvalonStudio.Utils;
     using Mono.Debugging.Client;
     using System;
+    using System.Composition;
     using System.Reactive.Linq;
     using System.Threading.Tasks;
     using System.Xml;
 
-    public class DebugManager2 : IDebugManager2, IExtension
+    [Export(typeof(IExtension)), Export(typeof(IDebugManager2)), Shared]
+    public class DebugManager2 : IDebugManager2, IActivatableExtension
     {
         private DebuggerSession _session;
         private object _sessionLock = new object();
         private StackFrame _currentStackFrame;
 
-        private IShell _shell;
+        private IStudio _studio;        
         private IConsole _console;
         private IEditor _lastDocument;
 
@@ -76,7 +78,7 @@ namespace AvalonStudio.Debugging
         {
             if (!_loadingBreakpoints)
             {
-                var solution = _shell.CurrentSolution;
+                var solution = _studio.CurrentSolution;
 
                 Platform.EnsureSolutionUserDataDirectory(solution);
 
@@ -93,7 +95,7 @@ namespace AvalonStudio.Debugging
         {
             _loadingBreakpoints = true;
 
-            var solution = _shell.CurrentSolution;
+            var solution = _studio.CurrentSolution;
 
             if (solution != null)
             {
@@ -136,7 +138,7 @@ namespace AvalonStudio.Debugging
 
         public void Activation()
         {
-            _shell = IoC.Get<IShell>();
+            _studio = IoC.Get<IStudio>();
             _console = IoC.Get<IConsole>();
 
             var started = Observable.FromEventPattern(this, nameof(TargetStarted)).Select(e => true);
@@ -148,14 +150,14 @@ namespace AvalonStudio.Debugging
 
             var isRunning = hasSession.Merge(started).Merge(stopped).StartWith(false);
 
-            var canRun = _shell.OnSolutionLoaded().CombineLatest(isRunning, hasSession, _shell.OnCurrentTaskChanged(), (loaded, running, session, hasTask) =>
+            var canRun = _studio.OnSolutionLoaded().CombineLatest(isRunning, hasSession, _studio.OnCurrentTaskChanged(), (loaded, running, session, hasTask) =>
             {
                 return loaded && !running && (!hasTask || (hasTask && session));
             });
 
-            var canPause = _shell.OnSolutionLoaded().CombineLatest(isRunning, (loaded, running) => loaded && running);
+            var canPause = _studio.OnSolutionLoaded().CombineLatest(isRunning, (loaded, running) => loaded && running);
 
-            var canStop = _shell.OnSolutionLoaded().CombineLatest(sessionStarted.Merge(sessionEnded), (loaded, sessionActive) => loaded && SessionActive);
+            var canStop = _studio.OnSolutionLoaded().CombineLatest(sessionStarted.Merge(sessionEnded), (loaded, sessionActive) => loaded && SessionActive);
 
             var canStep = canStop.CombineLatest(isRunning, (stop, running) => stop && !running);
 
@@ -167,12 +169,11 @@ namespace AvalonStudio.Debugging
 
             CanStep = canStep.StartWith(false);
 
-            _shell.OnSolutionChanged.Subscribe(_ => LoadBreakpoints());
+            _studio.OnSolutionChanged.Subscribe(_ => LoadBreakpoints());
         }
 
         public void BeforeActivation()
         {
-            IoC.RegisterConstant<IDebugManager2>(this);
         }
 
         private void OnEndSession()
@@ -183,7 +184,7 @@ namespace AvalonStudio.Debugging
             {
                 DebugSessionEnded?.Invoke(this, EventArgs.Empty);
 
-                _shell.CurrentPerspective = Perspective.Editor;
+                _studio.CurrentPerspective = Perspective.Editor;
 
                 _lastDocument?.ClearDebugHighlight();
                 _lastDocument = null;
@@ -223,7 +224,7 @@ namespace AvalonStudio.Debugging
 
         public async void Start()
         {
-            var project = _shell.GetDefaultProject();
+            var project = _studio.GetDefaultProject();
 
             if (project == null)
             {
@@ -234,7 +235,7 @@ namespace AvalonStudio.Debugging
 
             bool success = false;
 
-            success = await _shell.BuildAsync(project);
+            success = await _studio.BuildAsync(project);
 
             if (!success)
             {
@@ -268,7 +269,7 @@ namespace AvalonStudio.Debugging
 
                 _session.Run(debugger2.GetDebuggerStartInfo(project), debugger2.GetDebuggerSessionOptions(project));
 
-                _shell.CurrentPerspective = Perspective.Debug;
+                _studio.CurrentPerspective = Perspective.Debug;
 
                 DebugSessionStarted?.Invoke(this, EventArgs.Empty);
             }
@@ -312,7 +313,7 @@ namespace AvalonStudio.Debugging
 
                     ISourceFile file = null;
 
-                    var document = _shell.GetDocument(normalizedPath);
+                    var document = _studio.GetDocument(normalizedPath);
 
                     if (document != null)
                     {
@@ -322,14 +323,14 @@ namespace AvalonStudio.Debugging
 
                     if (file == null)
                     {
-                        file = _shell.CurrentSolution.FindFile(normalizedPath);
+                        file = _studio.CurrentSolution.FindFile(normalizedPath);
                     }
 
                     if (file != null)
                     {
                         Dispatcher.UIThread.InvokeAsync(async () =>
                         {
-                            _lastDocument = await _shell.OpenDocumentAsync(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true);
+                            _lastDocument = await _studio.OpenDocumentAsync(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true);
                         }).Wait();
                     }
                     else

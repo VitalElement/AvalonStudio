@@ -16,7 +16,7 @@ using System.Globalization;
 using Microsoft.TemplateEngine.Orchestrator.RunnableProjects;
 using Microsoft.TemplateEngine.Orchestrator.RunnableProjects.Config;
 using Microsoft.TemplateEngine.Edge.TemplateUpdates;
-using AvalonStudio.Extensibility.Plugin;
+using System.Composition;
 
 namespace AvalonStudio.Extensibility.Templating
 {
@@ -31,7 +31,9 @@ namespace AvalonStudio.Extensibility.Templating
         Cancelled = unchecked((int)0x80004004)
     }
 
-    public class TemplateManager : IExtension
+    [Export(typeof(TemplateManager))]
+    [Shared]
+    public class TemplateManager : IActivatableExtension
     {
         private const string HostIdentifier = "AvalonStudio";
         private const string HostVersion = "1.0.0";
@@ -312,13 +314,11 @@ namespace AvalonStudio.Extensibility.Templating
         }
 
         public void BeforeActivation()
-        {
-            IoC.RegisterConstant(this);
+        {            
         }
 
         public void Activation()
         {
-
         }
 
         public void UpdateDefaultTemplates()

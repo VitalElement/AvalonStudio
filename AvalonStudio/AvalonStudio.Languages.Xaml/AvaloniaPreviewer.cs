@@ -12,6 +12,7 @@ using Avalonia.Threading;
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
@@ -94,7 +95,7 @@ namespace AvalonStudio.Languages.Xaml
             if (File.Exists(file.Project.Executable))
             {
                 var port = FreeTcpPort();
-                
+
                 _listener = new BsonTcpTransport().Listen(IPAddress.Loopback, port, t =>
                 {
                     Dispatcher.UIThread.InvokeAsync(() =>
@@ -175,13 +176,13 @@ namespace AvalonStudio.Languages.Xaml
         {
             _visualBrush = new VisualBrush
             {
-                DestinationRect = new RelativeRect(0,0,20,20, RelativeUnit.Absolute),
+                DestinationRect = new RelativeRect(0, 0, 20, 20, RelativeUnit.Absolute),
                 TileMode = TileMode.Tile,
                 Visual = new Canvas
                 {
-                    Width=20,
-                    Height=20,
-                    Background= ColorScheme.CurrentColorScheme.Background,
+                    Width = 20,
+                    Height = 20,
+                    Background = ColorScheme.CurrentColorScheme.Background,
                     Children =
                     {
                         new Rectangle
@@ -202,7 +203,7 @@ namespace AvalonStudio.Languages.Xaml
                 }
             };
 
-            var shell = IoC.Get<IShell>();
+            var studio = IoC.Get<IStudio>();
 
             _disposables = new CompositeDisposable
             {
@@ -219,7 +220,7 @@ namespace AvalonStudio.Languages.Xaml
                     OnSourceFileChanged(file);
                 }),
 
-                Observable.FromEventPattern<BuildEventArgs>(shell, nameof(shell.BuildStarting)).Subscribe(o =>
+                Observable.FromEventPattern<BuildEventArgs>(studio, nameof(studio.BuildStarting)).Subscribe(o =>
                 {
                     if (SourceFile.Project.Solution.StartupProject == o.EventArgs.Project && _currentHost != null)
                     {
@@ -227,7 +228,7 @@ namespace AvalonStudio.Languages.Xaml
                     }
                 }),
 
-                Observable.FromEventPattern<BuildEventArgs>(shell, nameof(shell.BuildCompleted)).Subscribe(o =>
+                Observable.FromEventPattern<BuildEventArgs>(studio, nameof(studio.BuildCompleted)).Subscribe(o =>
                 {
                     if (SourceFile != null && SourceFile.Project.Solution.StartupProject == o.EventArgs.Project)
                     {

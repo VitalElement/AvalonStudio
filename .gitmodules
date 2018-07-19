@@ -10,3 +10,6 @@
 [submodule "templating"]
 	path = templating
 	url = https://github.com/VitalElement/templating.git
+[submodule "AvalonStudio.Shell"]
+	path = AvalonStudio.Shell
+	url = https://github.com/VitalElement/AvalonStudio.Shell.git

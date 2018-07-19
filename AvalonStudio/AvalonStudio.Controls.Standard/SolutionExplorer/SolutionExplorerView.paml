@@ -1,146 +1,144 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
+             xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Shell.Extensibility"
              xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.Standard.SolutionExplorer;assembly=AvalonStudio.Controls.Standard">
-  <Controls:ToolControl Title="Solution Explorer">
-    <DockPanel>
-      <StackPanel Orientation="Horizontal" Gap="4" Margin="2 4 0 -2" DockPanel.Dock="Top">
-        <StackPanel.ContextMenu>
-          <ContextMenu>
-            <MenuItem Header="Run All Tests" />
-            <MenuItem Header="Build Solution" />
-            <MenuItem Header="Rebuild Solution" />
-            <MenuItem Header="Clean Solution" />
-            <Separator />
-            <MenuItem Header="Add">
-              <MenuItem Header="New Project..." Command="{Binding Solution.AddNewProjectCommand}" />
-              <MenuItem Header="Existing Project..."  Command="{Binding Solution.AddExistingProjectCommand}"/>
-              <MenuItem Header="New Solution Folder..." Command="{Binding Solution.AddNewFolderCommand}" />
-            </MenuItem>
-            <Separator />
-            <MenuItem Header="Open Containing Folder"  Command="{Binding Solution.OpenInExplorerCommand}"/>
-          </ContextMenu>
-        </StackPanel.ContextMenu>
-        <DrawingPresenter Width="16" Height="16" Drawing="{Binding Solution.Icon}" />
-        <Controls:EditableTextBlock Text="{Binding Solution.Title}" InEditMode="{Binding Solution.InEditMode}" />
-      </StackPanel>
+  <DockPanel>
+    <StackPanel Orientation="Horizontal" Gap="4" Margin="2 4 0 -2" DockPanel.Dock="Top">
+      <StackPanel.ContextMenu>
+        <ContextMenu>
+          <MenuItem Header="Run All Tests" />
+          <MenuItem Header="Build Solution" />
+          <MenuItem Header="Rebuild Solution" />
+          <MenuItem Header="Clean Solution" />
+          <Separator />
+          <MenuItem Header="Add">
+            <MenuItem Header="New Project..." Command="{Binding Solution.AddNewProjectCommand}" />
+            <MenuItem Header="Existing Project..."  Command="{Binding Solution.AddExistingProjectCommand}" />
+            <MenuItem Header="New Solution Folder..." Command="{Binding Solution.AddNewFolderCommand}" />
+          </MenuItem>
+          <Separator />
+          <MenuItem Header="Open Containing Folder"  Command="{Binding Solution.OpenInExplorerCommand}" />
+        </ContextMenu>
+      </StackPanel.ContextMenu>
+      <DrawingPresenter Width="16" Height="16" Drawing="{Binding Solution.Icon}" />
+      <Controls:EditableTextBlock Text="{Binding Solution.Title}" InEditMode="{Binding Solution.InEditMode}" />
+    </StackPanel>
 
-      <TreeView BorderThickness="0" Items="{Binding Path=Solution.Items}" SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}">
-        <TreeView.Styles>
-          <Style Selector="TreeViewItem">
-            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-          </Style>
-          <Style Selector="ContextMenu">
-            <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
-          </Style>
-        </TreeView.Styles>
-        <TreeView.DataTemplates>
-          <TreeDataTemplate DataType="ViewModels:SolutionFolderViewModel" ItemsSource="{Binding Items}">
-            <StackPanel Orientation="Horizontal" Gap="4">
-              <StackPanel.ContextMenu>
-                <ContextMenu>
-                  <MenuItem Header="Add">
-                    <MenuItem Header="New Project..." Command="{Binding AddNewProjectCommand}" />
-                    <MenuItem Header="Existing Project..."  Command="{Binding AddExistingProjectCommand}"/>
-                    <MenuItem Header="New Solution Folder..." Command="{Binding AddNewFolderCommand}" />
-                  </MenuItem>
-                  <Separator />
-                  <MenuItem Header="Remove"  Command="{Binding RemoveCommand}"/>
-                </ContextMenu>
-              </StackPanel.ContextMenu>
-              <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-              <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" />
-            </StackPanel>
-          </TreeDataTemplate>
+    <TreeView BorderThickness="0" Items="{Binding Solution.Items}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}">
+      <TreeView.Styles>
+        <Style Selector="TreeViewItem">
+          <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+        </Style>
+        <Style Selector="ContextMenu">
+          <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
+        </Style>
+      </TreeView.Styles>
+      <TreeView.DataTemplates>
+        <TreeDataTemplate DataType="ViewModels:SolutionFolderViewModel" ItemsSource="{Binding Items}">
+          <StackPanel Orientation="Horizontal" Gap="4">
+            <StackPanel.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="Add">
+                  <MenuItem Header="New Project..." Command="{Binding AddNewProjectCommand}" />
+                  <MenuItem Header="Existing Project..."  Command="{Binding AddExistingProjectCommand}" />
+                  <MenuItem Header="New Solution Folder..." Command="{Binding AddNewFolderCommand}" />
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="Remove"  Command="{Binding RemoveCommand}" />
+              </ContextMenu>
+            </StackPanel.ContextMenu>
+            <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
+            <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" />
+          </StackPanel>
+        </TreeDataTemplate>
 
-          <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding Items}">
-            <StackPanel Orientation="Horizontal" IsVisible="{Binding IsVisible}" Gap="4">
-              <StackPanel.ContextMenu>
-                <ContextMenu>
-                  <MenuItem Header="Configure" Command="{Binding ConfigureCommand}"/>
-                  <MenuItem Header="Build" Command="{Binding BuildCommand}" />
-                  <MenuItem Header="Debug" Command="{Binding DebugCommand}"/>
-                  <MenuItem Header="Clean" Command="{Binding CleanCommand}" />
-                  <MenuItem Header="Set as Default Project" Command="{Binding SetProjectCommand}" />
-                  <MenuItem Header="Manage References" />
-                  <MenuItem Header="Open Developer Console" Command="{Binding DevConsoleCommand}" />
+        <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding Items}">
+          <StackPanel Orientation="Horizontal" IsVisible="{Binding IsVisible}" Gap="4">
+            <StackPanel.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="Configure" Command="{Binding ConfigureCommand}" />
+                <MenuItem Header="Build" Command="{Binding BuildCommand}" />
+                <MenuItem Header="Debug" Command="{Binding DebugCommand}" />
+                <MenuItem Header="Clean" Command="{Binding CleanCommand}" />
+                <MenuItem Header="Set as Default Project" Command="{Binding SetProjectCommand}" />
+                <MenuItem Header="Manage References" />
+                <MenuItem Header="Open Developer Console" Command="{Binding DevConsoleCommand}" />
+                <Separator />
+                <MenuItem Header="Add">
+                  <MenuItem Header="New File" Command="{Binding NewFileCommand}" />
+                  <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
+                  <MenuItem Header="Exisiting Item..." />
+                  <MenuItem Header="New Folder..." Command="{Binding NewFolderCommand}" />
+                  <MenuItem Header="Import Folder..." />
                   <Separator />
-                  <MenuItem Header="Add">
-                    <MenuItem Header="New File" Command="{Binding NewFileCommand}" />
-                    <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
-                    <MenuItem Header="Exisiting Item..." />
-                    <MenuItem Header="New Folder..." Command="{Binding NewFolderCommand}" />
-                    <MenuItem Header="Import Folder..." />
-                    <Separator />
-                    <MenuItem Header="New File..." />
-                  </MenuItem>
-                  <Separator />
-                  <MenuItem Header="Rename" Command="{Binding RenameCommand}" />
-                  <Separator />
-                  <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
-                  <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
-                </ContextMenu>
-              </StackPanel.ContextMenu>
-              <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-              <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" FontWeight="{Binding FontWeight}" />
-            </StackPanel>
-          </TreeDataTemplate>
+                  <MenuItem Header="New File..." />
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="Rename" Command="{Binding RenameCommand}" />
+                <Separator />
+                <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
+                <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
+              </ContextMenu>
+            </StackPanel.ContextMenu>
+            <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
+            <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" FontWeight="{Binding FontWeight}" />
+          </StackPanel>
+        </TreeDataTemplate>
 
-          <TreeDataTemplate DataType="ViewModels:ReferenceFolderViewModel" ItemsSource="{Binding References}">
-            <StackPanel Orientation="Horizontal" Gap="4">
-              <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-              <TextBlock Text="{Binding Title}" Height="15" />
-            </StackPanel>
-          </TreeDataTemplate>
+        <TreeDataTemplate DataType="ViewModels:ReferenceFolderViewModel" ItemsSource="{Binding References}">
+          <StackPanel Orientation="Horizontal" Gap="4">
+            <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
+            <TextBlock Text="{Binding Title}" Height="15" />
+          </StackPanel>
+        </TreeDataTemplate>
 
-          <TreeDataTemplate DataType="ViewModels:ReferenceViewModel">
-            <StackPanel Orientation="Horizontal" Gap="4">
-              <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-              <TextBlock Text="{Binding Name}" Height="15" />
-            </StackPanel>
-          </TreeDataTemplate>
+        <TreeDataTemplate DataType="ViewModels:ReferenceViewModel">
+          <StackPanel Orientation="Horizontal" Gap="4">
+            <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
+            <TextBlock Text="{Binding Name}" Height="15" />
+          </StackPanel>
+        </TreeDataTemplate>
 
-          <TreeDataTemplate DataType="ViewModels:SourceFileViewModel">
-            <StackPanel Orientation="Horizontal" Gap="4">
-              <StackPanel.ContextMenu>
-                <ContextMenu>
-                  <MenuItem Header="Rename" Command="{Binding RenameCommand}" />
-                  <Separator />
-                  <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
-                  <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
-                  <MenuItem Header="Delete" Command="{Binding DeleteCommand}" HotKey="Delete" />
-                </ContextMenu>
-              </StackPanel.ContextMenu>
-              <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-              <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" />
-            </StackPanel>
-          </TreeDataTemplate>
+        <TreeDataTemplate DataType="ViewModels:SourceFileViewModel">
+          <StackPanel Orientation="Horizontal" Gap="4">
+            <StackPanel.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="Rename" Command="{Binding RenameCommand}" />
+                <Separator />
+                <MenuItem Header="Open Containing Folder"  Command="{Binding OpenInExplorerCommand}" />
+                <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
+                <MenuItem Header="Delete" Command="{Binding DeleteCommand}" HotKey="Delete" />
+              </ContextMenu>
+            </StackPanel.ContextMenu>
+            <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
+            <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" />
+          </StackPanel>
+        </TreeDataTemplate>
 
-          <TreeDataTemplate DataType="ViewModels:ProjectFolderViewModel" ItemsSource="{Binding Items}">
-            <StackPanel Orientation="Horizontal" Gap="4">
-              <StackPanel.ContextMenu>
-                <ContextMenu>
-                  <MenuItem Header="Rename" Command="{Binding RenameCommand}" />
+        <TreeDataTemplate DataType="ViewModels:ProjectFolderViewModel" ItemsSource="{Binding Items}">
+          <StackPanel Orientation="Horizontal" Gap="4">
+            <StackPanel.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="Rename" Command="{Binding RenameCommand}" />
+                <Separator />
+                <MenuItem Header="Open Folder"  Command="{Binding OpenInExplorerCommand}" />
+                <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
+                <Separator />
+                <MenuItem Header="Add">
+                  <MenuItem Header="New File" Command="{Binding NewFileCommand}" />
+                  <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
+                  <MenuItem Header="Exisiting Item..." />
+                  <MenuItem Header="New Folder..." Command="{Binding NewFolderCommand}" />
+                  <MenuItem Header="Import Folder..." />
                   <Separator />
-                  <MenuItem Header="Open Folder"  Command="{Binding OpenInExplorerCommand}" />
-                  <MenuItem Header="Exclude from Project" Command="{Binding RemoveCommand}" />
-                  <Separator />
-                  <MenuItem Header="Add">
-                    <MenuItem Header="New File" Command="{Binding NewFileCommand}" />
-                    <MenuItem Header="New Item..." Command="{Binding NewItemCommand}" />
-                    <MenuItem Header="Exisiting Item..." />
-                    <MenuItem Header="New Folder..." Command="{Binding NewFolderCommand}" />
-                    <MenuItem Header="Import Folder..." />
-                    <Separator />
-                    <MenuItem Header="New File..." />
-                  </MenuItem>
-                </ContextMenu>
-              </StackPanel.ContextMenu>
-              <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
-              <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" />
-            </StackPanel>
-          </TreeDataTemplate>
-        </TreeView.DataTemplates>
-      </TreeView>
-    </DockPanel>
-  </Controls:ToolControl>
+                  <MenuItem Header="New File..." />
+                </MenuItem>
+              </ContextMenu>
+            </StackPanel.ContextMenu>
+            <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
+            <Controls:EditableTextBlock Text="{Binding Title}" InEditMode="{Binding InEditMode}" Height="15" />
+          </StackPanel>
+        </TreeDataTemplate>
+      </TreeView.DataTemplates>
+    </TreeView>
+  </DockPanel>
 </UserControl>
