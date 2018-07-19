@@ -12,10 +12,10 @@
                             <local:Center Name="PART_Center" />
                         </Decorator>
                     </ScrollViewer>
-                    <Grid Background="#0fffffff" x:Name="PART_Overlay" IsVisible="False">
-                        <StackPanel Gap="4" VerticalAlignment="Center">
+                    <Grid Background="#2fffffff" x:Name="PART_Overlay" IsVisible="False">
+                        <StackPanel Gap="4" VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource EditorForegroundBrush}">
                             <TextBlock Text="Unable to Load Previewer" FontSize="18"  HorizontalAlignment="Center" />
-                            <TextBlock x:Name="PART_Status" HorizontalAlignment="Center" Foreground="WhiteSmoke" />
+                            <TextBlock x:Name="PART_Status" HorizontalAlignment="Center" />
                         </StackPanel>
                     </Grid>
                 </Grid>

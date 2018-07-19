@@ -144,6 +144,14 @@ namespace AvalonStudio.Languages.Xaml
                     }
                 }, false, executeInShell: false);
             }
+            else
+            {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    _statusText.Text = "Please build your project to enable previewing and intellisense.";
+                    _overlay.IsVisible = true;
+                });
+            }
         }
 
         private void KillHost()
