@@ -1,25 +1,34 @@
 ﻿<Styles  xmlns="https://github.com/avaloniaui"
          xmlns:local="clr-namespace:AvalonStudio.Languages.Xaml;assembly=AvalonStudio.Languages.Xaml"
          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Style Selector="local|AvaloniaPreviewer">
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding" Value="0"/>
-        <Setter Property="Template">
-            <ControlTemplate>
-                <Grid>
-                    <ScrollViewer Name="PART_Remote" HorizontalScrollBarVisibility="Auto" >
-                        <Decorator Padding="40">
-                            <local:Center Name="PART_Center" />
-                        </Decorator>
-                    </ScrollViewer>
-                    <Grid Background="#2fffffff" x:Name="PART_Overlay" IsVisible="False">
-                        <StackPanel Gap="4" VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource EditorForegroundBrush}">
-                            <TextBlock Text="Unable to Load Previewer" FontSize="18"  HorizontalAlignment="Center" />
-                            <TextBlock x:Name="PART_Status" HorizontalAlignment="Center" />
-                        </StackPanel>
-                    </Grid>
-                </Grid>
-            </ControlTemplate>
-        </Setter>
-    </Style>
+  <Style Selector="local|AvaloniaPreviewer">
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Padding" Value="0"/>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <ScrollViewer Name="PART_Remote" HorizontalScrollBarVisibility="Auto" >
+            <Decorator Padding="40">
+              <local:Center Name="PART_Center" />
+            </Decorator>
+          </ScrollViewer>
+          <Grid Background="#7fffffff" x:Name="PART_Overlay" IsVisible="False">
+            <StackPanel Gap="4" VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource EditorForegroundBrush}">
+              <TextBlock Text="Unable to Load Previewer" FontSize="18"  HorizontalAlignment="Center" />
+              <TextBlock x:Name="PART_Status" HorizontalAlignment="Center" />
+            </StackPanel>
+          </Grid>
+          <Grid Background="#7fffffff" x:Name="PART_ErrorOverlay" IsVisible="False">
+            <StackPanel Gap="4" VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource EditorForegroundBrush}">
+              <TextBlock Text="XAML Syntax Errors" FontSize="18"  HorizontalAlignment="Center" />
+
+              <Panel Background="{DynamicResource EditorBackgroundBrush}" MaxWidth="600" MaxHeight="400">
+                <TextBox Background="{DynamicResource EditorBackgroundBrush}" IsReadOnly="True" Padding="0" BorderThickness="0" x:Name="PART_Errors" HorizontalAlignment="Center" TextWrapping="Wrap" AcceptsReturn="True"  Margin="10" MaxWidth="600" />
+              </Panel>
+            </StackPanel>
+          </Grid>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
 </Styles>

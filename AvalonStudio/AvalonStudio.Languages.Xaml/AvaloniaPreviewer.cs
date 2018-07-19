@@ -49,7 +49,9 @@ namespace AvalonStudio.Languages.Xaml
         private Center _remoteContainer;
         private Process _currentHost;
         private Grid _overlay;
+        private Grid _errorOverlay;
         private TextBlock _statusText;
+        private TextBox _errorText;
         private CompositeDisposable _disposables;
         private IDisposable _listener;
         private VisualBrush _visualBrush;
@@ -261,8 +263,10 @@ namespace AvalonStudio.Languages.Xaml
             _remoteContainer = e.NameScope.Find<Center>("PART_Center");
 
             _overlay = e.NameScope.Find<Grid>("PART_Overlay");
-
             _statusText = e.NameScope.Find<TextBlock>("PART_Status");
+
+            _errorOverlay = e.NameScope.Find<Grid>("PART_ErrorOverlay");
+            _errorText = e.NameScope.Find<TextBox>("PART_Errors");
 
             var background = e.NameScope.Find<ScrollViewer>("PART_Remote");
 
@@ -279,10 +283,14 @@ namespace AvalonStudio.Languages.Xaml
                 {
                     if (result.Error != null)
                     {
-                        IoC.Get<IConsole>().WriteLine(result.Error);
+                        _errorText.Text = result.Error;
+                        _errorOverlay.IsVisible = true;
                     }
-                    //_errorsContainer.IsVisible = result.Error != null;
-                    //_errors.Text = result.Error ?? "";
+                    else
+                    {
+                        _errorOverlay.IsVisible = false;
+                        _errorText.Text = "";
+                    }
                 }
                 if (obj is RequestViewportResizeMessage resize)
                 {
