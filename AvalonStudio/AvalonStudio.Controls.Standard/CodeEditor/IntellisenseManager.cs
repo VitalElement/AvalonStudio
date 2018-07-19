@@ -336,6 +336,11 @@
 
                     if (caretIndex - wordStart - offset >= 0 && intellisenseControl.SelectedCompletion != null)
                     {
+                        if(editor.Document.GetCharAt(wordStart) == intellisenseControl.SelectedCompletion.Model.InsertionText[0])
+                        {
+                            offset = 0;
+                        }
+
                         editor.Document.Replace(wordStart, caretIndex - wordStart - offset,
                                 intellisenseControl.SelectedCompletion.Model.InsertionText);
 
