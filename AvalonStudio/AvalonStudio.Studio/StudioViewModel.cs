@@ -63,7 +63,7 @@ namespace AvalonStudio.Studio
                 }
             });
 
-            this.WhenAnyValue(x => x.GlobalZoomLevel).Throttle(TimeSpan.FromSeconds(2)).Subscribe(zoomLevel =>
+            this.WhenAnyValue(x => x.GlobalZoomLevel).Throttle(TimeSpan.FromSeconds(2)).ObserveOn(RxApp.MainThreadScheduler).Subscribe(zoomLevel =>
             {
                 var settings = Settings.GetSettings<EditorSettings>();
 
