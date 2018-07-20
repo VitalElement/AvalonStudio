@@ -13,6 +13,7 @@ namespace AvalonStudio
 {
     internal class App : Application
     {
+#if !DEBUG
         static void Print(Exception ex)
         {
             Console.WriteLine(ex.Message);
@@ -22,39 +23,44 @@ namespace AvalonStudio
                 Print(ex.InnerException);
             }
         }
+#endif
 
         [STAThread]
         private static void Main(string[] args)
         {
-            try
+#if !DEBUG
+        try
             {
-                if (args == null)
-                {
-                    throw new ArgumentNullException(nameof(args));
-                }
-
-                BuildAvaloniaApp().AfterSetup(async _ =>
-                {
-                    InitializeLogging();
-
-                    Platform.Initialise();
-
-                    PackageSources.InitialisePackageSources();
-
-                    Dispatcher.UIThread.Post (async () =>
-                    {
-                        await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
-			        });
-                })
-                .StartShellApp<AppBuilder, MainWindow>("AvalonStudio", null, ()=>new MainWindowViewModel());
+#endif
+            if (args == null)
+            {
+                throw new ArgumentNullException(nameof(args));
             }
+
+            BuildAvaloniaApp().AfterSetup(async _ =>
+            {
+                InitializeLogging();
+
+                Platform.Initialise();
+
+                PackageSources.InitialisePackageSources();
+
+                Dispatcher.UIThread.Post(async () =>
+                   {
+                    await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
+                });
+            })
+            .StartShellApp<AppBuilder, MainWindow>("AvalonStudio", null, () => new MainWindowViewModel());
+#if !DEBUG
+    }
             catch (Exception e)
             {
                 Print(e);
             }
             finally
+#endif
             {
-                Application.Current.Exit();                
+                Application.Current.Exit();
             }
         }
 
