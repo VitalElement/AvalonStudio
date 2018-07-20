@@ -64,11 +64,13 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             _solutionExplorer = IoC.Get<ISolutionExplorer>();
         }
 
-        public override void Close()
+        public override bool OnClose()
         {
-            base.Close();
+            bool result = base.OnClose();
 
             _disposables.Dispose();
+
+            return result;
         }
 
         public void BeforeActivation()

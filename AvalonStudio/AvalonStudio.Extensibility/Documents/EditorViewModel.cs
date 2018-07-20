@@ -153,11 +153,13 @@ namespace AvalonStudio.Controls
 
         public abstract Task WaitForEditorToLoadAsync();
 
-        public override void Close()
+        public override bool OnClose()
         {
-            base.Close();
+            bool result = base.OnClose();
 
             Editor.Dispose();
+
+            return result;
         }
 
         /// <summary>

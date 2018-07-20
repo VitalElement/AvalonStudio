@@ -50,11 +50,13 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _isReadOnly, value); }
         }
 
-        public override void Close()
+        public override bool OnClose()
         {
-            base.Close();
+            var result = base.OnClose();
 
             _disposables.Dispose();
+
+            return result;
         }
 
         ~TextEditorViewModel()
