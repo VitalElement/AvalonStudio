@@ -4,11 +4,13 @@ using AvalonStudio.Toolchains.GCC;
 using AvalonStudio.Utils;
 using Mono.Debugging.Client;
 using System;
+using System.Composition;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging.GDB.Remote
 {
+    [Shared]
     [ExportDebugger]
     internal class RemoteGdbDebugger : IDebugger2
     {
@@ -43,6 +45,7 @@ namespace AvalonStudio.Debugging.GDB.Remote
                 Arguments = "",
                 WorkingDirectory = System.IO.Path.GetDirectoryName(Path.Combine(project.CurrentDirectory, project.Executable)),
                 UseExternalConsole = false,
+                RequiresManualStart = true,
                 CloseExternalConsoleOnExit = true
             };
 

@@ -4,11 +4,13 @@ using AvalonStudio.Projects;
 using AvalonStudio.Utils;
 using Mono.Debugging.Client;
 using Mono.Debugging.Win32;
+using System.Composition;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging.DotNetCore
 {
+    [Shared]
     [ExportDebugger]
     internal class DotNetCoreDebugger : IDebugger2
     {
