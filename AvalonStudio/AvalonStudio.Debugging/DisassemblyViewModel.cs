@@ -122,7 +122,7 @@ namespace AvalonStudio.Debugging
 
         public override Location DefaultLocation
         {
-            get { return Location.RightTop; }
+            get { return Location.Right; }
         }
 
         public void BeforeActivation()
