@@ -1,39 +1,33 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:dg="clr-namespace:Avalonia.Controls;assembly=Avalonia.DataGrid"
              xmlns:vm="clr-namespace:AvalonStudio.Controls.Standard.ErrorList;assembly=AvalonStudio.Controls.Standard">
-             
-  <dg:DataGrid Items="{Binding Errors}"
-        Name="dataGrid1"
-        Margin="12"
+
+  <dg:DataGrid Items="{Binding Errors}" SelectedItem="{Binding SelectedError, Mode=TwoWay}"
+        RowBackground="Transparent"
         CanUserResizeColumns="True"
         CanUserReorderColumns="True">
-
-        <dg:DataGrid.Columns>
-      
-          <dg:DataGridTextColumn
-            Header="Level"
-            Binding="{Binding Level}"
-            Width="6*" />
-          <dg:DataGridTextColumn
-            Header="Error"
-            Binding="{Binding Spelling}"
-            Width="4*"/>
-          <dg:DataGridTextColumn
-            Header="Project"
-            Binding="{Binding Project}"
-            Width="3*"/>
-          <dg:DataGridTextColumn
-            Header="File"
-            Binding="{Binding File}"
-            Width="3*"/>
-          <dg:DataGridTextColumn
-            Header="Line"
-            Binding="{Binding Line}"
-            Width="3*"
-            CellStyleClasses="gdp"/>
-      
-        </dg:DataGrid.Columns>
-    
-      </dg:DataGrid>
-    </TabItem>
+    <dg:DataGrid.Columns>
+      <dg:DataGridTextColumn
+        Header="Level"
+        Binding="{Binding Level}"
+        Width="0.5*" />
+      <dg:DataGridTextColumn
+        Header="Error"
+        Binding="{Binding Spelling}"
+        Width="10*" />
+      <dg:DataGridTextColumn
+        Header="Project"
+        Binding="{Binding Project}"
+        Width="1*" />
+      <dg:DataGridTextColumn
+        Header="File"
+        Binding="{Binding File}"
+        Width="1*" />
+      <dg:DataGridTextColumn
+        Header="Line"
+        Binding="{Binding Line}"
+        Width="0.5*"
+        CellStyleClasses="gdp" />
+    </dg:DataGrid.Columns>
+  </dg:DataGrid>
 </UserControl>
