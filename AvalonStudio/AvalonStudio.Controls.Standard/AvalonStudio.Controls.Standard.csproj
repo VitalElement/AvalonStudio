@@ -29,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AvalonStudio.Shell\src\AvalonStudio.Utils\AvalonStudio.Utils.csproj" />
+    <ProjectReference Include="..\..\DataGrid\src\Avalonia.DataGrid\Avalonia.DataGrid.csproj" />
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
