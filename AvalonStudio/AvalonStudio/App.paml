@@ -24,6 +24,7 @@
     <StyleInclude Source="resm:Dock.Avalonia.Controls.DockTarget.xaml?assembly=Dock.Avalonia"/>
     <StyleInclude Source="resm:Dock.Avalonia.Controls.DockToolChrome.xaml?assembly=Dock.Avalonia"/>
     <StyleInclude Source="resm:Dock.Avalonia.Controls.MetroWindow.xaml?assembly=Dock.Avalonia"/>
+    <StyleInclude Source="resm:Avalonia.DataGrid.Themes.Default.DefaultTheme.xaml?assembly=Avalonia.DataGrid.Themes.Default"/>
   </Application.Styles>  
     <Application.DataTemplates>
       <!-- Views -->
