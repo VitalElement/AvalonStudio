@@ -2,19 +2,19 @@
 using AvalonStudio.Menus;
 using System.Composition;
 
-namespace AvalonStudio.Controls.Standard.Console
+namespace AvalonStudio.Controls.Standard.ErrorList
 {
-    internal class ConsoleMainMenuItems
+    internal class ErrorListMainMenuItems
     {
-        [ExportMainMenuItem("View", "Console")]
+        [ExportMainMenuItem("View", "Error List")]
         [DefaultGroup("DefaultTools")]
         [DefaultOrder(0)]
-        public IMenuItem ViewConsole => _menuItemFactory.CreateCommandMenuItem("View.Console");
+        public IMenuItem ViewErrorList => _menuItemFactory.CreateCommandMenuItem("View.ErrorList");
 
         private readonly IMenuItemFactory _menuItemFactory;
 
         [ImportingConstructor]
-        public ConsoleMainMenuItems(IMenuItemFactory menuItemFactory)
+        public ErrorListMainMenuItems(IMenuItemFactory menuItemFactory)
         {
             _menuItemFactory = menuItemFactory;
         }
