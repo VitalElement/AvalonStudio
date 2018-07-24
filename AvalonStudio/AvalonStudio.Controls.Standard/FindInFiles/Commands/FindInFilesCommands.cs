@@ -1,6 +1,7 @@
 ﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Commands;
 using ReactiveUI;
+using AvalonStudio.Shell;
 
 namespace AvalonStudio.Controls.Standard.FindInFiles.Commands
 {
@@ -19,8 +20,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles.Commands
                 {
                     var vm = IoC.Get<FindInFilesViewModel>();
 
-                    vm.IsVisible = true;
-                    vm.IsSelected = true;                
+                    IoC.Get<IShell>().AddOrSelectTool(vm);
                 }));
         }
     }
