@@ -95,6 +95,8 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         public void Activation()
         {
             studio = IoC.Get<IStudio>();
+
+            IoC.Get<IShell>().AddOrSelectTool(this);
         }
     }
 }

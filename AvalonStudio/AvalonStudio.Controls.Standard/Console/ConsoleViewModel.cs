@@ -28,6 +28,8 @@ namespace AvalonStudio.Controls.Standard.Console
             Title = "Console";
             document = new TextDocument();
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
+
+            
         }
 
         private TextDocument document;
@@ -119,6 +121,8 @@ namespace AvalonStudio.Controls.Standard.Console
         public void Activation()
         {
             shell = IoC.Get<IShell>();
+
+            shell.AddOrSelectTool(this);
         }
 
         private void ScrollToEnd()

@@ -19,7 +19,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     [Export(typeof(IExtension))]
     [ExportToolControl]
     [Shared]
-    public class SolutionExplorerViewModel : ToolViewModel, IExtension, ISolutionExplorer
+    public class SolutionExplorerViewModel : ToolViewModel, IActivatableExtension, ISolutionExplorer
     {
         public const string ToolId = "CIDSEVM00";
 
@@ -135,7 +135,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public override MVVM.Location DefaultLocation
         {
-            get { return MVVM.Location.Right; }
+            get { return MVVM.Location.Left; }
         }
 
         public void NewSolution()
@@ -183,6 +183,15 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 await IoC.Get<IStudio>().OpenSolutionAsync(result[0]);
             }
+        }
+
+        public void BeforeActivation()
+        {
+        }
+
+        public void Activation()
+        {
+            IoC.Get<IShell>().AddOrSelectTool(this);
         }
     }
 }

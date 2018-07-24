@@ -1,8 +1,8 @@
-﻿using Dock.Model.Controls;
+﻿using AvalonStudio.MVVM;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    public interface ISolutionExplorer : IToolTab
+    public interface ISolutionExplorer : IToolViewModel
     {
         void NewSolution();
 
