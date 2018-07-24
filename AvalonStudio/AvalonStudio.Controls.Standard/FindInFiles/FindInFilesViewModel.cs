@@ -26,8 +26,6 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
         {
             Title = "Find Results";
 
-            IsVisible = false;
-
             FindCommand = ReactiveCommand.Create(async () =>
             {
                 Results = null;
