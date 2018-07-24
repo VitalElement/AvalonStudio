@@ -2,7 +2,8 @@ namespace AvalonStudio.Debugging
 {
     using Avalonia.Threading;
     using AvalonStudio.Documents;
-    using AvalonStudio.Extensibility;    
+    using AvalonStudio.Extensibility;
+    using AvalonStudio.Extensibility.Shell;
     using AvalonStudio.Extensibility.Studio;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
@@ -184,7 +185,7 @@ namespace AvalonStudio.Debugging
             {
                 DebugSessionEnded?.Invoke(this, EventArgs.Empty);
 
-                _studio.CurrentPerspective = Perspective.Editor;
+                _studio.CurrentPerspective = Perspective.Normal;
 
                 _lastDocument?.ClearDebugHighlight();
                 _lastDocument = null;
@@ -269,7 +270,7 @@ namespace AvalonStudio.Debugging
 
                 _session.Run(debugger2.GetDebuggerStartInfo(project), debugger2.GetDebuggerSessionOptions(project));
 
-                _studio.CurrentPerspective = Perspective.Debug;
+                _studio.CurrentPerspective = Perspective.Debugging;
 
                 DebugSessionStarted?.Invoke(this, EventArgs.Empty);
             }

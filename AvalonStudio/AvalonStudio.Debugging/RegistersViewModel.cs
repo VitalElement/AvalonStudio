@@ -1,5 +1,6 @@
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System;
@@ -11,6 +12,7 @@ using System.Reactive.Linq;
 
 namespace AvalonStudio.Debugging
 {
+    [Perspective(Perspective.Debugging)]
     [ExportToolControl, Export(typeof(IExtension)), Shared]
     public class RegistersViewModel : ToolViewModel<ObservableCollection<RegisterViewModel>>, IActivatableExtension
     {

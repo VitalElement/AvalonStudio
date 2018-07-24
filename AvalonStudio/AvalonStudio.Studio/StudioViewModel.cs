@@ -49,7 +49,7 @@ namespace AvalonStudio.Studio
 
             OnSolutionChanged = Observable.FromEventPattern<SolutionChangedEventArgs>(this, nameof(SolutionChanged)).Select(s => s.EventArgs.NewValue);
 
-            CurrentPerspective = Perspective.Editor;
+            CurrentPerspective = Perspective.Normal;
 
             var editorSettings = Settings.GetSettings<EditorSettings>();
 
@@ -122,11 +122,17 @@ namespace AvalonStudio.Studio
 
                 switch (value)
                 {
-                    case Perspective.Editor:
+                    case Perspective.Normal:
                         DebugVisible = false;
                         break;
 
-                    case Perspective.Debug:
+                    case Perspective.Debugging:
+                        // find all tools with debugging perspective attribute
+                        // they must also have IsOpen (i.e. user didnt close them)
+                        // re-dock them.
+
+
+
                         // TODO close intellisense, and tooltips.
                         // disable documents, get rid of error list, solution explorer, etc.    (isreadonly)
                         DebugVisible = true;

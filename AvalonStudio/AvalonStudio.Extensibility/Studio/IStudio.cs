@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
@@ -10,12 +11,6 @@ using AvalonStudio.TestFrameworks;
 
 namespace AvalonStudio.Extensibility.Studio
 {
-    public enum Perspective
-    {
-        Editor,
-        Debug
-    }
-
     public interface IStudio
     {
         IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
