@@ -20,7 +20,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles.Commands
                 {
                     var vm = IoC.Get<FindInFilesViewModel>();
 
-                    IoC.Get<IShell>().AddOrSelectTool(vm);
+                    IoC.Get<IShell>().CurrentPerspective.AddOrSelectTool(vm);
                 }));
         }
     }

@@ -27,7 +27,7 @@ namespace AvalonStudio.Controls.Standard.Console
             ViewConsoleCommand = new CommandDefinition("Console", null,
                 ReactiveCommand.Create(() =>
                 {
-                    _shell.AddOrSelectTool(_console as IToolViewModel);
+                    _shell.CurrentPerspective.AddOrSelectTool(_console as IToolViewModel);
                 }));
         }
     }

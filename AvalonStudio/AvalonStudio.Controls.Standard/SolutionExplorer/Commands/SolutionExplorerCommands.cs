@@ -48,7 +48,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
             ViewSolutionExplorerCommand = new CommandDefinition("Solution Explorer", null,
                 ReactiveCommand.Create(() =>
                 {
-                    _shell.AddOrSelectTool(_solutionExplorer);
+                    _shell.CurrentPerspective.AddOrSelectTool(_solutionExplorer);
                 }));
         }
     }

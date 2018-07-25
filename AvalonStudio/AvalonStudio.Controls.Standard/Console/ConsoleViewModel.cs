@@ -122,7 +122,7 @@ namespace AvalonStudio.Controls.Standard.Console
         {
             shell = IoC.Get<IShell>();
 
-            shell.AddOrSelectTool(this);
+            shell.CurrentPerspective.AddOrSelectTool(this);
         }
 
         private void ScrollToEnd()

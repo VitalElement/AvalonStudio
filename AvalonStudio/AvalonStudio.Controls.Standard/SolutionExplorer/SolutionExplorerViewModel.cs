@@ -191,7 +191,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public void Activation()
         {
-            IoC.Get<IShell>().AddOrSelectTool(this);
+            IoC.Get<IShell>().CurrentPerspective.AddOrSelectTool(this);
         }
     }
 }

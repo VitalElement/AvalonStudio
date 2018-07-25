@@ -27,7 +27,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             ViewErrorListCommand = new CommandDefinition("Error List", null,
                 ReactiveCommand.Create(() =>
                 {
-                    _shell.AddOrSelectTool(_errorList as IToolViewModel);
+                    _shell.CurrentPerspective.AddOrSelectTool(_errorList as IToolViewModel);
                 }));
         }
     }

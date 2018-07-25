@@ -96,7 +96,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         {
             studio = IoC.Get<IStudio>();
 
-            IoC.Get<IShell>().AddOrSelectTool(this);
+            IoC.Get<IShell>().CurrentPerspective.AddOrSelectTool(this);
         }
     }
 }
