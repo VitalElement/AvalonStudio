@@ -21,6 +21,8 @@ namespace AvalonStudio.Extensibility.Studio
 
         ColorScheme CurrentColorScheme { get; set; }
 
+        IPerspective DebugPerspective { get; }
+
         Perspective CurrentPerspective { get; set; }
 
         ISolution CurrentSolution { get; set; }
@@ -70,5 +72,7 @@ namespace AvalonStudio.Extensibility.Studio
         bool DebugMode { get; }
 
         double GlobalZoomLevel { get; set; }
+
+        void Initialise();
     }
 }

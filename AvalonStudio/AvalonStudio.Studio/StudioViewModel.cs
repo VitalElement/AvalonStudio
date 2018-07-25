@@ -11,6 +11,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Utils;
+using Dock.Model;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -80,6 +81,18 @@ namespace AvalonStudio.Studio
             });
         }
 
+        public void Initialise ()
+        {
+            var shell = IoC.Get<IShell>();
+
+            var debugPerspective = shell.CreatePerspective();
+
+            DebugPerspective = debugPerspective;
+        }
+
+        public DockBase DebugLayout { get; set; }
+        public DockBase MainLayout { get; set; }
+
         public ReactiveCommand EnableDebugModeCommand { get; }
 
         public IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> SolutionTypes { get; }
@@ -110,6 +123,8 @@ namespace AvalonStudio.Studio
             set { this.RaiseAndSetIfChanged(ref debugControlsVisible, value); }
         }
 
+        public IPerspective DebugPerspective { get; private set; }
+
         public Perspective CurrentPerspective
         {
             get
@@ -120,18 +135,22 @@ namespace AvalonStudio.Studio
             {
                 this.RaiseAndSetIfChanged(ref currentPerspective, value);
 
+                var shell = IoC.Get<IShell>();
+
                 switch (value)
                 {
                     case Perspective.Normal:
                         DebugVisible = false;
+                        shell.CurrentPerspective = shell.MainPerspective;
                         break;
 
                     case Perspective.Debugging:
                         // find all tools with debugging perspective attribute
                         // they must also have IsOpen (i.e. user didnt close them)
                         // re-dock them.
+                        shell.CurrentPerspective = DebugPerspective;
 
-
+                        //IoC.Get<IShell>().Layout?.Navigate(DebugLayout);
 
                         // TODO close intellisense, and tooltips.
                         // disable documents, get rid of error list, solution explorer, etc.    (isreadonly)
@@ -189,7 +208,7 @@ namespace AvalonStudio.Studio
         {
             var shell = IoC.Get<IShell>();
 
-            if (shell.Layout.FocusedView is IFileDocumentTabViewModel document)
+            if (shell.SelectedDocument is IFileDocumentTabViewModel document)
             {
                 document.Editor.Save();
             }
@@ -353,7 +372,7 @@ namespace AvalonStudio.Studio
 
                 if (focus)
                 {
-                    shell.Layout.Factory.SetCurrentView(fileTab);
+                    shell.Select(fileTab);
                     fileTab.Editor.Focus();
                 }
 

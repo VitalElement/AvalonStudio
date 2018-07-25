@@ -8,6 +8,8 @@ using AvalonStudio.Repositories;
 using AvalonStudio.Shell;
 using Serilog;
 using System;
+using AvalonStudio.Extensibility.Studio;
+using AvalonStudio.Extensibility;
 
 namespace AvalonStudio
 {
@@ -37,8 +39,12 @@ namespace AvalonStudio
                 throw new ArgumentNullException(nameof(args));
             }
 
-            BuildAvaloniaApp().AfterSetup(async _ =>
+            BuildAvaloniaApp().BeforeStarting(_ =>
             {
+                var studio = IoC.Get<IStudio>();
+
+                studio.Initialise();
+
                 InitializeLogging();
 
                 Platform.Initialise();
@@ -47,8 +53,8 @@ namespace AvalonStudio
 
                 Dispatcher.UIThread.Post(async () =>
                    {
-                    await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
-                });
+                       await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
+                   });
             })
             .StartShellApp<AppBuilder, MainWindow>("AvalonStudio", null, () => new MainWindowViewModel());
 #if !DEBUG
