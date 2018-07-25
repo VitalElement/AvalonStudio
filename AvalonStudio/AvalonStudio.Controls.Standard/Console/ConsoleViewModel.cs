@@ -2,6 +2,7 @@ using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
@@ -122,7 +123,8 @@ namespace AvalonStudio.Controls.Standard.Console
         {
             shell = IoC.Get<IShell>();
 
-            shell.CurrentPerspective.AddOrSelectTool(this);
+            shell.MainPerspective.AddOrSelectTool(this);
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
         }
 
         private void ScrollToEnd()

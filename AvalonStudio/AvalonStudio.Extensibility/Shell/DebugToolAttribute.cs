@@ -9,14 +9,4 @@ namespace AvalonStudio.Extensibility.Shell
         Normal,
         Debugging
     }
-
-    public class PerspectiveAttribute : Attribute
-    {
-        Perspective Perspective { get; }
-
-        public PerspectiveAttribute(Perspective perspective)
-        {
-            Perspective = perspective;
-        }
-    }
 }

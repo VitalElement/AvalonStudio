@@ -72,7 +72,5 @@ namespace AvalonStudio.Extensibility.Studio
         bool DebugMode { get; }
 
         double GlobalZoomLevel { get; set; }
-
-        void Initialise();
     }
 }

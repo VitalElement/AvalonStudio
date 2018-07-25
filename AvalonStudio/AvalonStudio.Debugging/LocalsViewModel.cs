@@ -1,6 +1,8 @@
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
+using AvalonStudio.Shell;
 using Mono.Debugging.Client;
 using System.Composition;
 using System.Threading.Tasks;
@@ -38,6 +40,8 @@ namespace AvalonStudio.Debugging
                     Clear();
                 };
             }
+
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
         }
 
         private void Update (StackFrame stackFrame)

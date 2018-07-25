@@ -43,8 +43,6 @@ namespace AvalonStudio
             {
                 var studio = IoC.Get<IStudio>();
 
-                studio.Initialise();
-
                 InitializeLogging();
 
                 Platform.Initialise();

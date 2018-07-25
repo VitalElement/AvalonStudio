@@ -83,6 +83,8 @@ namespace AvalonStudio.Debugging
                 IsVisible = false;
                 Clear();
             };
+
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
         }
 
         private void _debugManager_TargetStopped(object sender, Mono.Debugging.Client.TargetEventArgs e)

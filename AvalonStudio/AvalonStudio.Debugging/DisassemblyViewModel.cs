@@ -14,6 +14,8 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Linq;
 using System.Composition;
+using AvalonStudio.Extensibility.Studio;
+using AvalonStudio.Shell;
 
 namespace AvalonStudio.Debugging
 {
@@ -158,6 +160,8 @@ namespace AvalonStudio.Debugging
             {
                 Document = runModeDocument;
             });
+
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
         }
 
         public void Update()

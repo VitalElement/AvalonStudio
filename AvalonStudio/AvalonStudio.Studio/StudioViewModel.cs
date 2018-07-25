@@ -23,8 +23,9 @@ using System.Threading.Tasks;
 namespace AvalonStudio.Studio
 {
     [Export(typeof(IStudio))]
+    [Export(typeof(IExtension))]
     [Shared]
-    public class StudioViewModel : ReactiveObject, IStudio
+    public class StudioViewModel : ReactiveObject, IStudio, IActivatableExtension
     {
         private WorkspaceTaskRunner _taskRunner;
         private Perspective currentPerspective;
@@ -79,15 +80,6 @@ namespace AvalonStudio.Studio
             {
                 DebugMode = !DebugMode;
             });
-        }
-
-        public void Initialise ()
-        {
-            var shell = IoC.Get<IShell>();
-
-            var debugPerspective = shell.CreatePerspective();
-
-            DebugPerspective = debugPerspective;
         }
 
         public DockBase DebugLayout { get; set; }
@@ -487,6 +479,19 @@ namespace AvalonStudio.Studio
 
                 CurrentSolution = null;
             }
+        }
+
+        public void BeforeActivation()
+        {
+            var shell = IoC.Get<IShell>();
+
+            var debugPerspective = shell.CreatePerspective();
+
+            DebugPerspective = debugPerspective;
+        }
+
+        public void Activation()
+        {
         }
 
         public double GlobalZoomLevel

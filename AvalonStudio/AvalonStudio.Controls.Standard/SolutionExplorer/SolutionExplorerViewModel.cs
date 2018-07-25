@@ -133,10 +133,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        public override MVVM.Location DefaultLocation
-        {
-            get { return MVVM.Location.Left; }
-        }
+        public override MVVM.Location DefaultLocation => MVVM.Location.Right;
 
         public void NewSolution()
         {
@@ -191,7 +188,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public void Activation()
         {
-            IoC.Get<IShell>().CurrentPerspective.AddOrSelectTool(this);
+            IoC.Get<IShell>().MainPerspective.AddOrSelectTool(this);
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
         }
     }
 }
