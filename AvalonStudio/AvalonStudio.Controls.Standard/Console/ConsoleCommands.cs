@@ -1,4 +1,5 @@
 ﻿using AvalonStudio.Commands;
+using AvalonStudio.Controls.Standard.WelcomeScreen;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
@@ -15,6 +16,9 @@ namespace AvalonStudio.Controls.Standard.Console
         [ExportCommandDefinition("View.Console")]
         public CommandDefinition ViewConsoleCommand { get; }
 
+        [ExportCommandDefinition("View.WelcomeScreen")]
+        public CommandDefinition ViewWelcomeScreenCommand { get; }
+
         private readonly IShell _shell;
         private readonly IConsole _console;
 
@@ -29,6 +33,13 @@ namespace AvalonStudio.Controls.Standard.Console
                 {
                     _shell.CurrentPerspective.AddOrSelectTool(_console as IToolViewModel);
                 }));
+
+            ViewWelcomeScreenCommand = new CommandDefinition("Welcome Screen", null,
+              ReactiveCommand.Create(()=>
+              {
+                  var vm = IoC.Get<WelcomeScreenViewModel>();
+                  _shell.AddOrSelectDocument(vm);
+              }));
         }
     }
 }

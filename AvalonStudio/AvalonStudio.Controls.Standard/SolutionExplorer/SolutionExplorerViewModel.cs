@@ -21,8 +21,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     [Shared]
     public class SolutionExplorerViewModel : ToolViewModel, IActivatableExtension, ISolutionExplorer
     {
-        public const string ToolId = "CIDSEVM00";
-
         private ViewModel selectedItem;
 
         private IProject selectedProject;
@@ -46,8 +44,6 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             _solutionTypes = solutionTypes;
 
             Title = "Solution Explorer";
-
-            Id = ToolId;
         }
 
         public new ISolution Model

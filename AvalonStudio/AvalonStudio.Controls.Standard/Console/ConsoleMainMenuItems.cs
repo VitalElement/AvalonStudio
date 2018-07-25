@@ -11,6 +11,11 @@ namespace AvalonStudio.Controls.Standard.Console
         [DefaultOrder(0)]
         public IMenuItem ViewConsole => _menuItemFactory.CreateCommandMenuItem("View.Console");
 
+        [ExportMainMenuItem("View", "Welcome Screen")]
+        [DefaultGroup("DefaultTools")]
+        [DefaultOrder(0)]
+        public IMenuItem ViewWelcomeScreen => _menuItemFactory.CreateCommandMenuItem("View.WelcomeScreen");
+
         private readonly IMenuItemFactory _menuItemFactory;
 
         [ImportingConstructor]

@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using AvalonStudio.Controls.Standard.SolutionExplorer;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Studio;
@@ -16,6 +17,9 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.WelcomeScreen
 {
+    [Export(typeof(WelcomeScreenViewModel))]
+    [Export(typeof(IExtension))]
+    [Shared]
     public class WelcomeScreenViewModel : DocumentTabViewModel, IActivatableExtension
     {
         private ISolutionExplorer _solutionExplorer;
@@ -51,7 +55,8 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
         {
             var shell = IoC.Get<IShell>();
             var studio = IoC.Get<IStudio>();
-            shell.AddDocument(this, false);
+
+            shell.AddOrSelectDocument(this);
 
             _disposables = new CompositeDisposable
             {
