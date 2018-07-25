@@ -323,20 +323,20 @@ namespace AvalonStudio.Studio
                 {
                     currentTab = provider.CreateViewModel(file);
 
-                    shell.AddDocument(currentTab);
+                    shell.AddOrSelectDocument(currentTab);
                 }
                 else
                 {
                     var newTab = new TextEditorViewModel(file);
 
-                    shell.AddDocument(newTab);
+                    shell.AddOrSelectDocument(newTab);
 
                     currentTab = newTab;
                 }
             }
             else
             {
-                shell.AddDocument(currentTab);
+                shell.AddOrSelectDocument(currentTab);
             }
 
             return currentTab;
