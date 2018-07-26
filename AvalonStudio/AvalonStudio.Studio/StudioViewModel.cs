@@ -342,7 +342,7 @@ namespace AvalonStudio.Studio
             return currentTab;
         }
 
-        public async Task<IEditor> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
+        public async Task<IFileDocumentTabViewModel> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
         {
             var shell = IoC.Get<IShell>();
 
@@ -354,7 +354,11 @@ namespace AvalonStudio.Studio
 
                 if (debugHighlight)
                 {
-                    fileTab.Editor.SetDebugHighlight(line, startColumn, endColumn);
+                    if(fileTab is IDebugLineDocumentTabViewModel debugLineTab)
+                    {
+                        debugLineTab.DebugHighlight = new Debugging.DebugHighlightLocation { Line = line, StartColumn = startColumn, EndColumn = endColumn };
+                    }
+                    //fileTab.Editor.SetDebugHighlight(line, startColumn, endColumn);
                 }
 
                 if (selectLine || debugHighlight)
@@ -370,7 +374,7 @@ namespace AvalonStudio.Studio
 
                 if (currentTab is TextEditorViewModel editor)
                 {
-                    return editor.DocumentAccessor;
+                    return editor;
                 }
             }
 
@@ -389,11 +393,11 @@ namespace AvalonStudio.Studio
             }
         }
 
-        public IEditor GetDocument(string path)
+        public IFileDocumentTabViewModel GetDocument(string path)
         {
             var shell = IoC.Get<IShell>();
 
-            return shell.Documents.OfType<TextEditorViewModel>().Where(d => d.SourceFile?.FilePath == path).Select(d => d.DocumentAccessor).FirstOrDefault();
+            return shell.Documents.OfType<TextEditorViewModel>().Where(d => d.SourceFile?.FilePath == path).FirstOrDefault();
         }
 
         public IProject GetDefaultProject()

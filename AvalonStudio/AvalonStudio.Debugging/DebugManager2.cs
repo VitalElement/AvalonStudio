@@ -25,7 +25,7 @@ namespace AvalonStudio.Debugging
 
         private IStudio _studio;        
         private IConsole _console;
-        private IEditor _lastDocument;
+        private IDebugLineDocumentTabViewModel _lastDocument;
 
         public event EventHandler DebugSessionStarted;
 
@@ -318,7 +318,7 @@ namespace AvalonStudio.Debugging
 
                     if (document != null)
                     {
-                        _lastDocument = document;
+                        _lastDocument = document as IDebugLineDocumentTabViewModel;
                         file = document?.SourceFile;
                     }
 
@@ -331,7 +331,8 @@ namespace AvalonStudio.Debugging
                     {
                         Dispatcher.UIThread.InvokeAsync(async () =>
                         {
-                            _lastDocument = await _studio.OpenDocumentAsync(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true);
+                            _lastDocument = await _studio.OpenDocumentAsync(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true)
+                                                as IDebugLineDocumentTabViewModel;
                         }).Wait();
                     }
                     else

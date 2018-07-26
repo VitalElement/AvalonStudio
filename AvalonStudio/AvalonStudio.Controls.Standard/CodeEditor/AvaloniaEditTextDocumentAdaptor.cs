@@ -210,12 +210,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public void SetDebugHighlight(int line, int startColumn, int endColumn)
         {
-            _codeEditor.SetDebugHighlight(line, startColumn, endColumn);
+            //_codeEditor.SetDebugHighlight(line, startColumn, endColumn);
         }
 
         public void ClearDebugHighlight()
         {
-            _codeEditor.ClearDebugHighlight();
+            //_codeEditor.ClearDebugHighlight();
         }
 
         public void GotoOffset(int offset)

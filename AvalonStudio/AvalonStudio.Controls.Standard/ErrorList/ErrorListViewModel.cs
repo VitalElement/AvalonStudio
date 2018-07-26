@@ -51,7 +51,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
                             if (document != null)
                             {
-                                document.GotoOffset(value.Model.StartOffset);
+                                document.Editor.GotoOffset(value.Model.StartOffset);
                             }
                         }
                     }

@@ -449,6 +449,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             }),
 
+            this.WhenAnyValue(x=>x.DebugHighlight).Where(loc => loc != null).Subscribe(location =>
+            {                
+                if(location.Line != -1)
+                {
+                    SetDebugHighlight(location.Line, location.StartColumn, location.EndColumn);
+                }
+                else
+                {
+                    ClearDebugHighlight();
+                }
+            }),
+
             AddHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel),
             AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel)
         };
@@ -1191,6 +1203,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             set { SetValue(IsDirtyProperty, value); }
         }
 
+        public static readonly StyledProperty<DebugHighlightLocation> DebugHighlightProperty =
+            AvaloniaProperty.Register<CodeEditor, DebugHighlightLocation>(nameof(DebugHighlight));
+
+        public DebugHighlightLocation DebugHighlight
+        {
+            get => GetValue(DebugHighlightProperty);
+            set => SetValue(DebugHighlightProperty, value);
+        }
+
         public int GetOffsetFromPoint(Point point)
         {
             var position = GetPositionFromPoint(point);
@@ -1242,7 +1263,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return result;
         }
 
-        public void SetDebugHighlight(int line, int startColumn, int endColumn)
+        private void SetDebugHighlight(int line, int startColumn, int endColumn)
         {
             if (startColumn == -1 && endColumn == -1)
             {
@@ -1259,10 +1280,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _selectedDebugLineBackgroundRenderer.SetLocation(line, startColumn, endColumn);
         }
 
-        public void ClearDebugHighlight()
+        private void ClearDebugHighlight()
         {
             _selectedDebugLineBackgroundRenderer.SetLocation(-1);
         }
+
+
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
