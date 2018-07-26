@@ -42,6 +42,18 @@ namespace AvalonStudio.Extensibility.Editor
                     };
                 }
             });
+
+            this.WhenAnyValue(x => x.IsDirty).Subscribe(dirty =>
+            {
+                if(dirty)
+                {
+                    Title = file.Name + "*";
+                }
+                else
+                {
+                    Title = file.Name;
+                }
+            });
         }
 
         public bool IsReadOnly
