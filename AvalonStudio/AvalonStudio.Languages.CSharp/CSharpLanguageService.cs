@@ -832,11 +832,87 @@ namespace AvalonStudio.Languages.CSharp
             return result;
         }
 
+        HighlightType FromRoslynType(string type)
+        {
+            var result = HighlightType.None;
+
+            switch (type)
+            {
+                case "preprocessor keyword":
+                    return HighlightType.PreProcessor;
+
+                case "preprocessor text":
+                    return HighlightType.PreProcessorText;
+
+                case "keyword":
+                    result = HighlightType.Keyword;
+                    break;
+
+                case "identifier":
+                    result = HighlightType.Identifier;
+                    break;
+
+                case "punctuation":
+                    result = HighlightType.Punctuation;
+                    break;
+
+                case "class name":
+                    result = HighlightType.ClassName;
+                    break;
+
+                case "interface name":
+                    result = HighlightType.InterfaceName;
+                    break;
+
+                case "enum name":
+                    return HighlightType.EnumTypeName;
+
+                case "struct name":
+                    result = HighlightType.StructName;
+                    break;
+
+                case "number":
+                    result = HighlightType.NumericLiteral;
+                    break;
+
+                case "string":
+                    result = HighlightType.Literal;
+                    break;
+
+                case "operator":
+                    result = HighlightType.Operator;
+                    break;
+
+                case "xml doc comment - text":
+                case "xml doc comment - delimiter":
+                case "xml doc comment - name":
+                case "xml doc comment - attribute name":
+                case "xml doc comment - attribute quotes":
+                case "comment":
+                    result = HighlightType.Comment;
+                    break;
+
+                case "delegate name":
+                    result = HighlightType.DelegateName;
+                    break;
+
+                case "excluded code":
+                    result = HighlightType.None;
+                    break;
+
+                default:
+                    //Console.WriteLine($"Dont understand {type}");
+                    break;
+            }
+
+            return result;
+        }
+
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
 
-            /*var textLength = 0;
+            var textLength = 0;
 
             await Dispatcher.UIThread.InvokeAsync(() => { textLength = editor.Document.TextLength; });
 
@@ -863,7 +939,7 @@ namespace AvalonStudio.Languages.CSharp
             {
             }
 
-            result.IndexItems = await IndexBuilder.Compute(document);*/
+            result.IndexItems = await IndexBuilder.Compute(document);
 
             return result;
         }
@@ -1104,80 +1180,6 @@ namespace AvalonStudio.Languages.CSharp
     //        return result;
     //    }
 
-    //    HighlightType FromRoslynType(string type)
-    //    {
-    //        var result = HighlightType.None;
-
-    //        switch (type)
-    //        {
-    //            case "preprocessor keyword":
-    //                return HighlightType.PreProcessor;
-
-    //            case "preprocessor text":
-    //                return HighlightType.PreProcessorText;
-
-    //            case "keyword":
-    //                result = HighlightType.Keyword;
-    //                break;
-
-    //            case "identifier":
-    //                result = HighlightType.Identifier;
-    //                break;
-
-    //            case "punctuation":
-    //                result = HighlightType.Punctuation;
-    //                break;
-
-    //            case "class name":
-    //                result = HighlightType.ClassName;
-    //                break;
-
-    //            case "interface name":
-    //                result = HighlightType.InterfaceName;
-    //                break;
-
-    //            case "enum name":
-    //                return HighlightType.EnumTypeName;
-
-    //            case "struct name":
-    //                result = HighlightType.StructName;
-    //                break;
-
-    //            case "number":
-    //                result = HighlightType.NumericLiteral;
-    //                break;
-
-    //            case "string":
-    //                result = HighlightType.Literal;
-    //                break;
-
-    //            case "operator":
-    //                result = HighlightType.Operator;
-    //                break;
-
-    //            case "xml doc comment - text":
-    //            case "xml doc comment - delimiter":
-    //            case "xml doc comment - name":
-    //            case "xml doc comment - attribute name":
-    //            case "xml doc comment - attribute quotes":
-    //            case "comment":
-    //                result = HighlightType.Comment;
-    //                break;
-
-    //            case "delegate name":
-    //                result = HighlightType.DelegateName;
-    //                break;
-
-    //            case "excluded code":
-    //                result = HighlightType.None;
-    //                break;
-
-    //            default:
-    //                //Console.WriteLine($"Dont understand {type}");
-    //                break;
-    //        }
-
-    //        return result;
-    //    }
+    //    
     //}
 }

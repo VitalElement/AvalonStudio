@@ -258,13 +258,19 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public AvalonStudioTextDocument(AvaloniaEdit.Document.TextDocument document)
         {
             _document = document;
-            _lines = new DocumentLinesCollection(document);
-            _document.Changed += _document_Changed;
+            RefreshDocumentModel();
         }
 
         internal void RefreshDocumentModel ()
         {
+            if(_document != null)
+            {
+                _document.Changed -= _document_Changed;
+            }
+
             _document = new AvaloniaEdit.Document.TextDocument(_document.Text);
+            _lines = new DocumentLinesCollection(_document);
+            _document.Changed += _document_Changed;
         }
 
         private void _document_Changed(object sender, AvaloniaEdit.Document.DocumentChangeEventArgs e)

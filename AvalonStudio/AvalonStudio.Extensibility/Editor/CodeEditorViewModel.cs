@@ -113,14 +113,14 @@ namespace AvalonStudio.Extensibility.Editor
 
                     Dispatcher.UIThread.Post(() =>
                     {
-                        var toRemove = _highlights.Where(h => h.tag == LanguageService).ToList();
+                        var toRemove = _highlights.Where(h => h.tag == this).ToList();
 
                         foreach(var highlightData in toRemove)
                         {
                             _highlights.Remove(highlightData);
                         }
 
-                        _highlights.Add((LanguageService, result.SyntaxHighlightingData));
+                        _highlights.Add((this, result.SyntaxHighlightingData));
                     });
                 }
             });
