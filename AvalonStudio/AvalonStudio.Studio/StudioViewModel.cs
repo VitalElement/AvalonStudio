@@ -309,7 +309,7 @@ namespace AvalonStudio.Studio
             }
         }
 
-        public async Task<ITextDocumentTabViewModel> OpenDocumentAsync(ISourceFile file)
+        private async Task<ITextDocumentTabViewModel> OpenDocumentAsync(ISourceFile file)
         {
             var shell = IoC.Get<IShell>();
 
