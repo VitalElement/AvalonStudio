@@ -262,6 +262,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _document.Changed += _document_Changed;
         }
 
+        internal void RefreshDocumentModel ()
+        {
+            _document = new AvaloniaEdit.Document.TextDocument(_document.Text);
+        }
+
         private void _document_Changed(object sender, AvaloniaEdit.Document.DocumentChangeEventArgs e)
         {
             Changed?.Invoke(this, new DocumentChangeEventArgs(e.Offset, e.RemovedText.Text, e.InsertedText.Text));
