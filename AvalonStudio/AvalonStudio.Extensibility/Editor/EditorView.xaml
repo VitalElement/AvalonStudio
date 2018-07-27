@@ -52,7 +52,7 @@
                            IsReadOnly="{Binding IsReadOnly}"
                            HighlightSelectedWord="False"
                            ColorScheme="{Binding ColorScheme}"
-                           TextDocument="{Binding Document}">          
+                           Editor="{Binding }">          
         </editor:CodeEditor>
       </Grid>
     </DockPanel>

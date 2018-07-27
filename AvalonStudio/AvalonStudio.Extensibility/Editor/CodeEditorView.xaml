@@ -52,9 +52,7 @@
                            IsReadOnly="{Binding IsReadOnly}"
                            HighlightSelectedWord="False"
                            ColorScheme="{Binding ColorScheme}"
-                           TextDocument="{Binding Document}"
                            Editor="{Binding }"
-                           LanguageService="{Binding LanguageService}"
                            DebugHighlight="{Binding DebugHighlight}">          
         </editor:CodeEditor>
       </Grid>
