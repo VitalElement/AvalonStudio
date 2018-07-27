@@ -10,23 +10,17 @@ using Avalonia.Threading;
 using AvaloniaEdit;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
-using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
 using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
-using AvalonStudio.Controls.Standard.CodeEditor.Highlighting;
 using AvalonStudio.Controls.Standard.CodeEditor.Refactoring;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
-using AvalonStudio.Extensibility.Languages;
-using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility.Threading;
-using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
-using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TextEditor.Rendering;
 using ReactiveUI;
@@ -432,6 +426,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     {
                         td.RefreshDocumentModel();
                         Document = td.Document;
+
+                        if(editor.Offset <= Document.TextLength)
+                        {
+                            CaretOffset = editor.Offset;
+                        }
 
                         _isLoaded = true;
                         _textColorizer = new TextColoringTransformer(Document);

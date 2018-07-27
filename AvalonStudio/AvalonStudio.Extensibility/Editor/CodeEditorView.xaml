@@ -52,6 +52,7 @@
                            IsReadOnly="{Binding IsReadOnly}"
                            HighlightSelectedWord="False"
                            ColorScheme="{Binding ColorScheme}"
+                           EditorCaretOffset="{Binding Offset}"
                            Editor="{Binding }"
                            DebugHighlight="{Binding DebugHighlight}">          
         </editor:CodeEditor>
