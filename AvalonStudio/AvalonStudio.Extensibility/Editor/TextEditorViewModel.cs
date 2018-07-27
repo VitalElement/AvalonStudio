@@ -1,6 +1,7 @@
 ﻿using AvalonStudio.Documents;
 using AvalonStudio.Projects;
 using ReactiveUI;
+using System.IO;
 
 namespace AvalonStudio.Extensibility.Editor
 {
@@ -120,7 +121,8 @@ namespace AvalonStudio.Extensibility.Editor
 
         void ITextDocumentTabViewModel.Save()
         {
-            
+            File.WriteAllText(SourceFile.FilePath, Document.Text);
+            IsDirty = false;
         }
     }
 }
