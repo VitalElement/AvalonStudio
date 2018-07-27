@@ -343,6 +343,12 @@ namespace AvalonStudio.Documents
         ISourceFile SourceFile { get; }
 
         ITextDocument Document { get; }
+        
+        void OnBeforeTextEntered();
+
+        void OnTextEntered();
+
+        void OnTextChanged();
     }
 
     public interface IEditor : IDisposable

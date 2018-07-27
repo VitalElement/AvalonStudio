@@ -1,10 +1,18 @@
-﻿using AvalonStudio.Debugging;
+﻿using Avalonia.Threading;
+using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Studio;
+using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
+using AvalonStudio.Shell;
 using ReactiveUI;
+using System;
 using System.Linq;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Extensibility.Editor
 {
@@ -12,10 +20,21 @@ namespace AvalonStudio.Extensibility.Editor
     {
         private DebugHighlightLocation _debugHighlight;
         private ILanguageService _languageService;
+        private Subject<bool> _analysisTriggerEvents = new Subject<bool>();
+        private readonly JobRunner _codeAnalysisRunner;
+        private CancellationTokenSource _cancellationSource;
+        private bool _isAnalyzing;
 
-        public CodeEditorViewModel(ITextDocument document, ISourceFile file) : base (document, file)
+        public CodeEditorViewModel(ITextDocument document, ISourceFile file) : base(document, file)
         {
+            _codeAnalysisRunner = new JobRunner(1);
+
             RegisterLanguageService(file);
+
+            _analysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(async _ =>
+            {
+                await DoCodeAnalysisAsync();
+            });
         }
 
         public DebugHighlightLocation DebugHighlight
@@ -28,6 +47,75 @@ namespace AvalonStudio.Extensibility.Editor
         {
             get { return _languageService; }
             set { this.RaiseAndSetIfChanged(ref _languageService, value); }
+        }
+
+        void IEditor2.OnTextEntered()
+        {
+        }
+
+        void IEditor2.OnBeforeTextEntered()
+        {
+        }
+
+        void IEditor2.OnTextChanged()
+        {
+            if (!IsReadOnly)
+            {
+                IsDirty = true;
+
+                TriggerCodeAnalysis();
+            }
+        }
+
+        private void TriggerCodeAnalysis()
+        {
+            _analysisTriggerEvents.OnNext(true);
+        }
+
+        private async Task<bool> DoCodeAnalysisAsync()
+        {
+            var unsavedFiles = IoC.Get<IShell>().Documents.OfType<ITextDocumentTabViewModel>()
+                .Where(x => x.IsDirty)
+                .Select(x => new UnsavedFile(x.SourceFile.FilePath, x.Document.Text))
+                .ToList();
+
+            await _codeAnalysisRunner.InvokeAsync(async () =>
+            {
+                if (LanguageService != null)
+                {
+                    var result = await LanguageService.RunCodeAnalysisAsync(this, unsavedFiles, () => false);
+
+                    //_textColorizer?.SetTransformations(editor, result.SyntaxHighlightingData);
+
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        //    _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
+                    });
+
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        // TextArea.TextView.Redraw();
+                    });
+                }
+            });
+
+            return true;
+        }
+
+        private void StartBackgroundWorkers()
+        {
+            _cancellationSource = new CancellationTokenSource();
+
+            Task.Factory.StartNew(() =>
+            {
+                _codeAnalysisRunner.RunLoop(_cancellationSource.Token);
+                _cancellationSource = null;
+            });
+        }
+
+        public void ShutdownBackgroundWorkers()
+        {
+            _cancellationSource?.Cancel();
         }
 
         private void RegisterLanguageService(ISourceFile sourceFile)
@@ -103,17 +191,17 @@ namespace AvalonStudio.Extensibility.Editor
                     Observable.FromEventPattern<DiagnosticsUpdatedEventArgs>(LanguageService, nameof(LanguageService.DiagnosticsUpdated)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(args =>
                     LanguageService_DiagnosticsUpdated(args.Sender, args.EventArgs))
                 };
-            }
+            }*/
 
             StartBackgroundWorkers();
 
-            Document.TextChanged += TextDocument_TextChanged;
+            /*Document.TextChanged += TextDocument_TextChanged;
 
             TextArea.TextEntering += TextArea_TextEntering;
 
-            TextArea.TextEntered += TextArea_TextEntered;
+            TextArea.TextEntered += TextArea_TextEntered;*/
 
-            DoCodeAnalysisAsync().GetAwaiter();*/
+            DoCodeAnalysisAsync().GetAwaiter();
         }
 
         // HighlightingProvider

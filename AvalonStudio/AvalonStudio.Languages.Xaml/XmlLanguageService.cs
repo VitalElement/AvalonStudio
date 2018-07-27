@@ -161,7 +161,7 @@ namespace AvalonStudio.Languages.Xaml
 
         }
 
-        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor2 editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             return Task.FromResult(new CodeAnalysisResults());
         }

@@ -221,7 +221,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             dataAssociations.Add(file, association);
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor,
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor2 editor,
             List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();

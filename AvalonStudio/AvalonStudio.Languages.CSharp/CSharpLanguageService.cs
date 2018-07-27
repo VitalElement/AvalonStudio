@@ -832,7 +832,7 @@ namespace AvalonStudio.Languages.CSharp
             return result;
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor2 editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
 

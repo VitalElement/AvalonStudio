@@ -371,11 +371,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             }),
 
-            _analysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(async _ =>
-            {
-                await DoCodeAnalysisAsync();
-            }),
-
             Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Subscribe(e =>
             {
                 if (TextArea.Caret.Line != _lastLine && LanguageService != null)
@@ -520,6 +515,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _intellisense = new IntellisenseViewModel();
 
             _completionAssistant = new CompletionAssistantViewModel(_intellisense);
+
+            TextArea.TextEntering += TextArea_TextEntering;
+
+            TextArea.TextEntered += TextArea_TextEntered;
         }
 
         ~CodeEditor()
@@ -545,6 +544,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         protected override void OnTextChanged(EventArgs e)
         {
             base.OnTextChanged(e);
+
+            Editor?.OnTextChanged();
 
             if (_isLoaded)
             {
@@ -755,34 +756,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }*/
         }
 
-        private async Task<bool> DoCodeAnalysisAsync()
-        {
-            var editor = DocumentAccessor;
-            var unsavedFiles = UnsavedFiles.ToList();
-
-            await _codeAnalysisRunner.InvokeAsync(async () =>
-            {
-                if (LanguageService != null)
-                {
-                    var result = await LanguageService.RunCodeAnalysisAsync(editor, unsavedFiles, () => false);
-
-                    _textColorizer?.SetTransformations(editor, result.SyntaxHighlightingData);
-
-                    await Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
-                    });
-
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        TextArea.TextView.Redraw();
-                    });
-                }
-            });
-
-            return true;
-        }
-
         /*private void RegisterLanguageService(ISourceFile sourceFile)
         {
             UnRegisterLanguageService();
@@ -898,6 +871,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private void TextArea_TextEntered(object sender, TextInputEventArgs e)
         {
+            Editor?.OnTextEntered();
+
             _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
             _textEntering = false;
 
@@ -915,6 +890,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private void TextArea_TextEntering(object sender, TextInputEventArgs e)
         {
+            Editor?.OnBeforeTextEntered();
+
             _textEntering = true;
 
             if (TextArea.Selection.IsEmpty)
@@ -1205,6 +1182,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get => GetValue(LanguageServiceProperty);
             set => SetValue(LanguageServiceProperty, value);
+        }
+
+        public static readonly AvaloniaProperty<IEditor2> EditorProperty =
+            AvaloniaProperty.Register<CodeEditor, IEditor2>(nameof(Editor));
+
+        public IEditor2 Editor
+        {
+            get => GetValue(EditorProperty);
+            set => SetValue(EditorProperty, value);
         }
 
         public int GetOffsetFromPoint(Point point)

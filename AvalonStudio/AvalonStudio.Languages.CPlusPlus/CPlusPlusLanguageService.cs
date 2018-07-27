@@ -132,7 +132,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
-        public ISyntaxHighlightingProvider SyntaxHighlighter => throw new NotImplementedException();
+        public ISyntaxHighlightingProvider SyntaxHighlighter => null;
 
         private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
@@ -188,7 +188,7 @@ namespace AvalonStudio.Languages.CPlusPlus
         public async Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column,
             List<UnsavedFile> unsavedFiles, char lastChar, string filter)
         {
-            var clangUnsavedFiles = new List<ClangUnsavedFile>();
+          /*  var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
             foreach (var unsavedFile in unsavedFiles)
             {
@@ -268,9 +268,9 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     completionResults.Dispose();
                 }
-            });
+            });*/
 
-            return result;
+            return null;
         }
 
         private OffsetSyntaxHighlightingData CreateOffsetData(NClang.ClangCursor cursor, NClang.ClangCursor parent)
@@ -519,7 +519,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles,
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor2 editor, List<UnsavedFile> unsavedFiles,
             Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
@@ -587,7 +587,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public void RegisterSourceFile(IEditor2 editor)
         {
-            /*if (clangAccessJobRunner == null)
+            if (clangAccessJobRunner == null)
             {
                 clangAccessJobRunner = new JobRunner();
 
@@ -604,57 +604,57 @@ namespace AvalonStudio.Languages.CPlusPlus
             association = new CPlusPlusDataAssociation();
             dataAssociations.Add(editor.SourceFile, association);
 
-            association.TextInputHandler = (sender, e) =>
-            {
-                switch (e.Text)
-                {
-                    case "}":
-                    case ";":
-                        editor.IndentLine(editor.Line);
-                        break;
+            //association.TextInputHandler = (sender, e) =>
+            //{
+            //    switch (e.Text)
+            //    {
+            //        case "}":
+            //        case ";":
+            //            editor.IndentLine(editor.Line);
+            //            break;
 
-                    case "{":
-                        if (IndentationStrategy != null)
-                        {
-                            editor.IndentLine(editor.Line);
-                        }
-                        break;
-                }
+            //        case "{":
+            //            if (IndentationStrategy != null)
+            //            {
+            //                editor.IndentLine(editor.Line);
+            //            }
+            //            break;
+            //    }
 
-                OpenBracket(editor, editor.Document, e.Text);
-                CloseBracket(editor, editor.Document, e.Text);
-            };
+            //    OpenBracket(editor, editor.Document, e.Text);
+            //    CloseBracket(editor, editor.Document, e.Text);
+            //};
 
-            association.BeforeTextInputHandler = (sender, e) =>
-            {
-                switch (e.Text)
-                {
-                    case "\n":
-                    case "\r\n":
-                        var nextChar = ' ';
+            //association.BeforeTextInputHandler = (sender, e) =>
+            //{
+            //    switch (e.Text)
+            //    {
+            //        case "\n":
+            //        case "\r\n":
+            //            var nextChar = ' ';
 
-                        if (editor.CaretOffset != editor.Document.TextLength)
-                        {
-                            nextChar = editor.Document.GetCharAt(editor.CaretOffset);
-                        }
+            //            if (editor.CaretOffset != editor.Document.TextLength)
+            //            {
+            //                nextChar = editor.Document.GetCharAt(editor.CaretOffset);
+            //            }
 
-                        if (nextChar == '}')
-                        {
-                            var newline = "\r\n"; // TextUtilities.GetNewLineFromDocument(editor.Document, editor.TextArea.Caret.Line);
-                            editor.Document.Insert(editor.CaretOffset, newline);
+            //            if (nextChar == '}')
+            //            {
+            //                var newline = "\r\n"; // TextUtilities.GetNewLineFromDocument(editor.Document, editor.TextArea.Caret.Line);
+            //                editor.Document.Insert(editor.CaretOffset, newline);
 
-                            editor.Document.TrimTrailingWhiteSpace(editor.Line - 1);
+            //                editor.Document.TrimTrailingWhiteSpace(editor.Line - 1);
 
-                            editor.IndentLine(editor.Line);
+            //                editor.IndentLine(editor.Line);
 
-                            editor.CaretOffset -= newline.Length;
-                        }
-                        break;
-                }
-            };
+            //                editor.CaretOffset -= newline.Length;
+            //            }
+            //            break;
+            //    }
+            //};
 
-            editor.TextEntered += association.TextInputHandler;
-            editor.TextEntering += association.BeforeTextInputHandler;*/
+            //editor.TextEntered += association.TextInputHandler;
+            //editor.TextEntering += association.BeforeTextInputHandler;*/
         }
 
         public void UnregisterSourceFile(IEditor editor)
@@ -695,44 +695,45 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public async Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
-            StyledText styledText = null;
-            var associatedData = GetAssociatedData(editor.SourceFile);
+            //    StyledText styledText = null;
+            //    var associatedData = GetAssociatedData(editor.SourceFile);
 
-            var clangUnsavedFiles = new List<ClangUnsavedFile>();
+            //    var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
-            foreach (var unsavedFile in unsavedFiles)
-            {
-                clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
-            }
+            //    foreach (var unsavedFile in unsavedFiles)
+            //    {
+            //        clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+            //    }
 
-            await clangAccessJobRunner.InvokeAsync(() =>
-            {
-                var tu = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
+            //    await clangAccessJobRunner.InvokeAsync(() =>
+            //    {
+            //        var tu = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
 
-                if (tu != null)
-                {
-                    var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(editor.SourceFile.FilePath), offset));
+            //        if (tu != null)
+            //        {
+            //            var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(editor.SourceFile.FilePath), offset));
 
-                    switch (cursor.Kind)
-                    {
-                        case NClang.CursorKind.MemberReferenceExpression:
-                        case NClang.CursorKind.DeclarationReferenceExpression:
-                        case NClang.CursorKind.CallExpression:
-                        case NClang.CursorKind.TypeReference:
-                            styledText = InfoTextFromCursor(cursor.Referenced);
-                            break;
+            //            switch (cursor.Kind)
+            //            {
+            //                case NClang.CursorKind.MemberReferenceExpression:
+            //                case NClang.CursorKind.DeclarationReferenceExpression:
+            //                case NClang.CursorKind.CallExpression:
+            //                case NClang.CursorKind.TypeReference:
+            //                    styledText = InfoTextFromCursor(cursor.Referenced);
+            //                    break;
 
-                        case NClang.CursorKind.NoDeclarationFound:
-                            break;
+            //                case NClang.CursorKind.NoDeclarationFound:
+            //                    break;
 
-                        default:
-                            styledText = InfoTextFromCursor(cursor);
-                            break;
-                    }
-                }
-            });
+            //                default:
+            //                    styledText = InfoTextFromCursor(cursor);
+            //                    break;
+            //            }
+            //        }
+            //    });
 
-            return styledText == null ? null : new QuickInfoResult(styledText);
+            //    return styledText == null ? null : new QuickInfoResult(styledText);
+            return null;
         }
 
         private static Symbol SymbolFromClangCursor(ClangCursor cursor)
@@ -842,34 +843,36 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public async Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
         {
-            var results = new List<Symbol>();
+            //var results = new List<Symbol>();
 
-            if (name != string.Empty)
-            {
-                var clangUnsavedFiles = new List<ClangUnsavedFile>();
+            //if (name != string.Empty)
+            //{
+            //    var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
-                foreach (var unsavedFile in unsavedFiles)
-                {
-                    clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
-                }
+            //    foreach (var unsavedFile in unsavedFiles)
+            //    {
+            //        clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+            //    }
 
-                await clangAccessJobRunner.InvokeAsync(() =>
-                {
-                    var translationUnit = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
+            //    await clangAccessJobRunner.InvokeAsync(() =>
+            //    {
+            //        var translationUnit = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
 
-                    if (translationUnit != null)
-                    {
-                        var cursors = FindFunctions(translationUnit.GetCursor(), name);
+            //        if (translationUnit != null)
+            //        {
+            //            var cursors = FindFunctions(translationUnit.GetCursor(), name);
 
-                        foreach (var cursor in cursors)
-                        {
-                            results.Add(SymbolFromClangCursor(cursor));
-                        }
-                    }
-                });
-            }
+            //            foreach (var cursor in cursors)
+            //            {
+            //                results.Add(SymbolFromClangCursor(cursor));
+            //            }
+            //        }
+            //    });
+            //}
 
-            return results;
+            //return results;
+
+            return null;
         }
 
         public int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
@@ -946,7 +949,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        private ClangTranslationUnit GenerateTranslationUnit(IEditor editor, List<ClangUnsavedFile> unsavedFiles)
+        private ClangTranslationUnit GenerateTranslationUnit(IEditor2 editor, List<ClangUnsavedFile> unsavedFiles)
         {
             ClangTranslationUnit result = null;
 
@@ -1051,7 +1054,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        private ClangTranslationUnit GetAndParseTranslationUnit(IEditor editor, List<ClangUnsavedFile> unsavedFiles)
+        private ClangTranslationUnit GetAndParseTranslationUnit(IEditor2 editor, List<ClangUnsavedFile> unsavedFiles)
         {
             var dataAssociation = GetAssociatedData(editor.SourceFile);
 
