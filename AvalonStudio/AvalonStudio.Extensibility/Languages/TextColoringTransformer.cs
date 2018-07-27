@@ -1,10 +1,8 @@
 ﻿using Avalonia.Media;
-using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.CodeEditor;
 using AvalonStudio.Extensibility.Editor;
-using AvalonStudio.Extensibility.Languages;
 using System;
 using System.Linq;
 
@@ -13,16 +11,20 @@ namespace AvalonStudio.Languages
     public class TextColoringTransformer : GenericLineTransformer
     {
         private readonly TextDocument document;
-        private readonly ISyntaxHighlightingProvider _provider;
 
-        public TextColoringTransformer(ISyntaxHighlightingProvider provider, TextDocument document)
+        public TextColoringTransformer(TextDocument document)
         {
-            _provider = provider;
             this.document = document;
 
             TextTransformations = new TextSegmentCollection<TextTransformation>(document);
 
             ColorScheme = ColorScheme.Default;
+        }
+
+        public void Dispose()
+        {
+            TextTransformations.Clear();
+            TextTransformations = null;
         }
 
         public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
@@ -31,8 +33,7 @@ namespace AvalonStudio.Languages
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
-            var highlights = _provider.GetHighlightedLine(new AvalonStudio.Documents.SimpleSegment(line.Offset, line.Length));
-            /*var transformsInLine = TextTransformations.FindOverlappingSegments(line);
+            var transformsInLine = TextTransformations.FindOverlappingSegments(line);
 
             foreach (var transform in transformsInLine.OfType<ForegroundTextTransformation>())
             {
@@ -42,14 +43,6 @@ namespace AvalonStudio.Languages
             foreach (var transform in transformsInLine.OfType<OpacityTextTransformation>())
             {
                 transform.Transform(this, line);
-            }*/
-
-            foreach (var highlight in highlights)
-            {
-                if (highlight.Type != HighlightType.None)
-                {
-                    GetTextTransformation(0, highlight).Transform(this, line);
-                }
             }
         }
 
@@ -113,18 +106,13 @@ namespace AvalonStudio.Languages
 
         public void SetTransformations(object tag, SyntaxHighlightDataList highlightData)
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
+            foreach (var highlight in highlightData)
             {
-                RemoveAll(transform => Equals(transform.Tag, tag));
-
-                foreach (var highlight in highlightData)
+                if (highlight.Type != HighlightType.None)
                 {
-                    if (highlight.Type != HighlightType.None)
-                    {
-                        TextTransformations.Add(GetTextTransformation(tag, highlight));
-                    }
+                    TextTransformations.Add(GetTextTransformation(tag, highlight));
                 }
-            });
+            }
         }
 
         public IBrush GetBrush(HighlightType type)

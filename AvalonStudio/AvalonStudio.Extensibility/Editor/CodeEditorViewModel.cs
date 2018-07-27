@@ -8,6 +8,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -16,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Extensibility.Editor
 {
-    public class CodeEditorViewModel : TextEditorViewModel, IDebugLineDocumentTabViewModel, IEditor2
+    public class CodeEditorViewModel : TextEditorViewModel, IDebugLineDocumentTabViewModel, ICodeEditor
     {
         private DebugHighlightLocation _debugHighlight;
         private ILanguageService _languageService;
@@ -24,9 +25,12 @@ namespace AvalonStudio.Extensibility.Editor
         private readonly JobRunner _codeAnalysisRunner;
         private CancellationTokenSource _cancellationSource;
         private bool _isAnalyzing;
+        private ObservableCollection<(object tag, SyntaxHighlightDataList)> _highlights;
 
         public CodeEditorViewModel(ITextDocument document, ISourceFile file) : base(document, file)
         {
+            _highlights = new ObservableCollection<(object tag, SyntaxHighlightDataList)>();
+
             _codeAnalysisRunner = new JobRunner(1);
 
             RegisterLanguageService(file);
@@ -49,15 +53,22 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _languageService, value); }
         }
 
-        void IEditor2.OnTextEntered()
+        public ObservableCollection<(object tag, SyntaxHighlightDataList)> Highlights
+        {
+            get { return _highlights; }
+            set { this.RaiseAndSetIfChanged(ref _highlights, value); }
+        }
+
+
+        void ITextEditor.OnTextEntered()
         {
         }
 
-        void IEditor2.OnBeforeTextEntered()
+        void ITextEditor.OnBeforeTextEntered()
         {
         }
 
-        void IEditor2.OnTextChanged()
+        void ITextEditor.OnTextChanged()
         {
             if (!IsReadOnly)
             {
@@ -85,6 +96,13 @@ namespace AvalonStudio.Extensibility.Editor
                 {
                     var result = await LanguageService.RunCodeAnalysisAsync(this, unsavedFiles, () => false);
 
+
+                    // this is a runner, and we emit highlighting data and diagnostic data as its found.
+
+                    // editor will simply show these as they are emitted.
+
+                    // other LS like roslyn dont need this run loop as they implement it themselves.§
+
                     //_textColorizer?.SetTransformations(editor, result.SyntaxHighlightingData);
 
                     await Dispatcher.UIThread.InvokeAsync(() =>
@@ -94,7 +112,14 @@ namespace AvalonStudio.Extensibility.Editor
 
                     Dispatcher.UIThread.Post(() =>
                     {
-                        // TextArea.TextView.Redraw();
+                        var toRemove = _highlights.Where(h => h.tag == LanguageService).ToList();
+
+                        foreach(var highlightData in toRemove)
+                        {
+                            _highlights.Remove(highlightData);
+                        }
+
+                        _highlights.Add((LanguageService, result.SyntaxHighlightingData));
                     });
                 }
             });

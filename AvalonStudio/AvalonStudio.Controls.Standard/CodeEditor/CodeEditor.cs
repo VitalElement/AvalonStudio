@@ -21,6 +21,7 @@ using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.GlobalSettings;
@@ -423,17 +424,82 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             }),
 
-            this.GetObservable(LanguageServiceProperty).Subscribe(ls =>
+            this.GetObservable(EditorProperty).Subscribe(editor =>
             {
-                if(_textColorizer != null)
+                if(editor != null)
                 {
+                    if(editor.Document is AvalonStudioTextDocument td && Document != td.Document)
+                    {
+                        td.RefreshDocumentModel();
+                        Document = td.Document;
 
+                        _isLoaded = true;
+                        _textColorizer = new TextColoringTransformer(Document);
+
+                        TextArea.TextView.LineTransformers.Add(_textColorizer);
+                    }
+
+                    if(editor is ICodeEditor codeEditor)
+                    {
+                        if(codeEditor.Highlights != null)
+                        {
+                            _disposables.Add(
+                            Observable.FromEventPattern<NotifyCollectionChangedEventArgs>(codeEditor.Highlights, nameof(codeEditor.Highlights.CollectionChanged))
+                            .Subscribe(observer =>
+                            {
+                                var e = observer.EventArgs;
+
+                                switch(e.Action)
+                                {
+                                    case NotifyCollectionChangedAction.Add:
+                                        foreach(var item in  e.NewItems.Cast<(object tag, SyntaxHighlightDataList highlightList)>())
+                                        {
+                                            _textColorizer.SetTransformations(item.tag, item.highlightList);
+                                        }
+
+                                        TextArea.TextView.Redraw();
+                                        break;
+
+                                    case NotifyCollectionChangedAction.Remove:
+                                        foreach(var item in  e.OldItems.Cast<(object tag, SyntaxHighlightDataList highlightList)>())
+                                        {
+                                            _textColorizer.RemoveAll(i => i.Tag == item.tag);
+                                        }
+
+                                        TextArea.TextView.Redraw();
+                                        break;
+
+                                    case NotifyCollectionChangedAction.Reset:
+                                        foreach(var item in  e.OldItems.Cast<(object tag, SyntaxHighlightDataList highlightList)>())
+                                        {
+                                            _textColorizer.RemoveAll(i => true);
+                                        }
+
+                                        TextArea.TextView.Redraw();
+                                        break;
+
+                                       default:
+                                        throw new NotSupportedException();
+                                }
+                            }));
+
+                            foreach(var highlightData in codeEditor.Highlights)
+                            {
+                                _textColorizer.SetTransformations(highlightData.tag, highlightData.Item2);
+                            }
+
+                            TextArea.TextView.Redraw();
+                        }
+
+                        //TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
+                    }
                 }
-
-                if(ls != null && ls.SyntaxHighlighter != null)
+                else
                 {
-                    _textColorizer = new TextColoringTransformer(ls.SyntaxHighlighter, Document);
-                    TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
+                    if(Document != null)
+                    {
+                        Document = null;
+                    }
                 }
             }),
 
