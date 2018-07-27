@@ -11,6 +11,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Utils;
+using Dock.Model;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -22,8 +23,9 @@ using System.Threading.Tasks;
 namespace AvalonStudio.Studio
 {
     [Export(typeof(IStudio))]
+    [Export(typeof(IExtension))]
     [Shared]
-    public class StudioViewModel : ReactiveObject, IStudio
+    public class StudioViewModel : ReactiveObject, IStudio, IActivatableExtension
     {
         private WorkspaceTaskRunner _taskRunner;
         private Perspective currentPerspective;
@@ -49,7 +51,7 @@ namespace AvalonStudio.Studio
 
             OnSolutionChanged = Observable.FromEventPattern<SolutionChangedEventArgs>(this, nameof(SolutionChanged)).Select(s => s.EventArgs.NewValue);
 
-            CurrentPerspective = Perspective.Editor;
+            CurrentPerspective = Perspective.Normal;
 
             var editorSettings = Settings.GetSettings<EditorSettings>();
 
@@ -79,6 +81,9 @@ namespace AvalonStudio.Studio
                 DebugMode = !DebugMode;
             });
         }
+
+        public DockBase DebugLayout { get; set; }
+        public DockBase MainLayout { get; set; }
 
         public ReactiveCommand EnableDebugModeCommand { get; }
 
@@ -110,6 +115,8 @@ namespace AvalonStudio.Studio
             set { this.RaiseAndSetIfChanged(ref debugControlsVisible, value); }
         }
 
+        public IPerspective DebugPerspective { get; private set; }
+
         public Perspective CurrentPerspective
         {
             get
@@ -120,13 +127,23 @@ namespace AvalonStudio.Studio
             {
                 this.RaiseAndSetIfChanged(ref currentPerspective, value);
 
+                var shell = IoC.Get<IShell>();
+
                 switch (value)
                 {
-                    case Perspective.Editor:
+                    case Perspective.Normal:
                         DebugVisible = false;
+                        shell.CurrentPerspective = shell.MainPerspective;
                         break;
 
-                    case Perspective.Debug:
+                    case Perspective.Debugging:
+                        // find all tools with debugging perspective attribute
+                        // they must also have IsOpen (i.e. user didnt close them)
+                        // re-dock them.
+                        shell.CurrentPerspective = DebugPerspective;
+
+                        //IoC.Get<IShell>().Layout?.Navigate(DebugLayout);
+
                         // TODO close intellisense, and tooltips.
                         // disable documents, get rid of error list, solution explorer, etc.    (isreadonly)
                         DebugVisible = true;
@@ -183,7 +200,7 @@ namespace AvalonStudio.Studio
         {
             var shell = IoC.Get<IShell>();
 
-            if (shell.Layout.FocusedView is IFileDocumentTabViewModel document)
+            if (shell.SelectedDocument is IFileDocumentTabViewModel document)
             {
                 document.Editor.Save();
             }
@@ -306,26 +323,26 @@ namespace AvalonStudio.Studio
                 {
                     currentTab = provider.CreateViewModel(file);
 
-                    shell.AddDocument(currentTab);
+                    shell.AddOrSelectDocument(currentTab);
                 }
                 else
                 {
                     var newTab = new TextEditorViewModel(file);
 
-                    shell.AddDocument(newTab);
+                    shell.AddOrSelectDocument(newTab);
 
                     currentTab = newTab;
                 }
             }
             else
             {
-                shell.AddDocument(currentTab);
+                shell.AddOrSelectDocument(currentTab);
             }
 
             return currentTab;
         }
 
-        public async Task<IEditor> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
+        public async Task<IFileDocumentTabViewModel> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
         {
             var shell = IoC.Get<IShell>();
 
@@ -337,7 +354,11 @@ namespace AvalonStudio.Studio
 
                 if (debugHighlight)
                 {
-                    fileTab.Editor.SetDebugHighlight(line, startColumn, endColumn);
+                    if(fileTab is IDebugLineDocumentTabViewModel debugLineTab)
+                    {
+                        debugLineTab.DebugHighlight = new Debugging.DebugHighlightLocation { Line = line, StartColumn = startColumn, EndColumn = endColumn };
+                    }
+                    //fileTab.Editor.SetDebugHighlight(line, startColumn, endColumn);
                 }
 
                 if (selectLine || debugHighlight)
@@ -347,13 +368,13 @@ namespace AvalonStudio.Studio
 
                 if (focus)
                 {
-                    shell.Layout.Factory.SetCurrentView(fileTab);
+                    shell.Select(fileTab);
                     fileTab.Editor.Focus();
                 }
 
                 if (currentTab is TextEditorViewModel editor)
                 {
-                    return editor.DocumentAccessor;
+                    return editor;
                 }
             }
 
@@ -372,11 +393,11 @@ namespace AvalonStudio.Studio
             }
         }
 
-        public IEditor GetDocument(string path)
+        public IFileDocumentTabViewModel GetDocument(string path)
         {
             var shell = IoC.Get<IShell>();
 
-            return shell.Documents.OfType<TextEditorViewModel>().Where(d => d.SourceFile?.FilePath == path).Select(d => d.DocumentAccessor).FirstOrDefault();
+            return shell.Documents.OfType<TextEditorViewModel>().Where(d => d.SourceFile?.FilePath == path).FirstOrDefault();
         }
 
         public IProject GetDefaultProject()
@@ -462,6 +483,19 @@ namespace AvalonStudio.Studio
 
                 CurrentSolution = null;
             }
+        }
+
+        public void BeforeActivation()
+        {
+            var shell = IoC.Get<IShell>();
+
+            var debugPerspective = shell.CreatePerspective();
+
+            DebugPerspective = debugPerspective;
+        }
+
+        public void Activation()
+        {
         }
 
         public double GlobalZoomLevel

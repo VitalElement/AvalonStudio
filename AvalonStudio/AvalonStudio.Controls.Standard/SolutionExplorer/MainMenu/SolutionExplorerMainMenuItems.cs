@@ -29,6 +29,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.MainMenu
         [DefaultOrder(100)]
         public IMenuItem CloseSolution => _menuItemFactory.CreateCommandMenuItem("File.CloseSolution");
 
+        [ExportMainMenuItem("View", "Solution Explorer")]
+        [DefaultGroup("DefaultTools")]
+        [DefaultOrder(0)]
+        public IMenuItem ViewSolutionExplorer => _menuItemFactory.CreateCommandMenuItem("View.SolutionExplorer");
+
         private readonly IMenuItemFactory _menuItemFactory;
 
         [ImportingConstructor]

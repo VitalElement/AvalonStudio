@@ -13,13 +13,13 @@
             </Decorator>
           </ScrollViewer>
           <Grid Background="#7fffffff" x:Name="PART_Overlay" IsVisible="False">
-            <StackPanel Gap="4" VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource EditorForegroundBrush}">
+            <StackPanel Spacing="4" VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource EditorForegroundBrush}">
               <TextBlock Text="Unable to Load Previewer" FontSize="18"  HorizontalAlignment="Center" />
               <TextBlock x:Name="PART_Status" HorizontalAlignment="Center" />
             </StackPanel>
           </Grid>
           <Grid Background="#7fffffff" x:Name="PART_ErrorOverlay" IsVisible="False">
-            <StackPanel Gap="4" VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource EditorForegroundBrush}">
+            <StackPanel Spacing="4" VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource EditorForegroundBrush}">
               <TextBlock Text="XAML Syntax Errors" FontSize="18"  HorizontalAlignment="Center" />
 
               <Panel Background="{DynamicResource EditorBackgroundBrush}" MaxWidth="600" MaxHeight="400">

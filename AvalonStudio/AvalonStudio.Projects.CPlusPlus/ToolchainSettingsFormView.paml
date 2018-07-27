@@ -68,7 +68,7 @@
 
                 <TabStrip.DataTemplates>
                   <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Gap="2">
+                    <StackPanel Orientation="Horizontal" Spacing="2">
                       <TextBlock Text="{Binding Title}" Margin="2"/>
                     </StackPanel>
                   </DataTemplate>

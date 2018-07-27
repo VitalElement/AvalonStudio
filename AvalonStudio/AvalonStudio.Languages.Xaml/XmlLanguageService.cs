@@ -7,8 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace AvalonStudio.Languages.Xaml
 {
@@ -86,6 +89,48 @@ namespace AvalonStudio.Languages.Xaml
 
         public int Format(IEditor editor, uint offset, uint length, int cursor)
         {
+            var text = editor.Document.GetText((int)offset, (int)length);
+
+            XmlDocument doc = null;
+            try
+            {
+                doc = new XmlDocument();
+                doc.XmlResolver = null; // Prevent DTDs from being downloaded.
+                doc.LoadXml(text);
+            }
+            catch (XmlException ex)
+            {
+                // handle xml files without root element (https://bugzilla.xamarin.com/show_bug.cgi?id=4748)
+                if (ex.Message == "Root element is missing.")
+                {
+
+                }
+
+                return cursor;
+            }
+            catch (Exception ex)
+            {
+                return cursor;
+            }
+
+            var stringBuilder = new StringBuilder();
+
+            var element = XElement.Parse(text);
+
+            var settings = new XmlWriterSettings();
+            settings.OmitXmlDeclaration = true;
+            settings.Indent = true;
+            settings.NamespaceHandling = NamespaceHandling.OmitDuplicates;
+            settings.Indent = true;
+            settings.IndentChars = "  ";
+
+            using (var xmlWriter = XmlWriter.Create(stringBuilder, settings))
+            {
+                element.Save(xmlWriter);
+            }
+
+            editor.Document.Replace(0, editor.Document.TextLength, stringBuilder.ToString());
+
             return cursor;
         }
 

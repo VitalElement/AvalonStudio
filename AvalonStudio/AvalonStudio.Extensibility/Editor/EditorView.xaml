@@ -54,6 +54,7 @@
                            SourceText="{Binding SourceText}"
                            HighlightSelectedWord="False"
                            ColorScheme="{Binding ColorScheme}"
+                           DebugHighlight="{Binding DebugHighlight}"
                            DocumentAccessor="{Binding DocumentAccessor}">          
         </editor:CodeEditor>
       </Grid>

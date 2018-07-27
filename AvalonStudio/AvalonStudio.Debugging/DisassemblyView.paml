@@ -1,6 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility" xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"             >
   <DockPanel>
-    <StackPanel Margin="5 0 0 0" Orientation="Horizontal" Gap="4" DockPanel.Dock="Top">
+    <StackPanel Margin="5 0 0 0" Orientation="Horizontal" Spacing="4" DockPanel.Dock="Top">
       <TextBlock Text="Mixed Mode" />
       <CheckBox IsChecked="{Binding MixedMode}" />
     </StackPanel>

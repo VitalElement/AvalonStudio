@@ -1,6 +1,9 @@
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Shell;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
+using AvalonStudio.Shell;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -50,6 +53,8 @@ namespace AvalonStudio.Debugging
         public void Activation()
         {
             _debugManager = IoC.Get<IDebugManager2>();
+
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
 
             _debugManager.DebugSessionStarted += (sender, e) => { Enabled = false; };
 

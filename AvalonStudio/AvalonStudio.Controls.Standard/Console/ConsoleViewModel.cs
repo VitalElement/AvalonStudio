@@ -2,6 +2,7 @@ using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
@@ -28,6 +29,8 @@ namespace AvalonStudio.Controls.Standard.Console
             Title = "Console";
             document = new TextDocument();
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
+
+            
         }
 
         private TextDocument document;
@@ -119,6 +122,9 @@ namespace AvalonStudio.Controls.Standard.Console
         public void Activation()
         {
             shell = IoC.Get<IShell>();
+
+            shell.MainPerspective.AddOrSelectTool(this);
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
         }
 
         private void ScrollToEnd()

@@ -3,7 +3,7 @@
   <ListBox BorderThickness="0" Items="{Binding Frames}" SelectedItem="{Binding SelectedFrame}" Background="{DynamicResource ThemeControlBackgroundBrush}">
     <ListBox.DataTemplates>
       <DataTemplate DataType="vm:FrameViewModel">
-        <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Background}">
+        <StackPanel Orientation="Horizontal" Spacing="5" Background="{Binding Background}">
           <TextBlock Text="{Binding Function}" Width="200" />
           <TextBlock Text="{Binding Line}" />
           <TextBlock Text="{Binding Address}" />

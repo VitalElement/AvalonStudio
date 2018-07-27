@@ -4,11 +4,11 @@
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity">
     <DockPanel LastChildFill="True" Margin="6">
         <DockPanel DockPanel.Dock="Top" LastChildFill="True" Margin="0 0 0 6">
-            <StackPanel Orientation="Horizontal" Gap="16" HorizontalAlignment="Right" DockPanel.Dock="Right">
+            <StackPanel Orientation="Horizontal" Spacing="16" HorizontalAlignment="Right" DockPanel.Dock="Right">
                 <CheckBox Content="Case Sensitive" IsChecked="{Binding CaseSensitive}" />
                 <CheckBox Content="Whole Words" IsChecked="{Binding WholeWords}" />
                 <CheckBox Content="Regex" IsChecked="{Binding Regex} "/>
-                <StackPanel Orientation="Horizontal" Gap="2">
+                <StackPanel Orientation="Horizontal" Spacing="2">
                     <TextBlock Text="File Mask:" VerticalAlignment="Center" />
                     <TextBox Text="{Binding FileMask}" MinWidth="150">
                         <i:Interaction.Behaviors>
@@ -35,7 +35,7 @@
                         <i:Interaction.Behaviors>
                             <beh:CommandOnDoubleClickBehavior Command="{Binding OpenCommand}" />
                         </i:Interaction.Behaviors>
-                        <StackPanel Orientation="Horizontal" Gap="4" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                        <StackPanel Orientation="Horizontal" Spacing="4" DockPanel.Dock="Right" HorizontalAlignment="Right">
                             <TextBlock Text="{Binding File}" />
                             <TextBlock Text="{Binding LineNumber}" MinWidth="40" TextAlignment="Right" />
                         </StackPanel>

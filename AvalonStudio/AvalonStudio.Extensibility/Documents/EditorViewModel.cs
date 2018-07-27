@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Documents;
+﻿using AvalonStudio.Debugging;
+using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Studio;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
-    public abstract class EditorViewModel : DocumentTabViewModel, IFileDocumentTabViewModel
+    public abstract class EditorViewModel : DocumentTabViewModel, IFileDocumentTabViewModel, IDebugLineDocumentTabViewModel
     {
         private bool _isDirty;
         private ISourceFile _sourceFile;
@@ -19,11 +20,12 @@ namespace AvalonStudio.Controls
         private string _zoomLevelText;
         private double _fontSize;
         private double _zoomLevel;
-        private double _visualFontSize;        
+        private double _visualFontSize;
         private IStudio _studio;
+        private DebugHighlightLocation _debugHighlight;
 
         public EditorViewModel(ISourceFile file)
-        {            
+        {
             _studio = IoC.Get<IStudio>();
             _visualFontSize = _fontSize = 14;
             _zoomLevel = 1;
@@ -65,6 +67,12 @@ namespace AvalonStudio.Controls
 
         ~EditorViewModel()
         {
+        }
+
+        public DebugHighlightLocation DebugHighlight
+        {
+            get { return _debugHighlight; }
+            set { this.RaiseAndSetIfChanged(ref _debugHighlight, value); }
         }
 
         public double ZoomLevel

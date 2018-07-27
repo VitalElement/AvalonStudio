@@ -28,23 +28,13 @@
   </Application.Styles>  
     <Application.DataTemplates>
       <!-- Views -->
-      <DataTemplate DataType="Views:HomeView">
-        <Grid>
-          <StackPanel>
-            <TextBlock Text="{Binding Id}"/>
-            <TextBlock Text="{Binding Title}"/>
-            <TextBlock Text="{Binding Context}"/>
-            <Button Content="Main" Command="{Binding Context.Navigate}" CommandParameter="Main"/>
-          </StackPanel>
-        </Grid>
-      </DataTemplate>
       <DataTemplate DataType="Views:MainView">
         <Grid>
           <ContentControl Content="{Binding CurrentView}"/>
         </Grid>
       </DataTemplate>
       <DataTemplate DataType="id:IView">
-        <cont:ViewModelViewHost DataContext="{Binding }" />
+        <cont:ViewModelViewHost DataContext="{Binding Context}" />
       </DataTemplate>
     </Application.DataTemplates>  
 </Application>

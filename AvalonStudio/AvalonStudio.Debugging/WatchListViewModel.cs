@@ -1,8 +1,10 @@
 namespace AvalonStudio.Debugging
 {
     using Avalonia.Threading;
-    using AvalonStudio.Extensibility;    
+    using AvalonStudio.Extensibility;
+    using AvalonStudio.Extensibility.Studio;
     using AvalonStudio.MVVM;
+    using AvalonStudio.Shell;
     using Mono.Debugging.Client;
     using ReactiveUI;
     using System.Collections.Generic;
@@ -42,7 +44,10 @@ namespace AvalonStudio.Debugging
                 Expression = "";
             });
 
-            Activation(); // for when we create the part outside of composition.
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Activation(); // for when we create the part outside of composition.
+            });
         }
 
         public ObservableCollection<ObjectValueViewModel> Children
@@ -75,6 +80,8 @@ namespace AvalonStudio.Debugging
                     Clear();
                 };
             }
+
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
         }
 
         private void DebugManager_FrameChanged(object sender, System.EventArgs e)

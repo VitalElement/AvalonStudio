@@ -18,7 +18,7 @@
       <Grid Grid.RowSpan="2" RowDefinitions="100, *" Background="{DynamicResource ThemeControlBackgroundBrush}">
         <TextBlock FontSize="35" FontWeight="Light" Margin="10 0">AvalonStudio</TextBlock>
 
-        <StackPanel Gap="0" Grid.Column="0" Grid.Row="1">
+        <StackPanel Spacing="0" Grid.Column="0" Grid.Row="1">
           <StackPanel Margin="10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
             <TextBlock Classes="h1" FontWeight="Light">Start</TextBlock>
           </StackPanel>
@@ -48,7 +48,7 @@
 
 
       <!--RSS NEWS FEED-->
-      <StackPanel Gap="0" Margin="20 0" Grid.Column="1" Grid.Row="2">
+      <StackPanel Spacing="0" Margin="20 0" Grid.Column="1" Grid.Row="2">
         <StackPanel Margin="0 0" VerticalAlignment="Top">
           <TextBlock Classes="h1" FontWeight="Light" Grid.Column="2">News</TextBlock>
         </StackPanel>
@@ -68,7 +68,7 @@
       </StackPanel>
 
       <!--RSS VIDEO FEED-->
-      <StackPanel Gap="0" Grid.Column="2" Grid.Row="2">
+      <StackPanel Spacing="0" Grid.Column="2" Grid.Row="2">
         <StackPanel Margin="0 0" VerticalAlignment="Top">
           <TextBlock Classes="h1" FontWeight="Light" Grid.Column="3">Videos</TextBlock>
         </StackPanel>

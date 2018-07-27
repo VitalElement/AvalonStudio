@@ -4,6 +4,7 @@ using System.Composition;
 using ReactiveUI;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Studio;
+using System.Reactive.Linq;
 
 namespace AvalonStudio.Shell.Commands
 {
@@ -32,7 +33,7 @@ namespace AvalonStudio.Shell.Commands
             SaveCommand = new CommandDefinition(
                 "Save",
                 commandIconService.GetCompletionKindImage("Save"),
-                ReactiveCommand.Create(Save, _shell.WhenAnyValue<IShell, bool, Documents.IDocumentTabViewModel>(shell => shell.SelectedDocument, selected => selected != null)));
+                ReactiveCommand.Create(Save, _shell.WhenAnyValue(x=>x.SelectedDocument).Select(doc => doc != null)));
 
             SaveAllCommand = new CommandDefinition(
                 "Save All",

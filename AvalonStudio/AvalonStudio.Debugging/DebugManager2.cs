@@ -2,7 +2,8 @@ namespace AvalonStudio.Debugging
 {
     using Avalonia.Threading;
     using AvalonStudio.Documents;
-    using AvalonStudio.Extensibility;    
+    using AvalonStudio.Extensibility;
+    using AvalonStudio.Extensibility.Shell;
     using AvalonStudio.Extensibility.Studio;
     using AvalonStudio.Platforms;
     using AvalonStudio.Projects;
@@ -24,7 +25,7 @@ namespace AvalonStudio.Debugging
 
         private IStudio _studio;        
         private IConsole _console;
-        private IEditor _lastDocument;
+        private IDebugLineDocumentTabViewModel _lastDocument;
 
         public event EventHandler DebugSessionStarted;
 
@@ -184,7 +185,7 @@ namespace AvalonStudio.Debugging
             {
                 DebugSessionEnded?.Invoke(this, EventArgs.Empty);
 
-                _studio.CurrentPerspective = Perspective.Editor;
+                _studio.CurrentPerspective = Perspective.Normal;
 
                 _lastDocument?.ClearDebugHighlight();
                 _lastDocument = null;
@@ -269,7 +270,7 @@ namespace AvalonStudio.Debugging
 
                 _session.Run(debugger2.GetDebuggerStartInfo(project), debugger2.GetDebuggerSessionOptions(project));
 
-                _studio.CurrentPerspective = Perspective.Debug;
+                _studio.CurrentPerspective = Perspective.Debugging;
 
                 DebugSessionStarted?.Invoke(this, EventArgs.Empty);
             }
@@ -317,7 +318,7 @@ namespace AvalonStudio.Debugging
 
                     if (document != null)
                     {
-                        _lastDocument = document;
+                        _lastDocument = document as IDebugLineDocumentTabViewModel;
                         file = document?.SourceFile;
                     }
 
@@ -330,7 +331,8 @@ namespace AvalonStudio.Debugging
                     {
                         Dispatcher.UIThread.InvokeAsync(async () =>
                         {
-                            _lastDocument = await _studio.OpenDocumentAsync(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true);
+                            _lastDocument = await _studio.OpenDocumentAsync(file, sourceLocation.Line, sourceLocation.Column, sourceLocation.EndColumn, true)
+                                                as IDebugLineDocumentTabViewModel;
                         }).Wait();
                     }
                     else

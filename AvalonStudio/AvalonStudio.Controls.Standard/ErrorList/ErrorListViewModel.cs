@@ -51,7 +51,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
                             if (document != null)
                             {
-                                document.GotoOffset(value.Model.StartOffset);
+                                document.Editor.GotoOffset(value.Model.StartOffset);
                             }
                         }
                     }
@@ -95,6 +95,8 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         public void Activation()
         {
             studio = IoC.Get<IStudio>();
+
+            IoC.Get<IShell>().CurrentPerspective.AddOrSelectTool(this);
         }
     }
 }

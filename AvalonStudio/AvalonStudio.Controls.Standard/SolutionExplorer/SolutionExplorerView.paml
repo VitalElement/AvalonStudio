@@ -2,7 +2,7 @@
              xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Shell.Extensibility"
              xmlns:ViewModels="clr-namespace:AvalonStudio.Controls.Standard.SolutionExplorer;assembly=AvalonStudio.Controls.Standard">
   <DockPanel>
-    <StackPanel Orientation="Horizontal" Gap="4" Margin="2 4 0 -2" DockPanel.Dock="Top">
+    <StackPanel Orientation="Horizontal" Spacing="4" Margin="2 4 0 -2" DockPanel.Dock="Top">
       <StackPanel.ContextMenu>
         <ContextMenu>
           <MenuItem Header="Run All Tests" />
@@ -34,7 +34,7 @@
       </TreeView.Styles>
       <TreeView.DataTemplates>
         <TreeDataTemplate DataType="ViewModels:SolutionFolderViewModel" ItemsSource="{Binding Items}">
-          <StackPanel Orientation="Horizontal" Gap="4">
+          <StackPanel Orientation="Horizontal" Spacing="4">
             <StackPanel.ContextMenu>
               <ContextMenu>
                 <MenuItem Header="Add">
@@ -52,7 +52,7 @@
         </TreeDataTemplate>
 
         <TreeDataTemplate DataType="ViewModels:StandardProjectViewModel" ItemsSource="{Binding Items}">
-          <StackPanel Orientation="Horizontal" IsVisible="{Binding IsVisible}" Gap="4">
+          <StackPanel Orientation="Horizontal" IsVisible="{Binding IsVisible}" Spacing="4">
             <StackPanel.ContextMenu>
               <ContextMenu>
                 <MenuItem Header="Configure" Command="{Binding ConfigureCommand}" />
@@ -85,21 +85,21 @@
         </TreeDataTemplate>
 
         <TreeDataTemplate DataType="ViewModels:ReferenceFolderViewModel" ItemsSource="{Binding References}">
-          <StackPanel Orientation="Horizontal" Gap="4">
+          <StackPanel Orientation="Horizontal" Spacing="4">
             <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
             <TextBlock Text="{Binding Title}" Height="15" />
           </StackPanel>
         </TreeDataTemplate>
 
         <TreeDataTemplate DataType="ViewModels:ReferenceViewModel">
-          <StackPanel Orientation="Horizontal" Gap="4">
+          <StackPanel Orientation="Horizontal" Spacing="4">
             <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
             <TextBlock Text="{Binding Name}" Height="15" />
           </StackPanel>
         </TreeDataTemplate>
 
         <TreeDataTemplate DataType="ViewModels:SourceFileViewModel">
-          <StackPanel Orientation="Horizontal" Gap="4">
+          <StackPanel Orientation="Horizontal" Spacing="4">
             <StackPanel.ContextMenu>
               <ContextMenu>
                 <MenuItem Header="Rename" Command="{Binding RenameCommand}" />
@@ -115,7 +115,7 @@
         </TreeDataTemplate>
 
         <TreeDataTemplate DataType="ViewModels:ProjectFolderViewModel" ItemsSource="{Binding Items}">
-          <StackPanel Orientation="Horizontal" Gap="4">
+          <StackPanel Orientation="Horizontal" Spacing="4">
             <StackPanel.ContextMenu>
               <ContextMenu>
                 <MenuItem Header="Rename" Command="{Binding RenameCommand}" />
