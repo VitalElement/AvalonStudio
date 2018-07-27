@@ -519,7 +519,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor2 editor, List<UnsavedFile> unsavedFiles,
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles,
             Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
@@ -585,7 +585,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public void RegisterSourceFile(IEditor2 editor)
+        public void RegisterSourceFile(ITextEditor editor)
         {
             if (clangAccessJobRunner == null)
             {
@@ -949,7 +949,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        private ClangTranslationUnit GenerateTranslationUnit(IEditor2 editor, List<ClangUnsavedFile> unsavedFiles)
+        private ClangTranslationUnit GenerateTranslationUnit(ITextEditor editor, List<ClangUnsavedFile> unsavedFiles)
         {
             ClangTranslationUnit result = null;
 
@@ -1054,7 +1054,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        private ClangTranslationUnit GetAndParseTranslationUnit(IEditor2 editor, List<ClangUnsavedFile> unsavedFiles)
+        private ClangTranslationUnit GetAndParseTranslationUnit(ITextEditor editor, List<ClangUnsavedFile> unsavedFiles)
         {
             var dataAssociation = GetAssociatedData(editor.SourceFile);
 

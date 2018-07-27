@@ -19,7 +19,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn.Editor
         /// <summary>
         /// If set, <see cref="TextEditor.CaretOffset"/> will be updated.
         /// </summary>
-        public IEditor2 Editor { get; set; }
+        public ITextEditor Editor { get; set; }
 
         public override SourceText CurrentText => _currentText;
 

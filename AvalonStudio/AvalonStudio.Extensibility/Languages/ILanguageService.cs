@@ -70,7 +70,7 @@ namespace AvalonStudio.Languages
 
         Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "");
 
-        Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor2 editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);        
+        Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);        
 
         IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor);
 
@@ -84,7 +84,7 @@ namespace AvalonStudio.Languages
 
         Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo);
 
-        void RegisterSourceFile(IEditor2 editor);
+        void RegisterSourceFile(ITextEditor editor);
 
         void UnregisterSourceFile(IEditor editor);
 

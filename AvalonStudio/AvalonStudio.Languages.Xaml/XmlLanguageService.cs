@@ -152,7 +152,7 @@ namespace AvalonStudio.Languages.Xaml
             return char.IsLetterOrDigit(data);
         }
 
-        public virtual void RegisterSourceFile(IEditor2 editornew)
+        public virtual void RegisterSourceFile(ITextEditor editornew)
         {
         }
 
@@ -161,7 +161,7 @@ namespace AvalonStudio.Languages.Xaml
 
         }
 
-        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor2 editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             return Task.FromResult(new CodeAnalysisResults());
         }

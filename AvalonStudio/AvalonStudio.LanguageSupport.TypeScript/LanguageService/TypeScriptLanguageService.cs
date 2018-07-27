@@ -203,7 +203,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return Task.FromResult(new List<Symbol>());
         }
 
-        public void RegisterSourceFile(IEditor2 editor)
+        public void RegisterSourceFile(ITextEditor editor)
         {
             var file = editor.SourceFile;
 
@@ -221,7 +221,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             dataAssociations.Add(file, association);
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor2 editor,
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor,
             List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();

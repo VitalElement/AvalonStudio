@@ -172,8 +172,8 @@ namespace AvalonStudio.Languages.CSharp
     [ExportLanguageService(ContentCapabilities.CSharp)]
     internal class CSharpLanguageService : ILanguageService
     {
-        private static readonly ConditionalWeakTable<IEditor2, CSharpDataAssociation> dataAssociations =
-            new ConditionalWeakTable<IEditor2, CSharpDataAssociation>();
+        private static readonly ConditionalWeakTable<ITextEditor, CSharpDataAssociation> dataAssociations =
+            new ConditionalWeakTable<ITextEditor, CSharpDataAssociation>();
 
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
@@ -692,7 +692,7 @@ namespace AvalonStudio.Languages.CSharp
             }
         }
 
-        public void RegisterSourceFile(IEditor2 editor)
+        public void RegisterSourceFile(ITextEditor editor)
         {
             if (dataAssociations.TryGetValue(editor, out CSharpDataAssociation association))
             {
@@ -793,10 +793,10 @@ namespace AvalonStudio.Languages.CSharp
                 editor.TextEntering += association.BeforeTextInputHandler;*/
             }
 
-            SyntaxHighlighter = new RoslynHighlightProvider(GetDocument(association, editor.SourceFile));
+            //SyntaxHighlighter = new RoslynHighlightProvider(GetDocument(association, editor.SourceFile));
         }
 
-        private CSharpDataAssociation GetAssociatedData(IEditor2 editor)
+        private CSharpDataAssociation GetAssociatedData(ITextEditor editor)
         {
             if (!dataAssociations.TryGetValue(editor, out CSharpDataAssociation result))
             {
@@ -832,7 +832,7 @@ namespace AvalonStudio.Languages.CSharp
             return result;
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor2 editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
 
@@ -1074,110 +1074,110 @@ namespace AvalonStudio.Languages.CSharp
         }
     }
 
-    class RoslynHighlightProvider : ISyntaxHighlightingProvider
-    {
-        private Microsoft.CodeAnalysis.Document _document;
+    //class RoslynHighlightProvider : ISyntaxHighlightingProvider
+    //{
+    //    private Microsoft.CodeAnalysis.Document _document;
 
-        public RoslynHighlightProvider(Microsoft.CodeAnalysis.Document document)
-        {
-            _document = document;
-        }
+    //    public RoslynHighlightProvider(Microsoft.CodeAnalysis.Document document)
+    //    {
+    //        _document = document;
+    //    }
 
-        public List<OffsetSyntaxHighlightingData> GetHighlightedLine(ISegment line)
-        {
-            var result = new List<OffsetSyntaxHighlightingData>();
+    //    public List<OffsetSyntaxHighlightingData> GetHighlightedLine(ISegment line)
+    //    {
+    //        var result = new List<OffsetSyntaxHighlightingData>();
 
-            try
-            {
-                var highlightData = Classifier.GetClassifiedSpansAsync(_document, new TextSpan(line.Offset, line.Length)).GetAwaiter().GetResult();
-                var displayParts = Classifier.GetClassifiedSymbolDisplayPartsAsync(_document, new TextSpan(line.Offset, line.Length)).GetAwaiter().GetResult();
+    //        try
+    //        {
+    //            var highlightData = Classifier.GetClassifiedSpansAsync(_document, new TextSpan(line.Offset, line.Length)).GetAwaiter().GetResult();
+    //            var displayParts = Classifier.GetClassifiedSymbolDisplayPartsAsync(_document, new TextSpan(line.Offset, line.Length)).GetAwaiter().GetResult();
 
-                foreach (var span in highlightData)
-                {
-                    result.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
-                }
-            }
-            catch (NullReferenceException)
-            {
-            }
+    //            foreach (var span in highlightData)
+    //            {
+    //                result.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
+    //            }
+    //        }
+    //        catch (NullReferenceException)
+    //        {
+    //        }
 
-            return result;
-        }
+    //        return result;
+    //    }
 
-        HighlightType FromRoslynType(string type)
-        {
-            var result = HighlightType.None;
+    //    HighlightType FromRoslynType(string type)
+    //    {
+    //        var result = HighlightType.None;
 
-            switch (type)
-            {
-                case "preprocessor keyword":
-                    return HighlightType.PreProcessor;
+    //        switch (type)
+    //        {
+    //            case "preprocessor keyword":
+    //                return HighlightType.PreProcessor;
 
-                case "preprocessor text":
-                    return HighlightType.PreProcessorText;
+    //            case "preprocessor text":
+    //                return HighlightType.PreProcessorText;
 
-                case "keyword":
-                    result = HighlightType.Keyword;
-                    break;
+    //            case "keyword":
+    //                result = HighlightType.Keyword;
+    //                break;
 
-                case "identifier":
-                    result = HighlightType.Identifier;
-                    break;
+    //            case "identifier":
+    //                result = HighlightType.Identifier;
+    //                break;
 
-                case "punctuation":
-                    result = HighlightType.Punctuation;
-                    break;
+    //            case "punctuation":
+    //                result = HighlightType.Punctuation;
+    //                break;
 
-                case "class name":
-                    result = HighlightType.ClassName;
-                    break;
+    //            case "class name":
+    //                result = HighlightType.ClassName;
+    //                break;
 
-                case "interface name":
-                    result = HighlightType.InterfaceName;
-                    break;
+    //            case "interface name":
+    //                result = HighlightType.InterfaceName;
+    //                break;
 
-                case "enum name":
-                    return HighlightType.EnumTypeName;
+    //            case "enum name":
+    //                return HighlightType.EnumTypeName;
 
-                case "struct name":
-                    result = HighlightType.StructName;
-                    break;
+    //            case "struct name":
+    //                result = HighlightType.StructName;
+    //                break;
 
-                case "number":
-                    result = HighlightType.NumericLiteral;
-                    break;
+    //            case "number":
+    //                result = HighlightType.NumericLiteral;
+    //                break;
 
-                case "string":
-                    result = HighlightType.Literal;
-                    break;
+    //            case "string":
+    //                result = HighlightType.Literal;
+    //                break;
 
-                case "operator":
-                    result = HighlightType.Operator;
-                    break;
+    //            case "operator":
+    //                result = HighlightType.Operator;
+    //                break;
 
-                case "xml doc comment - text":
-                case "xml doc comment - delimiter":
-                case "xml doc comment - name":
-                case "xml doc comment - attribute name":
-                case "xml doc comment - attribute quotes":
-                case "comment":
-                    result = HighlightType.Comment;
-                    break;
+    //            case "xml doc comment - text":
+    //            case "xml doc comment - delimiter":
+    //            case "xml doc comment - name":
+    //            case "xml doc comment - attribute name":
+    //            case "xml doc comment - attribute quotes":
+    //            case "comment":
+    //                result = HighlightType.Comment;
+    //                break;
 
-                case "delegate name":
-                    result = HighlightType.DelegateName;
-                    break;
+    //            case "delegate name":
+    //                result = HighlightType.DelegateName;
+    //                break;
 
-                case "excluded code":
-                    result = HighlightType.None;
-                    break;
+    //            case "excluded code":
+    //                result = HighlightType.None;
+    //                break;
 
-                default:
-                    //Console.WriteLine($"Dont understand {type}");
-                    break;
-            }
+    //            default:
+    //                //Console.WriteLine($"Dont understand {type}");
+    //                break;
+    //        }
 
-            return result;
-        }
-    }
+    //        return result;
+    //    }
+    //}
 }
