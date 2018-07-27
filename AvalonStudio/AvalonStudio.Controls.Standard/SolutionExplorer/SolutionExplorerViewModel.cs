@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
@@ -44,6 +45,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             _solutionTypes = solutionTypes;
 
             Title = "Solution Explorer";
+
+            this.WhenAnyValue(x => x.SelectedItem).OfType<SourceFileViewModel>().Subscribe(async item =>
+              {
+                  await IoC.Get<IStudio>().OpenDocumentAsync((ISourceFile)item.Model, 1);
+              });
         }
 
         public new ISolution Model
@@ -114,19 +120,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public ViewModel SelectedItem
         {
-            get
-            {
-                return selectedItem;
-            }
-            set
-            {
-                this.RaiseAndSetIfChanged(ref selectedItem, value);
-
-                if (value is SourceFileViewModel sourceFile)
-                {
-                    IoC.Get<IStudio>().OpenDocument((ISourceFile)sourceFile.Model);
-                }
-            }
+            get => selectedItem;
+            set => this.RaiseAndSetIfChanged(ref selectedItem, value);
         }
 
         public override MVVM.Location DefaultLocation => MVVM.Location.Right;

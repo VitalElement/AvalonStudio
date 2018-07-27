@@ -5,7 +5,9 @@ using AvalonStudio.Projects;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
@@ -84,20 +86,18 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
     public class EditorAdaptor : IEditor
     {
         private CodeEditor _codeEditor;
-        private DocumentAdaptor _document;
+        private AvalonStudioTextDocument _document;
         private ISourceFile _sourceFile;
 
         public EditorAdaptor(CodeEditor editor)
         {
             _codeEditor = editor;
-            _document = new DocumentAdaptor(editor.Document);
+            _document = new AvalonStudioTextDocument(editor.Document);
 
             _codeEditor.TextArea.TextEntering += _codeEditor_TextEntering;
             _codeEditor.TextArea.TextEntered += _codeEditor_TextEntered;
             _codeEditor.RequestTooltipContent += RequestTooltipContent;
             _codeEditor.LostFocus += _codeEditor_LostFocus;
-
-            _sourceFile = _codeEditor.SourceFile;
         }
 
         private void _codeEditor_TextEntering (object sender, TextInputEventArgs e)
@@ -236,8 +236,20 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         internal CodeEditor EditorImpl => _codeEditor;
     }
 
-    public class DocumentAdaptor : ITextDocument, IDisposable
+    public class AvalonStudioTextDocument : ITextDocument, IDisposable
     {
+        public static async Task<ITextDocument> CreateAsync (ISourceFile file)
+        {
+            using (var fileStream = File.OpenText(file.Location))
+            {
+                var text = await fileStream.ReadToEndAsync();
+
+                var document = new AvaloniaEdit.Document.TextDocument(text);
+
+                return new AvalonStudioTextDocument(document);
+            }
+        }
+
         private AvaloniaEdit.Document.TextDocument _document;
         private DocumentLinesCollection _lines;
 
@@ -245,7 +257,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         internal AvaloniaEdit.Document.TextDocument Document => _document;
 
-        public DocumentAdaptor(AvaloniaEdit.Document.TextDocument document)
+        public AvalonStudioTextDocument(AvaloniaEdit.Document.TextDocument document)
         {
             _document = document;
             _lines = new DocumentLinesCollection(document);
@@ -257,7 +269,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             Changed?.Invoke(this, new DocumentChangeEventArgs(e.Offset, e.RemovedText.Text, e.InsertedText.Text));
         }
 
-        ~DocumentAdaptor()
+        ~AvalonStudioTextDocument()
         {
         }
 

@@ -60,11 +60,11 @@ namespace AvalonStudio.Studio
                 }
             });
 
-            EnterCommand = ReactiveCommand.Create(() =>
+            EnterCommand = ReactiveCommand.Create(async () =>
             {
                 var selectedResult = SelectedResult.Model;
-                IoC.Get<IStudio>().OpenDocument(selectedResult);
                 IsVisible = false;
+                await IoC.Get<IStudio>().OpenDocumentAsync(selectedResult, 1);
             });
 
             EscapeCommand = ReactiveCommand.Create(() =>

@@ -79,32 +79,35 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             drawingContext.FillRectangle(Background, new Rect(Bounds.Size));
 
-            var textView = TextView;
-            var renderSize = Bounds.Size;
-            if (textView != null && textView.VisualLinesValid)
+            if (_editor.Document != null)
             {
-                int currentLine = -1;
-
-                if (_editor.SelectionLength == 0 && _editor.CaretOffset >= 0 && _editor.CaretOffset <= _editor.Document.TextLength)
+                var textView = TextView;
+                var renderSize = Bounds.Size;
+                if (textView != null && textView.VisualLinesValid)
                 {
-                    currentLine = _editor.Document.GetLineByOffset(_editor.CaretOffset).LineNumber;
-                }
+                    int currentLine = -1;
 
-                foreach (var line in textView.VisualLines)
-                {
-                    var lineNumber = line.FirstDocumentLine.LineNumber;
+                    if (_editor.SelectionLength == 0 && _editor.CaretOffset >= 0 && _editor.CaretOffset <= _editor.Document.TextLength)
+                    {
+                        currentLine = _editor.Document.GetLineByOffset(_editor.CaretOffset).LineNumber;
+                    }
 
-                    var foreground = lineNumber != currentLine ? Foreground : SelectedLineForeground;
+                    foreach (var line in textView.VisualLines)
+                    {
+                        var lineNumber = line.FirstDocumentLine.LineNumber;
 
-                    var text = TextFormatterFactory.CreateFormattedText(
-                        this,
-                        lineNumber.ToString(CultureInfo.CurrentCulture),
-                        Typeface, EmSize, foreground
-                    );
+                        var foreground = lineNumber != currentLine ? Foreground : SelectedLineForeground;
 
-                    var y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
-                    drawingContext.DrawText(foreground, new Point((renderSize.Width - RightMarginSize) - text.Measure().Width, y - textView.VerticalOffset),
-                        text);
+                        var text = TextFormatterFactory.CreateFormattedText(
+                            this,
+                            lineNumber.ToString(CultureInfo.CurrentCulture),
+                            Typeface, EmSize, foreground
+                        );
+
+                        var y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
+                        drawingContext.DrawText(foreground, new Point((renderSize.Width - RightMarginSize) - text.Measure().Width, y - textView.VerticalOffset),
+                            text);
+                    }
                 }
             }
         }

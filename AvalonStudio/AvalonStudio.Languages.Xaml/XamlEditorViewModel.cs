@@ -6,9 +6,9 @@ using System;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    public class XamlEditorViewModel : TextEditorViewModel, IFileDocumentTabViewModel
+    public class XamlEditorViewModel : TextEditorViewModel
     {
-        public XamlEditorViewModel(ISourceFile file) : base(file)
+        public XamlEditorViewModel(ITextDocument document, ISourceFile file) : base(document, file)
         {
         }
     }

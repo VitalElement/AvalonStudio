@@ -41,13 +41,11 @@ namespace AvalonStudio.Extensibility.Studio
 
         event EventHandler<BuildEventArgs> BuildCompleted;
 
-        IFileDocumentTabViewModel GetDocument(string path);
-
-        IFileDocumentTabViewModel OpenDocument(ISourceFile file);
+        ITextDocumentTabViewModel GetDocument(string path);
 
         void RemoveDocument(ISourceFile document);
 
-        Task<IFileDocumentTabViewModel> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true);
+        Task<ITextDocumentTabViewModel> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true);
 
         void CloseDocumentsForProject(IProject project);
 

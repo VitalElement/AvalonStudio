@@ -68,7 +68,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
             {
                 CodeEditor editor = null;
 
-                if (CodeEditor.SourceFile.CompareTo(location.FileName) == 0)
+                /*if (CodeEditor.SourceFile.CompareTo(location.FileName) == 0)
                 {
                     editor = CodeEditor;
                 }
@@ -96,7 +96,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                             masterElement = currentElement;
                         }
                     }
-                }
+                }*/
             }
 
             if (masterElement != null)
@@ -141,7 +141,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
         {
             foreach(var location in _renameLocations)
             {
-                if (CodeEditor.SourceFile.CompareTo(location.FileName) != 0)
+                /*if (CodeEditor.SourceFile.CompareTo(location.FileName) != 0)
                 {
                     var currentTab = IoC.Get<IStudio>().GetDocument(location.FileName);
 
@@ -184,7 +184,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                             throw new System.Exception("Error renaming symbol");
                         }                        
                     }
-                }
+                }*/
             }
 
             _renameLocations = null;

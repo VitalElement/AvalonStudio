@@ -1,106 +1,126 @@
-﻿using Avalonia.Input;
-using AvalonStudio.Controls;
-using AvalonStudio.Documents;
-using AvalonStudio.Platforms;
+﻿using AvalonStudio.Documents;
 using AvalonStudio.Projects;
 using ReactiveUI;
-using System;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
-using System.Threading.Tasks;
 
 namespace AvalonStudio.Extensibility.Editor
 {
-    public class TextEditorViewModel : EditorViewModel
+    public class TextEditorViewModel : EditorViewModel, ITextDocumentTabViewModel
     {
-        private string _sourceText;
-        private IEditor _documentAccessor;
-        private CompositeDisposable _disposables;
-        private bool _isReadOnly;
+        private string _zoomLevelText;
+        private double _fontSize;
+        private double _zoomLevel;
+        private double _visualFontSize;
+        private ITextDocument _document;
+        private int _offset;
+        private int _line;
+        private int _column;
 
-        public TextEditorViewModel(ISourceFile file) : base(file)
+        public TextEditorViewModel(ITextDocument document, ISourceFile file) : base(file)
         {
-            Title = file.Name;
-
-            this.WhenAnyValue(x => x.DocumentAccessor).Subscribe(accessor =>
-            {
-                _disposables?.Dispose();
-                _disposables = null;
-
-                if (accessor != null)
-                {
-                    _disposables = new CompositeDisposable
-                    {
-                        Observable.FromEventPattern<TextInputEventArgs>(accessor, nameof(accessor.TextEntered)).Subscribe(args =>
-                        {
-                            IsDirty = true;
-                        }),
-                        Observable.FromEventPattern<TooltipDataRequestEventArgs>(accessor, nameof(accessor.RequestTooltipContent)).Subscribe(args =>
-                        {
-
-                        })
-                    };
-                }
-            });
-
-            this.WhenAnyValue(x => x.IsDirty).Subscribe(dirty =>
-            {
-                if(dirty)
-                {
-                    Title = file.Name + "*";
-                }
-                else
-                {
-                    Title = file.Name;
-                }
-            });
-        }
-
-        public bool IsReadOnly
-        {
-            get { return _isReadOnly; }
-            set { this.RaiseAndSetIfChanged(ref _isReadOnly, value); }
-        }
-
-        public override bool OnClose()
-        {
-            var result = base.OnClose();
-
-            _disposables.Dispose();
-
-            return result;
+            _visualFontSize = _fontSize = 14;
+            _zoomLevel = 1;
+            ZoomLevel = _studio.GlobalZoomLevel;
+            _document = document;
         }
 
         ~TextEditorViewModel()
         {
         }
 
-        public string SourceText
+        public int Offset
         {
-            get { return _sourceText; }
-            set { this.RaiseAndSetIfChanged(ref _sourceText, value); }
+            get { return _offset; }
+            set { this.RaiseAndSetIfChanged(ref _offset, value); }
         }
 
-        public override async Task WaitForEditorToLoadAsync()
+        public int Line
         {
-            if (_documentAccessor == null)
+            get { return _line; }
+            set { this.RaiseAndSetIfChanged(ref _line, value); }
+        }
+
+        public int Column
+        {
+            get { return _column; }
+            set { this.RaiseAndSetIfChanged(ref _column, value); }
+        }
+
+        public ITextDocument Document
+        {
+            get { return _document; }
+            set { this.RaiseAndSetIfChanged(ref _document, value); }
+        }
+
+        public double ZoomLevel
+        {
+            get
             {
-                await Task.Run(() =>
+                return _zoomLevel;
+            }
+            set
+            {
+                if (value != _zoomLevel)
                 {
-                    while (_documentAccessor == null)
-                    {
-                        Task.Delay(50);
-                    }
-                });
+                    _zoomLevel = value;
+                    _studio.GlobalZoomLevel = value;
+                    InvalidateVisualFontSize();
+
+                    ZoomLevelText = $"{ZoomLevel:0} %";
+                }
             }
         }
 
-        public IEditor DocumentAccessor
+        public string ZoomLevelText
         {
-            get { return _documentAccessor; }
-            set { this.RaiseAndSetIfChanged(ref _documentAccessor, value); }
+            get { return _zoomLevelText; }
+            set { this.RaiseAndSetIfChanged(ref _zoomLevelText, value); }
         }
 
-        public override IEditor Editor => _documentAccessor;
+        public double FontSize
+        {
+            get
+            {
+                return _fontSize;
+            }
+            set
+            {
+                if (_fontSize != value)
+                {
+                    _fontSize = value;
+                    InvalidateVisualFontSize();
+                }
+            }
+        }
+
+        public double VisualFontSize
+        {
+            get { return _visualFontSize; }
+            set { this.RaiseAndSetIfChanged(ref _visualFontSize, value); }
+        }
+
+        private void InvalidateVisualFontSize()
+        {
+            VisualFontSize = (ZoomLevel / 100) * FontSize;
+        }
+
+        void ITextDocumentTabViewModel.Focus ()
+        {
+
+        }
+
+        void ITextDocumentTabViewModel.GotoPosition(int line, int column)
+        {
+
+        }
+
+        void ITextDocumentTabViewModel.GotoOffset(int offset)
+        {
+
+        }
+
+        void ITextDocumentTabViewModel.Save()
+        {
+            
+        }
     }
 }

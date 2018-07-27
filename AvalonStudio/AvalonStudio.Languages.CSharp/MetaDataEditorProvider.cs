@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Documents;
+﻿using AvalonStudio.Controls.Standard.CodeEditor;
+using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
@@ -13,9 +14,9 @@ namespace AvalonStudio.Languages.CSharp
             return file.FilePath.StartsWith("$metadata");
         }
 
-        public IFileDocumentTabViewModel CreateViewModel(ISourceFile file)
+        public ITextDocumentTabViewModel CreateViewModel(ISourceFile file, ITextDocument document)
         {
-            return new TextEditorViewModel(file) { IsReadOnly = true };
+            return new TextEditorViewModel(document, file) { IsReadOnly = true };
         }
     }
 }

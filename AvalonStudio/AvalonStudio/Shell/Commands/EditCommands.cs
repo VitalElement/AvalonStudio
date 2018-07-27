@@ -65,7 +65,6 @@ namespace AvalonStudio.Shell.Commands
         private void Comment() => GetSelectedDocumentEditor()?.Comment();
         private void Uncomment() => GetSelectedDocumentEditor()?.Uncomment();
 
-        private IEditor GetSelectedDocumentEditor() =>
-            (_shell.SelectedDocument as IFileDocumentTabViewModel)?.Editor;
+        private IEditor GetSelectedDocumentEditor() => null;
     }
 }

@@ -27,14 +27,21 @@ namespace AvalonStudio.Documents
         DebugHighlightLocation DebugHighlight { get; set; }
     }
 
-    public interface IFileDocumentTabViewModel : IDocumentTabViewModel
+    public interface ITextDocumentTabViewModel : IFileTabViewModel
+    {
+        ITextDocument Document { get; }
+
+        void GotoPosition(int line, int column);
+
+        void GotoOffset(int offset);
+
+        void Focus();
+
+        void Save();
+    }
+
+    public interface IFileTabViewModel : IDocumentTabViewModel
     {
         ISourceFile SourceFile { get; }
-
-        IEditor Editor { get; }
-
-        bool IsDirty { get; set; }
-
-        Task WaitForEditorToLoadAsync();
     }
 }
