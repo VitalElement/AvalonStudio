@@ -12,7 +12,7 @@
         <ColumnDefinition Width="397*"/>
       </Grid.ColumnDefinitions>
 
-      <StackPanel Grid.Row="0" Gap="4">
+      <StackPanel Grid.Row="0" Spacing="4">
         <TextBlock  Text="Debug Adaptor:"/>
         <DropDown  Items="{Binding Debuggers}" SelectedItem="{Binding SelectedDebugger, Mode=TwoWay}" />
       </StackPanel>

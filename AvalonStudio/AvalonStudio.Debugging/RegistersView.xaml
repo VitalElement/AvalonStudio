@@ -5,7 +5,7 @@
                  VirtualizationMode="None">
             <ListBox.DataTemplates>
                 <DataTemplate DataType="vm:RegisterViewModel">
-                    <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Background}">
+                    <StackPanel Orientation="Horizontal" Spacing="5" Background="{Binding Background}">
                         <TextBlock Text="{Binding Name}" Width="90" Foreground="#FF007ACC" HorizontalAlignment="Left" />
                         <TextBlock Text="{Binding Value}" Foreground="#4EC9B0" HorizontalAlignment="Right" />
                     </StackPanel>

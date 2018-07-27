@@ -5,7 +5,7 @@
           TextBlock.FontFamily="Segoi UI" TextBlock.FontSize="14" VerticalAlignment="Top" HorizontalAlignment="Stretch">
         <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
             <StackPanel Margin="4 0">
-                <StackPanel Gap="2" Orientation="Horizontal">
+                <StackPanel Spacing="2" Orientation="Horizontal">
                     <TextBlock Text="{Binding Hint}" />
                     <TextBlock Text="{Binding OverloadText}" />
                 </StackPanel>

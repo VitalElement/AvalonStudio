@@ -16,12 +16,12 @@
         <DataTemplate>
           <Grid TextBlock.FontFamily="Inconsolata" TextBlock.FontSize="14" TextBlock.FontWeight="Light">
             <TextBlock Text="Loading..." IsVisible="{Binding IsLoading}"/>
-            <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Data.Background}" IsVisible="{Binding Data.Visible}">
+            <StackPanel Orientation="Horizontal" Spacing="5" Background="{Binding Data.Background}" IsVisible="{Binding Data.Visible}">
               <TextBlock Text="{Binding Data.Address}" Foreground="#FF007ACC" />
               <ItemsControl Items="{Binding Data.Values}">
                 <ItemsControl.ItemsPanel>
                   <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal" Gap="1" />
+                    <StackPanel Orientation="Horizontal" Spacing="1" />
                   </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.DataTemplates>

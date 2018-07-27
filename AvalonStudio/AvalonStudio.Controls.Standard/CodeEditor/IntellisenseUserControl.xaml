@@ -18,7 +18,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <StackPanel Orientation="Horizontal" Gap="4">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
                             <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
                             <TextBlock Text="{Binding Title}" />
                         </StackPanel>
