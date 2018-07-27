@@ -13,7 +13,7 @@ namespace AvalonStudio.Extensibility.Studio
 {
     public interface IStudio
     {
-        IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
+        IEnumerable<Lazy<ILanguageServiceProvider, LanguageServiceProviderMetadata>> LanguageServiceProviders { get; }
         IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> SolutionTypes { get; }
         IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
         IEnumerable<Lazy<IEditorProvider>> EditorProviders { get; }

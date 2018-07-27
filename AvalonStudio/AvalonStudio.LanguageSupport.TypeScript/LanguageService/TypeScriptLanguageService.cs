@@ -27,7 +27,6 @@ using File = System.IO.File;
 
 namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 {
-    [ExportLanguageService(ContentType)]
     public class TypeScriptLanguageService : ILanguageService
     {
         private const string ContentType = "TypeScript";

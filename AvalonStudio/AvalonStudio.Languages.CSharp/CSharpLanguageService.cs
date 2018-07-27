@@ -169,7 +169,6 @@ namespace AvalonStudio.Languages.CSharp
     }
 
 
-    [ExportLanguageService(ContentCapabilities.CSharp)]
     internal class CSharpLanguageService : ILanguageService
     {
         private static readonly ConditionalWeakTable<IEditor2, CSharpDataAssociation> dataAssociations =

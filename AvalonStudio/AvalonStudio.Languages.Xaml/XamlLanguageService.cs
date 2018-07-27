@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    [ExportLanguageService(ContentCapabilities.Xaml)]
     internal class XamlLanguageService : XmlLanguageService
     {
         public override string LanguageId => "xaml";

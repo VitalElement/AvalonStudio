@@ -35,14 +35,14 @@ namespace AvalonStudio.Studio
 
         [ImportingConstructor]
         public StudioViewModel([ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
-            [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
+            [ImportMany] IEnumerable<Lazy<ILanguageServiceProvider, LanguageServiceProviderMetadata>> languageServiceProviders,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             IContentTypeService contentTypeService)
         {
             EditorProviders = editorProviders;
-            LanguageServices = languageServices;
+            LanguageServiceProviders = languageServiceProviders;
             SolutionTypes = solutionTypes;
             ProjectTypes = projectTypes;
             TestFrameworks = testFrameworks;
@@ -91,7 +91,7 @@ namespace AvalonStudio.Studio
 
         public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
 
-        public IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
+        public IEnumerable<Lazy<ILanguageServiceProvider, LanguageServiceProviderMetadata>> LanguageServiceProviders { get; }
 
         public IEnumerable<Lazy<ITestFramework>> TestFrameworks { get; }
 

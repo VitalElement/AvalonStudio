@@ -25,7 +25,6 @@ using System.Xml.Linq;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
-    [ExportLanguageService(ContentCapabilities.C, ContentCapabilities.CPP)]
     internal class CPlusPlusLanguageService : ILanguageService
     {
         private static readonly ClangIndex index = ClangService.CreateIndex();
