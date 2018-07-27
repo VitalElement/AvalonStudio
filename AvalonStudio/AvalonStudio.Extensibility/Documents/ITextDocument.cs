@@ -3,6 +3,7 @@ using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Threading.Tasks;
 
@@ -330,7 +331,7 @@ namespace AvalonStudio.Documents
         event EventHandler<DocumentChangeEventArgs> Changed;
     }
 
-    public interface IEditor2
+    public interface ITextEditor
     {
         int Offset { get; set; }
 
@@ -338,17 +339,22 @@ namespace AvalonStudio.Documents
 
         int Column { get; set; }
 
-        ILanguageService LanguageService { get; }
-
         ISourceFile SourceFile { get; }
 
         ITextDocument Document { get; }
-        
+
         void OnBeforeTextEntered();
 
         void OnTextEntered();
 
         void OnTextChanged();
+    }
+
+    public interface ICodeEditor : ITextEditor
+    {
+        ILanguageService LanguageService { get; }
+
+        ObservableCollection<(object tag, SyntaxHighlightDataList)> Highlights { get; }
     }
 
     public interface IEditor : IDisposable
@@ -359,7 +365,7 @@ namespace AvalonStudio.Documents
 
         int Column { get; set; }
 
-        ILanguageService LanguageService { get; }
+        //ILanguageService LanguageService { get; }
 
         ISourceFile SourceFile { get; }
 
