@@ -11,6 +11,6 @@
 
         <GridSplitter Grid.Row="1" />
 
-        <local:EditorView Grid.Row="2" />
+        <local:CodeEditorView Grid.Row="2" />
     </Grid>
 </UserControl>

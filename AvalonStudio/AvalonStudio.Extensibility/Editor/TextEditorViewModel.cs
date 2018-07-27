@@ -5,7 +5,7 @@ using System.IO;
 
 namespace AvalonStudio.Extensibility.Editor
 {
-    public class TextEditorViewModel : EditorViewModel, ITextDocumentTabViewModel
+    public class TextEditorViewModel : EditorViewModel, ITextDocumentTabViewModel, ITextEditor
     {
         private string _zoomLevelText;
         private double _fontSize;
@@ -104,6 +104,13 @@ namespace AvalonStudio.Extensibility.Editor
             VisualFontSize = (ZoomLevel / 100) * FontSize;
         }
 
+        public override void OnSelected()
+        {
+            base.OnSelected();
+
+            // how to tell the control to focus.
+        }
+
         void ITextDocumentTabViewModel.Focus ()
         {
 
@@ -123,6 +130,22 @@ namespace AvalonStudio.Extensibility.Editor
         {
             File.WriteAllText(SourceFile.FilePath, Document.Text);
             IsDirty = false;
+        }
+
+        public virtual void OnBeforeTextEntered()
+        {
+        }
+
+        public virtual void OnTextEntered()
+        {
+        }
+
+        public virtual void OnTextChanged()
+        {
+            if (!IsReadOnly)
+            {
+                IsDirty = true;
+            }
         }
     }
 }

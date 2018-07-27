@@ -59,21 +59,22 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _highlights, value); }
         }
 
-
-        void ITextEditor.OnTextEntered()
+        public override void OnTextEntered()
         {
+            base.OnTextEntered();
         }
 
-        void ITextEditor.OnBeforeTextEntered()
+        public override void OnBeforeTextEntered()
         {
+            base.OnBeforeTextEntered();
         }
 
-        void ITextEditor.OnTextChanged()
+        public override void OnTextChanged()
         {
-            if (!IsReadOnly)
+            base.OnTextChanged();
+
+            if(!IsReadOnly)
             {
-                IsDirty = true;
-
                 TriggerCodeAnalysis();
             }
         }
