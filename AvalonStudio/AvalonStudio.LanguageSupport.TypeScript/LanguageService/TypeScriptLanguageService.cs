@@ -2,6 +2,7 @@
 using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Languages;
 using AvalonStudio.LanguageSupport.TypeScript.Projects;
@@ -106,6 +107,8 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
+        public ISyntaxHighlightingProvider SyntaxHighlighter => throw new NotImplementedException();
+
         public bool CanHandle(IEditor editor)
         {
             var result = false;
@@ -200,7 +203,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return Task.FromResult(new List<Symbol>());
         }
 
-        public void RegisterSourceFile(IEditor editor)
+        public void RegisterSourceFile(IEditor2 editor)
         {
             var file = editor.SourceFile;
 

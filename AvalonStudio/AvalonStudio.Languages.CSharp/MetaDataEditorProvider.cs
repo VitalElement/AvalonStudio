@@ -3,9 +3,24 @@ using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
+using System.IO;
 
 namespace AvalonStudio.Languages.CSharp
 {
+    [ExportEditorProvider]
+    internal class CsharpEditorProvider : IEditorProvider
+    {
+        public bool CanEdit(ISourceFile file)
+        {
+            return Path.GetExtension(file.FilePath) == ".cs";
+        }
+
+        public ITextDocumentTabViewModel CreateViewModel(ISourceFile file, ITextDocument document)
+        {
+            return new CodeEditorViewModel(document, file);
+        }
+    }
+
     [ExportEditorProvider]
     internal class MetaDataEditorProvider : IEditorProvider
     {

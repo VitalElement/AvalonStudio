@@ -4,6 +4,7 @@ using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.CodeEditor;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Languages;
 using System;
 using System.Linq;
 
@@ -12,9 +13,11 @@ namespace AvalonStudio.Languages
     public class TextColoringTransformer : GenericLineTransformer
     {
         private readonly TextDocument document;
+        private readonly ISyntaxHighlightingProvider _provider;
 
-        public TextColoringTransformer(TextDocument document)
+        public TextColoringTransformer(ISyntaxHighlightingProvider provider, TextDocument document)
         {
+            _provider = provider;
             this.document = document;
 
             TextTransformations = new TextSegmentCollection<TextTransformation>(document);
@@ -28,7 +31,8 @@ namespace AvalonStudio.Languages
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
-            var transformsInLine = TextTransformations.FindOverlappingSegments(line);
+            var highlights = _provider.GetHighlightedLine(new AvalonStudio.Documents.SimpleSegment(line.Offset, line.Length));
+            /*var transformsInLine = TextTransformations.FindOverlappingSegments(line);
 
             foreach (var transform in transformsInLine.OfType<ForegroundTextTransformation>())
             {
@@ -38,6 +42,14 @@ namespace AvalonStudio.Languages
             foreach (var transform in transformsInLine.OfType<OpacityTextTransformation>())
             {
                 transform.Transform(this, line);
+            }*/
+
+            foreach (var highlight in highlights)
+            {
+                if (highlight.Type != HighlightType.None)
+                {
+                    GetTextTransformation(0, highlight).Transform(this, line);
+                }
             }
         }
 

@@ -113,8 +113,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _analysisTriggerEvents.OnNext(true);
         }
 
-        public ILanguageService LanguageService { get; set; }
-
         public CodeEditor() : base(new TextArea(), null)
         {
             _codeAnalysisRunner = new JobRunner(1);
@@ -445,6 +443,20 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             }),
 
+            this.GetObservable(LanguageServiceProperty).Subscribe(ls =>
+            {
+                if(_textColorizer != null)
+                {
+
+                }
+
+                if(ls != null && ls.SyntaxHighlighter != null)
+                {
+                    _textColorizer = new TextColoringTransformer(ls.SyntaxHighlighter, Document);
+                    TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
+                }
+            }),
+
             AddHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel),
             AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel)
         };
@@ -771,7 +783,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return true;
         }
 
-        private void RegisterLanguageService(ISourceFile sourceFile)
+        /*private void RegisterLanguageService(ISourceFile sourceFile)
         {
             UnRegisterLanguageService();
 
@@ -798,7 +810,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 LanguageService.RegisterSourceFile(DocumentAccessor);
 
                 _diagnosticMarkersRenderer = new TextMarkerService(Document);
-                _textColorizer = new TextColoringTransformer(Document);
+                
                 _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
 
                 _contextActionsRenderer = new ContextActionsRenderer(this, _diagnosticMarkersRenderer);
@@ -811,7 +823,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
                 TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
-                TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
+                
 
                 _intellisenseManager = new IntellisenseManager(DocumentAccessor, _intellisense, _completionAssistant, LanguageService, sourceFile, offset =>
                 {
@@ -851,7 +863,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             TextArea.TextEntered += TextArea_TextEntered;
 
             DoCodeAnalysisAsync().GetAwaiter();
-        }
+        }*/
 
         private void LanguageService_DiagnosticsUpdated(object sender, DiagnosticsUpdatedEventArgs e)
         {
@@ -1184,6 +1196,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get => GetValue(DebugHighlightProperty);
             set => SetValue(DebugHighlightProperty, value);
+        }
+
+        public static readonly AvaloniaProperty<ILanguageService> LanguageServiceProperty =
+            AvaloniaProperty.Register<CodeEditor, ILanguageService>(nameof(LanguageService));
+
+        public ILanguageService LanguageService
+        {
+            get => GetValue(LanguageServiceProperty);
+            set => SetValue(LanguageServiceProperty, value);
         }
 
         public int GetOffsetFromPoint(Point point)

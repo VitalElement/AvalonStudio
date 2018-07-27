@@ -330,6 +330,21 @@ namespace AvalonStudio.Documents
         event EventHandler<DocumentChangeEventArgs> Changed;
     }
 
+    public interface IEditor2
+    {
+        int Offset { get; set; }
+
+        int Line { get; set; }
+
+        int Column { get; set; }
+
+        ILanguageService LanguageService { get; }
+
+        ISourceFile SourceFile { get; }
+
+        ITextDocument Document { get; }
+    }
+
     public interface IEditor : IDisposable
     {
         int CaretOffset { get; set; }

@@ -2,6 +2,7 @@
 using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using System;
 using System.Collections.Generic;
@@ -49,6 +50,8 @@ namespace AvalonStudio.Languages.Xaml
         };
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
+
+        public ISyntaxHighlightingProvider SyntaxHighlighter => throw new NotImplementedException();
 
         public virtual bool CanHandle(IEditor editor)
         {
@@ -149,7 +152,7 @@ namespace AvalonStudio.Languages.Xaml
             return char.IsLetterOrDigit(data);
         }
 
-        public virtual void RegisterSourceFile(IEditor editornew)
+        public virtual void RegisterSourceFile(IEditor2 editornew)
         {
         }
 

@@ -19,7 +19,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn.Editor
         /// <summary>
         /// If set, <see cref="TextEditor.CaretOffset"/> will be updated.
         /// </summary>
-        public IEditor Editor { get; set; }
+        public IEditor2 Editor { get; set; }
 
         public override SourceText CurrentText => _currentText;
 
@@ -59,7 +59,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn.Editor
             using (Document.RunUpdate())
             {
                 var editor = Editor;
-                var caretOffset = editor?.CaretOffset ?? 0;
+                var caretOffset = editor?.Offset ?? 0;
                 var documentOffset = 0;
                 try
                 {
@@ -97,7 +97,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn.Editor
                     if (caretOffset > newText.Length)
                         caretOffset = newText.Length;
                     if (editor != null)
-                        editor.CaretOffset = caretOffset;
+                        editor.Offset = caretOffset;
                 }
             }
         }

@@ -2,6 +2,7 @@ using AvaloniaEdit.Indentation;
 using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Projects;
 using System;
@@ -39,6 +40,8 @@ namespace AvalonStudio.Languages
     public interface ILanguageService
     {
         IIndentationStrategy IndentationStrategy { get; }
+
+        ISyntaxHighlightingProvider SyntaxHighlighter { get; }
 
         /// <summary>
         /// A file path compatible name for the language, i.e. cs, cpp, ts, css, go, vb, fsharp
@@ -81,7 +84,7 @@ namespace AvalonStudio.Languages
 
         Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo);
 
-        void RegisterSourceFile(IEditor editor);
+        void RegisterSourceFile(IEditor2 editor);
 
         void UnregisterSourceFile(IEditor editor);
 

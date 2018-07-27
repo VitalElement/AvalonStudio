@@ -40,4 +40,13 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Editor\CodeEditorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Editor\EditorView - Copy.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+
 </Project>

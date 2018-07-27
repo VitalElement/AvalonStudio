@@ -317,28 +317,21 @@ namespace AvalonStudio.Studio
 
             if (currentTab == null)
             {
+                var document = await AvalonStudioTextDocument.CreateAsync(file);
+
                 var provider = IoC.Get<IStudio>().EditorProviders.FirstOrDefault(p => p.Value.CanEdit(file))?.Value;
 
                 if (provider != null)
                 {
-                    currentTab = provider.CreateViewModel(file, currentTab.Document);
-
-                    shell.AddOrSelectDocument(currentTab);
+                    currentTab = provider.CreateViewModel(file, document);
                 }
                 else
                 {
-                    var document = await AvalonStudioTextDocument.CreateAsync(file);
-                    var newTab = new TextEditorViewModel(document, file);
-
-                    shell.AddOrSelectDocument(newTab);
-
-                    currentTab = newTab;
+                    currentTab = new TextEditorViewModel(document, file);
                 }
             }
-            else
-            {
-                shell.AddOrSelectDocument(currentTab);
-            }
+
+            shell.AddOrSelectDocument(currentTab);
 
             return currentTab;
         }

@@ -110,7 +110,7 @@ namespace AvalonStudio.Languages.Xaml
             }
         }
 
-        public override void RegisterSourceFile(IEditor editor)
+        public override void RegisterSourceFile(IEditor2 editor)
         {
             if (engine == null)
             {

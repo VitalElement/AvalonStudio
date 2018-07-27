@@ -132,6 +132,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
+        public ISyntaxHighlightingProvider SyntaxHighlighter => throw new NotImplementedException();
+
         private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
             switch (kind)
@@ -583,9 +585,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public void RegisterSourceFile(IEditor editor)
+        public void RegisterSourceFile(IEditor2 editor)
         {
-            if (clangAccessJobRunner == null)
+            /*if (clangAccessJobRunner == null)
             {
                 clangAccessJobRunner = new JobRunner();
 
@@ -652,7 +654,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             };
 
             editor.TextEntered += association.TextInputHandler;
-            editor.TextEntering += association.BeforeTextInputHandler;
+            editor.TextEntering += association.BeforeTextInputHandler;*/
         }
 
         public void UnregisterSourceFile(IEditor editor)
