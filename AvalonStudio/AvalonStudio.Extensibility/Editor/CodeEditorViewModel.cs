@@ -59,14 +59,24 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _highlights, value); }
         }
 
-        public override void OnTextEntered()
+        public override void OnTextEntered(string text)
         {
-            base.OnTextEntered();
+            base.OnTextEntered(text);
+
+            foreach (var helper in LanguageService.InputHelpers)
+            {
+                helper.AfterTextInput(LanguageService, this, text);
+            }
         }
 
-        public override void OnBeforeTextEntered()
+        public override void OnBeforeTextEntered(string text)
         {
-            base.OnBeforeTextEntered();
+            base.OnBeforeTextEntered(text);
+
+            foreach(var helper in LanguageService.InputHelpers)
+            {
+                helper.BeforeTextInput(LanguageService, this, text);
+            }
         }
 
         public override void OnTextChanged()
@@ -77,6 +87,11 @@ namespace AvalonStudio.Extensibility.Editor
             {
                 TriggerCodeAnalysis();
             }
+        }
+
+        public override void IndentLine(int lineNumber)
+        {
+            base.IndentLine(lineNumber);
         }
 
         private void TriggerCodeAnalysis()

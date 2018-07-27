@@ -8,26 +8,26 @@ namespace AvalonStudio.Languages.Xaml
 {
     class InsertQuotesForPropertyValueCodeEditorHelper : ICodeEditorInputHelper
     {
-        public void AfterTextInput(ILanguageService languageServivce, IEditor editor, TextInputEventArgs args)
+        public void AfterTextInput(ILanguageService languageServivce, ITextEditor editor, string text)
         {
-            if (args.Text == "=")
+            if (text == "=")
             {
-                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.CaretOffset - 1));
+                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.Offset - 1));
 
                 if (textBefore.Length > 2 && textBefore[textBefore.Length - 1] != '/')
                 {
                     var state = XmlParser.Parse(textBefore);
                     if (state.State == XmlParser.ParserState.StartAttribute)
                     {
-                        var caret = editor.CaretOffset;
+                        var caret = editor.Offset;
                         editor.Document.Insert(caret, "\"\"");
-                        editor.CaretOffset = caret + 1;
+                        editor.Offset = caret + 1;
                     }
                 }
             }
         }
 
-        public void BeforeTextInput(ILanguageService languageService, IEditor editor, TextInputEventArgs args)
+        public void BeforeTextInput(ILanguageService languageService, ITextEditor editor, string text)
         {
         }
     }

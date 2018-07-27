@@ -924,7 +924,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private void TextArea_TextEntered(object sender, TextInputEventArgs e)
         {
-            Editor?.OnTextEntered();
+            Editor?.OnTextEntered(e.Text);
 
             _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
             _textEntering = false;
@@ -943,7 +943,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private void TextArea_TextEntering(object sender, TextInputEventArgs e)
         {
-            Editor?.OnBeforeTextEntered();
+            Editor?.OnBeforeTextEntered(e.Text);
 
             _textEntering = true;
 

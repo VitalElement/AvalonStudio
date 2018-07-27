@@ -132,11 +132,11 @@ namespace AvalonStudio.Extensibility.Editor
             IsDirty = false;
         }
 
-        public virtual void OnBeforeTextEntered()
+        public virtual void OnBeforeTextEntered(string text)
         {
         }
 
-        public virtual void OnTextEntered()
+        public virtual void OnTextEntered(string text)
         {
         }
 
@@ -146,6 +146,10 @@ namespace AvalonStudio.Extensibility.Editor
             {
                 IsDirty = true;
             }
+        }
+
+        public virtual void IndentLine(int lineNumber)
+        {
         }
     }
 }

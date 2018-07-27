@@ -339,13 +339,15 @@ namespace AvalonStudio.Documents
 
         int Column { get; set; }
 
+        void IndentLine(int lineNumber);
+
         ISourceFile SourceFile { get; }
 
         ITextDocument Document { get; }
 
-        void OnBeforeTextEntered();
+        void OnBeforeTextEntered(string text);
 
-        void OnTextEntered();
+        void OnTextEntered(string text);
 
         void OnTextChanged();
     }

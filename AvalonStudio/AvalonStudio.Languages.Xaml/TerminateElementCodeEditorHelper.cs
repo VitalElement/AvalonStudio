@@ -8,17 +8,17 @@ namespace AvalonStudio.Languages.Xaml
 {
     class TerminateElementCodeEditorHelper : ICodeEditorInputHelper
     {
-        public void AfterTextInput(ILanguageService languageServivce, IEditor editor, TextInputEventArgs args)
+        public void AfterTextInput(ILanguageService languageServivce, ITextEditor editor, string text)
         {
-            if (args.Text == "/")
+            if (text == "/")
             {
-                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.CaretOffset - 1));
+                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.Offset - 1));
 
                 var nextChar = '\0';
 
-                if(editor.CaretOffset < editor.Document.TextLength)
+                if(editor.Offset < editor.Document.TextLength)
                 {
-                    nextChar = editor.Document.GetCharAt(editor.CaretOffset);
+                    nextChar = editor.Document.GetCharAt(editor.Offset);
                 }
 
                 if (textBefore.Length > 2 && textBefore[textBefore.Length - 1] != '/' && nextChar != '>')
@@ -28,15 +28,15 @@ namespace AvalonStudio.Languages.Xaml
                         || state.State == XmlParser.ParserState.StartElement
                         || state.State == XmlParser.ParserState.AfterAttributeValue)
                     {
-                        var caret = editor.CaretOffset;
+                        var caret = editor.Offset;
                         editor.Document.Insert(caret, ">");
-                        editor.CaretOffset = caret + 1;
+                        editor.Offset = caret + 1;
                     }
                 }
             }
         }
 
-        public void BeforeTextInput(ILanguageService languageService, IEditor editor, TextInputEventArgs args)
+        public void BeforeTextInput(ILanguageService languageService, ITextEditor editor, string text)
         {
         }
     }
