@@ -175,13 +175,12 @@ namespace AvalonStudio.Extensibility.Editor
 
             var contentTypeService = ContentTypeServiceInstance.Instance;
 
-            var languageService = IoC.Get<IStudio>().LanguageServices.FirstOrDefault(
+            var languageServiceProvider = IoC.Get<IStudio>().LanguageServiceProviders.FirstOrDefault(
                 o => o.Metadata.TargetCapabilities.Any(
                     c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;
 
-            languageService.RegisterSourceFile(this);
-
-            LanguageService = languageService;
+            LanguageService = languageServiceProvider.CreateLanguageService();
+            LanguageService.RegisterSourceFile(this);
 
             /*SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(sourceFile.ContentType);
 

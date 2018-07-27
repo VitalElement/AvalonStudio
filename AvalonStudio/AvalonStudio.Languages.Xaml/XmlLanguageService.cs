@@ -16,7 +16,6 @@ using System.Xml.Linq;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    [ExportLanguageService(ContentCapabilities.Xml)]
     internal class XmlLanguageService : ILanguageService
     {
         private static List<ICodeEditorInputHelper> s_InputHelpers = new List<ICodeEditorInputHelper>
