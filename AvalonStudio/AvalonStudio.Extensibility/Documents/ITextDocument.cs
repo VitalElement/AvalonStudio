@@ -377,6 +377,10 @@ namespace AvalonStudio.Documents
         ILanguageService LanguageService { get; }
 
         ObservableCollection<(object tag, SyntaxHighlightDataList)> Highlights { get; }
+
+        void Comment();
+
+        void Uncomment();
     }
 
     public interface IEditor : IDisposable
