@@ -83,156 +83,156 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public int EndOffset => _line.EndOffset;
     }
 
-    public class EditorAdaptor : IEditor
-    {
-        private CodeEditor _codeEditor;
-        private AvalonStudioTextDocument _document;
-        private ISourceFile _sourceFile;
+    //public class EditorAdaptor : IEditor
+    //{
+    //    private CodeEditor _codeEditor;
+    //    private AvalonStudioTextDocument _document;
+    //    private ISourceFile _sourceFile;
 
-        public EditorAdaptor(CodeEditor editor)
-        {
-            _codeEditor = editor;
-            _document = new AvalonStudioTextDocument(editor.Document);
+    //    public EditorAdaptor(CodeEditor editor)
+    //    {
+    //        _codeEditor = editor;
+    //        _document = new AvalonStudioTextDocument(editor.Document);
 
-            _codeEditor.TextArea.TextEntering += _codeEditor_TextEntering;
-            _codeEditor.TextArea.TextEntered += _codeEditor_TextEntered;
-            _codeEditor.RequestTooltipContent += RequestTooltipContent;
-            _codeEditor.LostFocus += _codeEditor_LostFocus;
-        }
+    //        _codeEditor.TextArea.TextEntering += _codeEditor_TextEntering;
+    //        _codeEditor.TextArea.TextEntered += _codeEditor_TextEntered;
+    //        _codeEditor.RequestTooltipContent += RequestTooltipContent;
+    //        _codeEditor.LostFocus += _codeEditor_LostFocus;
+    //    }
 
-        private void _codeEditor_TextEntering (object sender, TextInputEventArgs e)
-        {
-            if (!_codeEditor.IsReadOnly)
-            {
-                TextEntering?.Invoke(this, e);
-            }
-        }
+    //    private void _codeEditor_TextEntering (object sender, TextInputEventArgs e)
+    //    {
+    //        if (!_codeEditor.IsReadOnly)
+    //        {
+    //            TextEntering?.Invoke(this, e);
+    //        }
+    //    }
 
-        private void _codeEditor_TextEntered (object sender, TextInputEventArgs e)
-        {
-            if (!_codeEditor.IsReadOnly)
-            {
-                TextEntered?.Invoke(this, e);
-            }
-        }
+    //    private void _codeEditor_TextEntered (object sender, TextInputEventArgs e)
+    //    {
+    //        if (!_codeEditor.IsReadOnly)
+    //        {
+    //            TextEntered?.Invoke(this, e);
+    //        }
+    //    }
 
-        private void _codeEditor_LostFocus(object sender, Avalonia.Interactivity.RoutedEventArgs e)
-        {
-            LostFocus?.Invoke(this, EventArgs.Empty);
-        }
+    //    private void _codeEditor_LostFocus(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+    //    {
+    //        LostFocus?.Invoke(this, EventArgs.Empty);
+    //    }
 
-        public ITextDocument Document => _document;
+    //    public ITextDocument Document => _document;
 
-        public void Save()
-        {
-            _codeEditor.Save();
-        }
+    //    public void Save()
+    //    {
+    //        _codeEditor.Save();
+    //    }
 
-        public void IndentLine(int line)
-        {
-           // _codeEditor.LanguageService?.IndentationStrategy.IndentLine(_codeEditor.Document, _codeEditor.Document.GetLineByNumber(line));
-        }
+    //    public void IndentLine(int line)
+    //    {
+    //       // _codeEditor.LanguageService?.IndentationStrategy.IndentLine(_codeEditor.Document, _codeEditor.Document.GetLineByNumber(line));
+    //    }
 
-        public int CaretOffset { get => _codeEditor.CaretOffset; set => _codeEditor.CaretOffset = value; }
+    //    public int CaretOffset { get => _codeEditor.CaretOffset; set => _codeEditor.CaretOffset = value; }
 
-        public int Line { get => _codeEditor.TextArea.Caret.Line; set => _codeEditor.TextArea.Caret.Line = value; }
+    //    public int Line { get => _codeEditor.TextArea.Caret.Line; set => _codeEditor.TextArea.Caret.Line = value; }
 
-        public int Column { get => _codeEditor.TextArea.Caret.Column; set => _codeEditor.TextArea.Caret.Column = value; }
+    //    public int Column { get => _codeEditor.TextArea.Caret.Column; set => _codeEditor.TextArea.Caret.Column = value; }
 
-        public ISourceFile SourceFile => _sourceFile;
+    //    public ISourceFile SourceFile => _sourceFile;
         
-        /// <summary>
-        /// Occurs when the TextArea receives text input.
-        /// but occurs immediately before the TextArea handles the TextInput event.
-        /// </summary>
-        public event EventHandler<TextInputEventArgs> TextEntering;
+    //    /// <summary>
+    //    /// Occurs when the TextArea receives text input.
+    //    /// but occurs immediately before the TextArea handles the TextInput event.
+    //    /// </summary>
+    //    public event EventHandler<TextInputEventArgs> TextEntering;
 
-        /// <summary>
-        /// Occurs when the TextArea receives text input.
-        /// but occurs immediately after the TextArea handles the TextInput event.
-        /// </summary>
-        public event EventHandler<TextInputEventArgs> TextEntered;
+    //    /// <summary>
+    //    /// Occurs when the TextArea receives text input.
+    //    /// but occurs immediately after the TextArea handles the TextInput event.
+    //    /// </summary>
+    //    public event EventHandler<TextInputEventArgs> TextEntered;
 
-        public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
-        public event EventHandler LostFocus;        
+    //    public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
+    //    public event EventHandler LostFocus;        
 
-        public void Dispose()
-        {
-            if (_codeEditor != null)
-            {
-                _codeEditor.Close();
-                _codeEditor.TextArea.TextEntering -= TextEntering;
-                _codeEditor.TextArea.TextEntered -= TextEntered;
-                _codeEditor.LostFocus -= _codeEditor_LostFocus;
-                _codeEditor = null;
-            }
+    //    public void Dispose()
+    //    {
+    //        if (_codeEditor != null)
+    //        {
+    //            _codeEditor.Close();
+    //            _codeEditor.TextArea.TextEntering -= TextEntering;
+    //            _codeEditor.TextArea.TextEntered -= TextEntered;
+    //            _codeEditor.LostFocus -= _codeEditor_LostFocus;
+    //            _codeEditor = null;
+    //        }
 
-            _document?.Dispose();
-            _document = null;
-        }
+    //        _document?.Dispose();
+    //        _document = null;
+    //    }
 
-        public void FormatAll()
-        {
-            _codeEditor.FormatAll();
-        }
+    //    public void FormatAll()
+    //    {
+    //        _codeEditor.FormatAll();
+    //    }
 
-        public void Focus()
-        {
-            _codeEditor.Focus();
-        }
+    //    public void Focus()
+    //    {
+    //        _codeEditor.Focus();
+    //    }
 
-        public void TriggerCodeAnalysis()
-        {
-            _codeEditor.TriggerCodeAnalysis();
-        }
+    //    public void TriggerCodeAnalysis()
+    //    {
+    //        _codeEditor.TriggerCodeAnalysis();
+    //    }
 
-        public void Comment()
-        {
-            _codeEditor.CommentSelection();
-        }
+    //    public void Comment()
+    //    {
+    //        _codeEditor.CommentSelection();
+    //    }
 
-        public void Uncomment()
-        {
-            _codeEditor.UncommentSelection();
-        }
+    //    public void Uncomment()
+    //    {
+    //        _codeEditor.UncommentSelection();
+    //    }
 
-        public void Undo()
-        {
-            _codeEditor.Document.UndoStack.Undo();
-        }
+    //    public void Undo()
+    //    {
+    //        _codeEditor.Document.UndoStack.Undo();
+    //    }
 
-        public void Redo()
-        {
-            _codeEditor.Document.UndoStack.Redo();
-        }
+    //    public void Redo()
+    //    {
+    //        _codeEditor.Document.UndoStack.Redo();
+    //    }
 
-        public void SetDebugHighlight(int line, int startColumn, int endColumn)
-        {
-            //_codeEditor.SetDebugHighlight(line, startColumn, endColumn);
-        }
+    //    public void SetDebugHighlight(int line, int startColumn, int endColumn)
+    //    {
+    //        //_codeEditor.SetDebugHighlight(line, startColumn, endColumn);
+    //    }
 
-        public void ClearDebugHighlight()
-        {
-            //_codeEditor.ClearDebugHighlight();
-        }
+    //    public void ClearDebugHighlight()
+    //    {
+    //        //_codeEditor.ClearDebugHighlight();
+    //    }
 
-        public void GotoOffset(int offset)
-        {
-            _codeEditor.CaretOffset = offset;
-        }
+    //    public void GotoOffset(int offset)
+    //    {
+    //        _codeEditor.CaretOffset = offset;
+    //    }
 
-        public void GotoPosition(int line, int column)
-        {
-            _codeEditor.CaretOffset = _codeEditor.Document.GetOffset(line, column);
-        }
+    //    public void GotoPosition(int line, int column)
+    //    {
+    //        _codeEditor.CaretOffset = _codeEditor.Document.GetOffset(line, column);
+    //    }
 
-        public void RenameSymbol(int offset)
-        {
-            _codeEditor.BeginSymbolRename(offset);
-        }
+    //    public void RenameSymbol(int offset)
+    //    {
+    //        _codeEditor.BeginSymbolRename(offset);
+    //    }
 
-        internal CodeEditor EditorImpl => _codeEditor;
-    }
+    //    internal CodeEditor EditorImpl => _codeEditor;
+    //}
 
     public class AvalonStudioTextDocument : ITextDocument, IDisposable
     {
