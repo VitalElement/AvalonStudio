@@ -128,6 +128,16 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
+        public void Comment ()
+        {
+
+        }
+
+        public void Uncomment ()
+        {
+
+        }
+
         public override void IndentLine(int lineNumber)
         {
             base.IndentLine(lineNumber);
