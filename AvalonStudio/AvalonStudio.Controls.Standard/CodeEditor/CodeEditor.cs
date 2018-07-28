@@ -368,9 +368,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 _lastLine = TextArea.Caret.Line;
 
 
+                EditorCaretOffset = TextArea.Caret.Offset;
                 Line = TextArea.Caret.Line;
                 Column = TextArea.Caret.Column;
-                EditorCaretOffset = TextArea.Caret.Offset;
             }),
 
             Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Throttle(TimeSpan.FromMilliseconds(100)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(e =>
