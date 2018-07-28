@@ -62,7 +62,7 @@ namespace AvalonStudio.Languages
         bool CanTriggerIntellisense(char currentChar, char previousChar);
         IEnumerable<char> IntellisenseSearchCharacters { get; }
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
-        IEnumerable<ICodeEditorInputHelper> InputHelpers { get; }
+        IEnumerable<ITextEditorInputHelper> InputHelpers { get; }
 
         event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;        
 

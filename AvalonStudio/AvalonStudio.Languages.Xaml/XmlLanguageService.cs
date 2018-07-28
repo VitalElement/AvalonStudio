@@ -18,7 +18,7 @@ namespace AvalonStudio.Languages.Xaml
 {
     internal class XmlLanguageService : ILanguageService
     {
-        private static List<ICodeEditorInputHelper> s_InputHelpers = new List<ICodeEditorInputHelper>
+        private static List<ITextEditorInputHelper> s_InputHelpers = new List<ITextEditorInputHelper>
         {
             new CompleteCloseTagCodeEditorHelper(),
             new TerminateElementCodeEditorHelper(),
@@ -32,7 +32,7 @@ namespace AvalonStudio.Languages.Xaml
 
         public virtual string LanguageId => "xml";
 
-        public IEnumerable<ICodeEditorInputHelper> InputHelpers => s_InputHelpers;
+        public IEnumerable<ITextEditorInputHelper> InputHelpers => s_InputHelpers;
 
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => new Dictionary<string, Func<string, string>>();
 

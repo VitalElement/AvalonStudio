@@ -27,7 +27,7 @@ namespace AvalonStudio.Controls.Standard.Tests
 
         public IEnumerable<char> IntellisenseCompleteCharacters => throw new NotImplementedException();
 
-        public IEnumerable<ICodeEditorInputHelper> InputHelpers => throw new NotImplementedException();
+        public IEnumerable<ITextEditorInputHelper> InputHelpers => throw new NotImplementedException();
 
         public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 

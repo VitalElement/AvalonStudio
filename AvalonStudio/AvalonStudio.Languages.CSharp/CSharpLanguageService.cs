@@ -208,7 +208,7 @@ namespace AvalonStudio.Languages.CSharp
             _metadataHelper = new MetadataHelper(new AssemblyLoader());
         }
 
-        public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
+        public IEnumerable<ITextEditorInputHelper> InputHelpers => null;
 
         public bool CanTriggerIntellisense(char currentChar, char previousChar)
         {

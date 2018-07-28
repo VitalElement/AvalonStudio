@@ -6,9 +6,9 @@ using System;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    class InsertQuotesForPropertyValueCodeEditorHelper : ICodeEditorInputHelper
+    class InsertQuotesForPropertyValueCodeEditorHelper : ITextEditorInputHelper
     {
-        public bool AfterTextInput(ILanguageService languageServivce, ITextEditor editor, string text)
+        public bool AfterTextInput(ITextEditor editor, string text)
         {
             if (text == "=")
             {
@@ -29,9 +29,13 @@ namespace AvalonStudio.Languages.Xaml
             return false;
         }
 
-        public bool BeforeTextInput(ILanguageService languageService, ITextEditor editor, string text)
+        public bool BeforeTextInput(ITextEditor editor, string text)
         {
             return false;
+        }
+
+        public void CaretMovedToEmptyLine(ITextEditor editor)
+        {
         }
     }
 }

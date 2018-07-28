@@ -25,9 +25,9 @@ using System.Xml.Linq;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
-    class AutoBrackedInputHelper : ICodeEditorInputHelper
+    class AutoBrackedInputHelper : ITextEditorInputHelper
     {
-        public bool AfterTextInput(ILanguageService languageServivce, ITextEditor editor, string inputText)
+        public bool AfterTextInput(ITextEditor editor, string inputText)
         {
             if(inputText.Length == 1)
             {
@@ -49,13 +49,17 @@ namespace AvalonStudio.Languages.CPlusPlus
             return false;
         }
 
-        public bool BeforeTextInput(ILanguageService languageService, ITextEditor editor, string inputText)
+        public bool BeforeTextInput(ITextEditor editor, string inputText)
         {
             return false;
         }
+
+        public void CaretMovedToEmptyLine(ITextEditor editor)
+        {
+        }
     }
 
-    class CPlusPlusIndentationInputHelper : ICodeEditorInputHelper
+    class CPlusPlusIndentationInputHelper : ITextEditorInputHelper
     {
         private (ISegment whitespace, int offset, char character) GetPreviousBracketInfo(ITextEditor editor, int offset, int skip = 0)
         {
@@ -276,7 +280,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public string LanguageId => "cpp";
 
-        public IEnumerable<ICodeEditorInputHelper> InputHelpers { get; } = new ICodeEditorInputHelper[] { new AutoBrackedInputHelper(), new CPlusPlusIndentationInputHelper() };
+        public IEnumerable<ITextEditorInputHelper> InputHelpers { get; } = new ITextEditorInputHelper[] { new AutoBrackedInputHelper(), new CPlusPlusIndentationInputHelper() };
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 

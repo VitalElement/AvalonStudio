@@ -6,14 +6,14 @@ using System;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    class InsertExtraNewLineBetweenAttributesOnEnterCodeInputHelper : ICodeEditorInputHelper
+    class InsertExtraNewLineBetweenAttributesOnEnterCodeInputHelper : ITextEditorInputHelper
     {
-        public bool AfterTextInput(ILanguageService languageServivce, ITextEditor editor, string text)
+        public bool AfterTextInput(ITextEditor editor, string text)
         {
             return false;
         }
 
-        public bool BeforeTextInput(ILanguageService languageService, ITextEditor editor, string text)
+        public bool BeforeTextInput(ITextEditor editor, string text)
         {
             if (text == "\n")
             {
@@ -60,6 +60,10 @@ namespace AvalonStudio.Languages.Xaml
             }
 
             return false;
+        }
+
+        public void CaretMovedToEmptyLine(ITextEditor editor)
+        {
         }
     }
 }
