@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Threading.Tasks;
 
 namespace AvalonStudio.Documents
 {
@@ -19,7 +18,7 @@ namespace AvalonStudio.Documents
 
             while (index > 0)
             {
-                if(!char.IsWhiteSpace(lineText[index - 1]))
+                if (!char.IsWhiteSpace(lineText[index - 1]))
                 {
                     break;
                 }
