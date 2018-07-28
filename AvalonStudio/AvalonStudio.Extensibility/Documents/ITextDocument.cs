@@ -13,7 +13,24 @@ namespace AvalonStudio.Documents
     {
         public static void TrimTrailingWhiteSpace(this ITextDocument document, ISegment line)
         {
-            document.Replace(line, document.GetText(line).TrimEnd());
+            var lineText = document.GetText(line);
+
+            var index = lineText.Length;
+
+            while (index > 0)
+            {
+                if(!char.IsWhiteSpace(lineText[index - 1]))
+                {
+                    break;
+                }
+
+                index--;
+            }
+
+            if (index != lineText.Length)
+            {
+                document.Replace(line.Offset + index, lineText.Length - index, "");
+            }
         }
 
         public static void TrimTrailingWhiteSpace(this ITextDocument document, int lineNumber)
