@@ -59,12 +59,12 @@ namespace AvalonStudio.Shell.Commands
 
         //private void ShowQuickCommander() => _shell.ShowQuickCommander();
 
-        private void Undo() => GetSelectedDocumentEditor()?.Undo();
-        private void Redo() => GetSelectedDocumentEditor()?.Redo();
+        private void Undo() => GetSelectedDocumentEditor()?.Document.Undo();
+        private void Redo() => GetSelectedDocumentEditor()?.Document.Redo();
 
-        private void Comment() => GetSelectedDocumentEditor()?.Comment();
-        private void Uncomment() => GetSelectedDocumentEditor()?.Uncomment();
+        private void Comment() => (GetSelectedDocumentEditor() as ICodeEditor)?.Comment();
+        private void Uncomment() => (GetSelectedDocumentEditor() as ICodeEditor)?.Uncomment();
 
-        private IEditor GetSelectedDocumentEditor() => null;
+        private ITextEditor GetSelectedDocumentEditor() => _shell.SelectedDocument as ITextEditor;
     }
 }
