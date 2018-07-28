@@ -20,7 +20,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _document = document;
         }
 
-        public IDocumentLine this[int index] => new DocumentLine(_document.Lines[index]);
+        public IDocumentLine this[int index] => new DocumentLine(_document.Lines[index - 1]);
 
         public int Count => _document.Lines.Count;
 
