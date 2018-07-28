@@ -111,7 +111,7 @@ namespace AvalonStudio.Extensibility.Editor
             // how to tell the control to focus.
         }
 
-        void ITextDocumentTabViewModel.Focus ()
+        public void Focus ()
         {
 
         }
@@ -126,10 +126,18 @@ namespace AvalonStudio.Extensibility.Editor
 
         }
 
-        void ITextDocumentTabViewModel.Save()
+        public virtual void Save()
         {
-            File.WriteAllText(SourceFile.FilePath, Document.Text);
-            IsDirty = false;
+            if (IsDirty)
+            {
+                if (GlobalSettings.Settings.GetSettings<EditorSettings>().RemoveTrailingWhitespaceOnSave)
+                {
+                    Document.TrimTrailingWhiteSpace();
+                }
+
+                File.WriteAllText(SourceFile.FilePath, Document.Text);
+                IsDirty = false;
+            }
         }
 
         public virtual void OnBeforeTextEntered(string text)

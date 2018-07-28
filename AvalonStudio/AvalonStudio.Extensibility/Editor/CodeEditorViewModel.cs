@@ -95,6 +95,39 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
+        public override void Save()
+        {
+            try
+            {
+                FormatAll();
+            }
+            catch (Exception)
+            {
+
+            }
+
+            base.Save();
+        }
+
+        public void FormatAll()
+        {
+            if (LanguageService != null)
+            {
+                if (GlobalSettings.Settings.GetSettings<EditorSettings>().AutoFormat)
+                {
+                    var caretOffset = LanguageService.Format(this, 0, (uint)Document.TextLength, Offset);
+
+                    // some language services manually set the caret themselves and return -1 to indicate this.
+                    if (caretOffset >= 0)
+                    {
+                        Offset = caretOffset;
+                    }
+
+                    Focus();
+                }
+            }
+        }
+
         public override void IndentLine(int lineNumber)
         {
             base.IndentLine(lineNumber);
