@@ -63,9 +63,12 @@ namespace AvalonStudio.Extensibility.Editor
         {
             base.OnTextEntered(text);
 
-            foreach (var helper in LanguageService.InputHelpers)
+            if (LanguageService?.InputHelpers != null)
             {
-                helper.AfterTextInput(LanguageService, this, text);
+                foreach (var helper in LanguageService.InputHelpers)
+                {
+                    helper.AfterTextInput(LanguageService, this, text);
+                }
             }
         }
 
@@ -73,9 +76,12 @@ namespace AvalonStudio.Extensibility.Editor
         {
             base.OnBeforeTextEntered(text);
 
-            foreach(var helper in LanguageService.InputHelpers)
+            if (LanguageService?.InputHelpers != null)
             {
-                helper.BeforeTextInput(LanguageService, this, text);
+                foreach (var helper in LanguageService.InputHelpers)
+                {
+                    helper.BeforeTextInput(LanguageService, this, text);
+                }
             }
         }
 
