@@ -26,13 +26,20 @@ namespace AvalonStudio.Editor
         /// <param name="line">The line number to indent.</param>
         /// <param name="previousBracketWhitespace">The whitespace before the last bracket.</param>
         /// <param name="previousBracketChar">The last bracket char.</param>
-        private void Indent(ITextEditor editor, int line, ISegment previousBracketWhitespace, char? previousBracketChar)
+        private void Indent(ITextEditor editor, int line, ISegment previousBracketWhitespace, char? previousBracketChar, int indentations = 1, bool indentForClosing = false)
         {
             var whiteSpace = editor.Document.GetWhitespaceAfter(editor.Document.Lines[line].Offset);
 
             if (previousBracketWhitespace != null)
             {
-                editor.Document.Replace(whiteSpace, editor.Document.GetText(previousBracketWhitespace) + (previousBracketChar == '{' ? new string(' ', 4) : ""));
+                if (indentForClosing)
+                {
+                    editor.Document.Replace(whiteSpace, editor.Document.GetText(previousBracketWhitespace) + (previousBracketChar == '{' || previousBracketChar == '}' ? new string(' ', 4 * indentations) : ""));
+                }
+                else
+                {
+                    editor.Document.Replace(whiteSpace, editor.Document.GetText(previousBracketWhitespace) + (previousBracketChar == '{' ? new string(' ', 4 * indentations) : ""));
+                }
             }
             else
             {
@@ -55,7 +62,20 @@ namespace AvalonStudio.Editor
 
                 if (lastCharInfo.index != -1)
                 {
-                    if (lastCharInfo.character == ')')
+                    if (lastCharInfo.character == '{' && onEnter)
+                    {
+                        var whiteSpace = editor.Document.GetWhitespaceAfter(editor.PreviousLine().Offset);
+
+                        var currentChar = editor.Document.GetCharAt(editor.Offset);
+
+                        if (char.IsWhiteSpace(currentChar) || currentChar == '}')
+                        {
+                            editor.Document.Insert(editor.Offset, "\n" + editor.Document.GetText(whiteSpace));
+
+                            editor.Offset = editor.PreviousLine().EndOffset;
+                        }
+                    }
+                    else if (lastCharInfo.character == ')')
                     {
                         var lineText = editor.CurrentLineText();
 
@@ -63,14 +83,6 @@ namespace AvalonStudio.Editor
                         {
                             editor.Document.Insert(editor.Offset, new string(' ', 4));
                         }
-                    }
-                    else if (lastCharInfo.character == '{' && onEnter)
-                    {
-                        var whiteSpace = editor.Document.GetWhitespaceAfter(editor.PreviousLine().Offset);
-
-                        editor.Document.Insert(editor.Offset, "\n" + editor.Document.GetText(whiteSpace));
-
-                        editor.Offset = editor.PreviousLine().EndOffset;
                     }
                     else
                     {
@@ -103,7 +115,7 @@ namespace AvalonStudio.Editor
 
                 ConditionalIndent(editor, true);
             }
-            else if (inputText == "{")
+            else if (inputText == "{" || inputText == "}" || inputText == ";")
             {
                 var prevLine = editor.PreviousLine();
 
@@ -111,11 +123,41 @@ namespace AvalonStudio.Editor
                 {
                     var lastCharInfo = editor.Document.GetLastNonWhiteSpaceCharBefore(prevLine.EndOffset, prevLine.Offset);
 
-                    if (lastCharInfo.character != '{')
+                    if (!(inputText == "{" && lastCharInfo.character == '{'))
                     {
-                        var lastBracketWhitespaceInfo = GetPreviousBracketInfo(editor, editor.Offset - 2, 1);
+                        if (inputText == "{" || inputText == "}")
+                        {
+                            var lastBracketWhitespaceInfo = GetPreviousBracketInfo(editor, editor.Offset - 2, 1);
 
-                        Indent(editor, editor.Line, lastBracketWhitespaceInfo.whitespace, lastBracketWhitespaceInfo.character);
+                            Indent(editor, editor.Line, lastBracketWhitespaceInfo.whitespace, lastBracketWhitespaceInfo.character);
+                        }
+                        else
+                        {
+                            var lastBracketWhitespaceInfo = GetPreviousBracketInfo(editor, editor.Offset - 1, 0);
+                            
+                            if (lastCharInfo.character == ')')
+                            {
+                                Indent(editor, editor.Line, lastBracketWhitespaceInfo.whitespace, lastBracketWhitespaceInfo.character, lastBracketWhitespaceInfo.character == '{' ? 2 : 1, true);
+                            }
+                            else
+                            {
+                                var previousLineText = editor.PreviousLineText().Trim();
+
+                                if (previousLineText.EndsWith("else"))
+                                {
+                                    var lineText = editor.CurrentLineText();
+
+                                    if (!lineText.Contains("{"))
+                                    {
+                                        Indent(editor, editor.Line, lastBracketWhitespaceInfo.whitespace, lastBracketWhitespaceInfo.character, lastBracketWhitespaceInfo.character == '{' ? 2 : 1, true);
+                                    }
+                                }
+                                else
+                                {
+                                    Indent(editor, editor.Line, lastBracketWhitespaceInfo.whitespace, lastBracketWhitespaceInfo.character);
+                                }
+                            }
+                        }
                     }
                 }
                 else
