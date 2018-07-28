@@ -25,6 +25,155 @@ using System.Xml.Linq;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
+    class AutoBrackedInputHelper : ICodeEditorInputHelper
+    {
+        public bool AfterTextInput(ILanguageService languageServivce, ITextEditor editor, string inputText)
+        {
+            if(inputText.Length == 1)
+            {
+                var currentChar = inputText[0];
+
+                if (currentChar.IsCloseBracketChar() && editor.Offset < editor.Document.TextLength && editor.Document.GetCharAt(editor.Offset) == currentChar)
+                {
+                    editor.Document.Replace(editor.Offset, 1, "");
+                }
+                else if (currentChar.IsOpenBracketChar())
+                {
+                    var closeChar = inputText[0].GetCloseBracketChar();
+
+                    editor.Document.Insert(editor.Offset, (currentChar == '{' ? " " : "") + closeChar);
+                    editor.Offset--;
+                }
+            }
+
+            return false;
+        }
+
+        public bool BeforeTextInput(ILanguageService languageService, ITextEditor editor, string inputText)
+        {
+            return false;
+        }
+    }
+
+    class CPlusPlusIndentationInputHelper : ICodeEditorInputHelper
+    {
+        private (ISegment whitespace, int offset, char character) GetPreviousBracketInfo(ITextEditor editor, int offset, int skip = 0)
+        {
+            var previousBracket = editor.Document.GetLastCharMatching(c => c == '{' || c == '}', offset, 0, skip);
+
+            if (previousBracket.index != -1)
+            {
+                var previousBracketLocation = editor.Document.GetLocation(previousBracket.index);
+                var previousBracketLine = editor.Document.Lines[previousBracketLocation.Line];
+
+                return (editor.Document.GetWhitespaceAfter(previousBracketLine.Offset), previousBracket.index, previousBracket.character);
+            }
+
+            return (null, -1, '\0');
+        }
+
+        private void Indent(ITextEditor editor, int line, ISegment previousBracketWhitespace, char? previousBracketChar)
+        {
+            var whiteSpace = editor.Document.GetWhitespaceAfter(editor.Document.Lines[line].Offset);
+
+            if (previousBracketWhitespace != null)
+            {
+                editor.Document.Replace(whiteSpace, editor.Document.GetText(previousBracketWhitespace) + (previousBracketChar == '{' ? new string(' ', 4) : ""));
+            }
+            else
+            {
+                editor.Document.Replace(whiteSpace, "");
+            }
+        }
+
+        public bool AfterTextInput(ILanguageService languageServivce, ITextEditor editor, string inputText)
+        {
+            if (inputText == "\n")
+            {
+                var previousBracketInfo = GetPreviousBracketInfo(editor, editor.Offset - 1);
+
+                if(previousBracketInfo.whitespace != null)
+                {
+                    Indent(editor, editor.Line, previousBracketInfo.whitespace, previousBracketInfo.character);
+                }
+
+                var currentLine = editor.CurrentLine();
+
+                if (currentLine.PreviousLine != null)
+                {
+                    var lastCharInfo = editor.Document.GetLastNonWhiteSpaceCharBefore(currentLine.PreviousLine.EndOffset, currentLine.PreviousLine.Offset);
+
+                    if (lastCharInfo.index != -1)
+                    {
+                        if (lastCharInfo.character == ')')
+                        {
+                            var lineText = editor.CurrentLineText();
+
+                            if (!lineText.Contains("{"))
+                            {
+                                editor.Document.Insert(editor.Offset, new string(' ', 4));
+                            }
+                        }
+                        else if (lastCharInfo.character == '{')
+                        {
+                            var whiteSpace = editor.Document.GetWhitespaceAfter(editor.PreviousLine().Offset);
+
+                            editor.Document.Insert(editor.Offset, "\n" + editor.Document.GetText(whiteSpace));
+
+                            editor.Offset = editor.PreviousLine().EndOffset;
+                        }
+                        else
+                        {
+                            var previousLineText = editor.PreviousLineText().Trim();
+
+                            if(previousLineText.EndsWith("else"))
+                            {
+                                var lineText = editor.CurrentLineText();
+
+                                if (!lineText.Contains("{"))
+                                {
+                                    editor.Document.Insert(editor.Offset, new string(' ', 4));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else if (inputText == "{")
+            {
+                var prevLine = editor.PreviousLine();
+
+                if (prevLine != null)
+                {
+                    var lastCharInfo = editor.Document.GetLastNonWhiteSpaceCharBefore(prevLine.EndOffset, prevLine.Offset);
+
+                    if (lastCharInfo.character != '{')
+                    {
+                        var lastBracketWhitespaceInfo = GetPreviousBracketInfo(editor, editor.Offset - 2, 1);
+                        
+                        Indent(editor, editor.Line, lastBracketWhitespaceInfo.whitespace, lastBracketWhitespaceInfo.character);
+                    }
+                }
+                else
+                {
+                    Indent(editor, editor.Line, null, null);
+                }
+            }
+
+            return false;
+        }
+
+        public bool BeforeTextInput(ILanguageService languageService, ITextEditor editor, string inputText)
+        {
+            return false;
+        }
+
+        public void CaretMovedToEmptyLine (ILanguageService languageService, ITextEditor editor)
+        {
+
+        }
+    }
+
     internal class CPlusPlusLanguageService : ILanguageService
     {
         private static readonly ClangIndex index = ClangService.CreateIndex();
@@ -127,7 +276,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public string LanguageId => "cpp";
 
-        public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
+        public IEnumerable<ICodeEditorInputHelper> InputHelpers { get; } = new ICodeEditorInputHelper[] { new AutoBrackedInputHelper(), new CPlusPlusIndentationInputHelper() };
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
