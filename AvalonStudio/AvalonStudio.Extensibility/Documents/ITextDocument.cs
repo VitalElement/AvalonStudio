@@ -343,6 +343,10 @@ namespace AvalonStudio.Documents
 
         char GetCharAt(int offset);
 
+        void Undo();
+
+        void Redo();
+
         IDisposable RunUpdate();
 
         event EventHandler<DocumentChangeEventArgs> Changed;
