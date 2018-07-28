@@ -10,19 +10,20 @@ namespace AvalonStudio.Languages
 {
     public class TextColoringTransformer : GenericLineTransformer
     {
-        private readonly TextDocument document;
+        private readonly TextDocument _document;
 
         public TextColoringTransformer(TextDocument document)
         {
-            this.document = document;
-
             TextTransformations = new TextSegmentCollection<TextTransformation>(document);
 
             ColorScheme = ColorScheme.Default;
+
+            _document = document;
         }
 
         public void Dispose()
         {
+            TextTransformations.Disconnect(_document);
             TextTransformations.Clear();
             TextTransformations = null;
         }
@@ -70,16 +71,16 @@ namespace AvalonStudio.Languages
                 {
                     return new OpacityTextTransformation(
                         tag,
-                        document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
-                        document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
+                        _document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
+                        _document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
                         0.5);
                 }
                 else
                 {
                     return new ForegroundTextTransformation(
                         tag,
-                        document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
-                        document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
+                        _document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
+                        _document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
                         GetBrush(highlight.Type));
                 }
             }
