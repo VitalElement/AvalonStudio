@@ -8,6 +8,20 @@ using System.Globalization;
 
 namespace AvalonStudio.Documents
 {
+    public static class ITextEditorExtensions
+    {
+        public static IDocumentLine CurrentLine(this ITextEditor editor) => 
+            editor.Line > 0 && editor.Line <= editor.Document.LineCount ? 
+            editor.Document.Lines[editor.Line] : null;
+
+        public static IDocumentLine PreviousLine(this ITextEditor editor) =>
+            editor.CurrentLine()?.PreviousLine;
+
+        public static string CurrentLineText(this ITextEditor editor) => editor.Document.GetText(editor.CurrentLine());
+
+        public static string PreviousLineText(this ITextEditor editor) => editor.Document.GetText(editor.PreviousLine());
+    }
+
     public static class ITextDocumentExtensions
     {
         public static void TrimTrailingWhiteSpace(this ITextDocument document, ISegment line)
@@ -87,6 +101,47 @@ namespace AvalonStudio.Documents
             }
             pos++; // go back the one character that isn't whitespace
             return new SimpleSegment(pos, offset - pos);
+        }
+
+        public static (int index, char character) GetLastNonWhiteSpaceCharBefore(this ITextDocument textSource, int index, int minIndex = 0)
+        {
+            while(index >= minIndex)
+            {
+                var currentChar = textSource.GetCharAt(index);
+
+                if (!char.IsWhiteSpace(currentChar))
+                {
+                    return (index, currentChar);
+                }
+
+                index--;
+            }
+
+            return (-1, '\0');
+        }
+
+        public static (int index, char character) GetLastCharMatching (this ITextDocument textSource, Predicate<char> predicate, int startIndex, int minIndex = 0, int skip = 0)
+        {
+            while (startIndex >= minIndex)
+            {
+                var currentChar = textSource.GetCharAt(startIndex);
+
+                if(predicate(currentChar))
+                {
+                    if (skip == 0)
+                    {
+                        return (startIndex, currentChar);
+                    }
+                    else
+                    {
+                        skip--;
+                    }
+                }
+
+                startIndex--;
+            }
+
+            return (-1, '\0');
         }
     }
 
