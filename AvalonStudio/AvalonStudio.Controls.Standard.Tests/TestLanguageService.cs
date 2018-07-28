@@ -1,5 +1,4 @@
-﻿using AvaloniaEdit.Indentation;
-using AvalonStudio.Documents;
+﻿using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
