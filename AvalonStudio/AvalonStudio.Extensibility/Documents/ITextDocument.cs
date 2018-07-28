@@ -365,9 +365,9 @@ namespace AvalonStudio.Documents
 
         ITextDocument Document { get; }
 
-        void OnBeforeTextEntered(string text);
+        bool OnBeforeTextEntered(string text);
 
-        void OnTextEntered(string text);
+        bool OnTextEntered(string text);
 
         void OnTextChanged();
     }

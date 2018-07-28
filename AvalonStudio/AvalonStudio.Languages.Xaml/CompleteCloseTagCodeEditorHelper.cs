@@ -8,7 +8,7 @@ namespace AvalonStudio.Languages.Xaml
 {
     class CompleteCloseTagCodeEditorHelper : ICodeEditorInputHelper
     {
-        public void AfterTextInput(ILanguageService languageServivce, ITextEditor editor, string text)
+        public bool AfterTextInput(ILanguageService languageServivce, ITextEditor editor, string text)
         {
             if (text == ">")
             {
@@ -27,10 +27,13 @@ namespace AvalonStudio.Languages.Xaml
                     }
                 }
             }
+
+            return false;
         }
 
-        public void BeforeTextInput(ILanguageService languageService, ITextEditor editor,  string text)
+        public bool BeforeTextInput(ILanguageService languageService, ITextEditor editor,  string text)
         {
+            return false;
         }
     }
 }

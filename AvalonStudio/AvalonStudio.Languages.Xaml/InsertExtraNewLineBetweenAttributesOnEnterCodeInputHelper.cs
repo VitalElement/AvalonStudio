@@ -8,12 +8,12 @@ namespace AvalonStudio.Languages.Xaml
 {
     class InsertExtraNewLineBetweenAttributesOnEnterCodeInputHelper : ICodeEditorInputHelper
     {
-        public void AfterTextInput(ILanguageService languageServivce, ITextEditor editor, string text)
+        public bool AfterTextInput(ILanguageService languageServivce, ITextEditor editor, string text)
         {
-
+            return false;
         }
 
-        public void BeforeTextInput(ILanguageService languageService, ITextEditor editor, string text)
+        public bool BeforeTextInput(ILanguageService languageService, ITextEditor editor, string text)
         {
             if (text == "\n")
             {
@@ -58,6 +58,8 @@ namespace AvalonStudio.Languages.Xaml
                     }
                 }
             }
+
+            return false;
         }
     }
 }

@@ -140,12 +140,14 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
-        public virtual void OnBeforeTextEntered(string text)
+        public virtual bool OnBeforeTextEntered(string text)
         {
+            return false;
         }
 
-        public virtual void OnTextEntered(string text)
+        public virtual bool OnTextEntered(string text)
         {
+            return false;
         }
 
         public virtual void OnTextChanged()

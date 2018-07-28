@@ -6,7 +6,7 @@ namespace AvalonStudio.Editor
 {
     public interface ICodeEditorInputHelper
     {
-        void BeforeTextInput(ILanguageService languageService, ITextEditor editor,  string inputText);
-        void AfterTextInput(ILanguageService languageServivce, ITextEditor document, string inputText);
+        bool BeforeTextInput(ILanguageService languageService, ITextEditor editor,  string inputText);
+        bool AfterTextInput(ILanguageService languageServivce, ITextEditor document, string inputText);
     }
 }

@@ -59,30 +59,40 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _highlights, value); }
         }
 
-        public override void OnTextEntered(string text)
+        public override bool OnTextEntered(string text)
         {
-            base.OnTextEntered(text);
+            bool handled = false;
 
             if (LanguageService?.InputHelpers != null)
             {
                 foreach (var helper in LanguageService.InputHelpers)
                 {
-                    helper.AfterTextInput(LanguageService, this, text);
+                    if(helper.AfterTextInput(LanguageService, this, text))
+                    {
+                        handled = true;
+                    }
                 }
             }
+
+            return handled;
         }
 
-        public override void OnBeforeTextEntered(string text)
+        public override bool OnBeforeTextEntered(string text)
         {
-            base.OnBeforeTextEntered(text);
+            bool handled = false;
 
             if (LanguageService?.InputHelpers != null)
             {
                 foreach (var helper in LanguageService.InputHelpers)
                 {
-                    helper.BeforeTextInput(LanguageService, this, text);
+                    if(helper.BeforeTextInput(LanguageService, this, text))
+                    {
+                        handled = true;
+                    }
                 }
             }
+
+            return handled;
         }
 
         public override void OnTextChanged()
