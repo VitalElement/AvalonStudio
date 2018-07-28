@@ -26,9 +26,12 @@ namespace AvalonStudio.Extensibility.Editor
         private CancellationTokenSource _cancellationSource;
         private bool _isAnalyzing;
         private ObservableCollection<(object tag, SyntaxHighlightDataList)> _highlights;
+        private int _lastLineNumber;
 
         public CodeEditorViewModel(ITextDocument document, ISourceFile file) : base(document, file)
         {
+            _lastLineNumber = -1;
+
             _highlights = new ObservableCollection<(object tag, SyntaxHighlightDataList)>();
 
             _codeAnalysisRunner = new JobRunner(1);
@@ -38,6 +41,29 @@ namespace AvalonStudio.Extensibility.Editor
             _analysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(async _ =>
             {
                 await DoCodeAnalysisAsync();
+            });
+
+            this.WhenAnyValue(x => x.Line).Subscribe(lineNumber =>
+            {
+                if(lineNumber != _lastLineNumber && lineNumber > 0)
+                {
+                    var line = Document.Lines[Line];
+
+                    var text = Document.GetText(line);
+
+                    if (string.IsNullOrWhiteSpace(text))
+                    {
+                        if (LanguageService?.InputHelpers != null)
+                        {
+                            foreach (var helper in LanguageService.InputHelpers)
+                            {
+                                helper.CaretMovedToEmptyLine(this);
+                            }
+                        }
+                    }
+
+                    _lastLineNumber = lineNumber;
+                }
             });
         }
 
@@ -67,7 +93,7 @@ namespace AvalonStudio.Extensibility.Editor
             {
                 foreach (var helper in LanguageService.InputHelpers)
                 {
-                    if(helper.AfterTextInput(LanguageService, this, text))
+                    if(helper.AfterTextInput(this, text))
                     {
                         handled = true;
                     }
@@ -85,7 +111,7 @@ namespace AvalonStudio.Extensibility.Editor
             {
                 foreach (var helper in LanguageService.InputHelpers)
                 {
-                    if(helper.BeforeTextInput(LanguageService, this, text))
+                    if(helper.BeforeTextInput(this, text))
                     {
                         handled = true;
                     }
