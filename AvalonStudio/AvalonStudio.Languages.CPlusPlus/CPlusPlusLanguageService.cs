@@ -25,182 +25,6 @@ using System.Xml.Linq;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
-    class AutoBrackedInputHelper : ITextEditorInputHelper
-    {
-        public bool AfterTextInput(ITextEditor editor, string inputText)
-        {
-            if(inputText.Length == 1)
-            {
-                var currentChar = inputText[0];
-
-                if (currentChar.IsCloseBracketChar() && editor.Offset < editor.Document.TextLength && editor.Document.GetCharAt(editor.Offset) == currentChar)
-                {
-                    editor.Document.Replace(editor.Offset, 1, "");
-                }
-                else if (currentChar.IsOpenBracketChar())
-                {
-                    var closeChar = inputText[0].GetCloseBracketChar();
-
-                    editor.Document.Insert(editor.Offset, (currentChar == '{' ? " " : "") + closeChar);
-                    editor.Offset--;
-                }
-            }
-
-            return false;
-        }
-
-        public bool BeforeTextInput(ITextEditor editor, string inputText)
-        {
-            return false;
-        }
-
-        public void CaretMovedToEmptyLine(ITextEditor editor)
-        {
-        }
-    }
-
-    class CPlusPlusIndentationInputHelper : ITextEditorInputHelper
-    {
-        private (ISegment whitespace, int offset, char character) GetPreviousBracketInfo(ITextEditor editor, int offset, int skip = 0)
-        {
-            var previousBracket = editor.Document.GetLastCharMatching(c => c == '{' || c == '}', offset, 0, skip);
-
-            if (previousBracket.index != -1)
-            {
-                var previousBracketLocation = editor.Document.GetLocation(previousBracket.index);
-                var previousBracketLine = editor.Document.Lines[previousBracketLocation.Line];
-
-                return (editor.Document.GetWhitespaceAfter(previousBracketLine.Offset), previousBracket.index, previousBracket.character);
-            }
-
-            return (null, -1, '\0');
-        }
-
-        /// <summary>
-        /// Indents a line to the same indentation as the last { or } + 1 indentation. Or 0 indentations if no previous brackets.
-        /// </summary>
-        /// <param name="editor">The editor.</param>
-        /// <param name="line">The line number to indent.</param>
-        /// <param name="previousBracketWhitespace">The whitespace before the last bracket.</param>
-        /// <param name="previousBracketChar">The last bracket char.</param>
-        private void Indent(ITextEditor editor, int line, ISegment previousBracketWhitespace, char? previousBracketChar)
-        {
-            var whiteSpace = editor.Document.GetWhitespaceAfter(editor.Document.Lines[line].Offset);
-
-            if (previousBracketWhitespace != null)
-            {
-                editor.Document.Replace(whiteSpace, editor.Document.GetText(previousBracketWhitespace) + (previousBracketChar == '{' ? new string(' ', 4) : ""));
-            }
-            else
-            {
-                editor.Document.Replace(whiteSpace, "");
-            }
-        }
-
-        /// <summary>
-        /// Indents the current line assuming we already have normal indentation, applying syntax specific rules.
-        /// </summary>
-        /// <param name="editor">The editor.</param>
-        /// <param name="onEnter">True if called after user pressed enter.</param>
-        private void ConditionalIndent(ITextEditor editor, bool onEnter = false)
-        {
-            var currentLine = editor.CurrentLine();
-
-            if (currentLine.PreviousLine != null)
-            {
-                var lastCharInfo = editor.Document.GetLastNonWhiteSpaceCharBefore(currentLine.PreviousLine.EndOffset, currentLine.PreviousLine.Offset);
-
-                if (lastCharInfo.index != -1)
-                {
-                    if (lastCharInfo.character == ')')
-                    {
-                        var lineText = editor.CurrentLineText();
-
-                        if (!lineText.Contains("{"))
-                        {
-                            editor.Document.Insert(editor.Offset, new string(' ', 4));
-                        }
-                    }
-                    else if (lastCharInfo.character == '{' && onEnter)
-                    {
-                        var whiteSpace = editor.Document.GetWhitespaceAfter(editor.PreviousLine().Offset);
-
-                        editor.Document.Insert(editor.Offset, "\n" + editor.Document.GetText(whiteSpace));
-
-                        editor.Offset = editor.PreviousLine().EndOffset;
-                    }
-                    else
-                    {
-                        var previousLineText = editor.PreviousLineText().Trim();
-
-                        if (previousLineText.EndsWith("else"))
-                        {
-                            var lineText = editor.CurrentLineText();
-
-                            if (!lineText.Contains("{"))
-                            {
-                                editor.Document.Insert(editor.Offset, new string(' ', 4));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        public bool AfterTextInput(ITextEditor editor, string inputText)
-        {
-            if (inputText == "\n")
-            {
-                var previousBracketInfo = GetPreviousBracketInfo(editor, editor.Offset - 1);
-
-                if(previousBracketInfo.whitespace != null)
-                {
-                    Indent(editor, editor.Line, previousBracketInfo.whitespace, previousBracketInfo.character);
-                }
-
-                ConditionalIndent(editor, true);
-            }
-            else if (inputText == "{")
-            {
-                var prevLine = editor.PreviousLine();
-
-                if (prevLine != null)
-                {
-                    var lastCharInfo = editor.Document.GetLastNonWhiteSpaceCharBefore(prevLine.EndOffset, prevLine.Offset);
-
-                    if (lastCharInfo.character != '{')
-                    {
-                        var lastBracketWhitespaceInfo = GetPreviousBracketInfo(editor, editor.Offset - 2, 1);
-                        
-                        Indent(editor, editor.Line, lastBracketWhitespaceInfo.whitespace, lastBracketWhitespaceInfo.character);
-                    }
-                }
-                else
-                {
-                    Indent(editor, editor.Line, null, null);
-                }
-            }
-
-            return false;
-        }
-
-        public bool BeforeTextInput(ITextEditor editor, string inputText)
-        {
-            return false;
-        }
-
-        public void CaretMovedToEmptyLine(ITextEditor editor)
-        {
-            var previousBracketInfo = GetPreviousBracketInfo(editor, editor.Offset - 1);
-
-            Indent(editor, editor.Line, previousBracketInfo.whitespace, previousBracketInfo.character);
-
-            ConditionalIndent(editor);
-
-            editor.Offset = editor.CurrentLine().EndOffset;
-        }
-    }
-
     internal class CPlusPlusLanguageService : ILanguageService
     {
         private static readonly ClangIndex index = ClangService.CreateIndex();
@@ -259,8 +83,6 @@ namespace AvalonStudio.Languages.CPlusPlus
             _snippetDynamicVars.Add("ClassName", (offset, line, column) => null);
         }
 
-        public IIndentationStrategy IndentationStrategy { get; private set; }
-
         public bool CanTriggerIntellisense(char currentChar, char previousChar)
         {
             bool result = false;
@@ -303,7 +125,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public string LanguageId => "cpp";
 
-        public IEnumerable<ITextEditorInputHelper> InputHelpers { get; } = new ITextEditorInputHelper[] { new AutoBrackedInputHelper(), new CPlusPlusIndentationInputHelper() };
+        public IEnumerable<ITextEditorInputHelper> InputHelpers { get; } 
+            = new ITextEditorInputHelper[] { new AutoBrackedInputHelper(), new CBasedLanguageIndentationInputHelper() };
 
         public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
@@ -363,87 +186,87 @@ namespace AvalonStudio.Languages.CPlusPlus
         public async Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column,
             List<UnsavedFile> unsavedFiles, char lastChar, string filter)
         {
-          /*  var clangUnsavedFiles = new List<ClangUnsavedFile>();
+            /*  var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
-            foreach (var unsavedFile in unsavedFiles)
-            {
-                clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
-            }
+              foreach (var unsavedFile in unsavedFiles)
+              {
+                  clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+              }
 
-            var result = new CodeCompletionResults();
+              var result = new CodeCompletionResults();
 
-            await clangAccessJobRunner.InvokeAsync(() =>
-            {
-                var translationUnit = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
+              await clangAccessJobRunner.InvokeAsync(() =>
+              {
+                  var translationUnit = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
 
-                if (translationUnit != null)
-                {
-                    var completionResults = translationUnit.CodeCompleteAt(editor.SourceFile.Location, line, column, clangUnsavedFiles.ToArray(),
-                        CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
-                    completionResults.Sort();
+                  if (translationUnit != null)
+                  {
+                      var completionResults = translationUnit.CodeCompleteAt(editor.SourceFile.Location, line, column, clangUnsavedFiles.ToArray(),
+                          CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
+                      completionResults.Sort();
 
-                    result.Contexts = (CompletionContext)completionResults.Contexts;
+                      result.Contexts = (CompletionContext)completionResults.Contexts;
 
-                    if (result.Contexts == CompletionContext.Unexposed && lastChar == ':')
-                    {
-                        result.Contexts = CompletionContext.AnyType; // special case Class::<- here static class member access. 
-                    }
+                      if (result.Contexts == CompletionContext.Unexposed && lastChar == ':')
+                      {
+                          result.Contexts = CompletionContext.AnyType; // special case Class::<- here static class member access. 
+                      }
 
-                    foreach (var codeCompletion in completionResults.Results)
-                    {
-                        var typedText = string.Empty;
-                        
-                        if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available || codeCompletion.CompletionString.Availability == AvailabilityKind.Deprecated)
-                        {
-                            foreach (var chunk in codeCompletion.CompletionString.Chunks)
-                            {
-                                if (chunk.Kind == CompletionChunkKind.TypedText)
-                                {
-                                    typedText = chunk.Text;
-                                }
+                      foreach (var codeCompletion in completionResults.Results)
+                      {
+                          var typedText = string.Empty;
 
-                                // TODO construct chunks into replacement text.
+                          if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available || codeCompletion.CompletionString.Availability == AvailabilityKind.Deprecated)
+                          {
+                              foreach (var chunk in codeCompletion.CompletionString.Chunks)
+                              {
+                                  if (chunk.Kind == CompletionChunkKind.TypedText)
+                                  {
+                                      typedText = chunk.Text;
+                                  }
 
-                                // i.e. do should insert do {} while();
+                                  // TODO construct chunks into replacement text.
 
-                                switch (chunk.Kind)
-                                {
-                                    case CompletionChunkKind.LeftParen:
-                                    case CompletionChunkKind.LeftAngle:
-                                    case CompletionChunkKind.LeftBrace:
-                                    case CompletionChunkKind.LeftBracket:
-                                    case CompletionChunkKind.RightAngle:
-                                    case CompletionChunkKind.RightBrace:
-                                    case CompletionChunkKind.RightBracket:
-                                    case CompletionChunkKind.RightParen:
-                                    case CompletionChunkKind.Placeholder:
-                                    case CompletionChunkKind.Comma:
-                                        break;
-                                }
-                            }
+                                  // i.e. do should insert do {} while();
 
-                            if (filter == string.Empty || typedText.StartsWith(filter))
-                            {
-                                var completion = new CodeCompletionData(typedText, typedText, typedText)
-                                {
-                                    Priority = (int)codeCompletion.CompletionString.Priority,
-                                    Kind = FromClangKind(codeCompletion.CursorKind),
-                                    BriefComment = codeCompletion.CompletionString.BriefComment
-                                };
+                                  switch (chunk.Kind)
+                                  {
+                                      case CompletionChunkKind.LeftParen:
+                                      case CompletionChunkKind.LeftAngle:
+                                      case CompletionChunkKind.LeftBrace:
+                                      case CompletionChunkKind.LeftBracket:
+                                      case CompletionChunkKind.RightAngle:
+                                      case CompletionChunkKind.RightBrace:
+                                      case CompletionChunkKind.RightBracket:
+                                      case CompletionChunkKind.RightParen:
+                                      case CompletionChunkKind.Placeholder:
+                                      case CompletionChunkKind.Comma:
+                                          break;
+                                  }
+                              }
 
-                                result.Completions.Add(completion);
+                              if (filter == string.Empty || typedText.StartsWith(filter))
+                              {
+                                  var completion = new CodeCompletionData(typedText, typedText, typedText)
+                                  {
+                                      Priority = (int)codeCompletion.CompletionString.Priority,
+                                      Kind = FromClangKind(codeCompletion.CursorKind),
+                                      BriefComment = codeCompletion.CompletionString.BriefComment
+                                  };
 
-                                if (completion.Kind == CodeCompletionKind.OverloadCandidate)
-                                {
-                                    //Console.WriteLine("TODO Implement overload candidate.");
-                                }
-                            }
-                        }
-                    }
+                                  result.Completions.Add(completion);
 
-                    completionResults.Dispose();
-                }
-            });*/
+                                  if (completion.Kind == CodeCompletionKind.OverloadCandidate)
+                                  {
+                                      //Console.WriteLine("TODO Implement overload candidate.");
+                                  }
+                              }
+                          }
+                      }
+
+                      completionResults.Dispose();
+                  }
+              });*/
 
             return null;
         }
@@ -774,70 +597,13 @@ namespace AvalonStudio.Languages.CPlusPlus
                 throw new Exception("Source file already registered with language service.");
             }
 
-            IndentationStrategy = new CSharpIndentationStrategy(new AvaloniaEdit.TextEditorOptions { ConvertTabsToSpaces = true });
-
             association = new CPlusPlusDataAssociation();
             dataAssociations.Add(editor.SourceFile, association);
-
-            //association.TextInputHandler = (sender, e) =>
-            //{
-            //    switch (e.Text)
-            //    {
-            //        case "}":
-            //        case ";":
-            //            editor.IndentLine(editor.Line);
-            //            break;
-
-            //        case "{":
-            //            if (IndentationStrategy != null)
-            //            {
-            //                editor.IndentLine(editor.Line);
-            //            }
-            //            break;
-            //    }
-
-            //    OpenBracket(editor, editor.Document, e.Text);
-            //    CloseBracket(editor, editor.Document, e.Text);
-            //};
-
-            //association.BeforeTextInputHandler = (sender, e) =>
-            //{
-            //    switch (e.Text)
-            //    {
-            //        case "\n":
-            //        case "\r\n":
-            //            var nextChar = ' ';
-
-            //            if (editor.CaretOffset != editor.Document.TextLength)
-            //            {
-            //                nextChar = editor.Document.GetCharAt(editor.CaretOffset);
-            //            }
-
-            //            if (nextChar == '}')
-            //            {
-            //                var newline = "\r\n"; // TextUtilities.GetNewLineFromDocument(editor.Document, editor.TextArea.Caret.Line);
-            //                editor.Document.Insert(editor.CaretOffset, newline);
-
-            //                editor.Document.TrimTrailingWhiteSpace(editor.Line - 1);
-
-            //                editor.IndentLine(editor.Line);
-
-            //                editor.CaretOffset -= newline.Length;
-            //            }
-            //            break;
-            //    }
-            //};
-
-            //editor.TextEntered += association.TextInputHandler;
-            //editor.TextEntering += association.BeforeTextInputHandler;*/
         }
 
         public void UnregisterSourceFile(IEditor editor)
         {
             var association = GetAssociatedData(editor.SourceFile);
-
-            editor.TextEntered -= association.TextInputHandler;
-            editor.TextEntering -= association.BeforeTextInputHandler;
 
             var tu = association.TranslationUnit;
 
@@ -1095,7 +861,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                     var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                   result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                    result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
                 }
             }
 
@@ -1246,71 +1012,6 @@ namespace AvalonStudio.Languages.CPlusPlus
                 return dataAssociation.TranslationUnit;
             }
             return null;
-        }
-
-        private void OpenBracket(IEditor editor, ITextDocument document, string text)
-        {
-            if (text[0].IsOpenBracketChar() && editor.CaretOffset <= document.TextLength && editor.CaretOffset > 0)
-            {
-                var nextChar = ' ';
-
-                if (editor.CaretOffset != document.TextLength)
-                {
-                    nextChar = document.GetCharAt(editor.CaretOffset);
-                }
-
-                var location = document.GetLocation(editor.CaretOffset);
-
-                if (char.IsWhiteSpace(nextChar) || nextChar.IsCloseBracketChar())
-                {
-                    if (text[0] == '{')
-                    {
-                        var offset = editor.CaretOffset;
-
-                        document.Insert(editor.CaretOffset, " " + text[0].GetCloseBracketChar().ToString() + " ");
-
-                        if (IndentationStrategy != null)
-                        {
-                            editor.IndentLine(editor.Line);
-                        }
-
-                        editor.CaretOffset = offset + 1;
-                    }
-                    else
-                    {
-                        var offset = editor.CaretOffset;
-
-                        document.Insert(editor.CaretOffset, text[0].GetCloseBracketChar().ToString());
-
-                        editor.CaretOffset = offset;
-                    }
-                }
-            }
-        }
-
-        private void CloseBracket(IEditor editor, ITextDocument document, string text)
-        {
-            if (text[0].IsCloseBracketChar() && editor.CaretOffset < document.TextLength && editor.CaretOffset > 0)
-            {
-                var offset = editor.CaretOffset;
-
-                while (offset < document.TextLength)
-                {
-                    var currentChar = document.GetCharAt(offset);
-
-                    if (currentChar == text[0])
-                    {
-                        document.Replace(offset, 1, string.Empty);
-                        break;
-                    }
-                    else if (!currentChar.IsWhiteSpace())
-                    {
-                        break;
-                    }
-
-                    offset++;
-                }
-            }
         }
 
         public static int ApplyReplacements(ITextDocument document, int cursor, XDocument replacements, bool replaceCursor = true)

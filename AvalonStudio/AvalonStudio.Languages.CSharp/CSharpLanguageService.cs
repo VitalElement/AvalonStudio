@@ -208,7 +208,8 @@ namespace AvalonStudio.Languages.CSharp
             _metadataHelper = new MetadataHelper(new AssemblyLoader());
         }
 
-        public IEnumerable<ITextEditorInputHelper> InputHelpers => null;
+        public IEnumerable<ITextEditorInputHelper> InputHelpers { get; }
+            = new ITextEditorInputHelper[] { new AutoBrackedInputHelper(), new CBasedLanguageIndentationInputHelper() };
 
         public bool CanTriggerIntellisense(char currentChar, char previousChar)
         {
@@ -244,11 +245,6 @@ namespace AvalonStudio.Languages.CSharp
         public bool IsValidIdentifierCharacter(char data)
         {
             return char.IsLetterOrDigit(data) || data == '_';
-        }
-
-        public IIndentationStrategy IndentationStrategy
-        {
-            get; private set;
         }
 
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => _snippetCodeGenerators;
@@ -626,79 +622,12 @@ namespace AvalonStudio.Languages.CSharp
             //throw new NotImplementedException();
         }
 
-        private void OpenBracket(IEditor editor, ITextDocument document, string text)
-        {
-            if (text[0].IsOpenBracketChar() && editor.CaretOffset <= document.TextLength && editor.CaretOffset > 0)
-            {
-                var nextChar = ' ';
-
-                if (editor.CaretOffset != document.TextLength)
-                {
-                    nextChar = document.GetCharAt(editor.CaretOffset);
-                }
-
-                var location = document.GetLocation(editor.CaretOffset);
-
-                if (char.IsWhiteSpace(nextChar) || nextChar.IsCloseBracketChar())
-                {
-                    if (text[0] == '{')
-                    {
-                        var offset = editor.CaretOffset;
-
-                        document.Insert(editor.CaretOffset, " " + text[0].GetCloseBracketChar().ToString() + " ");
-
-                        if (IndentationStrategy != null)
-                        {
-                            editor.IndentLine(editor.Line);
-                        }
-
-                        editor.CaretOffset = offset + 1;
-                    }
-                    else
-                    {
-                        var offset = editor.CaretOffset;
-
-                        document.Insert(editor.CaretOffset, text[0].GetCloseBracketChar().ToString());
-
-                        editor.CaretOffset = offset;
-                    }
-                }
-            }
-        }
-
-        private void CloseBracket(IEditor editor, ITextDocument document, string text)
-        {
-            if (text[0].IsCloseBracketChar() && editor.CaretOffset < document.TextLength && editor.CaretOffset > 0)
-            {
-                var offset = editor.CaretOffset;
-
-                while (offset < document.TextLength)
-                {
-                    var currentChar = document.GetCharAt(offset);
-
-                    if (currentChar == text[0])
-                    {
-                        document.Replace(offset, 1, string.Empty);
-                        break;
-                    }
-                    else if (!currentChar.IsWhiteSpace())
-                    {
-                        break;
-                    }
-
-                    offset++;
-                }
-            }
-        }
-
         public void RegisterSourceFile(ITextEditor editor)
         {
             if (dataAssociations.TryGetValue(editor, out CSharpDataAssociation association))
             {
                 throw new Exception("Source file already registered with language service.");
             }
-
-            IndentationStrategy = new CSharpIndentationStrategy(new AvaloniaEdit.TextEditorOptions { ConvertTabsToSpaces = true });
 
             association = new CSharpDataAssociation
             {

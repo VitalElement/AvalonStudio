@@ -96,8 +96,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 #endif
         }
 
-        public IIndentationStrategy IndentationStrategy { get; }
-
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => null;
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => null;

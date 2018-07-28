@@ -1,5 +1,3 @@
-using AvaloniaEdit.Indentation;
-using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Languages;
@@ -8,7 +6,6 @@ using AvalonStudio.Projects;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages
@@ -39,8 +36,6 @@ namespace AvalonStudio.Languages
 
     public interface ILanguageService
     {
-        IIndentationStrategy IndentationStrategy { get; }
-
         ISyntaxHighlightingProvider SyntaxHighlighter { get; }
 
         /// <summary>
