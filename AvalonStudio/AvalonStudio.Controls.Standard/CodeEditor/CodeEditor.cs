@@ -366,6 +366,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 //}
 
                 _lastLine = TextArea.Caret.Line;
+
+
+                Line = TextArea.Caret.Line;
+                Column = TextArea.Caret.Column;
+                EditorCaretOffset = TextArea.Caret.Offset;
             }),
 
             Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Throttle(TimeSpan.FromMilliseconds(100)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(e =>
@@ -397,10 +402,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     _intellisenseControl.SetLocation(position);
 
                     _selectedWordBackgroundRenderer.SelectedWord = GetWordAtOffset(CaretOffset);
-
-                    Line = TextArea.Caret.Line;
-                    Column = TextArea.Caret.Column;
-                    EditorCaretOffset = TextArea.Caret.Offset;
 
                     TextArea.TextView.InvalidateLayer(KnownLayer.Background);
                 }
@@ -871,7 +872,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private void TextArea_TextEntered(object sender, TextInputEventArgs e)
         {
-            Editor?.OnTextEntered(e.Text);
+            if (Editor != null)
+            {
+                e.Handled = Editor.OnTextEntered(e.Text);
+            }
 
             _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
             _textEntering = false;
@@ -879,7 +883,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private void TextArea_TextEntering(object sender, TextInputEventArgs e)
         {
-            Editor?.OnBeforeTextEntered(e.Text);
+            if (Editor != null)
+            {
+                e.Handled = Editor.OnBeforeTextEntered(e.Text);
+            }
 
             _textEntering = true;
         }
