@@ -76,6 +76,13 @@ namespace AvalonStudio.Languages.CPlusPlus
             return (null, -1, '\0');
         }
 
+        /// <summary>
+        /// Indents a line to the same indentation as the last { or } + 1 indentation. Or 0 indentations if no previous brackets.
+        /// </summary>
+        /// <param name="editor">The editor.</param>
+        /// <param name="line">The line number to indent.</param>
+        /// <param name="previousBracketWhitespace">The whitespace before the last bracket.</param>
+        /// <param name="previousBracketChar">The last bracket char.</param>
         private void Indent(ITextEditor editor, int line, ISegment previousBracketWhitespace, char? previousBracketChar)
         {
             var whiteSpace = editor.Document.GetWhitespaceAfter(editor.Document.Lines[line].Offset);
@@ -90,7 +97,57 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        public bool AfterTextInput(ILanguageService languageServivce, ITextEditor editor, string inputText)
+        /// <summary>
+        /// Indents the current line assuming we already have normal indentation, applying syntax specific rules.
+        /// </summary>
+        /// <param name="editor">The editor.</param>
+        /// <param name="onEnter">True if called after user pressed enter.</param>
+        private void ConditionalIndent(ITextEditor editor, bool onEnter = false)
+        {
+            var currentLine = editor.CurrentLine();
+
+            if (currentLine.PreviousLine != null)
+            {
+                var lastCharInfo = editor.Document.GetLastNonWhiteSpaceCharBefore(currentLine.PreviousLine.EndOffset, currentLine.PreviousLine.Offset);
+
+                if (lastCharInfo.index != -1)
+                {
+                    if (lastCharInfo.character == ')')
+                    {
+                        var lineText = editor.CurrentLineText();
+
+                        if (!lineText.Contains("{"))
+                        {
+                            editor.Document.Insert(editor.Offset, new string(' ', 4));
+                        }
+                    }
+                    else if (lastCharInfo.character == '{' && onEnter)
+                    {
+                        var whiteSpace = editor.Document.GetWhitespaceAfter(editor.PreviousLine().Offset);
+
+                        editor.Document.Insert(editor.Offset, "\n" + editor.Document.GetText(whiteSpace));
+
+                        editor.Offset = editor.PreviousLine().EndOffset;
+                    }
+                    else
+                    {
+                        var previousLineText = editor.PreviousLineText().Trim();
+
+                        if (previousLineText.EndsWith("else"))
+                        {
+                            var lineText = editor.CurrentLineText();
+
+                            if (!lineText.Contains("{"))
+                            {
+                                editor.Document.Insert(editor.Offset, new string(' ', 4));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public bool AfterTextInput(ITextEditor editor, string inputText)
         {
             if (inputText == "\n")
             {
@@ -101,47 +158,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     Indent(editor, editor.Line, previousBracketInfo.whitespace, previousBracketInfo.character);
                 }
 
-                var currentLine = editor.CurrentLine();
-
-                if (currentLine.PreviousLine != null)
-                {
-                    var lastCharInfo = editor.Document.GetLastNonWhiteSpaceCharBefore(currentLine.PreviousLine.EndOffset, currentLine.PreviousLine.Offset);
-
-                    if (lastCharInfo.index != -1)
-                    {
-                        if (lastCharInfo.character == ')')
-                        {
-                            var lineText = editor.CurrentLineText();
-
-                            if (!lineText.Contains("{"))
-                            {
-                                editor.Document.Insert(editor.Offset, new string(' ', 4));
-                            }
-                        }
-                        else if (lastCharInfo.character == '{')
-                        {
-                            var whiteSpace = editor.Document.GetWhitespaceAfter(editor.PreviousLine().Offset);
-
-                            editor.Document.Insert(editor.Offset, "\n" + editor.Document.GetText(whiteSpace));
-
-                            editor.Offset = editor.PreviousLine().EndOffset;
-                        }
-                        else
-                        {
-                            var previousLineText = editor.PreviousLineText().Trim();
-
-                            if(previousLineText.EndsWith("else"))
-                            {
-                                var lineText = editor.CurrentLineText();
-
-                                if (!lineText.Contains("{"))
-                                {
-                                    editor.Document.Insert(editor.Offset, new string(' ', 4));
-                                }
-                            }
-                        }
-                    }
-                }
+                ConditionalIndent(editor, true);
             }
             else if (inputText == "{")
             {
@@ -167,14 +184,20 @@ namespace AvalonStudio.Languages.CPlusPlus
             return false;
         }
 
-        public bool BeforeTextInput(ILanguageService languageService, ITextEditor editor, string inputText)
+        public bool BeforeTextInput(ITextEditor editor, string inputText)
         {
             return false;
         }
 
-        public void CaretMovedToEmptyLine (ILanguageService languageService, ITextEditor editor)
+        public void CaretMovedToEmptyLine(ITextEditor editor)
         {
+            var previousBracketInfo = GetPreviousBracketInfo(editor, editor.Offset - 1);
 
+            Indent(editor, editor.Line, previousBracketInfo.whitespace, previousBracketInfo.character);
+
+            ConditionalIndent(editor);
+
+            editor.Offset = editor.CurrentLine().EndOffset;
         }
     }
 
