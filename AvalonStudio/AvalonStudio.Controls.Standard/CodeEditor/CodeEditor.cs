@@ -424,7 +424,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     if(editor.Document is AvalonStudioTextDocument td && Document != td.Document)
                     {
-                        td.RefreshDocumentModel();
                         Document = td.Document;
 
                         if(editor.Offset <= Document.TextLength)
@@ -971,6 +970,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             if (_textColorizer != null)
             {
                 TextArea.TextView.LineTransformers.Remove(_textColorizer);
+                _textColorizer.Dispose();
                 _textColorizer = null;
             }
 

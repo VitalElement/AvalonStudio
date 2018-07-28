@@ -249,7 +249,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         }
 
         private AvaloniaEdit.Document.TextDocument _document;
-        private DocumentLinesCollection _lines;
+        private readonly DocumentLinesCollection _lines;
 
         public event EventHandler<DocumentChangeEventArgs> Changed;
 
@@ -258,18 +258,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public AvalonStudioTextDocument(AvaloniaEdit.Document.TextDocument document)
         {
             _document = document;
-            RefreshDocumentModel();
-        }
-
-        internal void RefreshDocumentModel ()
-        {
-            if(_document != null)
-            {
-                _document.Changed -= _document_Changed;
-            }
-
-            _document = new AvaloniaEdit.Document.TextDocument(_document.Text);
-            _lines = new DocumentLinesCollection(_document);
+            _lines = new DocumentLinesCollection(document);
             _document.Changed += _document_Changed;
         }
 
@@ -322,6 +311,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             var loc = _document.GetLocation(offset);
 
             return new TextLocation(loc.Line, loc.Column);
+        }
+
+        public void Undo ()
+        {
+            _document.UndoStack.Undo();
+        }
+
+        public void Redo()
+        {
+            _document.UndoStack.Redo();
         }
 
         public void Dispose()
