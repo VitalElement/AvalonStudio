@@ -53,6 +53,8 @@
                            HighlightSelectedWord="False"
                            ColorScheme="{Binding ColorScheme}"
                            EditorCaretOffset="{Binding Offset}"
+                           Line="{Binding Line}"
+                           Column="{Binding Column}"
                            Editor="{Binding }"
                            DebugHighlight="{Binding DebugHighlight}">          
         </editor:CodeEditor>
