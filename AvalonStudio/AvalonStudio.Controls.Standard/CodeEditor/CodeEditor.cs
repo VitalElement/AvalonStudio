@@ -734,25 +734,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             //}
         }
 
-        public void FormatAll()
-        {
-            //if (LanguageService != null)
-            //{
-            //    if (Settings.GetSettings<EditorSettings>().AutoFormat)
-            //    {
-            //        var caretOffset = LanguageService.Format(DocumentAccessor, 0, (uint)Document.TextLength, CaretOffset);
-
-            //        // some language services manually set the caret themselves and return -1 to indicate this.
-            //        if (caretOffset >= 0)
-            //        {
-            //            CaretOffset = caretOffset;
-            //        }
-
-            //        Focus();
-            //    }
-            //}
-        }
-
         public void SetSelection(TextSegment segment)
         {
             SelectionStart = segment.StartOffset;
@@ -773,39 +754,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         public void ShutdownBackgroundWorkers()
         {
             _cancellationSource?.Cancel();
-        }
-
-        public void Save()
-        {
-            /*if (SourceFile != null && Document != null && IsDirty)
-            {
-                try
-                {
-                    FormatAll();
-                }
-                catch (Exception)
-                {
-
-                }
-
-                if (Settings.GetSettings<EditorSettings>().RemoveTrailingWhitespaceOnSave)
-                {
-                    Document.TrimTrailingWhiteSpace();
-                }
-
-                File.WriteAllText(SourceFile.Location, Document.Text);
-                IsDirty = false;
-
-                lock (UnsavedFiles)
-                {
-                    var unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
-
-                    if (unsavedFile != null)
-                    {
-                        UnsavedFiles.Remove(unsavedFile);
-                    }
-                }
-            }*/
         }
 
         /*private void RegisterLanguageService(ISourceFile sourceFile)
@@ -927,17 +875,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _intellisenseManager?.OnTextInput(e, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
             _textEntering = false;
-
-            //if (TextArea.Selection.IsEmpty)
-            //{
-            //    if (LanguageService != null && LanguageService.InputHelpers != null)
-            //    {
-            //        foreach (var helper in LanguageService.InputHelpers)
-            //        {
-            //            helper.AfterTextInput(LanguageService, DocumentAccessor, e);
-            //        }
-            //    }
-            //}
         }
 
         private void TextArea_TextEntering(object sender, TextInputEventArgs e)
@@ -945,17 +882,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             Editor?.OnBeforeTextEntered(e.Text);
 
             _textEntering = true;
-
-            //if (TextArea.Selection.IsEmpty)
-            //{
-            //    if (LanguageService != null && LanguageService.InputHelpers != null)
-            //    {
-            //        foreach (var helper in LanguageService.InputHelpers)
-            //        {
-            //            helper.BeforeTextInput(LanguageService, DocumentAccessor, e);
-            //        }
-            //    }
-            //}
         }
 
         private void UnRegisterLanguageService()
@@ -1006,34 +932,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             //    LanguageService = null;
             //}
 
-            Document.TextChanged -= TextDocument_TextChanged;
-
             TextArea.TextEntering -= TextArea_TextEntering;
             TextArea.TextEntered -= TextArea_TextEntered;
 
             _intellisenseManager = null;
-        }
-
-        private void TextDocument_TextChanged(object sender, EventArgs e)
-        {
-            /* UnsavedFile unsavedFile = null;
-
-             lock (UnsavedFiles)
-             {
-                 unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
-             }
-
-             if (unsavedFile == null)
-             {
-                 lock (UnsavedFiles)
-                 {
-                     UnsavedFiles.InsertSorted(new UnsavedFile(SourceFile.Location, Document.Text));
-                 }
-             }
-             else
-             {
-                 unsavedFile.Contents = Document.Text;
-             }*/
         }
 
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
@@ -1189,15 +1091,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get => GetValue(ColorSchemeProperty);
             set => SetValue(ColorSchemeProperty, value);
-        }
-
-        public static readonly AvaloniaProperty<IEditor> DocumentAccessorProperty =
-            AvaloniaProperty.Register<CodeEditor, IEditor>(nameof(DocumentAccessor), defaultBindingMode: BindingMode.TwoWay);
-
-        public IEditor DocumentAccessor
-        {
-            get => GetValue(DocumentAccessorProperty);
-            set => SetValue(DocumentAccessorProperty, value);
         }
 
         public static readonly StyledProperty<bool> IsDirtyProperty =
