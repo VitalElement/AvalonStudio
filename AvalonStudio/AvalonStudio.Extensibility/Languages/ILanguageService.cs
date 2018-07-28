@@ -90,10 +90,10 @@ namespace AvalonStudio.Languages
 
         bool CanHandle(IEditor editor);
 
-        int Format(IEditor editor, uint offset, uint length, int cursor);
+        int Format(ITextEditor editor, uint offset, uint length, int cursor);
 
-        int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
+        int Comment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
 
-        int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
+        int UnComment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
     }
 }

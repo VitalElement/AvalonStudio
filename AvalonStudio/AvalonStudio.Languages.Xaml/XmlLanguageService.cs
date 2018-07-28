@@ -84,12 +84,12 @@ namespace AvalonStudio.Languages.Xaml
             return Task.FromResult<CodeCompletionResults>(null);
         }
 
-        public int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             return caret;
         }
 
-        public int Format(IEditor editor, uint offset, uint length, int cursor)
+        public int Format(ITextEditor editor, uint offset, uint length, int cursor)
         {
             var text = editor.Document.GetText((int)offset, (int)length);
 
@@ -170,7 +170,7 @@ namespace AvalonStudio.Languages.Xaml
             return Task.FromResult<SignatureHelp>(null);
         }
 
-        public int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             return caret;
         }

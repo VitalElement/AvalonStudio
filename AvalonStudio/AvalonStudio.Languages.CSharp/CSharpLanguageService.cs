@@ -406,7 +406,7 @@ namespace AvalonStudio.Languages.CSharp
             return result;*/
         }
 
-        public int Format(IEditor editor, uint offset, uint length, int cursor)
+        public int Format(ITextEditor editor, uint offset, uint length, int cursor)
         {
             /*if (editor.SourceFile is MetaDataFile)
             {
@@ -943,7 +943,7 @@ namespace AvalonStudio.Languages.CSharp
             return result;
         }
 
-        public int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
             var textDocument = editor.Document;
@@ -965,7 +965,7 @@ namespace AvalonStudio.Languages.CSharp
             return result;
         }
 
-        public int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 

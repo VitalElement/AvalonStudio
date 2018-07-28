@@ -673,7 +673,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             dataAssociations.Remove(editor.SourceFile);
         }
 
-        public int Format(IEditor editor, uint offset, uint length, int cursor)
+        public int Format(ITextEditor editor, uint offset, uint length, int cursor)
         {
             bool replaceCursor = cursor >= 0 ? true : false;
 
@@ -874,7 +874,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return null;
         }
 
-        public int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
             var textDocument = editor.Document;
@@ -896,7 +896,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
@@ -919,7 +919,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                     var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                    result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                   result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
                 }
             }
 
