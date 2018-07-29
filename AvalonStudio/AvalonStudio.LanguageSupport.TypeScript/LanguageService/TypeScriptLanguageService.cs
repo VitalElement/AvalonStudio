@@ -531,7 +531,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
+        public IEnumerable<IContextActionProvider> GetContextActionProviders(ITextEditor editor)
         {
             return Enumerable.Empty<IContextActionProvider>();
         }

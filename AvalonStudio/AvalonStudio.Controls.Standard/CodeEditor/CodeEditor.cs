@@ -449,11 +449,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         _contextActionsRenderer = new ContextActionsRenderer(this, _diagnosticMarkersRenderer);
                         TextArea.LeftMargins.Add(_contextActionsRenderer);
                         TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
-
-                        //foreach (var contextActionProvider in LanguageService.GetContextActionProviders(DocumentAccessor))
-                        //{
-                        //    _contextActionsRenderer.Providers.Add(contextActionProvider);
-                        //}
                     }
 
                     if(editor is ICodeEditor codeEditor)
@@ -568,7 +563,10 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                         _disposables.Add(_intellisenseManager);
 
-                        //TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
+                        foreach (var contextActionProvider in codeEditor.LanguageService.GetContextActionProviders(codeEditor))
+                        {
+                            _contextActionsRenderer.Providers.Add(contextActionProvider);
+                        }
                     }
                 }
                 else

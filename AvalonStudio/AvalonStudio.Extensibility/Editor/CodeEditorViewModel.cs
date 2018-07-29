@@ -28,7 +28,6 @@ namespace AvalonStudio.Extensibility.Editor
         private Subject<bool> _analysisTriggerEvents = new Subject<bool>();
         private readonly JobRunner _codeAnalysisRunner;
         private CancellationTokenSource _cancellationSource;
-        private bool _isAnalyzing;
         private ObservableCollection<(object tag, SyntaxHighlightDataList)> _highlights;
         private ObservableCollection<(object tag, IEnumerable<Diagnostic>)> _diagnostics;
         private IEnumerable<IndexEntry> _codeIndex;
@@ -221,7 +220,7 @@ namespace AvalonStudio.Extensibility.Editor
                     {
                         CodeIndex = result.IndexItems;
 
-                        var toRemove = _highlights.Where(h => h.tag == this).ToList();
+                        var toRemove = _highlights.Where(h => h.tag.Equals(this)).ToList();
 
                         foreach (var highlightData in toRemove)
                         {
@@ -254,18 +253,6 @@ namespace AvalonStudio.Extensibility.Editor
 
         private void RegisterLanguageService(ISourceFile sourceFile)
         {
-            //UnRegisterLanguageService();
-
-            /*if (sourceFile.Project?.Solution != null)
-            {
-                _snippetManager.InitialiseSnippetsForSolution(sourceFile.Project.Solution);
-            }
-
-            if (sourceFile.Project != null)
-            {
-                _snippetManager.InitialiseSnippetsForProject(sourceFile.Project);
-            }*/
-
             var contentTypeService = ContentTypeServiceInstance.Instance;
 
             var languageServiceProvider = IoC.Get<IStudio>().LanguageServiceProviders.FirstOrDefault(
@@ -282,60 +269,9 @@ namespace AvalonStudio.Extensibility.Editor
             };
 
 
-            /*SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(sourceFile.ContentType);
-
-            if (LanguageService != null)
-            {
-                LanguageService.RegisterSourceFile(DocumentAccessor);
-
-                _diagnosticMarkersRenderer = new TextMarkerService(Document);
-
-                _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
-
-                _contextActionsRenderer = new ContextActionsRenderer(this, _diagnosticMarkersRenderer);
-                TextArea.LeftMargins.Add(_contextActionsRenderer);
-
-                foreach (var contextActionProvider in LanguageService.GetContextActionProviders(DocumentAccessor))
-                {
-                    _contextActionsRenderer.Providers.Add(contextActionProvider);
-                }
-
-                TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
-                TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
-
-
-                _intellisenseManager = new IntellisenseManager(DocumentAccessor, _intellisense, _completionAssistant, LanguageService, sourceFile, offset =>
-                {
-                    var location = new TextViewPosition(Document.GetLocation(offset));
-
-                    var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
-                    var visualLocationTop = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineTop);
-
-                    var position = visualLocation - TextArea.TextView.ScrollOffset;
-                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
-
-                    _completionAssistantControl.SetLocation(position);
-                });
-
-                _disposables.Add(_intellisenseManager);
-
-                TextArea.IndentationStrategy = LanguageService.IndentationStrategy;
-
-                if (TextArea.IndentationStrategy == null)
-                {
-                    TextArea.IndentationStrategy = new DefaultIndentationStrategy();
-                }
-
-                
-            }*/
+            /*SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(sourceFile.ContentType);}*/
 
             StartBackgroundWorkers();
-
-            /*Document.TextChanged += TextDocument_TextChanged;
-
-            TextArea.TextEntering += TextArea_TextEntering;
-
-            TextArea.TextEntered += TextArea_TextEntered;*/
 
             DoCodeAnalysisAsync().GetAwaiter();
         }
@@ -344,14 +280,14 @@ namespace AvalonStudio.Extensibility.Editor
         {
             if (e.AssociatedSourceFile == SourceFile)
             {
-                var toRemove = _diagnostics.Where(x => x.tag == e.Tag).ToList();
+                var toRemove = _diagnostics.Where(x => x.tag.Equals(e.Tag)).ToList();
 
                 foreach (var diagnostic in toRemove)
                 {
                     _diagnostics.Remove(diagnostic);
                 }
 
-                var highlightsToRemove = _highlights.Where(h => h.tag == SourceFile).ToList();
+                var highlightsToRemove = _highlights.Where(h => h.tag.Equals(SourceFile)).ToList();
 
                 foreach (var highlightData in highlightsToRemove)
                 {

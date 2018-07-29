@@ -252,9 +252,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 offset = line.Offset;
                 var length = line.Length;
 
-                throw new NotImplementedException();
-                //var actions = await provider.GetCodeFixes(_editor.DocumentAccessor, offset, length, cancellationToken).ConfigureAwait(true);
-                //allActions.AddRange(actions);
+                var actions = await provider.GetCodeFixes(_editor.Editor, offset, length, cancellationToken).ConfigureAwait(true);
+                allActions.AddRange(actions);
             }
             return allActions;
         }

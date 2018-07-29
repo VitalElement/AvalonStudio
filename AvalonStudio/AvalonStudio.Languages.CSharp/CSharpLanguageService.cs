@@ -1061,20 +1061,18 @@ namespace AvalonStudio.Languages.CSharp
             return null;
         }
 
-        public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
+        public IEnumerable<IContextActionProvider> GetContextActionProviders(ITextEditor editor)
         {
-            /* var dataAssociation = GetAssociatedData(editor);
+             var dataAssociation = GetAssociatedData(editor);
 
              var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
 
              var service = workspace.GetService<ICodeFixService>();
 
-             return new List<IContextActionProvider>
+            return new List<IContextActionProvider>
              {
                  new RoslynContextActionProvider(workspace, service)
-             };*/
-
-            return null;
+             };
         }
     }
 

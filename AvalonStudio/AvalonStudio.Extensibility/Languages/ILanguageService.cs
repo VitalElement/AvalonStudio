@@ -67,7 +67,7 @@ namespace AvalonStudio.Languages
 
         Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);        
 
-        IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor);
+        IEnumerable<IContextActionProvider> GetContextActionProviders(ITextEditor editor);
 
         Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName);
 
