@@ -19,7 +19,7 @@ namespace AvalonStudio.Editor
                 {
                     var closeChar = inputText[0].GetCloseBracketChar();
 
-                    editor.Document.Insert(editor.Offset, (currentChar == '{' ? " " : "") + closeChar);
+                    editor.Document.Insert(editor.Offset, closeChar.ToString());
                     editor.Offset--;
                 }
             }
