@@ -313,14 +313,14 @@ namespace AvalonStudio.Languages.CSharp
                 : CompletionTrigger.Invoke;
         }
 
-        public async Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char previousChar, string filter)
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char previousChar, string filter)
         {
-           // if (editor.SourceFile is MetaDataFile)
+            if (editor.SourceFile is MetaDataFile)
             {
                 return null;
             }
 
-            /*var result = new CodeCompletionResults();
+            var result = new CodeCompletionResults();
 
             var dataAssociation = GetAssociatedData(editor);
 
@@ -399,12 +399,12 @@ namespace AvalonStudio.Languages.CSharp
                 result.Contexts = Languages.CompletionContext.AnyType;
             }
 
-            return result;*/
+            return result;
         }
 
         public int Format(ITextEditor editor, uint offset, uint length, int cursor)
         {
-            /*if (editor.SourceFile is MetaDataFile)
+            if (editor.SourceFile is MetaDataFile)
             {
                 return cursor;
             }
@@ -414,7 +414,7 @@ namespace AvalonStudio.Languages.CSharp
             var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(editor.SourceFile);
             var formattedDocument = Formatter.FormatAsync(document).GetAwaiter().GetResult();
 
-            RoslynWorkspace.GetWorkspace(dataAssociation.Solution).TryApplyChanges(formattedDocument.Project.Solution);*/
+            RoslynWorkspace.GetWorkspace(dataAssociation.Solution).TryApplyChanges(formattedDocument.Project.Solution);
 
             return -1;
         }
@@ -616,7 +616,7 @@ namespace AvalonStudio.Languages.CSharp
             return null;
         }
 
-        public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
+        public Task<List<Symbol>> GetSymbolsAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, string name)
         {
             return null;
             //throw new NotImplementedException();
@@ -975,9 +975,9 @@ namespace AvalonStudio.Languages.CSharp
             return null;
         }
 
-        public async Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
+        public async Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
-            /*var dataAssociation = GetAssociatedData(editor);
+            var dataAssociation = GetAssociatedData(editor);
 
             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
 
@@ -988,7 +988,7 @@ namespace AvalonStudio.Languages.CSharp
             if (invocation != null)
             {
                 return invocation.BuildSignatureHelp();
-            }*/
+            }
 
             return null;
         }

@@ -39,18 +39,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public class CodeEditor : AvaloniaEdit.TextEditor
     {
-        private static List<UnsavedFile> _unsavedFiles;
-
         public static List<UnsavedFile> UnsavedFiles
         {
             get
             {
-                if (_unsavedFiles == null)
-                {
-                    _unsavedFiles = new List<UnsavedFile>();
-                }
-
-                return _unsavedFiles;
+                return IoC.Get<IShell>().Documents.OfType<ITextDocumentTabViewModel>()
+                .Where(x => x.IsDirty)
+                .Select(x => new UnsavedFile(x.SourceFile.FilePath, x.Document.Text))
+                .ToList();
             }
         }
 
@@ -383,11 +379,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Throttle(TimeSpan.FromMilliseconds(100)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(e =>
             {
+                var location = new TextViewPosition(Document.GetLocation(CaretOffset));
+
                 if (_intellisenseManager != null && !_textEntering)
                 {
                     if (TextArea.Selection.IsEmpty)
                     {
-                        var location = Document.GetLocation(CaretOffset);
                         _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, UnsavedFiles.ToList());
                     }
                     else if (_currentSnippetContext != null)
@@ -397,22 +394,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     }
                 }
 
-                if (CaretOffset > 0)
-                {
-                    var prevLocation = new TextViewPosition(Document.GetLocation(CaretOffset - 1));
+                var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
+                var visualLocationTop = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineTop);
 
-                    var visualLocation = TextArea.TextView.GetVisualPosition(prevLocation, VisualYPosition.LineBottom);
-                    var visualLocationTop = TextArea.TextView.GetVisualPosition(prevLocation, VisualYPosition.LineTop);
+                var position = visualLocation - TextArea.TextView.ScrollOffset;
+                position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
 
-                    var position = visualLocation - TextArea.TextView.ScrollOffset;
-                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
+                _intellisenseControl.SetLocation(position);
 
-                    _intellisenseControl.SetLocation(position);
+                _selectedWordBackgroundRenderer.SelectedWord = GetWordAtOffset(CaretOffset);
 
-                    _selectedWordBackgroundRenderer.SelectedWord = GetWordAtOffset(CaretOffset);
-
-                    TextArea.TextView.InvalidateLayer(KnownLayer.Background);
-                }
+                TextArea.TextView.InvalidateLayer(KnownLayer.Background);
             }),
 
             this.WhenAnyValue(x=>x.DebugHighlight).Where(loc => loc != null).Subscribe(location =>
@@ -495,6 +487,21 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                             TextArea.TextView.Redraw();
                         }
+
+                        _intellisenseManager = new IntellisenseManager(editor, _intellisense, _completionAssistant, codeEditor.LanguageService, editor.SourceFile, offset =>
+                        {
+                            var location = new TextViewPosition(Document.GetLocation(offset));
+
+                            var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
+                            var visualLocationTop = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineTop);
+
+                            var position = visualLocation - TextArea.TextView.ScrollOffset;
+                            position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
+
+                            _completionAssistantControl.SetLocation(position);
+                        });
+
+                        _disposables.Add(_intellisenseManager);
 
                         //TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
                     }
@@ -719,6 +726,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             Focus();
         }
 
+        protected override void OnLostFocus(RoutedEventArgs e)
+        {
+            base.OnLostFocus(e);
+
+            // _intellisenseManager?.CloseIntellisense();
+
+            //_completionAssistant?.Close();
+        }
+
         public void CommentSelection()
         {
             //if (LanguageService != null)
@@ -805,20 +821,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 TextArea.TextView.BackgroundRenderers.Add(_diagnosticMarkersRenderer);
                 
 
-                _intellisenseManager = new IntellisenseManager(DocumentAccessor, _intellisense, _completionAssistant, LanguageService, sourceFile, offset =>
-                {
-                    var location = new TextViewPosition(Document.GetLocation(offset));
-
-                    var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
-                    var visualLocationTop = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineTop);
-
-                    var position = visualLocation - TextArea.TextView.ScrollOffset;
-                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
-
-                    _completionAssistantControl.SetLocation(position);
-                });
-
-                _disposables.Add(_intellisenseManager);
+                
 
                 TextArea.IndentationStrategy = LanguageService.IndentationStrategy;
 
@@ -1131,7 +1134,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             get => GetValue(DebugHighlightProperty);
             set => SetValue(DebugHighlightProperty, value);
         }
-        
+
         public static readonly AvaloniaProperty<ITextEditor> EditorProperty =
             AvaloniaProperty.Register<CodeEditor, ITextEditor>(nameof(Editor));
 

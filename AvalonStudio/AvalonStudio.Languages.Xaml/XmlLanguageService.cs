@@ -79,7 +79,7 @@ namespace AvalonStudio.Languages.Xaml
             return result;
         }
 
-        public virtual Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
+        public virtual Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             return Task.FromResult<CodeCompletionResults>(null);
         }
@@ -141,7 +141,7 @@ namespace AvalonStudio.Languages.Xaml
             return Task.FromResult<QuickInfoResult>(null);
         }
 
-        public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
+        public Task<List<Symbol>> GetSymbolsAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, string name)
         {
             return Task.FromResult<List<Symbol>>(null);
         }
@@ -165,7 +165,7 @@ namespace AvalonStudio.Languages.Xaml
             return Task.FromResult(new CodeAnalysisResults());
         }
 
-        public Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
+        public Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             return Task.FromResult<SignatureHelp>(null);
         }

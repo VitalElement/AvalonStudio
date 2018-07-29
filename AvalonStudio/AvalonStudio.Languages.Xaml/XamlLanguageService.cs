@@ -62,7 +62,7 @@ namespace AvalonStudio.Languages.Xaml
             return result;
         }
 
-        public override async Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
+        public override async Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             var results = new CodeCompletionResults();
 

@@ -120,7 +120,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return result;
         }
 
-        public async Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line,
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line,
             int column, List<UnsavedFile> unsavedFiles, char previousChar, string filter = "")
         {
             //Get position in text
@@ -142,7 +142,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             };
         }
 
-        private async Task<List<CodeCompletionData>> CodeCompleteAtAsync(IEditor editor, int index,
+        private async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ITextEditor editor, int index,
             List<UnsavedFile> unsavedFiles, string filter = "")
         {
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == editor.SourceFile.FilePath);
@@ -194,7 +194,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return Task.FromResult<QuickInfoResult>(null);
         }
 
-        public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
+        public Task<List<Symbol>> GetSymbolsAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, string name)
         {
             //STUB!
             return Task.FromResult(new List<Symbol>());
@@ -439,7 +439,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return document.Take(offset).Count(x => x == '\n') + 1;
         }
 
-        public Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
+        public Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             //STUB!
             //return new SignatureHelp();
