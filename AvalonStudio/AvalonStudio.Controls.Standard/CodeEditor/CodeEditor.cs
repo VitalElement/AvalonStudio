@@ -540,9 +540,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             
                             _scopeLineBackgroundRenderer.ApplyIndex(codeEditor.CodeIndex);
 
+                            foreach(var diagnostic in codeEditor.Diagnostics)
+                            {
+                                _diagnosticMarkersRenderer.SetDiagnostics(diagnostic.tag, diagnostic.diagnostics);
+                            }
+
                             foreach(var highlightData in codeEditor.Highlights)
                             {
-                                _textColorizer.SetTransformations(highlightData.tag, highlightData.Item2);
+                                _textColorizer.SetTransformations(highlightData.tag, highlightData.highlights);
                             }
 
                             TextArea.TextView.Redraw();

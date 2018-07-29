@@ -1,7 +1,7 @@
-using AvalonStudio.Languages;
+﻿using AvalonStudio.Languages;
 using System.Collections.ObjectModel;
 
-namespace AvalonStudio.Controls.Standard.ErrorList
+namespace AvalonStudio.Utils
 {
     public interface IErrorList
     {

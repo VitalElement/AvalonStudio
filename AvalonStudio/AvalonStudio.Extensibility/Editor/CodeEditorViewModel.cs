@@ -7,6 +7,7 @@ using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
+using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -367,8 +368,7 @@ namespace AvalonStudio.Extensibility.Editor
                     }
                 }
 
-                // TODO post to error list ??? how
-                //IoC.Get<IErrorList>().UpdateDiagnostics(e);
+                IoC.Get<IErrorList>().UpdateDiagnostics(e);
             }
         }
 

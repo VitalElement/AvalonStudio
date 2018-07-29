@@ -1,4 +1,4 @@
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
@@ -6,7 +6,7 @@ using AvalonStudio.Projects;
 using System;
 using System.IO;
 
-namespace AvalonStudio.Controls.Standard.ErrorList
+namespace AvalonStudio.Utils
 {
     public class ErrorViewModel : ViewModel<Diagnostic>, IComparable<ErrorViewModel>
     {
