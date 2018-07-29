@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Documents;
+﻿using Avalonia;
+using AvalonStudio.Documents;
 using AvalonStudio.Projects;
 using ReactiveUI;
 using System.IO;
@@ -15,6 +16,7 @@ namespace AvalonStudio.Extensibility.Editor
         private int _offset;
         private int _line;
         private int _column;
+        private bool _isFocused;
 
         public TextEditorViewModel(ITextDocument document, ISourceFile file) : base(file)
         {
@@ -99,6 +101,12 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _visualFontSize, value); }
         }
 
+        public bool IsFocused
+        {
+            get { return _isFocused; }
+            set { this.RaiseAndSetIfChanged(ref _isFocused, value); }
+        }
+
         private void InvalidateVisualFontSize()
         {
             VisualFontSize = (ZoomLevel / 100) * FontSize;
@@ -108,6 +116,7 @@ namespace AvalonStudio.Extensibility.Editor
         {
             base.OnSelected();
 
+            IsFocused = true;
             // how to tell the control to focus.
         }
 

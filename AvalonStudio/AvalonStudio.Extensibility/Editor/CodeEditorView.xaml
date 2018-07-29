@@ -56,8 +56,11 @@
                            Line="{Binding Line}"
                            Column="{Binding Column}"
                            Editor="{Binding }"
-                           DebugHighlight="{Binding DebugHighlight}">          
-        </editor:CodeEditor>
+                           DebugHighlight="{Binding DebugHighlight}">
+                <i:Interaction.Behaviors>
+                    <beh:BindFocusedBehavior IsFocused="{Binding IsFocused}" />
+                </i:Interaction.Behaviors>
+            </editor:CodeEditor>
       </Grid>
     </DockPanel>
 </UserControl>

@@ -365,12 +365,20 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 //    }
                 //}
 
-                _lastLine = TextArea.Caret.Line;
+                if(_isLoaded)
+                {
+                    _lastLine = TextArea.Caret.Line;
 
+                    EditorCaretOffset = TextArea.Caret.Offset;
+                    Line = TextArea.Caret.Line;
+                    Column = TextArea.Caret.Column;
 
-                EditorCaretOffset = TextArea.Caret.Offset;
-                Line = TextArea.Caret.Line;
-                Column = TextArea.Caret.Column;
+                    if(!IsFocused)
+                    {
+                        Focus();
+                    }
+
+                }
             }),
 
             Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Throttle(TimeSpan.FromMilliseconds(100)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(e =>
@@ -418,7 +426,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     ClearDebugHighlight();
                 }
             }),
-
             this.GetObservable(EditorProperty).Subscribe(editor =>
             {
                 if(editor != null)
@@ -432,7 +439,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             CaretOffset = editor.Offset;
                         }
 
-                        _isLoaded = true;
                         _textColorizer = new TextColoringTransformer(Document);
 
                         TextArea.TextView.LineTransformers.Add(_textColorizer);
@@ -962,6 +968,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _completionAssistantControl.PlacementTarget = TextArea;
             _completionAssistantControl.DataContext = _completionAssistant;
+
+            _isLoaded = true;
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                Focus();
+                TextArea.Caret.BringCaretToView();
+            });
         }
 
         private void List_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
