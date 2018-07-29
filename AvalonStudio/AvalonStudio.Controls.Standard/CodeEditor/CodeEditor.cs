@@ -54,11 +54,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private InsertionContext _currentSnippetContext;
         private bool _suppressIsDirtyNotifications = false;
 
-        public IntellisenseViewModel Intellisense => _intellisense;
-
-        private IntellisenseManager _intellisenseManager;
+        public IntellisenseViewModel Intellisense { get; }
         private Intellisense _intellisenseControl;
-        private IntellisenseViewModel _intellisense;
+        private IntellisenseManager _intellisenseManager;
 
         private CompletionAssistantView _completionAssistantControl;
         private CompletionAssistantViewModel _completionAssistant;
@@ -488,7 +486,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             TextArea.TextView.Redraw();
                         }
 
-                        _intellisenseManager = new IntellisenseManager(editor, _intellisense, _completionAssistant, codeEditor.LanguageService, editor.SourceFile, offset =>
+                        _intellisenseManager = new IntellisenseManager(editor, Intellisense, _completionAssistant, codeEditor.LanguageService, editor.SourceFile, offset =>
                         {
                             var location = new TextViewPosition(Document.GetLocation(offset));
 
@@ -575,9 +573,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             /*_analysisTriggerEvents.Select(_ => Observable.Timer(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance)
             .SelectMany(o => DoCodeAnalysisAsync())).Switch().Subscribe(_ => { });*/
 
-            _intellisense = new IntellisenseViewModel();
+            Intellisense = new IntellisenseViewModel();
 
-            _completionAssistant = new CompletionAssistantViewModel(_intellisense);
+            _completionAssistant = new CompletionAssistantViewModel(Intellisense);
 
             TextArea.TextEntering += TextArea_TextEntering;
 
@@ -967,7 +965,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _intellisenseControl.SetSignatureHelper(_completionAssistantControl);
 
             _intellisenseControl.PlacementTarget = TextArea;
-            _intellisenseControl.DataContext = _intellisense;
+            _intellisenseControl.DataContext = Intellisense;
 
             _completionAssistantControl.PlacementTarget = TextArea;
             _completionAssistantControl.DataContext = _completionAssistant;
