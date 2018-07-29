@@ -746,10 +746,11 @@ namespace AvalonStudio.Languages.CSharp
             var result = new Diagnostic(
                 diagnostic.TextSpan.Start,
                 diagnostic.TextSpan.Length,
-                project,
+                project.Name,
                 fileName,
                 diagnostic.DataLocation.MappedStartLine,
                 diagnostic.Message,
+                diagnostic.Id,
                 (DiagnosticLevel)diagnostic.Severity,
                 category);
 

@@ -491,10 +491,11 @@ namespace AvalonStudio.Languages.CPlusPlus
                     var diag = new Diagnostic(
                         diagnostic.Location.FileLocation.Offset,
                         0,
-                        file.Project,
+                        file.Project.Name,
                         diagnostic.Location.FileLocation.File.FileName,
                         diagnostic.Location.FileLocation.Line,
                         diagnostic.Spelling,
+                        "",
                         (DiagnosticLevel)diagnostic.Severity,
                         DiagnosticCategory.Compiler);
 

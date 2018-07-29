@@ -241,10 +241,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 diagnostics.Add(new Diagnostic(
                     0, 0,
-                    editor.SourceFile.Project,                    
+                    editor.SourceFile.Project.Name,                    
                     editor.SourceFile.Location,
                     0,
                     "Code analysis language service call failed.",
+                    "INT001",
                     DiagnosticLevel.Error,
                     DiagnosticCategory.Compiler));
 
@@ -308,10 +309,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 diagnostics.Add(new Diagnostic(
                     diagnostic.Start,
                     diagnostic.Length,
-                    editor.SourceFile.Project,                    
+                    editor.SourceFile.Project.Name,                    
                     editor.SourceFile.Location,
                     GetLineNumber(currentFileConts, diagnostic.Start),
                     diagnostic.MessageText,
+                    "INT002",
                     diagnostic.Category == TSBridge.Ast.Diagnostics.Diagnostic.DiagnosticCategory.Error
                         ? DiagnosticLevel.Error
                         : DiagnosticLevel.Warning,
@@ -322,10 +324,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             diagnostics.Add(new Diagnostic(
                 0,
                 0,
-                editor.SourceFile.Project,                
+                editor.SourceFile.Project.Name,                
                 editor.SourceFile.Location,
                 0,
                 "Code analysis for TypeScript is experimental and unstable. Use with caution.",
+                "INT003",
                 DiagnosticLevel.Warning,
                 DiagnosticCategory.Compiler));
 

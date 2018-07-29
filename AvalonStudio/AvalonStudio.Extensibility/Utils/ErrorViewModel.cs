@@ -32,7 +32,7 @@ namespace AvalonStudio.Utils
 
         public string Project
         {
-            get { return Model.Project.Name; }
+            get { return Model.Project; }
         }
 
         public int Line

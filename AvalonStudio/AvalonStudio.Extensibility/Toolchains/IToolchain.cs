@@ -2,6 +2,7 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Projects;
 using AvalonStudio.Utils;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains

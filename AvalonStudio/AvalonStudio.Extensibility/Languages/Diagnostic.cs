@@ -20,9 +20,15 @@ namespace AvalonStudio.Languages
         EditAndContinue
     }
 
+    public enum DiagnosticSource
+    {
+        Build,
+        Analysis,
+    }
+
     public class Diagnostic : TextSegment
     {
-        public Diagnostic(int offset, int length, IProject project, string file, int line, string message, DiagnosticLevel level, DiagnosticCategory category)
+        public Diagnostic(int offset, int length, string project, string file, int line, string message, string code, DiagnosticLevel level, DiagnosticCategory category, DiagnosticSource source = DiagnosticSource.Analysis)
         {
             StartOffset = offset;
             Length = length;
@@ -32,17 +38,21 @@ namespace AvalonStudio.Languages
             Spelling = message;
             Level = level;
             Category = category;
+            Source = source;
+            Code = code;
         }
 
         public static readonly Color ErrorBrush = Color.FromRgb(253, 45, 45);
         public static readonly Color WarningBrush = Color.FromRgb(255, 207, 40);
         public static readonly Color DefaultBrush = Color.FromRgb(0, 42, 74);
 
-        public IProject Project { get; }
+        public string Project { get; }
         public int Line { get; }
         public string File { get; }
         public string Spelling { get; }
+        public string Code { get;  }
         public DiagnosticLevel Level { get; }
         public DiagnosticCategory Category { get; }
+        public DiagnosticSource Source { get; }
     }
 }
