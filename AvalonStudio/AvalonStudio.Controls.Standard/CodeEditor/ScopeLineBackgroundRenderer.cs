@@ -19,18 +19,33 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private readonly IBrush brush = Brush.Parse("#717171");
         private readonly Pen _pen;
 
-        private readonly TextSegmentCollection<IndexEntry> markers;
+        private TextSegmentCollection<IndexEntry> markers;
+
+        private TextDocument _document;
 
         public ScopeLineBackgroundRenderer(TextDocument document)
         {
+            _document = document;
             _pen = new Pen(brush, 1, new DashStyle(new double[] { 8, 4 }, 0));
             markers = new TextSegmentCollection<IndexEntry>(document);
         }
 
-        public void ApplyIndex(List<IndexEntry> index)
+        public void Dispose()
+        {
+            markers?.Clear();
+            markers.Disconnect(_document);
+            markers = null;
+            _document = null;
+        }
+
+        public void ApplyIndex(IEnumerable<IndexEntry> index)
         {
             markers.Clear();
-            markers.AddRange(index);
+
+            if (index != null)
+            {
+                markers.AddRange(index);
+            }
         }
 
         public void Draw(TextView textView, DrawingContext drawingContext)
@@ -96,7 +111,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public Rect GetRectForRange(IEnumerable<Rect> rects)
         {
-            if (rects.Count()== 0)
+            if (rects.Count() == 0)
             {
                 return Rect.Empty;
             }

@@ -11,17 +11,28 @@ namespace AvalonStudio.Extensibility.Editor
 {
     public class TextMarkerService : IBackgroundRenderer
     {
-        private readonly TextSegmentCollection<TextMarker> markers;
+        private TextSegmentCollection<TextMarker> markers;
 
         public KnownLayer Layer => KnownLayer.Background;
 
         public ColorScheme ColorScheme { get; set; }
 
+        private TextDocument _document;
+
         public TextMarkerService(TextDocument document)
         {
+            _document = document;
             markers = new TextSegmentCollection<TextMarker>(document);
 
             ColorScheme = ColorScheme.Default;
+        }
+
+        public void Dispose()
+        {
+            markers.Clear();
+            markers.Disconnect(_document);
+            markers = null;
+            _document = null;
         }
 
         public event EventHandler<EventArgs> DataChanged;
@@ -116,7 +127,7 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
-        public void SetDiagnostics(object tag, TextSegmentCollection<Diagnostic> diagnostics)
+        public void SetDiagnostics(object tag, IEnumerable<Diagnostic> diagnostics)
         {
             foreach (var diag in diagnostics)
             {

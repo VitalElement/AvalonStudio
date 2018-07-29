@@ -1,6 +1,7 @@
 ﻿using Avalonia.Threading;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages;
@@ -8,8 +9,10 @@ using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -26,13 +29,17 @@ namespace AvalonStudio.Extensibility.Editor
         private CancellationTokenSource _cancellationSource;
         private bool _isAnalyzing;
         private ObservableCollection<(object tag, SyntaxHighlightDataList)> _highlights;
+        private ObservableCollection<(object tag, IEnumerable<Diagnostic>)> _diagnostics;
+        private IEnumerable<IndexEntry> _codeIndex;
         private int _lastLineNumber;
+        private CompositeDisposable _languageServiceDisposables;
 
         public CodeEditorViewModel(ITextDocument document, ISourceFile file) : base(document, file)
         {
             _lastLineNumber = -1;
 
             _highlights = new ObservableCollection<(object tag, SyntaxHighlightDataList)>();
+            _diagnostics = new ObservableCollection<(object tag, IEnumerable<Diagnostic>)>();
 
             _codeAnalysisRunner = new JobRunner(1);
 
@@ -45,7 +52,7 @@ namespace AvalonStudio.Extensibility.Editor
 
             this.WhenAnyValue(x => x.Line).Subscribe(lineNumber =>
             {
-                if(lineNumber != _lastLineNumber && lineNumber > 0)
+                if (lineNumber != _lastLineNumber && lineNumber > 0)
                 {
                     var line = Document.Lines[Line];
 
@@ -79,10 +86,22 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _languageService, value); }
         }
 
-        public ObservableCollection<(object tag, SyntaxHighlightDataList)> Highlights
+        public ObservableCollection<(object tag, SyntaxHighlightDataList highlights)> Highlights
         {
             get { return _highlights; }
             set { this.RaiseAndSetIfChanged(ref _highlights, value); }
+        }
+
+        public ObservableCollection<(object tag, IEnumerable<Diagnostic> diagnostics)> Diagnostics
+        {
+            get => _diagnostics;
+            set => this.RaiseAndSetIfChanged(ref _diagnostics, value);
+        }
+
+        public IEnumerable<IndexEntry> CodeIndex
+        {
+            get { return _codeIndex; }
+            set { this.RaiseAndSetIfChanged(ref _codeIndex, value); }
         }
 
         public override bool OnTextEntered(string text)
@@ -93,7 +112,7 @@ namespace AvalonStudio.Extensibility.Editor
             {
                 foreach (var helper in LanguageService.InputHelpers)
                 {
-                    if(helper.AfterTextInput(this, text))
+                    if (helper.AfterTextInput(this, text))
                     {
                         handled = true;
                     }
@@ -111,7 +130,7 @@ namespace AvalonStudio.Extensibility.Editor
             {
                 foreach (var helper in LanguageService.InputHelpers)
                 {
-                    if(helper.BeforeTextInput(this, text))
+                    if (helper.BeforeTextInput(this, text))
                     {
                         handled = true;
                     }
@@ -125,7 +144,7 @@ namespace AvalonStudio.Extensibility.Editor
         {
             base.OnTextChanged();
 
-            if(!IsReadOnly)
+            if (!IsReadOnly)
             {
                 TriggerCodeAnalysis();
             }
@@ -164,12 +183,12 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
-        public void Comment ()
+        public void Comment()
         {
 
         }
 
-        public void Uncomment ()
+        public void Uncomment()
         {
 
         }
@@ -197,25 +216,13 @@ namespace AvalonStudio.Extensibility.Editor
                 {
                     var result = await LanguageService.RunCodeAnalysisAsync(this, unsavedFiles, () => false);
 
-
-                    // this is a runner, and we emit highlighting data and diagnostic data as its found.
-
-                    // editor will simply show these as they are emitted.
-
-                    // other LS like roslyn dont need this run loop as they implement it themselves.§
-
-                    //_textColorizer?.SetTransformations(editor, result.SyntaxHighlightingData);
-
-                    await Dispatcher.UIThread.InvokeAsync(() =>
-                    {
-                        //    _scopeLineBackgroundRenderer?.ApplyIndex(result.IndexItems);
-                    });
-
                     Dispatcher.UIThread.Post(() =>
                     {
+                        CodeIndex = result.IndexItems;
+
                         var toRemove = _highlights.Where(h => h.tag == this).ToList();
 
-                        foreach(var highlightData in toRemove)
+                        foreach (var highlightData in toRemove)
                         {
                             _highlights.Remove(highlightData);
                         }
@@ -267,6 +274,13 @@ namespace AvalonStudio.Extensibility.Editor
             LanguageService = languageServiceProvider.CreateLanguageService();
             LanguageService.RegisterSourceFile(this);
 
+            _languageServiceDisposables = new CompositeDisposable
+            {
+                Observable.FromEventPattern<DiagnosticsUpdatedEventArgs>(LanguageService, nameof(LanguageService.DiagnosticsUpdated)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(args =>
+                LanguageService_DiagnosticsUpdated(args.Sender, args.EventArgs))
+            };
+
+
             /*SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(sourceFile.ContentType);
 
             if (LanguageService != null)
@@ -311,11 +325,7 @@ namespace AvalonStudio.Extensibility.Editor
                     TextArea.IndentationStrategy = new DefaultIndentationStrategy();
                 }
 
-                _languageServiceDisposables = new CompositeDisposable
-                {
-                    Observable.FromEventPattern<DiagnosticsUpdatedEventArgs>(LanguageService, nameof(LanguageService.DiagnosticsUpdated)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(args =>
-                    LanguageService_DiagnosticsUpdated(args.Sender, args.EventArgs))
-                };
+                
             }*/
 
             StartBackgroundWorkers();
@@ -327,6 +337,39 @@ namespace AvalonStudio.Extensibility.Editor
             TextArea.TextEntered += TextArea_TextEntered;*/
 
             DoCodeAnalysisAsync().GetAwaiter();
+        }
+
+        private void LanguageService_DiagnosticsUpdated(object sender, DiagnosticsUpdatedEventArgs e)
+        {
+            if (e.AssociatedSourceFile == SourceFile)
+            {
+                var toRemove = _diagnostics.Where(x => x.tag == e.Tag).ToList();
+
+                foreach (var diagnostic in toRemove)
+                {
+                    _diagnostics.Remove(diagnostic);
+                }
+
+                var highlightsToRemove = _highlights.Where(h => h.tag == SourceFile).ToList();
+
+                foreach (var highlightData in highlightsToRemove)
+                {
+                    _highlights.Remove(highlightData);
+                }
+
+                if (e.Kind == DiagnosticsUpdatedKind.DiagnosticsCreated)
+                {
+                    _diagnostics.Add((e.Tag, e.Diagnostics));
+
+                    if (e.DiagnosticHighlights != null)
+                    {
+                        _highlights.Add((SourceFile, e.DiagnosticHighlights));
+                    }
+                }
+
+                // TODO post to error list ??? how
+                //IoC.Get<IErrorList>().UpdateDiagnostics(e);
+            }
         }
 
         // HighlightingProvider

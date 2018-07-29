@@ -1,4 +1,5 @@
 ﻿using Avalonia.Input;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using System;
@@ -431,7 +432,11 @@ namespace AvalonStudio.Documents
     {
         ILanguageService LanguageService { get; }
 
-        ObservableCollection<(object tag, SyntaxHighlightDataList)> Highlights { get; }
+        ObservableCollection<(object tag, SyntaxHighlightDataList highlights)> Highlights { get; }
+
+        ObservableCollection<(object tag, IEnumerable<Diagnostic> diagnostics)> Diagnostics { get; }
+
+        IEnumerable<IndexEntry> CodeIndex { get; }
 
         void Comment();
 

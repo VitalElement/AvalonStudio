@@ -10,7 +10,7 @@ namespace AvalonStudio.Languages
 {
     public class TextColoringTransformer : GenericLineTransformer
     {
-        private readonly TextDocument _document;
+        private TextDocument _document;
 
         public TextColoringTransformer(TextDocument document)
         {
@@ -26,6 +26,7 @@ namespace AvalonStudio.Languages
             TextTransformations.Disconnect(_document);
             TextTransformations.Clear();
             TextTransformations = null;
+            _document = null;
         }
 
         public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
