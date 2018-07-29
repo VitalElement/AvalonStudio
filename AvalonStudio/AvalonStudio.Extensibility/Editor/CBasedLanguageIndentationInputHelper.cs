@@ -4,9 +4,12 @@ namespace AvalonStudio.Editor
 {
     public class CBasedLanguageIndentationInputHelper : ITextEditorInputHelper
     {
-        private (ISegment whitespace, int offset, char character) GetPreviousBracketInfo(ITextEditor editor, int offset, int skip = 0)
+        private (ISegment whitespace, int offset, char character) GetPreviousBracketInfo(ITextEditor editor, int offset)
         {
-            var previousBracket = editor.Document.GetLastCharMatching(c => c == '{' || c == '}', offset, 0, skip);
+            var location = editor.Document.GetLocation(offset);
+            var line = editor.Document.Lines[location.Line];
+
+            var previousBracket = editor.Document.GetLastCharMatching(c => c == '{' || c == '}', line.Offset, 0);
 
             if (previousBracket.index != -1)
             {
@@ -127,13 +130,13 @@ namespace AvalonStudio.Editor
                     {
                         if (inputText == "{" || inputText == "}")
                         {
-                            var lastBracketWhitespaceInfo = GetPreviousBracketInfo(editor, editor.Offset - 2, 1);
+                            var lastBracketWhitespaceInfo = GetPreviousBracketInfo(editor, editor.Offset - 2);
 
                             Indent(editor, editor.Line, lastBracketWhitespaceInfo.whitespace, lastBracketWhitespaceInfo.character);
                         }
                         else
                         {
-                            var lastBracketWhitespaceInfo = GetPreviousBracketInfo(editor, editor.Offset - 1, 0);
+                            var lastBracketWhitespaceInfo = GetPreviousBracketInfo(editor, editor.Offset - 1);
                             
                             if (lastCharInfo.character == ')')
                             {
@@ -176,13 +179,16 @@ namespace AvalonStudio.Editor
 
         public void CaretMovedToEmptyLine(ITextEditor editor)
         {
-            var previousBracketInfo = GetPreviousBracketInfo(editor, editor.Offset - 1);
+            if (editor.Document.TextLength > 0)
+            {
+                var previousBracketInfo = GetPreviousBracketInfo(editor, editor.Offset < editor.Document.TextLength ? editor.Offset : editor.Offset - 1);
 
-            Indent(editor, editor.Line, previousBracketInfo.whitespace, previousBracketInfo.character);
+                Indent(editor, editor.Line, previousBracketInfo.whitespace, previousBracketInfo.character);
 
-            ConditionalIndent(editor);
+                ConditionalIndent(editor);
 
-            editor.Offset = editor.CurrentLine().EndOffset;
+                editor.Offset = editor.CurrentLine().EndOffset;
+            }
         }
     }
 }
