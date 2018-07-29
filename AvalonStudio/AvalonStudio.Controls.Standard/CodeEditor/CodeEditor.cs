@@ -377,32 +377,35 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Throttle(TimeSpan.FromMilliseconds(100)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(e =>
             {
-                var location = new TextViewPosition(Document.GetLocation(CaretOffset));
-
-                if (_intellisenseManager != null && !_textEntering)
+                if(Document != null)
                 {
-                    if (TextArea.Selection.IsEmpty)
+                    var location = new TextViewPosition(Document.GetLocation(CaretOffset));
+
+                    if (_intellisenseManager != null && !_textEntering)
                     {
-                        _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, UnsavedFiles.ToList());
+                        if (TextArea.Selection.IsEmpty)
+                        {
+                            _intellisenseManager.SetCursor(CaretOffset, location.Line, location.Column, UnsavedFiles.ToList());
+                        }
+                        else if (_currentSnippetContext != null)
+                        {
+                            var offset = Document.GetOffset(TextArea.Selection.StartPosition.Location);
+                            _intellisenseManager.SetCursor(offset, TextArea.Selection.StartPosition.Line, TextArea.Selection.StartPosition.Column, UnsavedFiles.ToList());
+                        }
                     }
-                    else if (_currentSnippetContext != null)
-                    {
-                        var offset = Document.GetOffset(TextArea.Selection.StartPosition.Location);
-                        _intellisenseManager.SetCursor(offset, TextArea.Selection.StartPosition.Line, TextArea.Selection.StartPosition.Column, UnsavedFiles.ToList());
-                    }
+
+                    var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
+                    var visualLocationTop = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineTop);
+
+                    var position = visualLocation - TextArea.TextView.ScrollOffset;
+                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
+
+                    _intellisenseControl.SetLocation(position);
+
+                    _selectedWordBackgroundRenderer.SelectedWord = GetWordAtOffset(CaretOffset);
+
+                    TextArea.TextView.InvalidateLayer(KnownLayer.Background);
                 }
-
-                var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
-                var visualLocationTop = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineTop);
-
-                var position = visualLocation - TextArea.TextView.ScrollOffset;
-                position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
-
-                _intellisenseControl.SetLocation(position);
-
-                _selectedWordBackgroundRenderer.SelectedWord = GetWordAtOffset(CaretOffset);
-
-                TextArea.TextView.InvalidateLayer(KnownLayer.Background);
             }),
 
             this.WhenAnyValue(x=>x.DebugHighlight).Where(loc => loc != null).Subscribe(location =>
