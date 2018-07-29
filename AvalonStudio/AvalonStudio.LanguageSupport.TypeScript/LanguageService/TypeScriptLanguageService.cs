@@ -2,11 +2,13 @@
 using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Languages;
 using AvalonStudio.LanguageSupport.TypeScript.Projects;
 using AvalonStudio.Projects;
+using AvalonStudio.Utils;
 using IridiumJS.Runtime;
 using Newtonsoft.Json;
 using System;
@@ -79,8 +81,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             new Regex(
                 @"(//[\t|\s|\w|\d|\.]*[\r\n|\n])|([\s|\t]*/\*[\t|\s|\w|\W|\d|\.|\r|\n]*\*/)|(\<[!%][ \r\n\t]*(--([^\-]|[\r\n]|-[^\-])*--[ \r\n\t%]*)\>)",
                 RegexOptions.Compiled);
-
-        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
         public TypeScriptLanguageService()
         {
@@ -248,7 +248,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                     DiagnosticLevel.Error,
                     DiagnosticCategory.Compiler));
 
-                DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
+                IoC.Get<IErrorList>().UpdateDiagnostics(new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
 
                 return new CodeAnalysisResults();
             }
@@ -329,7 +329,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 DiagnosticLevel.Warning,
                 DiagnosticCategory.Compiler));
 
-            DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
+            IoC.Get<IErrorList>().UpdateDiagnostics(new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
 
             return result;
         }

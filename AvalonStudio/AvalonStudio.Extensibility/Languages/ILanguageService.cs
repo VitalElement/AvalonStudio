@@ -59,8 +59,6 @@ namespace AvalonStudio.Languages
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
         IEnumerable<ITextEditorInputHelper> InputHelpers { get; }
 
-        event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;        
-
         bool IsValidIdentifierCharacter(char data);
 
         Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "");

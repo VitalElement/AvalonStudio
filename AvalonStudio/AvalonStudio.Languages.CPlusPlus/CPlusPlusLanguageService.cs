@@ -4,6 +4,7 @@ using AvalonStudio.CodeEditor;
 using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
@@ -36,8 +37,6 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
-
-        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
         public CPlusPlusLanguageService()
         {
@@ -553,7 +552,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             });
 
-            DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
+            IoC.Get<IErrorList>().UpdateDiagnostics(new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
 
             return result;
         }

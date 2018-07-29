@@ -6,6 +6,7 @@ using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using ReactiveUI;
+using System;
 using System.Collections.ObjectModel;
 using System.Composition;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         private ErrorViewModel selectedError;
         private IStudio studio;
+
+        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
         public ErrorListViewModel()
         {
@@ -72,20 +75,25 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         public void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics)
         {
-            var toRemove = Errors.Where(e => Equals(e.Tag, diagnostics.Tag) && e.AssociatedFile == diagnostics.AssociatedSourceFile).ToList();
-
-            foreach (var error in toRemove)
+            Dispatcher.UIThread.Post(() =>
             {
-                Errors.Remove(error);
-            }
+                var toRemove = Errors.Where(e => Equals(e.Tag, diagnostics.Tag) && e.AssociatedFile == diagnostics.AssociatedSourceFile).ToList();
 
-            foreach (var diagnostic in diagnostics.Diagnostics)
-            {
-                if (diagnostic.Level != DiagnosticLevel.Hidden)
+                foreach (var error in toRemove)
                 {
-                    Errors.InsertSorted(new ErrorViewModel(diagnostic, diagnostics.Tag, diagnostics.AssociatedSourceFile));
+                    Errors.Remove(error);
                 }
-            }
+
+                foreach (var diagnostic in diagnostics.Diagnostics)
+                {
+                    if (diagnostic.Level != DiagnosticLevel.Hidden)
+                    {
+                        Errors.InsertSorted(new ErrorViewModel(diagnostic, diagnostics.Tag, diagnostics.AssociatedSourceFile));
+                    }
+                }
+
+                DiagnosticsUpdated?.Invoke(this, diagnostics);
+            });
         }
 
         public void BeforeActivation()

@@ -29,8 +29,6 @@ namespace AvalonStudio.Controls.Standard.Tests
 
         public ISyntaxHighlightingProvider SyntaxHighlighter => throw new NotImplementedException();
 
-        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
-
         public bool CanHandle(IEditor editor)
         {
             throw new NotImplementedException();

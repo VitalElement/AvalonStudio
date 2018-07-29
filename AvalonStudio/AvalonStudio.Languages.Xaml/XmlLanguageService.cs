@@ -26,8 +26,6 @@ namespace AvalonStudio.Languages.Xaml
             new InsertExtraNewLineBetweenAttributesOnEnterCodeInputHelper()
         };
 
-        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
-
         public IIndentationStrategy IndentationStrategy { get; } = new XamlIndentationStrategy();
 
         public virtual string LanguageId => "xml";

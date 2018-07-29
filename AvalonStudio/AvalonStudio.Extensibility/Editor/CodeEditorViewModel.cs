@@ -264,7 +264,7 @@ namespace AvalonStudio.Extensibility.Editor
 
             _languageServiceDisposables = new CompositeDisposable
             {
-                Observable.FromEventPattern<DiagnosticsUpdatedEventArgs>(LanguageService, nameof(LanguageService.DiagnosticsUpdated)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(args =>
+                Observable.FromEventPattern<DiagnosticsUpdatedEventArgs>(IoC.Get<IErrorList>(), nameof(IErrorList.DiagnosticsUpdated)).Subscribe(args =>
                 LanguageService_DiagnosticsUpdated(args.Sender, args.EventArgs))
             };
 
@@ -303,8 +303,6 @@ namespace AvalonStudio.Extensibility.Editor
                         _highlights.Add((SourceFile, e.DiagnosticHighlights));
                     }
                 }
-
-                IoC.Get<IErrorList>().UpdateDiagnostics(e);
             }
         }
 

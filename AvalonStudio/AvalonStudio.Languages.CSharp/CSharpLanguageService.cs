@@ -188,10 +188,6 @@ namespace AvalonStudio.Languages.CSharp
             WithMiscellaneousOptions(Microsoft.CodeAnalysis.SymbolDisplayMiscellaneousOptions.None).
             WithMiscellaneousOptions(Microsoft.CodeAnalysis.SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers);
 
-
-
-        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
-
         public CSharpLanguageService()
         {
             _snippetCodeGenerators = new Dictionary<string, Func<string, string>>();
@@ -665,7 +661,7 @@ namespace AvalonStudio.Languages.CSharp
                         }
                     }
 
-                    DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(diagnostics.Id, editor.SourceFile, (DiagnosticsUpdatedKind)diagnostics.Kind, results.ToImmutableArray(), fadedCode));
+                    IoC.Get<IErrorList>().UpdateDiagnostics(new DiagnosticsUpdatedEventArgs(diagnostics.Id, editor.SourceFile, (DiagnosticsUpdatedKind)diagnostics.Kind, results.ToImmutableArray(), fadedCode));
                 });
 
                 /*association.TextInputHandler = (sender, e) =>
