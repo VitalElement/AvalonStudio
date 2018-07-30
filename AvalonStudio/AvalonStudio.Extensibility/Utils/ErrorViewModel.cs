@@ -2,6 +2,7 @@
 using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using System;
 using System.IO;
@@ -37,6 +38,8 @@ namespace AvalonStudio.Utils
             get { return Model.Line; }
         }
 
+        public string Code => Model.Code;
+
         public DiagnosticLevel Level
         {
             get { return Model.Level; }
@@ -63,7 +66,19 @@ namespace AvalonStudio.Utils
 
         public int CompareTo(ErrorViewModel other)
         {
-            return Line.CompareTo(other.Line);
+            var result = File.CompareFilePath(other.File);
+
+            if(result == 0)
+            {
+                result = Line.CompareTo(other.Line);
+
+                if(result == 0)
+                {
+                    result = Code.CompareTo(other.Code);
+                }
+            }
+
+            return result;
         }
     }
 }

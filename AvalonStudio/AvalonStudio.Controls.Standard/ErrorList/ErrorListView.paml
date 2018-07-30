@@ -12,6 +12,10 @@
         Binding="{Binding Level}"
         Width="0.5*" />
       <dg:DataGridTextColumn
+        Header="Code"
+        Binding="{Binding Code}"
+        Width="0.5*" />
+      <dg:DataGridTextColumn
         Header="Error"
         Binding="{Binding Spelling}"
         Width="10*" />
