@@ -16,7 +16,7 @@ namespace CorApi.Portable
             {
                 unsafe
                 {
-                    int count = 0;
+                    var count = 0u;
                     GetName(0, out count, IntPtr.Zero);
 
                     if (count == 0)
@@ -24,21 +24,21 @@ namespace CorApi.Portable
                         return null;
                     }
 
-                    var temp = stackalloc char[count];
+                    var temp = stackalloc char[(int)count];
                     GetName(count, out count, (IntPtr)temp);
 
-                    return new string(temp, 0, count - 1);
+                    return new string(temp, 0, (int)count - 1);
                 }
             }
         }
 
-        public void SetJMCStatus(bool justMyCode, int[] tokensRef)
+        public void SetJMCStatus(bool justMyCode, uint[] tokensRef)
         {
-            var length = 0;
+            var length = 0u;
 
             if(tokensRef!= null)
             {
-                length = tokensRef.Length;
+                length = (uint)tokensRef.Length;
             }
 
             QueryInterface<Module2>().SetJMCStatus(justMyCode, length, tokensRef);
@@ -52,7 +52,7 @@ namespace CorApi.Portable
             }
             set
             {
-                QueryInterface<Module2>().JITCompilerFlags = value;
+                QueryInterface<Module2>().SetJITCompilerFlags(value);
             }
         }
 

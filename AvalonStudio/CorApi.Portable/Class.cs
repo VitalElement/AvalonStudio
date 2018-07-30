@@ -15,13 +15,13 @@ namespace CorApi.Portable
         public Type GetParameterizedType(CorElementType elementType, Type[] typeArguments)
         {
             Type[] types = null;
-            int length = 0;
+            uint length = 0;
             if (typeArguments != null)
             {
                 types = new Type[typeArguments.Length];
                 for (int i = 0; i < typeArguments.Length; i++)
                     types[i] = typeArguments[i];
-                length = typeArguments.Length;
+                length = (uint)typeArguments.Length;
             }
 
             Type pType = null;
