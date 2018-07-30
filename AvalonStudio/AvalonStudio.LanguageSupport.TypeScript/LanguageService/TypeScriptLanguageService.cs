@@ -247,7 +247,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                     DiagnosticCategory.Compiler));
 
                 errorList.Remove((this, editor.SourceFile));
-                errorList.Create((this, editor.SourceFile), DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
+                errorList.Create((this, editor.SourceFile), null, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
 
                 return new CodeAnalysisResults();
             }
@@ -331,7 +331,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 DiagnosticCategory.Compiler));
 
             errorList.Remove((this, editor.SourceFile));
-            errorList.Create((this, editor.SourceFile), DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
+            errorList.Create((this, editor.SourceFile), null, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
 
             return result;
         }

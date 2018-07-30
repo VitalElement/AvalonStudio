@@ -30,16 +30,16 @@ namespace AvalonStudio.Languages.CPlusPlus
     {
         private static readonly ClangIndex index = ClangService.CreateIndex();
 
-        private static readonly ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation> dataAssociations =
-            new ConditionalWeakTable<ISourceFile, CPlusPlusDataAssociation>();
-
+        private ClangTranslationUnit _translationUnit;
         private JobRunner clangAccessJobRunner;
+        private CancellationTokenSource _runnerCanellationSource;
 
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
 
         public CPlusPlusLanguageService()
         {
+            _runnerCanellationSource = new CancellationTokenSource();
             _snippetCodeGenerators = new Dictionary<string, Func<string, string>>();
             _snippetDynamicVars = new Dictionary<string, Func<int, int, int, string>>();
 
@@ -518,8 +518,6 @@ namespace AvalonStudio.Languages.CPlusPlus
         {
             var result = new CodeAnalysisResults();
 
-            var dataAssociation = GetAssociatedData(editor.SourceFile);
-
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
             clangUnsavedFiles.AddRange(unsavedFiles.Select(f => new ClangUnsavedFile(f.FileName, f.Contents)));
@@ -551,7 +549,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             var errorList = IoC.Get<IErrorList>();
             errorList.Remove((this, editor.SourceFile));
-            errorList.Create((this, editor.SourceFile), DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
+            errorList.Create((this, editor.SourceFile), editor.SourceFile.FilePath, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
 
             return result;
         }
@@ -587,30 +585,17 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 clangAccessJobRunner = new JobRunner();
 
-                Task.Factory.StartNew(() => { clangAccessJobRunner.RunLoop(new CancellationToken()); });
+                Task.Factory.StartNew(() => { clangAccessJobRunner.RunLoop(_runnerCanellationSource.Token); });
             }
-
-            if (dataAssociations.TryGetValue(editor.SourceFile, out CPlusPlusDataAssociation association))
-            {
-                throw new Exception("Source file already registered with language service.");
-            }
-
-            association = new CPlusPlusDataAssociation();
-            dataAssociations.Add(editor.SourceFile, association);
         }
 
         public void UnregisterSourceFile(IEditor editor)
         {
-            var association = GetAssociatedData(editor.SourceFile);
-
-            var tu = association.TranslationUnit;
-
             clangAccessJobRunner.InvokeAsync(() =>
             {
-                tu?.Dispose();
+                _translationUnit?.Dispose();
+                _runnerCanellationSource.Cancel();
             });
-
-            dataAssociations.Remove(editor.SourceFile);
         }
 
         public int Format(ITextEditor editor, uint offset, uint length, int cursor)
@@ -982,32 +967,17 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        private CPlusPlusDataAssociation GetAssociatedData(ISourceFile sourceFile)
-        {
-            CPlusPlusDataAssociation result = null;
-
-            dataAssociations.TryGetValue(sourceFile, out result);
-
-            return result;
-        }
-
         private ClangTranslationUnit GetAndParseTranslationUnit(ITextEditor editor, List<ClangUnsavedFile> unsavedFiles)
         {
-            var dataAssociation = GetAssociatedData(editor.SourceFile);
-
-            if (dataAssociation != null)
+            if (_translationUnit == null)
             {
-                if (dataAssociation.TranslationUnit == null)
-                {
-                    dataAssociation.TranslationUnit = GenerateTranslationUnit(editor, unsavedFiles);
-                }
-
-                // Always do a reparse, as a workaround for some issues in libclang 3.7.1
-                dataAssociation.TranslationUnit.Reparse(unsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
-
-                return dataAssociation.TranslationUnit;
+                _translationUnit = GenerateTranslationUnit(editor, unsavedFiles);
             }
-            return null;
+
+            // Always do a reparse, as a workaround for some issues in libclang 3.7.1
+            _translationUnit.Reparse(unsavedFiles.ToArray(), ReparseTranslationUnitFlags.None);
+
+            return _translationUnit;
         }
 
         public static int ApplyReplacements(ITextDocument document, int cursor, XDocument replacements, bool replaceCursor = true)

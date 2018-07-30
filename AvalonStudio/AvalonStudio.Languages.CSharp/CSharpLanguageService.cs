@@ -659,7 +659,7 @@ namespace AvalonStudio.Languages.CSharp
 
                     var errorList = IoC.Get<IErrorList>();
                     errorList.Remove((diagnostics.Id, editor.SourceFile));
-                    errorList.Create((diagnostics.Id, editor.SourceFile), DiagnosticSourceKind.Analysis, results.ToImmutableArray(), fadedCode);
+                    errorList.Create((diagnostics.Id, editor.SourceFile), editor.SourceFile.FilePath, DiagnosticSourceKind.Analysis, results.ToImmutableArray(), fadedCode);
                 });
             }
 

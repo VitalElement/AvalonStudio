@@ -25,9 +25,10 @@ namespace AvalonStudio.Languages
             Source = DiagnosticSourceKind.Misc;
         }
 
-        public DiagnosticsUpdatedEventArgs(object tag, DiagnosticsUpdatedKind kind, DiagnosticSourceKind source, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
+        public DiagnosticsUpdatedEventArgs(object tag, string filePath, DiagnosticsUpdatedKind kind, DiagnosticSourceKind source, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
         {
             Tag = tag;
+            FilePath = filePath;
             Kind = kind;
             Diagnostics = diagnostics;
             DiagnosticHighlights = diagnosticHighlights;
@@ -35,6 +36,7 @@ namespace AvalonStudio.Languages
         }
 
         public object Tag { get; }
+        public string FilePath { get; }
         public DiagnosticsUpdatedKind Kind { get; }
         public DiagnosticSourceKind Source { get; }
         public ImmutableArray<Diagnostic> Diagnostics { get; }

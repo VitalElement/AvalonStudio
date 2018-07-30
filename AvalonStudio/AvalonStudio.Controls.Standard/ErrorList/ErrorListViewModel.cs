@@ -94,7 +94,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         }
         
         /// <inheritdoc/>
-        public void Create(object tag, DiagnosticSourceKind source, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
+        public void Create(object tag, string filePath, DiagnosticSourceKind source, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
         {
             Dispatcher.UIThread.Post(() =>
             {
@@ -106,7 +106,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                     }
                 }
 
-                DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(tag, DiagnosticsUpdatedKind.DiagnosticsCreated, source, diagnostics, diagnosticHighlights));
+                DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(tag, filePath, DiagnosticsUpdatedKind.DiagnosticsCreated, source, diagnostics, diagnosticHighlights));
             });
         }
 

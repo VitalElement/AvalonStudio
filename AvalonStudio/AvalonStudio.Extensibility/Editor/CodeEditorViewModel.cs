@@ -5,6 +5,7 @@ using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
@@ -102,6 +103,12 @@ namespace AvalonStudio.Extensibility.Editor
         {
             get { return _codeIndex; }
             set { this.RaiseAndSetIfChanged(ref _codeIndex, value); }
+        }
+
+        public override bool OnClose()
+        {
+            LanguageService?.UnregisterSourceFile(null);
+            return base.OnClose();
         }
 
         public override bool OnTextEntered(string text)
@@ -296,7 +303,7 @@ namespace AvalonStudio.Extensibility.Editor
                     break;
 
                 case DiagnosticsUpdatedKind.DiagnosticsCreated:
-                    if (e.Source == DiagnosticSourceKind.Analysis)
+                    if (e.Source == DiagnosticSourceKind.Analysis && e.FilePath.CompareFilePath(SourceFile.FilePath) == 0)
                     {
                         _diagnostics.Add((e.Tag, e.Diagnostics));
 

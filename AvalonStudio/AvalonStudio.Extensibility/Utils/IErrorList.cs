@@ -16,7 +16,7 @@ namespace AvalonStudio.Utils
         /// <param name="sourceKind">The source kind of the diagnostic, misc, build or analysis.</param>
         /// <param name="diagnostics">The diagnostics to add.</param>
         /// <param name="diagnosticHighlights">Any special syntax highlighting for editors to show.</param>
-        void Create(object tag, DiagnosticSourceKind sourceKind, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null);
+        void Create(object tag, string filePath, DiagnosticSourceKind sourceKind, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null);
 
         /// <summary>
         /// Removes any diagnostics from the list with a matching tag.
