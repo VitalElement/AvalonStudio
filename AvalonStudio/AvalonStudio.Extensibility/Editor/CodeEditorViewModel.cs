@@ -268,7 +268,6 @@ namespace AvalonStudio.Extensibility.Editor
                 LanguageService_DiagnosticsUpdated(args.Sender, args.EventArgs))
             };
 
-
             /*SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(sourceFile.ContentType);}*/
 
             StartBackgroundWorkers();
@@ -278,44 +277,36 @@ namespace AvalonStudio.Extensibility.Editor
 
         private void LanguageService_DiagnosticsUpdated(object sender, DiagnosticsUpdatedEventArgs e)
         {
-            if (e.Source == DiagnosticSource.Analysis)
+            switch (e.Kind)
             {
-                switch (e.Kind)
-                {
-                    case DiagnosticsUpdatedKind.DiagnosticsRemoved:
-                        var toRemove = _diagnostics.Where(x => x.tag.Equals(e.Tag)).ToList();
+                case DiagnosticsUpdatedKind.DiagnosticsRemoved:
+                    var toRemove = _diagnostics.Where(x => x.tag.Equals(e.Tag)).ToList();
 
-                        foreach (var diagnostic in toRemove)
-                        {
-                            _diagnostics.Remove(diagnostic);
-                        }
+                    foreach (var diagnostic in toRemove)
+                    {
+                        _diagnostics.Remove(diagnostic);
+                    }
 
-                        var highlightsToRemove = _highlights.Where(h => h.tag.Equals(SourceFile)).ToList();
+                    var highlightsToRemove = _highlights.Where(h => h.tag.Equals(e.Tag)).ToList();
 
-                        foreach (var highlightData in highlightsToRemove)
-                        {
-                            _highlights.Remove(highlightData);
-                        }
-                        break;
+                    foreach (var highlightData in highlightsToRemove)
+                    {
+                        _highlights.Remove(highlightData);
+                    }
+                    break;
 
-                    case DiagnosticsUpdatedKind.DiagnosticsCreated:
+                case DiagnosticsUpdatedKind.DiagnosticsCreated:
+                    if (e.Source == DiagnosticSource.Analysis)
+                    {
                         _diagnostics.Add((e.Tag, e.Diagnostics));
 
                         if (e.DiagnosticHighlights != null)
                         {
                             _highlights.Add((e.Tag, e.DiagnosticHighlights));
                         }
-                        break;
-                }
+                    }
+                    break;
             }
         }
-
-        // HighlightingProvider
-
-        // CompletionProvider
-
-        // Formatter
-
-        // Indentation Strategy
     }
 }

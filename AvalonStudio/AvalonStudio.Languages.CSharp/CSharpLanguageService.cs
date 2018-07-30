@@ -249,10 +249,6 @@ namespace AvalonStudio.Languages.CSharp
 
         public string LanguageId => "cs";
 
-        public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData { get; } = new Subject<SyntaxHighlightDataList>();
-
-        public ISyntaxHighlightingProvider SyntaxHighlighter { get; private set; }
-
         public bool CanHandle(IEditor editor)
         {
             var result = false;
@@ -665,58 +661,6 @@ namespace AvalonStudio.Languages.CSharp
                     errorList.Remove((diagnostics.Id, editor.SourceFile));
                     errorList.Create((diagnostics.Id, editor.SourceFile), DiagnosticSource.Analysis, results.ToImmutableArray(), fadedCode);
                 });
-
-                /*association.TextInputHandler = (sender, e) =>
-                {
-                    switch (e.Text)
-                    {
-                        case "}":
-                        case ";":
-                            editor.IndentLine(editor.Line);
-                            break;
-
-                        case "{":
-                            if (IndentationStrategy != null)
-                            {
-                                editor.IndentLine(editor.Line);
-                            }
-                            break;
-                    }
-
-                    OpenBracket(editor, editor.Document, e.Text);
-                    CloseBracket(editor, editor.Document, e.Text);
-                };
-
-                association.BeforeTextInputHandler = (sender, e) =>
-                {
-                    switch (e.Text)
-                    {
-                        case "\n":
-                        case "\r\n":
-                            var nextChar = ' ';
-
-                            if (editor.CaretOffset != editor.Document.TextLength)
-                            {
-                                nextChar = editor.Document.GetCharAt(editor.CaretOffset);
-                            }
-
-                            if (nextChar == '}')
-                            {
-                                var newline = "\r\n"; // TextUtilities.GetNewLineFromDocument(editor.Document, editor.TextArea.Caret.Line);
-                                editor.Document.Insert(editor.CaretOffset, newline);
-
-                                editor.Document.TrimTrailingWhiteSpace(editor.Line - 1);
-
-                                editor.IndentLine(editor.Line);
-
-                                editor.CaretOffset -= newline.Length;
-                            }
-                            break;
-                    }
-                };
-
-                editor.TextEntered += association.TextInputHandler;
-                editor.TextEntering += association.BeforeTextInputHandler;*/
             }
 
             //SyntaxHighlighter = new RoslynHighlightProvider(GetDocument(association, editor.SourceFile));

@@ -124,12 +124,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public string LanguageId => "cpp";
 
-        public IEnumerable<ITextEditorInputHelper> InputHelpers { get; } 
+        public IEnumerable<ITextEditorInputHelper> InputHelpers { get; }
             = new ITextEditorInputHelper[] { new AutoBrackedInputHelper(), new CBasedLanguageIndentationInputHelper() };
-
-        public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
-
-        public ISyntaxHighlightingProvider SyntaxHighlighter => null;
 
         private CodeCompletionKind FromClangKind(NClang.CursorKind kind)
         {
@@ -185,87 +181,87 @@ namespace AvalonStudio.Languages.CPlusPlus
         public async Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column,
             List<UnsavedFile> unsavedFiles, char lastChar, string filter)
         {
-             var clangUnsavedFiles = new List<ClangUnsavedFile>();
+            var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
-              foreach (var unsavedFile in unsavedFiles)
-              {
-                  clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
-              }
+            foreach (var unsavedFile in unsavedFiles)
+            {
+                clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+            }
 
-              var result = new CodeCompletionResults();
+            var result = new CodeCompletionResults();
 
-              await clangAccessJobRunner.InvokeAsync(() =>
-              {
-                  var translationUnit = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
+            await clangAccessJobRunner.InvokeAsync(() =>
+            {
+                var translationUnit = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
 
-                  if (translationUnit != null)
-                  {
-                      var completionResults = translationUnit.CodeCompleteAt(editor.SourceFile.Location, line, column, clangUnsavedFiles.ToArray(),
-                          CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
-                      completionResults.Sort();
+                if (translationUnit != null)
+                {
+                    var completionResults = translationUnit.CodeCompleteAt(editor.SourceFile.Location, line, column, clangUnsavedFiles.ToArray(),
+                        CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
+                    completionResults.Sort();
 
-                      result.Contexts = (CompletionContext)completionResults.Contexts;
+                    result.Contexts = (CompletionContext)completionResults.Contexts;
 
-                      if (result.Contexts == CompletionContext.Unexposed && lastChar == ':')
-                      {
-                          result.Contexts = CompletionContext.AnyType; // special case Class::<- here static class member access. 
+                    if (result.Contexts == CompletionContext.Unexposed && lastChar == ':')
+                    {
+                        result.Contexts = CompletionContext.AnyType; // special case Class::<- here static class member access. 
                       }
 
-                      foreach (var codeCompletion in completionResults.Results)
-                      {
-                          var typedText = string.Empty;
+                    foreach (var codeCompletion in completionResults.Results)
+                    {
+                        var typedText = string.Empty;
 
-                          if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available || codeCompletion.CompletionString.Availability == AvailabilityKind.Deprecated)
-                          {
-                              foreach (var chunk in codeCompletion.CompletionString.Chunks)
-                              {
-                                  if (chunk.Kind == CompletionChunkKind.TypedText)
-                                  {
-                                      typedText = chunk.Text;
-                                  }
+                        if (codeCompletion.CompletionString.Availability == AvailabilityKind.Available || codeCompletion.CompletionString.Availability == AvailabilityKind.Deprecated)
+                        {
+                            foreach (var chunk in codeCompletion.CompletionString.Chunks)
+                            {
+                                if (chunk.Kind == CompletionChunkKind.TypedText)
+                                {
+                                    typedText = chunk.Text;
+                                }
 
                                   // TODO construct chunks into replacement text.
 
                                   // i.e. do should insert do {} while();
 
                                   switch (chunk.Kind)
-                                  {
-                                      case CompletionChunkKind.LeftParen:
-                                      case CompletionChunkKind.LeftAngle:
-                                      case CompletionChunkKind.LeftBrace:
-                                      case CompletionChunkKind.LeftBracket:
-                                      case CompletionChunkKind.RightAngle:
-                                      case CompletionChunkKind.RightBrace:
-                                      case CompletionChunkKind.RightBracket:
-                                      case CompletionChunkKind.RightParen:
-                                      case CompletionChunkKind.Placeholder:
-                                      case CompletionChunkKind.Comma:
-                                          break;
-                                  }
-                              }
+                                {
+                                    case CompletionChunkKind.LeftParen:
+                                    case CompletionChunkKind.LeftAngle:
+                                    case CompletionChunkKind.LeftBrace:
+                                    case CompletionChunkKind.LeftBracket:
+                                    case CompletionChunkKind.RightAngle:
+                                    case CompletionChunkKind.RightBrace:
+                                    case CompletionChunkKind.RightBracket:
+                                    case CompletionChunkKind.RightParen:
+                                    case CompletionChunkKind.Placeholder:
+                                    case CompletionChunkKind.Comma:
+                                        break;
+                                }
+                            }
 
-                              if (filter == string.Empty || typedText.StartsWith(filter))
-                              {
-                                  var completion = new CodeCompletionData(typedText, typedText, typedText)
-                                  {
-                                      Priority = (int)codeCompletion.CompletionString.Priority,
-                                      Kind = FromClangKind(codeCompletion.CursorKind),
-                                      BriefComment = codeCompletion.CompletionString.BriefComment
-                                  };
+                            if (filter == string.Empty || typedText.StartsWith(filter))
+                            {
+                                var completion = new CodeCompletionData(typedText, typedText, typedText)
+                                {
+                                    Priority = (int)codeCompletion.CompletionString.Priority,
+                                    Kind = FromClangKind(codeCompletion.CursorKind),
+                                    BriefComment = codeCompletion.CompletionString.BriefComment
+                                };
 
-                                  result.Completions.Add(completion);
+                                result.Completions.Add(completion);
 
-                                  if (completion.Kind == CodeCompletionKind.OverloadCandidate)
-                                  {
+                                if (completion.Kind == CodeCompletionKind.OverloadCandidate)
+                                {
                                       //Console.WriteLine("TODO Implement overload candidate.");
                                   }
-                              }
-                          }
-                      }
+                            }
+                        }
+                    }
 
-                      completionResults.Dispose();
-                  }
-              });
+                    completionResults.Dispose();
+                }
+            });
 
             return result;
         }

@@ -46,10 +46,6 @@ namespace AvalonStudio.Languages.Xaml
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
-        public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
-
-        public ISyntaxHighlightingProvider SyntaxHighlighter => throw new NotImplementedException();
-
         public virtual bool CanHandle(IEditor editor)
         {
             var result = false;

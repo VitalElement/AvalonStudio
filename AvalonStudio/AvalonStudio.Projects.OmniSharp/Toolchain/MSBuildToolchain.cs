@@ -198,6 +198,9 @@ namespace AvalonStudio.Toolchains.MSBuild
         {
             var diagnosticEntries = new Dictionary<string, List<Diagnostic>>();
 
+            var errorList = IoC.Get<IErrorList>();
+            errorList.Remove(this);
+
             var result = await Task.Factory.StartNew(() =>
             {
                 var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"build {Path.GetFileName(project.Location)}", (s, e) =>
@@ -219,8 +222,6 @@ namespace AvalonStudio.Toolchains.MSBuild
                 return exitCode == 0;
             });
 
-            var errorList = IoC.Get<IErrorList>();
-
             foreach(var key in diagnosticEntries.Keys)
             {
                 errorList.Create(this, DiagnosticSource.Build, diagnosticEntries[key].ToImmutableArray());
@@ -236,6 +237,9 @@ namespace AvalonStudio.Toolchains.MSBuild
 
         public async Task Clean(IConsole console, IProject project)
         {
+            var errorList = IoC.Get<IErrorList>();
+            errorList.Remove(this);
+
             await Task.Factory.StartNew(() =>
             {
                 console.Write($"Cleaning Project: {project.Name}...");

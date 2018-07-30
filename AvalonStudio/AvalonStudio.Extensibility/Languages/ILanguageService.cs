@@ -43,8 +43,6 @@ namespace AvalonStudio.Languages
 
     public interface ILanguageService
     {
-        ISyntaxHighlightingProvider SyntaxHighlighter { get; }
-
         /// <summary>
         /// A file path compatible name for the language, i.e. cs, cpp, ts, css, go, vb, fsharp
         /// </summary>

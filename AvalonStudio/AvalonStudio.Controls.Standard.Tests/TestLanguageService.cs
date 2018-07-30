@@ -27,8 +27,6 @@ namespace AvalonStudio.Controls.Standard.Tests
 
         public IEnumerable<ITextEditorInputHelper> InputHelpers => throw new NotImplementedException();
 
-        public ISyntaxHighlightingProvider SyntaxHighlighter => throw new NotImplementedException();
-
         public bool CanHandle(IEditor editor)
         {
             throw new NotImplementedException();
