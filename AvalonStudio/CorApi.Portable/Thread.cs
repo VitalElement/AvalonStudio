@@ -12,11 +12,11 @@ namespace CorApi.Portable
 {
     public partial class Thread
     {
-        public int Id
+        public uint Id
         {
             get
             {
-                GetID(out int result);
+                GetID(out uint result);
 
                 return result;
             }

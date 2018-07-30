@@ -4,14 +4,14 @@
 // project unless explicitly authorized.
 //
 
-using SharpDX.Mathematics.Interop;
+using SharpGen.Runtime;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 namespace CorApi.Portable
 {
-    public partial class Controller
+    public partial class Controller : ComObject
     {
         public IEnumerable Threads
         {

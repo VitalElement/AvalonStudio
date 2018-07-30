@@ -12,7 +12,7 @@ namespace CorApi.Portable
 {
     public partial class Eval
     {
-        public void NewParameterizedArray(Type type, int rank, int dims, int lowBounds)
+        public void NewParameterizedArray(Type type, uint rank, uint dims, uint lowBounds)
         {
             var eval2 = QueryInterface<Eval2>();
             eval2.NewParameterizedArray(type, rank, dims, lowBounds);
@@ -22,9 +22,9 @@ namespace CorApi.Portable
         {
 
             Type[] types = null;
-            int typesLength = 0;
+            uint typesLength = 0;
             Value[] values = null;
-            int valuesLength = 0;
+            uint valuesLength = 0;
             var eval2 = QueryInterfaceOrNull<Eval2>();
 
             if (argumentTypes != null)
@@ -32,14 +32,14 @@ namespace CorApi.Portable
                 types = new Type[argumentTypes.Length];
                 for (int i = 0; i < argumentTypes.Length; i++)
                     types[i] = argumentTypes[i];
-                typesLength = types.Length;
+                typesLength = (uint)types.Length;
             }
             if (arguments != null)
             {
                 values = new Value[arguments.Length];
                 for (int i = 0; i < arguments.Length; i++)
                     values[i] = arguments[i];
-                valuesLength = values.Length;
+                valuesLength = (uint)values.Length;
             }
 
             eval2.NewParameterizedObject(managedFunction, typesLength, types, valuesLength, values);
@@ -48,9 +48,9 @@ namespace CorApi.Portable
         public void CallParameterizedFunction(Function managedFunction, Type[] argumentTypes, Value[] arguments)
         {
             Type[] types = null;
-            int typesLength = 0;
+            uint typesLength = 0;
             Value[] values = null;
-            int valuesLength = 0;
+            uint valuesLength = 0;
 
             var eval2 = QueryInterfaceOrNull<Eval2>();
 
@@ -59,14 +59,14 @@ namespace CorApi.Portable
                 types = new Type[argumentTypes.Length];
                 for (int i = 0; i < argumentTypes.Length; i++)
                     types[i] = argumentTypes[i];
-                typesLength = types.Length;
+                typesLength = (uint)types.Length;
             }
             if (arguments != null)
             {
                 values = new Value[arguments.Length];
                 for (int i = 0; i < arguments.Length; i++)
                     values[i] = arguments[i];
-                valuesLength = values.Length;
+                valuesLength = (uint)values.Length;
             }
             eval2.CallParameterizedFunction(managedFunction, typesLength, types, valuesLength, values);
         }

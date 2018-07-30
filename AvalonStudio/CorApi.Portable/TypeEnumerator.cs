@@ -48,8 +48,8 @@ namespace CorApi.Portable
                 return false;
 
             Type[] a = new Type[1];
-            int c = 0;
-            m_enum.Next(a.Length, a, out c);
+            var c = 0u;
+            m_enum.Next((uint)a.Length, a, out c);
             if (c == 1) // S_OK && we got 1 new element
                 m_ty = new Type(a[0].NativePointer);
             else
@@ -64,7 +64,7 @@ namespace CorApi.Portable
             m_ty = null;
         }
 
-        public void Skip(int celt)
+        public void Skip(uint celt)
         {
             m_enum.Skip(celt);
             m_ty = null;
@@ -88,7 +88,7 @@ namespace CorApi.Portable
                     return 0;
                 }
 
-                return m_enum.Count;
+                return (int)m_enum.Count;
             }
         }
     }

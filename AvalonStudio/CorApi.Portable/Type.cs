@@ -30,7 +30,7 @@ namespace CorApi.Portable
             }
         }
 
-        public Value GetStaticFieldValue(int fieldToken, Frame frame)
+        public Value GetStaticFieldValue(uint fieldToken, Frame frame)
         {
             Value dv = null;
             GetStaticFieldValue(fieldToken, frame, out dv);
