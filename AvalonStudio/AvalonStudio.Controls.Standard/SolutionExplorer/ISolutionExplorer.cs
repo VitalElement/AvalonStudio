@@ -1,6 +1,8 @@
-﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
+﻿using AvalonStudio.MVVM;
+
+namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    public interface ISolutionExplorer
+    public interface ISolutionExplorer : IToolViewModel
     {
         void NewSolution();
 

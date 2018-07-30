@@ -6,6 +6,7 @@ using AvalonStudio.CodeEditor;
 using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Projects;
@@ -28,6 +29,7 @@ using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition;
 using System.IO;
 using System.Linq;
 using System.Reactive.Subjects;
@@ -1132,9 +1134,11 @@ namespace AvalonStudio.Languages.CSharp
 
             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
 
+            var service = workspace.GetService<ICodeFixService>();
+
             return new List<IContextActionProvider>
             {
-                new RoslynContextActionProvider(workspace)
+                new RoslynContextActionProvider(workspace, service)
             };
         }
     }

@@ -199,9 +199,7 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             get
             {
-                var shell = IoC.Get<IShell>();
-
-                var debugger = shell.Debugger2s.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.DotNetCore.DotNetCoreDebugger");
+                var debugger = IoC.GetInstances<IDebugger>().FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Debugging.DotNetCore.DotNetCoreDebugger");
 
                 return debugger;
             }
@@ -282,9 +280,7 @@ namespace AvalonStudio.Projects.OmniSharp
         {
             get
             {
-                var shell = IoC.Get<IShell>();
-
-                var toolchain = shell.ToolChains.FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Toolchains.MSBuild.MSBuildToolchain");
+                var toolchain = IoC.GetInstances<IToolchain>().FirstOrDefault(tc => tc.GetType().ToString() == "AvalonStudio.Toolchains.MSBuild.MSBuildToolchain");
 
                 return toolchain;
             }

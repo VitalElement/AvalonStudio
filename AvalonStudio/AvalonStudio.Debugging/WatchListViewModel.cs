@@ -2,16 +2,22 @@ namespace AvalonStudio.Debugging
 {
     using Avalonia.Threading;
     using AvalonStudio.Extensibility;
-    using AvalonStudio.Extensibility.Plugin;
+    using AvalonStudio.Extensibility.Studio;
     using AvalonStudio.MVVM;
+    using AvalonStudio.Shell;
     using Mono.Debugging.Client;
     using ReactiveUI;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Composition;
     using System.Linq;
     using System.Threading.Tasks;
 
-    public class WatchListViewModel : ToolViewModel, IExtension, IWatchList
+    [ExportToolControl]
+    [Export(typeof(IWatchList))]
+    [Export(typeof(IExtension))]
+    [Shared]
+    public class WatchListViewModel : ToolViewModel, IActivatableExtension, IWatchList
     {
         protected IDebugManager2 DebugManager { get; set; }
 
@@ -38,7 +44,10 @@ namespace AvalonStudio.Debugging
                 Expression = "";
             });
 
-            Activation(); // for when we create the part outside of composition.
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Activation(); // for when we create the part outside of composition.
+            });
         }
 
         public ObservableCollection<ObjectValueViewModel> Children
@@ -49,12 +58,11 @@ namespace AvalonStudio.Debugging
 
         public override Location DefaultLocation
         {
-            get { return Location.RightMiddle; }
+            get { return Location.Bottom; }
         }
 
         public virtual void BeforeActivation()
-        {
-            IoC.RegisterConstant(this, typeof(IWatchList));
+        {            
         }
 
         public virtual void Activation()
@@ -72,6 +80,8 @@ namespace AvalonStudio.Debugging
                     Clear();
                 };
             }
+
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
         }
 
         private void DebugManager_FrameChanged(object sender, System.EventArgs e)

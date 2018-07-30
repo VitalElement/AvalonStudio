@@ -2,6 +2,7 @@
 {
     using Avalonia.Controls;
     using AvalonStudio.Extensibility;
+    using AvalonStudio.Extensibility.Studio;
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;
     using AvalonStudio.Shell;
@@ -43,9 +44,7 @@
                 var dlg = new OpenFileDialog();
                 dlg.Title = "Open Project";
 
-                var shell = IoC.Get<IShell>();
-
-                foreach (var projectType in shell.ProjectTypes)
+                foreach (var projectType in IoC.Get<IStudio>().ProjectTypes)
                 {
                     var projectTypeMetadata = projectType.Metadata;
                     var extensions = new List<string>();
@@ -103,7 +102,7 @@
 
                 shell.ModalDialog = new NewProjectDialogViewModel(Model);
 
-                if (await shell.ModalDialog.ShowDialog())
+                if (await shell.ModalDialog.ShowDialogAsync())
                 {
                     var observable = Items.ObserveNewItems().OfType<SolutionItemViewModel>().FirstOrDefaultAsync();
 

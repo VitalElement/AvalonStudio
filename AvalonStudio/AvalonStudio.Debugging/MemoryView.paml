@@ -1,36 +1,34 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
-    <cont:ToolControl Title="Memory Viewer">
-      <Grid RowDefinitions="22,*">
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility"             >
+  <Grid RowDefinitions="22,*">
 
-        <Grid ColumnDefinitions="55,*,60,60">
-          <TextBlock Text="Address:" Margin="5 0"/>
-          <TextBox Grid.Column="1" Padding="0" Margin="0 1" BorderThickness="1" FontSize="10" Text="{Binding Address}"/>
+    <Grid ColumnDefinitions="55,*,60,60">
+      <TextBlock Text="Address:" Margin="5 0"/>
+      <TextBox Grid.Column="1" Padding="0" Margin="0 1" BorderThickness="1" FontSize="10" Text="{Binding Address}"/>
 
-          <TextBlock Grid.Column="2" Margin="5 0" Text="Columns:" />
-          <DropDown Grid.Column="3" Padding="0" Margin="0 1" Items="{Binding ColumnOptions}"/>
-        </Grid>
+      <TextBlock Grid.Column="2" Margin="5 0" Text="Columns:" />
+      <DropDown Grid.Column="3" Padding="0" Margin="0 1" Items="{Binding ColumnOptions}"/>
+    </Grid>
 
-        <TextBlock Grid.Row="1" Text="Memory Viewer is not Available when the target is running." FontSize="18" TextAlignment="Center" Margin="20" />
-        
-        <ListBox Grid.Row="1" IsVisible="{Binding Enabled}" Grid.ColumnSpan="2" BorderThickness="0" Items="{Binding MemoryData}" SelectedIndex="{Binding SelectedIndex}" Background="{DynamicResource ThemeControlDarkBrush}">
-          <ListBox.DataTemplates>
-            <DataTemplate>
-              <Grid TextBlock.FontFamily="Inconsolata" TextBlock.FontSize="14" TextBlock.FontWeight="Light">
-                <TextBlock Text="Loading..." IsVisible="{Binding IsLoading}"/>
-                <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Data.Background}" IsVisible="{Binding Data.Visible}">
-                  <TextBlock Text="{Binding Data.Address}" Foreground="#FF007ACC" />
-                  <ItemsControl Items="{Binding Data.Values}">
-                    <ItemsControl.ItemsPanel>
-                      <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" Gap="1" />
-                      </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.DataTemplates>
-                      <DataTemplate>
-                        <TextBlock Text="{Binding FormattedValue}" Foreground="{Binding ValueForeground, Mode=TwoWay}">
-                          
-                          <!--
+    <TextBlock Grid.Row="1" Text="Memory Viewer is not Available when the target is running." FontSize="18" TextAlignment="Center" Margin="20" />
+
+    <ListBox Grid.Row="1" IsVisible="{Binding Enabled}" Grid.ColumnSpan="2" BorderThickness="0" Items="{Binding MemoryData}" SelectedIndex="{Binding SelectedIndex}" Background="{DynamicResource ThemeControlDarkBrush}">
+      <ListBox.DataTemplates>
+        <DataTemplate>
+          <Grid TextBlock.FontFamily="Inconsolata" TextBlock.FontSize="14" TextBlock.FontWeight="Light">
+            <TextBlock Text="Loading..." IsVisible="{Binding IsLoading}"/>
+            <StackPanel Orientation="Horizontal" Spacing="5" Background="{Binding Data.Background}" IsVisible="{Binding Data.Visible}">
+              <TextBlock Text="{Binding Data.Address}" Foreground="#FF007ACC" />
+              <ItemsControl Items="{Binding Data.Values}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="1" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.DataTemplates>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding FormattedValue}" Foreground="{Binding ValueForeground, Mode=TwoWay}">
+
+                      <!--
                           <TextBlock.Style>
                             <Style TargetType="TextBlock">
                               <Setter Property="Foreground" Value="#4EC9B0" />
@@ -41,16 +39,15 @@
                               </Style.Triggers>
                             </Style>
                           </TextBlock.Style>-->
-                        </TextBlock>
-                      </DataTemplate>
-                    </ItemsControl.DataTemplates>
-                  </ItemsControl>
-                  <TextBlock Text="{Binding Data.Text}" Foreground="#FF007ACC"/>
-                </StackPanel>
-              </Grid>
-            </DataTemplate>
-          </ListBox.DataTemplates>
-        </ListBox>
-      </Grid>
-    </cont:ToolControl>
+                    </TextBlock>
+                  </DataTemplate>
+                </ItemsControl.DataTemplates>
+              </ItemsControl>
+              <TextBlock Text="{Binding Data.Text}" Foreground="#FF007ACC"/>
+            </StackPanel>
+          </Grid>
+        </DataTemplate>
+      </ListBox.DataTemplates>
+    </ListBox>
+  </Grid>
 </UserControl>

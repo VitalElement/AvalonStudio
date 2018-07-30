@@ -13,3 +13,9 @@
 [submodule "SharpGenTools"]
 	path = SharpGenTools
 	url = https://github.com/jkoritzinsky/SharpGenTools.git
+[submodule "AvalonStudio.Shell"]
+	path = AvalonStudio.Shell
+	url = https://github.com/VitalElement/AvalonStudio.Shell.git
+[submodule "DataGrid"]
+	path = DataGrid
+	url = https://github.com/AvaloniaUI/DataGrid.git

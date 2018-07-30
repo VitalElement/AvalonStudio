@@ -42,6 +42,18 @@ namespace AvalonStudio.Extensibility.Editor
                     };
                 }
             });
+
+            this.WhenAnyValue(x => x.IsDirty).Subscribe(dirty =>
+            {
+                if(dirty)
+                {
+                    Title = file.Name + "*";
+                }
+                else
+                {
+                    Title = file.Name;
+                }
+            });
         }
 
         public bool IsReadOnly
@@ -50,11 +62,13 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _isReadOnly, value); }
         }
 
-        public override void Close()
+        public override bool OnClose()
         {
-            base.Close();
+            var result = base.OnClose();
 
             _disposables.Dispose();
+
+            return result;
         }
 
         ~TextEditorViewModel()
@@ -65,21 +79,6 @@ namespace AvalonStudio.Extensibility.Editor
         {
             get { return _sourceText; }
             set { this.RaiseAndSetIfChanged(ref _sourceText, value); }
-        }
-
-        public string FontFamily
-        {
-            get
-            {
-                switch (Platform.PlatformIdentifier)
-                {
-                    /*case Platforms.PlatformID.Win32NT:
-                        return "Consolas";*/
-
-                    default:
-                        return "Source Code Pro";
-                }
-            }
         }
 
         public override async Task WaitForEditorToLoadAsync()

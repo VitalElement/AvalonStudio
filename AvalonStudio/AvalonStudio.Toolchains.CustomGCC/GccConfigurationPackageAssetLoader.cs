@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Composition;
+using AvalonStudio.Extensibility;
 
 namespace AvalonStudio.Toolchains.CustomGCC
 {
+    [Export(typeof(IExtension))]
     class GccConfigurationPackageAssetLoader : IPackageAssetLoader
     {
         public void Activation()

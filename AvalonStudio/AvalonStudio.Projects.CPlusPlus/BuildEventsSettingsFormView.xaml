@@ -1,6 +1,6 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+﻿<UserControl xmlns="https://github.com/avaloniaui">
   <StackPanel>
-    <StackPanel Gap="4">
+    <StackPanel Spacing="4">
       <TextBox UseFloatingWatermark="true" Watermark="Pre-build event command line:" Text="{Binding PreBuildCommands}" AcceptsReturn="True" Height="200" />
       <TextBox UseFloatingWatermark="true" Watermark="Post-build event command line:" Text="{Binding PostBuildCommands}" AcceptsReturn="True" Height="200" />
     </StackPanel>

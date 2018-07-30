@@ -1,17 +1,15 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"  xmlns:controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
+﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:vm="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging" IsVisible="{Binding IsVisible}">
-  <controls:ToolControl Title="Call Stack">
-    <ListBox BorderThickness="0" Items="{Binding Frames}" SelectedItem="{Binding SelectedFrame}" Background="{DynamicResource ThemeControlBackgroundBrush}">
-      <ListBox.DataTemplates>
-        <DataTemplate DataType="vm:FrameViewModel">
-          <StackPanel Orientation="Horizontal" Gap="5" Background="{Binding Background}">
-            <TextBlock Text="{Binding Function}" Width="200" />
-            <TextBlock Text="{Binding Line}" />
-            <TextBlock Text="{Binding Address}" />
-            <TextBlock Text="{Binding File}" />
-          </StackPanel>
-        </DataTemplate>
-      </ListBox.DataTemplates>
-    </ListBox>
-  </controls:ToolControl> 
+  <ListBox BorderThickness="0" Items="{Binding Frames}" SelectedItem="{Binding SelectedFrame}" Background="{DynamicResource ThemeControlBackgroundBrush}">
+    <ListBox.DataTemplates>
+      <DataTemplate DataType="vm:FrameViewModel">
+        <StackPanel Orientation="Horizontal" Spacing="5" Background="{Binding Background}">
+          <TextBlock Text="{Binding Function}" Width="200" />
+          <TextBlock Text="{Binding Line}" />
+          <TextBlock Text="{Binding Address}" />
+          <TextBlock Text="{Binding File}" />
+        </StackPanel>
+      </DataTemplate>
+    </ListBox.DataTemplates>
+  </ListBox>
 </UserControl>

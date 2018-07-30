@@ -1,17 +1,21 @@
 using Avalonia;
+using Avalonia.Threading;
 using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
+using AvalonStudio.Shell;
 using Serilog;
 using System;
-using System.Composition;
+using AvalonStudio.Extensibility.Studio;
+using AvalonStudio.Extensibility;
 
 namespace AvalonStudio
 {
     internal class App : Application
     {
+#if !DEBUG
         static void Print(Exception ex)
         {
             Console.WriteLine(ex.Message);
@@ -21,43 +25,51 @@ namespace AvalonStudio
                 Print(ex.InnerException);
             }
         }
+#endif
 
         [STAThread]
         private static void Main(string[] args)
         {
-            try
+#if !DEBUG
+        try
             {
-                if (args == null)
-                {
-                    throw new ArgumentNullException(nameof(args));
-                }
+#endif
+            if (args == null)
+            {
+                throw new ArgumentNullException(nameof(args));
+            }
 
-                var builder = BuildAvaloniaApp().AfterSetup(async _ =>
-                {
-                    Platform.Initialise();
-                    PackageSources.InitialisePackageSources();
-
-                    var extensionManager = new ExtensionManager();
-                    var container = CompositionRoot.CreateContainer(extensionManager);
-
-                    var shellExportFactory = container.GetExport<ExportFactory<ShellViewModel>>();
-                    ShellViewModel.Instance = shellExportFactory.CreateExport().Value;
-
-                    await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
-                });
+            BuildAvaloniaApp().BeforeStarting(_ =>
+            {
+                var studio = IoC.Get<IStudio>();
 
                 InitializeLogging();
 
-                builder.Start<MainWindow>();
-            }
+                Platform.Initialise();
+
+                PackageSources.InitialisePackageSources();
+
+                Dispatcher.UIThread.Post(async () =>
+                   {
+                       await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
+                   });
+            })
+            .StartShellApp<AppBuilder, MainWindow>("AvalonStudio", null, () => new MainWindowViewModel());
+#if !DEBUG
+    }
             catch (Exception e)
             {
                 Print(e);
             }
+            finally
+#endif
+            {
+                Application.Current.Exit();
+            }
         }
 
         public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>().UseWin32().UseSkia().UseReactiveUI();
+            => AppBuilder.Configure<App>().UsePlatformDetect();
 
         public override void Initialize()
         {
@@ -72,24 +84,6 @@ namespace AvalonStudio
                 .WriteTo.Trace(outputTemplate: "{Area}: {Message}")
                 .CreateLogger());
 #endif
-        }
-    }
-
-    public static class AppBuilderExtensions
-    {
-        public static AppBuilder AvalonStudioPlatformDetect(this AppBuilder builder)
-        {
-            switch (Platform.PlatformIdentifier)
-            {
-                case Platforms.PlatformID.Win32NT:
-                    return builder.UseWin32().UseSkia();
-
-                case Platforms.PlatformID.Unix:
-                    return builder.UseGtk3().UseSkia();
-
-                default:
-                    return builder.UsePlatformDetect();
-            }
         }
     }
 }

@@ -1,17 +1,17 @@
 <UserControl xmlns="https://github.com/avaloniaui">
-    <StackPanel Gap="10"  HorizontalAlignment="Left" Margin="10">
-        <StackPanel Orientation="Horizontal" Gap="5">
-            <StackPanel Orientation="Horizontal" Gap="5">
+    <StackPanel Spacing="10"  HorizontalAlignment="Left" Margin="10">
+        <StackPanel Orientation="Horizontal" Spacing="5">
+            <StackPanel Orientation="Horizontal" Spacing="5">
                 <TextBlock Text="Interface" />
                 <DropDown Items="{Binding InterfaceOptions}" SelectedIndex="{Binding InterfaceSelectedIndex, Mode=TwoWay}" />
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Gap="5">
+            <StackPanel Orientation="Horizontal" Spacing="5">
                 <TextBlock Text="Speed (kHz)" />
                 <DropDown Items="{Binding SpeedOptions}" SelectedIndex="{Binding SpeedSelectedIndex, Mode=TwoWay}" />
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Gap="5">
+            <StackPanel Orientation="Horizontal" Spacing="5">
                 <TextBlock Text="Download" />
                 <CheckBox IsChecked="{Binding Download}" />
 
@@ -19,17 +19,17 @@
                 <CheckBox IsChecked="{Binding PostDownloadReset}" />
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Gap="5">
+            <StackPanel Orientation="Horizontal" Spacing="5">
                 <TextBlock Text="Reset" />
                 <CheckBox IsChecked="{Binding Reset}" />
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Gap="5">
+            <StackPanel Orientation="Horizontal" Spacing="5">
                 <TextBlock Text="Run" />
                 <CheckBox IsChecked="{Binding Run}" />
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Gap="5">
+            <StackPanel Orientation="Horizontal" Spacing="5">
             <TextBlock Text="Connect over TCPIP" />
             <CheckBox IsChecked="{Binding UseRemote}" />
           </StackPanel>

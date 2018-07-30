@@ -1,6 +1,7 @@
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Shell;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -21,10 +22,10 @@ namespace AvalonStudio.Toolchains.Standard
 
         private int fileCount;
         private int numTasks;
-        private IShell _shell;
+        private IStudio _studio;
         private IStatusBar _statusBar;
 
-        protected IShell Shell => _shell;
+        protected IStudio Studio => _studio;
 
         private readonly object resultLock = new object();
 
@@ -668,7 +669,7 @@ namespace AvalonStudio.Toolchains.Standard
 
         public virtual async Task BeforeBuild(IConsole console, IProject project)
         {
-            _shell = IoC.Get<IShell>();
+            _studio = IoC.Get<IStudio>();
         }
           
         public abstract Task<bool> InstallAsync(IConsole console, IProject project);

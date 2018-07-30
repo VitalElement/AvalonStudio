@@ -2,19 +2,22 @@ using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
-using AvalonStudio.TextEditor.Rendering;
 using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
+using System.Composition;
 
 namespace AvalonStudio.Controls.Standard.Console
 {
-    public class ConsoleViewModel : ToolViewModel, IConsole, IPlugin
+    [ExportToolControl]
+    [Export(typeof(IExtension))]
+    [Export(typeof(IConsole))]
+    [Shared]
+    public class ConsoleViewModel : ToolViewModel, IConsole, IActivatableExtension
     {
         private ObservableCollection<IBackgroundRenderer> backgroundRenderers;
 
@@ -26,6 +29,8 @@ namespace AvalonStudio.Controls.Standard.Console
             Title = "Console";
             document = new TextDocument();
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
+
+            
         }
 
         private TextDocument document;
@@ -112,27 +117,14 @@ namespace AvalonStudio.Controls.Standard.Console
 
         public void BeforeActivation()
         {
-            IoC.RegisterConstant<IConsole>(this);
         }
 
         public void Activation()
         {
             shell = IoC.Get<IShell>();
-        }
 
-        public string Name
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public Version Version
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        public string Description
-        {
-            get { throw new NotImplementedException(); }
+            shell.MainPerspective.AddOrSelectTool(this);
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
         }
 
         private void ScrollToEnd()

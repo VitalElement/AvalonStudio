@@ -1,17 +1,21 @@
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Shell;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
+using AvalonStudio.Shell;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Composition;
 using System.Linq;
 using System.Reactive.Linq;
 
 namespace AvalonStudio.Debugging
 {
-    public class RegistersViewModel : ToolViewModel<ObservableCollection<RegisterViewModel>>, IExtension
+    [ExportToolControl, Export(typeof(IExtension)), Shared]
+    public class RegistersViewModel : ToolViewModel<ObservableCollection<RegisterViewModel>>, IActivatableExtension
     {
         private IDebugManager2 _debugManager;
 
@@ -49,6 +53,8 @@ namespace AvalonStudio.Debugging
         public void Activation()
         {
             _debugManager = IoC.Get<IDebugManager2>();
+
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
 
             _debugManager.DebugSessionStarted += (sender, e) => { Enabled = false; };
 

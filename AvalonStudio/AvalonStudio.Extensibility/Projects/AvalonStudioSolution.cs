@@ -1,5 +1,6 @@
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Projects;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
@@ -129,19 +130,18 @@ namespace AvalonStudio.Projects
 
         private static async Task<IProject> LoadProjectAsync(ISolution solution, string reference)
         {
-            var shell = IoC.Get<IShell>();
             IProject result = null;
 
             var extension = Path.GetExtension(reference);
 
             var projectFilePath = Path.Combine(solution.CurrentDirectory, reference).ToPlatformPath();
 
-            var projectType = shell.ProjectTypes.FirstOrDefault(
+            var projectType = IoC.Get<IStudio>().ProjectTypes.FirstOrDefault(
                 p => extension.EndsWith(p.Metadata.DefaultExtension));
             
             if (projectType == null)
             {
-                projectType = shell.ProjectTypes.FirstOrDefault(
+                projectType = IoC.Get<IStudio>().ProjectTypes.FirstOrDefault(
                     p => p.Metadata.PossibleExtensions.Any(e => extension.EndsWith(e)));
             }
 

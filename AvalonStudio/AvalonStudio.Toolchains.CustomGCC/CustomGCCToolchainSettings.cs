@@ -42,6 +42,29 @@ namespace AvalonStudio.Toolchains.CustomGCC
         public string LibraryQueryCommand { get; set; } = "gcc";
 
         [JsonIgnore]
+        public string[] ExtraPaths
+        {
+            get
+            {
+                var settings = CustomGCCToolchainProfiles.Instance;
+
+                if (settings.Profiles.ContainsKey(InstanceName))
+                {
+                    return settings.Profiles[InstanceName].ExtraPaths;
+                }
+                else
+                {
+                    return new string[0];
+                }
+            }
+
+            set
+            {
+
+            }
+        }
+
+        [JsonIgnore]
         public string BasePath
         {
             get
@@ -60,11 +83,16 @@ namespace AvalonStudio.Toolchains.CustomGCC
             set { }
         }
 
-        private string ResolveCommand (string prefix, string name)
+        private string ResolveCommand(string prefix, string name)
         {
             var settings = CustomGCCToolchainProfiles.Instance;
 
-            var basePath = settings.Profiles[InstanceName].BasePath;
+            string basePath = "";
+
+            if (settings.Profiles.ContainsKey(InstanceName))
+            {
+                basePath = settings.Profiles[InstanceName].BasePath;
+            }
 
             if (!string.IsNullOrEmpty(prefix))
             {

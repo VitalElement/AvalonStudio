@@ -5,11 +5,13 @@ using AvalonStudio.Toolchains.GCC;
 using AvalonStudio.Utils;
 using Mono.Debugging.Client;
 using System;
+using System.Composition;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging.GDB.JLink
 {
+    [Shared]
     [ExportDebugger]
     internal class JLinkDebugger : IDebugger2
     {

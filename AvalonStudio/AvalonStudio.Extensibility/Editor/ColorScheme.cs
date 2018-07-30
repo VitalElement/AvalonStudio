@@ -5,12 +5,11 @@ using Newtonsoft.Json;
 using Avalonia.Media;
 using System.Collections.Generic;
 using Avalonia;
-using AvalonStudio.Extensibility.Plugin;
 using System;
 
 namespace AvalonStudio.Extensibility.Editor
 {
-    public class DefaultColorSchemes : IExtension
+    public class DefaultColorSchemes : IActivatableExtension
     {
         public void Activation()
         {
@@ -103,8 +102,8 @@ namespace AvalonStudio.Extensibility.Editor
         public static readonly ColorScheme Default = new ColorScheme
         {
             Name = "Dark",
-            Background = Brush.Parse("#1e1e1e"),
-            BackgroundAccent = Brush.Parse("#FF2D2D30"),
+            Background = Brush.Parse("#1a1a1a"),
+            BackgroundAccent = Brush.Parse("#1c1c1c"),
             Border = Brush.Parse("#FF3E3E42"),
             Text = Brush.Parse("#C8C8C8"),
             ErrorDiagnostic = Brush.Parse("#FD2D2D"),

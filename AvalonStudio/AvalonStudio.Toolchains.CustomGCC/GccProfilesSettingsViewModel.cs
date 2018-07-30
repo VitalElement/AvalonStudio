@@ -1,13 +1,12 @@
 ﻿using Avalonia.Controls;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Settings;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 
 namespace AvalonStudio.Toolchains.CustomGCC
 {
-    class GccProfilesSettingsViewModel : SettingsViewModel, IExtension
+    class GccProfilesSettingsViewModel : SettingsViewModel, IActivatableExtension
     {
         private CustomGCCToolchainProfiles _settings;
         private ObservableCollection<string> _profiles;
@@ -82,6 +81,12 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         private void Save()
         {
+            if(!_settings.Profiles.ContainsKey(InstanceName))
+            {
+                _settings.Profiles[InstanceName] = new CustomGCCToolchainProfile();
+                Profiles.Add(InstanceName);
+            }
+
             _settings.Profiles[InstanceName].BasePath = BasePath;
 
             _settings.Save();

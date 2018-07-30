@@ -1,15 +1,19 @@
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using ReactiveUI;
 using System.Collections.ObjectModel;
+using System.Composition;
 
 namespace AvalonStudio.Debugging
 {
-    public class CallStackViewModel : ToolViewModel, IExtension
+    [ExportToolControl]
+    [Export(typeof(IExtension))]
+    [Shared]
+    public class CallStackViewModel : ToolViewModel, IActivatableExtension
     {
         private IDebugManager2 _debugManager;
 
@@ -36,17 +40,17 @@ namespace AvalonStudio.Debugging
 
                 if (selectedFrame != null)
                 {
-                    var shell = IoC.Get<IShell>();
+                    var studio = IoC.Get<IStudio>();
 
                     _debugManager.SelectedFrame = selectedFrame.Model;
-                    
-                    var file = shell?.CurrentSolution?.FindFile(selectedFrame.Model.SourceLocation.FileName.NormalizePath());
+
+                    var file = studio?.CurrentSolution?.FindFile(selectedFrame.Model.SourceLocation.FileName.NormalizePath());
 
                     if (file != null)
                     {
                         Dispatcher.UIThread.InvokeAsync(async () =>
                         {
-                            await shell?.OpenDocumentAsync(file, selectedFrame.Line, -1, -1, false, true);
+                            await studio?.OpenDocumentAsync(file, selectedFrame.Line, -1, -1, false, true);
                         });
                     }
                 }
@@ -59,7 +63,7 @@ namespace AvalonStudio.Debugging
 
         public override Location DefaultLocation
         {
-            get { return Location.BottomRight; }
+            get { return Location.Bottom; }
         }
 
         public void BeforeActivation()
@@ -79,6 +83,8 @@ namespace AvalonStudio.Debugging
                 IsVisible = false;
                 Clear();
             };
+
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
         }
 
         private void _debugManager_TargetStopped(object sender, Mono.Debugging.Client.TargetEventArgs e)

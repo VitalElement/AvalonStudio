@@ -1,4 +1,5 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+﻿<UserControl xmlns="https://github.com/avaloniaui" 
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Shell.Extensibility">
     <Grid IsEnabled="{Binding IsEnabled}">
       <Grid.RowDefinitions>
         <RowDefinition Height="15*"/>
@@ -11,7 +12,7 @@
         <ColumnDefinition Width="397*"/>
       </Grid.ColumnDefinitions>
 
-      <StackPanel Grid.Row="0" Gap="4">
+      <StackPanel Grid.Row="0" Spacing="4">
         <TextBlock  Text="Debug Adaptor:"/>
         <DropDown  Items="{Binding Debuggers}" SelectedItem="{Binding SelectedDebugger, Mode=TwoWay}" />
       </StackPanel>
@@ -45,7 +46,7 @@
       </Panel>
 
       <ScrollViewer Grid.Row="2" Grid.ColumnSpan="3">
-        <Controls:ViewModelViewHost DataContext="{Binding DebugSettingsControl}" />  
+        <cont:ViewModelViewHost DataContext="{Binding DebugSettingsControl}" />  
       </ScrollViewer>
     </Grid>
   </UserControl>

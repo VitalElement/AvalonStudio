@@ -1,5 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-              xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard" FontFamily="Source Sans Pro" FontSize="14">
+              xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard" FontFamily="{DynamicResource UiFont}" FontSize="14">
     <Grid Background="{DynamicResource ThemeControlBackgroundBrush}" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}">
         <StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
@@ -10,12 +10,12 @@
                 <ListBox Items="{Binding Parameters}" BorderThickness="0" Margin="-2 -4 -2 0" VirtualizationMode="None" Background="{DynamicResource ThemeControlBackgroundBrush}" IsEnabled="false">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" Margin="0" Gap="4" />
+                            <StackPanel Orientation="Horizontal" Margin="0" Spacing="4" />
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                     <ListBox.DataTemplates>
                         <DataTemplate DataType="local:ParameterViewModel">
-                            <StackPanel Orientation="Horizontal" TextBlock.FontWeight="{Binding FontWeight}" Gap="2">
+                            <StackPanel Orientation="Horizontal" TextBlock.FontWeight="{Binding FontWeight}" Spacing="2">
                                 <TextBlock Margin="0" Text="{Binding BuiltInType}" Foreground="#FF569CD6" />
                                 <TextBlock Margin="0" Text="{Binding Type}" Foreground="#FF4ec9b0" />
                                 <TextBlock Margin="0" Text="{Binding DisplayName}"  />

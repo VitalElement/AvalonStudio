@@ -45,7 +45,7 @@ namespace AvalonStudio.TextEditor.Rendering
                 
                 double x = PixelSnapHelpers.PixelAlign(0, pixelSize.Width);
                 double y = PixelSnapHelpers.PixelAlign(linePosY, pixelSize.Height);
-                var x2 = PixelSnapHelpers.PixelAlign(textView.Bounds.Width, pixelSize.Width);
+                var x2 = PixelSnapHelpers.PixelAlign(textView.Bounds.Width - pixelSize.Width, pixelSize.Width);
                 var y2 = PixelSnapHelpers.PixelAlign(lineBottom, pixelSize.Height);
 
                 builder.AddRectangle(textView, new Rect(new Point(x, y), new Point(x2, y2)));

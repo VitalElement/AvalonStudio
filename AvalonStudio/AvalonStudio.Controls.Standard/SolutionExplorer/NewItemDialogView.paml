@@ -1,9 +1,8 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" 
-             xmlns:vm="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio" 
-             xmlns:Controls="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Shell.Extensibility"
              MinWidth="600" MinHeight="400">
   <Grid>
-    <StackPanel Orientation="Horizontal" Gap="20">      
+    <StackPanel Orientation="Horizontal" Spacing="20">      
       
       <DockPanel LastChildFill="True">
         <Button Content="Check for Updates" Command="{Binding UpdateTemplatesCommand}" DockPanel.Dock="Bottom" />
@@ -19,7 +18,7 @@
         </ListBox>        
       </DockPanel>      
       
-      <Controls:ViewModelViewHost DataContext="{Binding SelectedTemplate}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+      <cont:ViewModelViewHost DataContext="{Binding SelectedTemplate}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
     </StackPanel>           
   </Grid>
 </UserControl>

@@ -1,7 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:local="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard">
   <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
     <Grid TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}" Background="{DynamicResource ThemeControlBackgroundBrush}">
-      <StackPanel Orientation="Horizontal" Gap="4">
+      <StackPanel Orientation="Horizontal" Spacing="4">
         <StackPanel Orientation="Horizontal">
           <TextBlock Text="(" />
           <TextBlock Text="{Binding SelectedSignatureIndex}" />

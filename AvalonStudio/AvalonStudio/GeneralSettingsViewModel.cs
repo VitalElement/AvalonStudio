@@ -1,5 +1,4 @@
 ﻿using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Settings;
 using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.GlobalSettings;
@@ -9,7 +8,7 @@ using System.Linq;
 
 namespace AvalonStudio
 {
-    class GeneralSettingsViewModel : SettingsViewModel, IExtension
+    class GeneralSettingsViewModel : SettingsViewModel, IActivatableExtension
     {
         private int _selectedThemeIndex;
 

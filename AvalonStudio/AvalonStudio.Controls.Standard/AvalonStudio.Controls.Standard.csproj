@@ -23,15 +23,16 @@
     <EmbeddedResource Include="CodeEditor\Highlighting\Resources\XML-Mode.xshd" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.2-build5122-beta" />
+    <PackageReference Include="Avalonia" Version="0.6.2-build5392-beta" />
     <PackageReference Include="GitInfo" Version="2.0.10" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\AvalonStudio.Shell\src\AvalonStudio.Utils\AvalonStudio.Utils.csproj" />
+    <ProjectReference Include="..\..\DataGrid\src\Avalonia.DataGrid\Avalonia.DataGrid.csproj" />
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
-    <ProjectReference Include="..\AvalonStudio.Utils\AvalonStudio.Utils.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="SolutionExplorer\TemplateView.xaml">

@@ -1,38 +1,47 @@
-﻿namespace AvalonStudio.Controls.Standard.WelcomeScreen
-{
-    using Avalonia.Media.Imaging;
-    using AvalonStudio.Controls.Standard.SolutionExplorer;
-    using AvalonStudio.Extensibility;
-    using AvalonStudio.Extensibility.Plugin;
-    using AvalonStudio.Platforms;
-    using AvalonStudio.Shell;
-    using ReactiveUI;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Reactive.Disposables;
-    using System.Reactive.Linq;
-    using System.Threading.Tasks;
+﻿using Avalonia.Media.Imaging;
+using Avalonia.Threading;
+using AvalonStudio.Controls.Standard.SolutionExplorer;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
+using AvalonStudio.Platforms;
+using AvalonStudio.Shell;
+using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Composition;
+using System.IO;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
 
-    public class WelcomeScreenViewModel : DocumentTabViewModel, IExtension
+namespace AvalonStudio.Controls.Standard.WelcomeScreen
+{
+    [Export(typeof(WelcomeScreenViewModel))]
+    [Export(typeof(IExtension))]
+    [Shared]
+    public class WelcomeScreenViewModel : DocumentTabViewModel, IActivatableExtension
     {
+        private ISolutionExplorer _solutionExplorer;
+
         private ObservableCollection<RecentProjectViewModel> _recentProjects;
         private ObservableCollection<NewsFeedViewModel> _newsFeed;
         private ObservableCollection<VideoFeedViewModel> _videoFeed;
-        ISolutionExplorer _solutionExplorer;
         private CompositeDisposable _disposables;
 
-        public WelcomeScreenViewModel()
+        [ImportingConstructor]
+        public WelcomeScreenViewModel(ISolutionExplorer solutionExplorer)
         {
             Title = "Start Page";
+
+            _solutionExplorer = solutionExplorer;
 
             _recentProjects = new ObservableCollection<RecentProjectViewModel>();
             _newsFeed = new ObservableCollection<NewsFeedViewModel>();
             _videoFeed = new ObservableCollection<VideoFeedViewModel>();
 
-            NewSolution = ReactiveCommand.Create(() => _solutionExplorer?.NewSolution());
-            OpenSolution = ReactiveCommand.Create(() => _solutionExplorer?.OpenSolution());
+            NewSolution = ReactiveCommand.Create(_solutionExplorer.NewSolution);
+            OpenSolution = ReactiveCommand.Create(_solutionExplorer.OpenSolution);
 
             LoadRecentProjects();
         }
@@ -45,11 +54,13 @@
         public void Activation()
         {
             var shell = IoC.Get<IShell>();
-            shell.AddDocument(this, false);
+            var studio = IoC.Get<IStudio>();
+
+            shell.AddOrSelectDocument(this);
 
             _disposables = new CompositeDisposable
             {
-                Observable.FromEventPattern<SolutionChangedEventArgs>(shell, nameof(shell.SolutionChanged)).Subscribe(o => ShellOnSolutionChanged(o.Sender, o.EventArgs))
+                Observable.FromEventPattern<SolutionChangedEventArgs>(studio, nameof(studio.SolutionChanged)).Subscribe(o => ShellOnSolutionChanged(o.Sender, o.EventArgs))
             };
             //shell.SolutionChanged += ShellOnSolutionChanged;
 
@@ -58,11 +69,13 @@
             _solutionExplorer = IoC.Get<ISolutionExplorer>();
         }
 
-        public override void Close()
+        public override bool OnClose()
         {
-            base.Close();
+            bool result = base.OnClose();
 
             _disposables.Dispose();
+
+            return result;
         }
 
         public void BeforeActivation()

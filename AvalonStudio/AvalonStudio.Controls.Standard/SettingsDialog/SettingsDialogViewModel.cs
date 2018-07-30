@@ -1,17 +1,20 @@
 ﻿using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Settings;
 using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Composition;
 
 namespace AvalonStudio.Controls.Standard.SettingsDialog
 {
-    public class SettingsDialogViewModel : DocumentTabViewModel, IExtension, ISettingsManager
+    [Export(typeof(ISettingsManager))]
+    [Export(typeof(SettingsDialogViewModel))]
+    [Shared]
+    public class SettingsDialogViewModel : DocumentTabViewModel, IActivatableExtension, ISettingsManager
     {
         private Dictionary<string, SettingsCategoryViewModel> _categories = new Dictionary<string, SettingsCategoryViewModel>();
         private ObservableCollection<SettingsCategoryViewModel> _categoryViewModels = new ObservableCollection<SettingsCategoryViewModel>();
-        private SettingsViewModel _selectedSetting;
+        private object _selectedSetting;
 
         public SettingsDialogViewModel()
         {
@@ -24,8 +27,6 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
 
         public void BeforeActivation()
         {
-            IoC.RegisterConstant<ISettingsManager>(this);
-            IoC.RegisterConstant(this);
         }
 
         public void RegisterSettingsDialog(string category, SettingsViewModel viewModel)
@@ -48,16 +49,20 @@ namespace AvalonStudio.Controls.Standard.SettingsDialog
 
         public ObservableCollection<SettingsCategoryViewModel> Categories => _categoryViewModels;
 
-        public SettingsViewModel SelectedSetting
+        public object SelectedSetting
         {
             get { return _selectedSetting; }
             set
             {
-                if (value is SettingsViewModel)
+                if (value is SettingsViewModel setting)
                 {
-                    this.RaiseAndSetIfChanged(ref _selectedSetting, value);
+                    setting.OnDialogLoaded();
 
-                    _selectedSetting.OnDialogLoaded();
+                    this.RaiseAndSetIfChanged(ref _selectedSetting, value);
+                }
+                else
+                {
+                    _selectedSetting = value;
                 }
             }
         }

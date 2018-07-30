@@ -1,16 +1,18 @@
-﻿using AvalonStudio.Documents;
+﻿using AvalonStudio.Debugging;
+using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
-using AvalonStudio.Extensibility.MainMenu;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
+using Dock.Model;
 using ReactiveUI;
 using System;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
-    public abstract class EditorViewModel : DocumentTabViewModel, IFileDocumentTabViewModel
+    public abstract class EditorViewModel : DocumentTabViewModel, IFileDocumentTabViewModel, IDebugLineDocumentTabViewModel
     {
         private bool _isDirty;
         private ISourceFile _sourceFile;
@@ -19,11 +21,12 @@ namespace AvalonStudio.Controls
         private double _fontSize;
         private double _zoomLevel;
         private double _visualFontSize;
-        private IShell _shell;
+        private IStudio _studio;
+        private DebugHighlightLocation _debugHighlight;
 
         public EditorViewModel(ISourceFile file)
         {
-            _shell = IoC.Get<IShell>();
+            _studio = IoC.Get<IStudio>();
             _visualFontSize = _fontSize = 14;
             _zoomLevel = 1;
 
@@ -37,20 +40,20 @@ namespace AvalonStudio.Controls
             {
                 var definition = await Editor.LanguageService?.GotoDefinition(Editor, 1);
 
-                var shell = IoC.Get<IShell>();
+                var studio = IoC.Get<IStudio>();
 
                 if (definition.MetaDataFile == null)
                 {
-                    var document = shell.CurrentSolution.FindFile(definition.FileName);
+                    var document = studio.CurrentSolution.FindFile(definition.FileName);
 
                     if (document != null)
                     {
-                        await shell.OpenDocumentAsync(document, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
+                        await studio.OpenDocumentAsync(document, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
                     }
                 }
                 else
                 {
-                    await shell.OpenDocumentAsync(definition.MetaDataFile, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
+                    await studio.OpenDocumentAsync(definition.MetaDataFile, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
                 }
             });
 
@@ -59,11 +62,17 @@ namespace AvalonStudio.Controls
                 Editor.RenameSymbol(Editor.CaretOffset);
             });
 
-            ZoomLevel = _shell.GlobalZoomLevel;
+            ZoomLevel = _studio.GlobalZoomLevel;
         }
 
         ~EditorViewModel()
         {
+        }
+
+        public DebugHighlightLocation DebugHighlight
+        {
+            get { return _debugHighlight; }
+            set { this.RaiseAndSetIfChanged(ref _debugHighlight, value); }
         }
 
         public double ZoomLevel
@@ -77,7 +86,7 @@ namespace AvalonStudio.Controls
                 if (value != _zoomLevel)
                 {
                     _zoomLevel = value;
-                    _shell.GlobalZoomLevel = value;
+                    _studio.GlobalZoomLevel = value;
                     InvalidateVisualFontSize();
 
                     ZoomLevelText = $"{ZoomLevel:0} %";
@@ -118,8 +127,6 @@ namespace AvalonStudio.Controls
             VisualFontSize = (ZoomLevel / 100) * FontSize;
         }
 
-        public IMenu ContextMenu => IoC.Get<IShell>().BuildEditorContextMenu();
-
         public ReactiveCommand GotoDefinitionCommand { get; }
 
         public ReactiveCommand RenameSymbolCommand { get; }
@@ -153,5 +160,40 @@ namespace AvalonStudio.Controls
         public abstract IEditor Editor { get; }
 
         public abstract Task WaitForEditorToLoadAsync();
+
+        public override bool OnClose()
+        {
+            bool result = base.OnClose();
+
+            Editor.Dispose();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets or sets view id.
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets view context.
+        /// </summary>
+        public object Context { get; set; }
+
+        /// <summary>
+        /// Gets or sets view width.
+        /// </summary>
+        public double Width { get; set; }
+
+        /// <summary>
+        /// Gets or sets view height.
+        /// </summary>
+        public double Height { get; set; }
+
+        /// <summary>
+        /// Gets or sets view parent.
+        /// </summary>
+        /// <remarks>If parrent is <see cref="null"/> than view is root.</remarks>
+        public IView Parent { get; set; }
     }
 }

@@ -5,12 +5,12 @@
     <Grid RowDefinitions="*,5,*">
         <Grid DockPanel.Dock="Top" Background="{DynamicResource ThemeEditorBackground}">
             <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
-                <previewer:AvaloniaPreviewer Xaml="{Binding CodeEditor.SourceText}" SourceFile="{Binding SourceFile}" />
+                <previewer:AvaloniaPreviewer Xaml="{Binding SourceText}" SourceFile="{Binding SourceFile}" />
             </Border>
         </Grid>
 
         <GridSplitter Grid.Row="1" />
 
-        <local:EditorView Grid.Row="2"  DataContext="{Binding CodeEditor}" />
+        <local:EditorView Grid.Row="2" />
     </Grid>
 </UserControl>
