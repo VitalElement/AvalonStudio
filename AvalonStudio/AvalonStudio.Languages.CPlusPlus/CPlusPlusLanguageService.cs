@@ -551,7 +551,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             var errorList = IoC.Get<IErrorList>();
             errorList.Remove((this, editor.SourceFile));
-            errorList.Create((this, editor.SourceFile), DiagnosticSource.Analysis, diagnostics.ToImmutableArray());
+            errorList.Create((this, editor.SourceFile), DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
 
             return result;
         }

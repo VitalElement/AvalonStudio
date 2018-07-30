@@ -601,7 +601,7 @@ namespace AvalonStudio.Toolchains.Standard
 
                                         var errorList = IoC.Get<IErrorList>();
 
-                                        errorList.Create(this, Languages.DiagnosticSource.Build, compileResult.Diagnostics.ToImmutableArray());
+                                        errorList.Create(this, Languages.DiagnosticSourceKind.Build, compileResult.Diagnostics.ToImmutableArray());
                                     }).GetAwaiter();
                                 }
                                 else

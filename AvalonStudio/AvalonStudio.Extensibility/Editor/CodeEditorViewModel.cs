@@ -296,7 +296,7 @@ namespace AvalonStudio.Extensibility.Editor
                     break;
 
                 case DiagnosticsUpdatedKind.DiagnosticsCreated:
-                    if (e.Source == DiagnosticSource.Analysis)
+                    if (e.Source == DiagnosticSourceKind.Analysis)
                     {
                         _diagnostics.Add((e.Tag, e.Diagnostics));
 

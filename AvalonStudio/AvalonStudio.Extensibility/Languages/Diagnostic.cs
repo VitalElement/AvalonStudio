@@ -19,7 +19,7 @@ namespace AvalonStudio.Languages
         EditAndContinue
     }
 
-    public enum DiagnosticSource
+    public enum DiagnosticSourceKind
     {
         Build,
         Analysis,

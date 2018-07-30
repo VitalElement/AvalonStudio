@@ -22,10 +22,10 @@ namespace AvalonStudio.Languages
         {
             Tag = tag;
             Kind = kind;
-            Source = DiagnosticSource.Misc;
+            Source = DiagnosticSourceKind.Misc;
         }
 
-        public DiagnosticsUpdatedEventArgs(object tag, DiagnosticsUpdatedKind kind, DiagnosticSource source, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
+        public DiagnosticsUpdatedEventArgs(object tag, DiagnosticsUpdatedKind kind, DiagnosticSourceKind source, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
         {
             Tag = tag;
             Kind = kind;
@@ -36,7 +36,7 @@ namespace AvalonStudio.Languages
 
         public object Tag { get; }
         public DiagnosticsUpdatedKind Kind { get; }
-        public DiagnosticSource Source { get; }
+        public DiagnosticSourceKind Source { get; }
         public ImmutableArray<Diagnostic> Diagnostics { get; }
         public SyntaxHighlightDataList DiagnosticHighlights { get; }
     }

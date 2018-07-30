@@ -224,7 +224,7 @@ namespace AvalonStudio.Toolchains.MSBuild
 
             foreach(var key in diagnosticEntries.Keys)
             {
-                errorList.Create(this, DiagnosticSource.Build, diagnosticEntries[key].ToImmutableArray());
+                errorList.Create(this, DiagnosticSourceKind.Build, diagnosticEntries[key].ToImmutableArray());
             }
 
             return result;

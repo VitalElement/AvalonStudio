@@ -26,6 +26,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         private ErrorViewModel selectedError;
         private IStudio studio;
 
+        /// <inheritdoc/>
         public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
         public ErrorListViewModel()
@@ -69,12 +70,14 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             get { return Location.Bottom; }
         }
 
+        /// <inheritdoc/>
         public ObservableCollection<ErrorViewModel> Errors
         {
             get { return errors; }
             set { this.RaiseAndSetIfChanged(ref errors, value); }
         }
 
+        /// <inheritdoc/>
         public void Remove(object tag)
         {
             Dispatcher.UIThread.Post(() =>
@@ -89,8 +92,9 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                 DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(tag, DiagnosticsUpdatedKind.DiagnosticsRemoved));
             });
         }
-
-        public void Create(object tag, DiagnosticSource source, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
+        
+        /// <inheritdoc/>
+        public void Create(object tag, DiagnosticSourceKind source, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
         {
             Dispatcher.UIThread.Post(() =>
             {
