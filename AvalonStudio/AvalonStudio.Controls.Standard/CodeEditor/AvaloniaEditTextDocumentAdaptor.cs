@@ -248,6 +248,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
         }
 
+        public static ITextDocument Create (string text)
+        {
+            return new AvalonStudioTextDocument(new AvaloniaEdit.Document.TextDocument(text));
+        }
+
         private AvaloniaEdit.Document.TextDocument _document;
         private readonly DocumentLinesCollection _lines;
 

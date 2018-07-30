@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using AvalonStudio.Documents;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Projects;
 using ReactiveUI;
 using System.IO;
@@ -23,7 +24,7 @@ namespace AvalonStudio.Extensibility.Editor
         {
             _visualFontSize = _fontSize = 14;
             _zoomLevel = 1;
-            ZoomLevel = _studio.GlobalZoomLevel;
+           // ZoomLevel = _studio.GlobalZoomLevel;
             _document = document;
         }
 
@@ -72,7 +73,7 @@ namespace AvalonStudio.Extensibility.Editor
                 if (value != _zoomLevel)
                 {
                     _zoomLevel = value;
-                    _studio.GlobalZoomLevel = value;
+                    IoC.Get<IStudio>().GlobalZoomLevel = value;
                     InvalidateVisualFontSize();
 
                     ZoomLevelText = $"{ZoomLevel:0} %";
