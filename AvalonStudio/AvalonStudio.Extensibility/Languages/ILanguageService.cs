@@ -18,18 +18,25 @@ namespace AvalonStudio.Languages
 
     public class DiagnosticsUpdatedEventArgs : EventArgs
     {
-        public DiagnosticsUpdatedEventArgs(object tag, ISourceFile associatedFile, DiagnosticsUpdatedKind kind, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
+        public DiagnosticsUpdatedEventArgs(object tag, DiagnosticsUpdatedKind kind)
         {
             Tag = tag;
-            AssociatedSourceFile = associatedFile;
+            Kind = kind;
+            Source = DiagnosticSource.Misc;
+        }
+
+        public DiagnosticsUpdatedEventArgs(object tag, DiagnosticsUpdatedKind kind, DiagnosticSource source, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
+        {
+            Tag = tag;
             Kind = kind;
             Diagnostics = diagnostics;
             DiagnosticHighlights = diagnosticHighlights;
+            Source = source;
         }
 
         public object Tag { get; }
-        public ISourceFile AssociatedSourceFile { get; }
         public DiagnosticsUpdatedKind Kind { get; }
+        public DiagnosticSource Source { get; }
         public ImmutableArray<Diagnostic> Diagnostics { get; }
         public SyntaxHighlightDataList DiagnosticHighlights { get; }
     }

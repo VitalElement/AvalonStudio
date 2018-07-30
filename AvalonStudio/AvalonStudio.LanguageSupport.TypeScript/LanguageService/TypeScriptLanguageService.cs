@@ -221,6 +221,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor,
             List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
+            var errorList = IoC.Get<IErrorList>();
             var result = new CodeAnalysisResults();
             var diagnostics = new List<Diagnostic>();
 
@@ -249,7 +250,8 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                     DiagnosticLevel.Error,
                     DiagnosticCategory.Compiler));
 
-                IoC.Get<IErrorList>().UpdateDiagnostics(new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
+                errorList.Remove((this, editor.SourceFile));
+                errorList.Create((this, editor.SourceFile), DiagnosticSource.Analysis, diagnostics.ToImmutableArray());
 
                 return new CodeAnalysisResults();
             }
@@ -332,7 +334,8 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 DiagnosticLevel.Warning,
                 DiagnosticCategory.Compiler));
 
-            IoC.Get<IErrorList>().UpdateDiagnostics(new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
+            errorList.Remove((this, editor.SourceFile));
+            errorList.Create((this, editor.SourceFile), DiagnosticSource.Analysis, diagnostics.ToImmutableArray());
 
             return result;
         }

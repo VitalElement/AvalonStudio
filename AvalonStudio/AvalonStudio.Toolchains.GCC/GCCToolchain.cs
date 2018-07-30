@@ -1,15 +1,18 @@
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Shell;
+using AvalonStudio.Languages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Composition;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Toolchains.GCC
@@ -157,6 +160,33 @@ namespace AvalonStudio.Toolchains.GCC
             return result;
         }
 
+        private static readonly Regex errorRegex = new Regex((@"(?=.*(?:error|warning|line).*)(?<file>((?:[a-zA-Z]\:){0,1}(?:[\\\/][\w. ]+){1,})).*?(?<line>\d+).*?(?<column>\d+)(?::\s+)(?<type>warning|error)(?::\s+)(?<message>.*)"), RegexOptions.Compiled);
+
+        private void ParseOutputForErrors(IList<Diagnostic> diagnostics, ISourceFile file, string output)
+        {
+            if (string.IsNullOrWhiteSpace(output))
+            {
+                return;
+            }
+
+            var match = errorRegex.Match(output);
+
+            var filename = match.Groups["file"].Value;
+            var type = match.Groups["type"].Value;
+            var lineText = match.Groups["line"].Value;
+            var columnText = match.Groups["column"].Value;
+            var code = match.Groups["code"].Value;
+            var message = match.Groups["message"].Value;
+
+            if (match.Success)
+            {
+                int.TryParse(lineText, out int line);
+                int.TryParse(columnText, out int column);
+
+                diagnostics.Add(new Diagnostic(0, 0, file.Project.Name, filename, line, message, code, type == "error" ? DiagnosticLevel.Error : DiagnosticLevel.Warning, DiagnosticCategory.Compiler));
+            }
+        }
+
         public override CompileResult Compile(IConsole console, IStandardProject superProject, IStandardProject project, ISourceFile file, string outputFile)
         {
             var result = new CompileResult();
@@ -184,6 +214,7 @@ namespace AvalonStudio.Toolchains.GCC
             {
                 if (e.Data != null)
                 {
+                    ParseOutputForErrors(result.Diagnostics, file, e.Data);
                     console.WriteLine();
                     console.WriteLine(e.Data);
                 }

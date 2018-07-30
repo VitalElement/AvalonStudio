@@ -553,7 +553,9 @@ namespace AvalonStudio.Languages.CPlusPlus
                 }
             });
 
-            IoC.Get<IErrorList>().UpdateDiagnostics(new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
+            var errorList = IoC.Get<IErrorList>();
+            errorList.Remove((this, editor.SourceFile));
+            errorList.Create((this, editor.SourceFile), DiagnosticSource.Analysis, diagnostics.ToImmutableArray());
 
             return result;
         }

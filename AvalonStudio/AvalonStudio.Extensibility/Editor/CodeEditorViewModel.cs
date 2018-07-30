@@ -278,30 +278,34 @@ namespace AvalonStudio.Extensibility.Editor
 
         private void LanguageService_DiagnosticsUpdated(object sender, DiagnosticsUpdatedEventArgs e)
         {
-            if (e.AssociatedSourceFile == SourceFile)
+            if (e.Source == DiagnosticSource.Analysis)
             {
-                var toRemove = _diagnostics.Where(x => x.tag.Equals(e.Tag)).ToList();
-
-                foreach (var diagnostic in toRemove)
+                switch (e.Kind)
                 {
-                    _diagnostics.Remove(diagnostic);
-                }
+                    case DiagnosticsUpdatedKind.DiagnosticsRemoved:
+                        var toRemove = _diagnostics.Where(x => x.tag.Equals(e.Tag)).ToList();
 
-                var highlightsToRemove = _highlights.Where(h => h.tag.Equals(SourceFile)).ToList();
+                        foreach (var diagnostic in toRemove)
+                        {
+                            _diagnostics.Remove(diagnostic);
+                        }
 
-                foreach (var highlightData in highlightsToRemove)
-                {
-                    _highlights.Remove(highlightData);
-                }
+                        var highlightsToRemove = _highlights.Where(h => h.tag.Equals(SourceFile)).ToList();
 
-                if (e.Kind == DiagnosticsUpdatedKind.DiagnosticsCreated)
-                {
-                    _diagnostics.Add((e.Tag, e.Diagnostics));
+                        foreach (var highlightData in highlightsToRemove)
+                        {
+                            _highlights.Remove(highlightData);
+                        }
+                        break;
 
-                    if (e.DiagnosticHighlights != null)
-                    {
-                        _highlights.Add((SourceFile, e.DiagnosticHighlights));
-                    }
+                    case DiagnosticsUpdatedKind.DiagnosticsCreated:
+                        _diagnostics.Add((e.Tag, e.Diagnostics));
+
+                        if (e.DiagnosticHighlights != null)
+                        {
+                            _highlights.Add((e.Tag, e.DiagnosticHighlights));
+                        }
+                        break;
                 }
             }
         }

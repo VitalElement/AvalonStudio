@@ -9,6 +9,7 @@ using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -109,6 +110,7 @@ namespace AvalonStudio.Toolchains.Standard
             }
 
             console.Clear();
+            IoC.Get<IErrorList>().Remove(this);
 
             console.WriteLine("Starting Build...");
             console.WriteLine();
@@ -245,6 +247,8 @@ namespace AvalonStudio.Toolchains.Standard
             await Task.Factory.StartNew(async () =>
             {
                 console.WriteLine("Starting Clean...");
+
+                IoC.Get<IErrorList>().Remove(this);
 
                 await CleanAll(console, project as IStandardProject, project as IStandardProject);
 
@@ -594,6 +598,10 @@ namespace AvalonStudio.Toolchains.Standard
                                         {
                                             console.WriteLine(output);
                                         }
+
+                                        var errorList = IoC.Get<IErrorList>();
+
+                                        errorList.Create(this, Languages.DiagnosticSource.Build, compileResult.Diagnostics.ToImmutableArray());
                                     }).GetAwaiter();
                                 }
                                 else

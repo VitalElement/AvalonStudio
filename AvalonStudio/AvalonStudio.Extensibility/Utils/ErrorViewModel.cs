@@ -10,15 +10,12 @@ namespace AvalonStudio.Utils
 {
     public class ErrorViewModel : ViewModel<Diagnostic>, IComparable<ErrorViewModel>
     {
-        public ErrorViewModel(Diagnostic model, object tag, ISourceFile associatedFile) : base(model)
+        public ErrorViewModel(Diagnostic model, object tag) : base(model)
         {
             Tag = tag;
-            AssociatedFile = associatedFile;
         }
 
         public object Tag { get; private set; }
-
-        public ISourceFile AssociatedFile { get; }
 
         public string File
         {

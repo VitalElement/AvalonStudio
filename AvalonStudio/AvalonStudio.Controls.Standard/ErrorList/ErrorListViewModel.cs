@@ -3,10 +3,12 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
+using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Composition;
 using System.Linq;
@@ -73,26 +75,34 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             set { this.RaiseAndSetIfChanged(ref errors, value); }
         }
 
-        public void UpdateDiagnostics(DiagnosticsUpdatedEventArgs diagnostics)
+        public void Remove(object tag)
         {
             Dispatcher.UIThread.Post(() =>
             {
-                var toRemove = Errors.Where(e => Equals(e.Tag, diagnostics.Tag) && e.AssociatedFile == diagnostics.AssociatedSourceFile).ToList();
+                var toRemove = Errors.Where(e => Equals(e.Tag, tag)).ToList();
 
                 foreach (var error in toRemove)
                 {
                     Errors.Remove(error);
                 }
 
-                foreach (var diagnostic in diagnostics.Diagnostics)
+                DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(tag, DiagnosticsUpdatedKind.DiagnosticsRemoved));
+            });
+        }
+
+        public void Create(object tag, DiagnosticSource source, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                foreach (var diagnostic in diagnostics)
                 {
                     if (diagnostic.Level != DiagnosticLevel.Hidden)
                     {
-                        Errors.InsertSorted(new ErrorViewModel(diagnostic, diagnostics.Tag, diagnostics.AssociatedSourceFile));
+                        Errors.InsertSorted(new ErrorViewModel(diagnostic, tag));
                     }
                 }
 
-                DiagnosticsUpdated?.Invoke(this, diagnostics);
+                DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(tag, DiagnosticsUpdatedKind.DiagnosticsCreated, source, diagnostics, diagnosticHighlights));
             });
         }
 

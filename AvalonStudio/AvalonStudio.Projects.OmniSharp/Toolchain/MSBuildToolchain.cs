@@ -190,14 +190,13 @@ namespace AvalonStudio.Toolchains.MSBuild
                     entries[filename + project_file] = new List<Diagnostic>();
                 }
 
-                entries[filename + project_file].Add(new Diagnostic(0, 0, null, filename, line, message, code, type == "warning" ? DiagnosticLevel.Warning : DiagnosticLevel.Error, DiagnosticCategory.Compiler, DiagnosticSource.Build));
+                entries[filename + project_file].Add(new Diagnostic(0, 0, project_file, filename, line, message, code, type == "warning" ? DiagnosticLevel.Warning : DiagnosticLevel.Error, DiagnosticCategory.Compiler));
             }
         }
 
         public async Task<bool> BuildAsync(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
             var diagnosticEntries = new Dictionary<string, List<Diagnostic>>();
-
 
             var result = await Task.Factory.StartNew(() =>
             {
@@ -224,7 +223,7 @@ namespace AvalonStudio.Toolchains.MSBuild
 
             foreach(var key in diagnosticEntries.Keys)
             {
-                errorList.UpdateDiagnostics(new DiagnosticsUpdatedEventArgs(this, null, DiagnosticsUpdatedKind.DiagnosticsCreated, diagnosticEntries[key].ToImmutableArray()));
+                errorList.Create(this, DiagnosticSource.Build, diagnosticEntries[key].ToImmutableArray());
             }
 
             return result;

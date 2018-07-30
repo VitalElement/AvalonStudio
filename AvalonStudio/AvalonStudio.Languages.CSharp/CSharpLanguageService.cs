@@ -661,7 +661,9 @@ namespace AvalonStudio.Languages.CSharp
                         }
                     }
 
-                    IoC.Get<IErrorList>().UpdateDiagnostics(new DiagnosticsUpdatedEventArgs(diagnostics.Id, editor.SourceFile, (DiagnosticsUpdatedKind)diagnostics.Kind, results.ToImmutableArray(), fadedCode));
+                    var errorList = IoC.Get<IErrorList>();
+                    errorList.Remove((diagnostics.Id, editor.SourceFile));
+                    errorList.Create((diagnostics.Id, editor.SourceFile), DiagnosticSource.Analysis, results.ToImmutableArray(), fadedCode);
                 });
 
                 /*association.TextInputHandler = (sender, e) =>

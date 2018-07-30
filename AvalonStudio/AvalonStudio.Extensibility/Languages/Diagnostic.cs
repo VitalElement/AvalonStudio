@@ -1,6 +1,5 @@
-using AvalonStudio.Projects;
-using AvaloniaEdit.Document;
 using Avalonia.Media;
+using AvaloniaEdit.Document;
 
 namespace AvalonStudio.Languages
 {
@@ -24,11 +23,12 @@ namespace AvalonStudio.Languages
     {
         Build,
         Analysis,
+        Misc,
     }
 
     public class Diagnostic : TextSegment
     {
-        public Diagnostic(int offset, int length, string project, string file, int line, string message, string code, DiagnosticLevel level, DiagnosticCategory category, DiagnosticSource source = DiagnosticSource.Analysis)
+        public Diagnostic(int offset, int length, string project, string file, int line, string message, string code, DiagnosticLevel level, DiagnosticCategory category)
         {
             StartOffset = offset;
             Length = length;
@@ -38,7 +38,6 @@ namespace AvalonStudio.Languages
             Spelling = message;
             Level = level;
             Category = category;
-            Source = source;
             Code = code;
         }
 
@@ -53,6 +52,5 @@ namespace AvalonStudio.Languages
         public string Code { get;  }
         public DiagnosticLevel Level { get; }
         public DiagnosticCategory Category { get; }
-        public DiagnosticSource Source { get; }
     }
 }
