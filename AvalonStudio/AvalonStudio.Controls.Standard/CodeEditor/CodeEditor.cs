@@ -1036,11 +1036,35 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _isLoaded = true;
 
+            TextArea.SelectionChanged += TextArea_SelectionChanged;
+
             Dispatcher.UIThread.Post(() =>
             {
                 Focus();
                 TextArea.Caret.BringCaretToView();
             });
+        }
+
+        private void TextArea_SelectionChanged(object sender, EventArgs e)
+        {
+            if (TextArea.Selection.IsEmpty)
+            {
+                Selection = null;
+            }
+            else
+            {
+                var start = TextArea.Selection.StartPosition.Location;
+                var end = TextArea.Selection.EndPosition.Location;
+
+                if (end >= start)
+                {
+                    Selection = new Documents.SimpleSegment(Document.GetOffset(start), Document.GetOffset(end) - Document.GetOffset(start));
+                }
+                else
+                {
+                    Selection = new Documents.SimpleSegment(Document.GetOffset(end), Document.GetOffset(start) - Document.GetOffset(end));
+                }
+            }
         }
 
         private void List_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -1204,6 +1228,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get => GetValue(EditorProperty);
             set => SetValue(EditorProperty, value);
+        }
+
+        public static readonly AvaloniaProperty<Documents.ISegment> SelectionProperty =
+            AvaloniaProperty.Register<CodeEditor, Documents.ISegment>(nameof(Selection), defaultBindingMode: BindingMode.TwoWay);
+
+        public Documents.ISegment Selection
+        {
+            get => GetValue(SelectionProperty);
+            set => SetValue(SelectionProperty, value);
         }
 
         public int GetOffsetFromPoint(Point point)

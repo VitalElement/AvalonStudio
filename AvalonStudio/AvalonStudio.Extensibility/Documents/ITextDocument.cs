@@ -423,6 +423,8 @@ namespace AvalonStudio.Documents
 
         ITextDocument Document { get; }
 
+        ISegment Selection { get; }
+
         bool OnBeforeTextEntered(string text);
 
         bool OnTextEntered(string text);

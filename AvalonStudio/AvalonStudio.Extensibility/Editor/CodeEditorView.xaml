@@ -55,6 +55,7 @@
                            EditorCaretOffset="{Binding Offset}"
                            Line="{Binding Line}"
                            Column="{Binding Column}"
+                           Selection="{Binding Selection}"
                            Editor="{Binding }"
                            DebugHighlight="{Binding DebugHighlight}">
                 <i:Interaction.Behaviors>

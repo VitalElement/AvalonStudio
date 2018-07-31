@@ -17,6 +17,7 @@ namespace AvalonStudio.Extensibility.Editor
         private int _line;
         private int _column;
         private bool _isFocused;
+        private ISegment _selection;
 
         public TextEditorViewModel(ITextDocument document, ISourceFile file) : base(file)
         {
@@ -46,6 +47,12 @@ namespace AvalonStudio.Extensibility.Editor
         {
             get { return _column; }
             set { this.RaiseAndSetIfChanged(ref _column, value); }
+        }
+
+        public ISegment Selection
+        {
+            get { return _selection; }
+            set { this.RaiseAndSetIfChanged(ref _selection, value); }
         }
 
         public ITextDocument Document
