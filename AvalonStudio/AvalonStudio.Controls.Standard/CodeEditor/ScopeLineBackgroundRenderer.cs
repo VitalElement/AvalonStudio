@@ -19,7 +19,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private readonly IBrush brush = Brush.Parse("#717171");
         private readonly Pen _pen;
 
-        private TextSegmentCollection<IndexEntry> markers;
+        private TextSegmentCollection<TextSegment> markers;
 
         private TextDocument _document;
 
@@ -27,7 +27,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             _document = document;
             _pen = new Pen(brush, 1, new DashStyle(new double[] { 8, 4 }, 0));
-            markers = new TextSegmentCollection<IndexEntry>(document);
+            markers = new TextSegmentCollection<TextSegment>(document);
         }
 
         public void Dispose()
@@ -44,7 +44,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             if (index != null)
             {
-                markers.AddRange(index);
+                markers.AddRange(index.Select(s=>new TextSegment { StartOffset = s.StartOffset, EndOffset = s.EndOffset }));
             }
         }
 
