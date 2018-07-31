@@ -263,15 +263,24 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
             }
         }
 
-        public async Task ReevaluateProject(IProject project)
+        public async Task<(Project project, List<string> projectReferences, string targetPath)> ReevaluateProject(IProject project)
         {
             var proj = project as OmniSharpProject;
 
             var buildHost = _buildNodes.Take();
 
-            var loadData = await buildHost.LoadProject(project.Solution.CurrentDirectory, project.Location);
+            var (info, projectReferences, targetPath) = await buildHost.LoadProject(project.Solution.CurrentDirectory, project.Location, proj.RoslynProject.Id);
 
             _buildNodes.Add(buildHost);
+
+            if(info != null)
+            {
+                return (CurrentSolution.GetProject(info.Id), projectReferences, targetPath);
+            }
+            else
+            {
+                return (null, projectReferences, targetPath);
+            }
         }
 
         public ProjectId GetProjectId(IProject project)
