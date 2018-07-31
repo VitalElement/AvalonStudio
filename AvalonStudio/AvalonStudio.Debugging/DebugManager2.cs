@@ -201,6 +201,8 @@ namespace AvalonStudio.Debugging
                     _session.TargetExited -= _session_TargetExited;
                     _session.TargetStarted -= _session_TargetStarted;
                     _session.TargetReady -= _session_TargetReady;
+
+                    _session.Dispose();
                     _session = null;
                 }
             }
