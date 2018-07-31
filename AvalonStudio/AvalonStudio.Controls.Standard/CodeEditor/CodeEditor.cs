@@ -450,7 +450,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
 
                         TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
-                        TextArea.TextView.LineTransformers.Add(_textColorizer);
+                        TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
 
                         _diagnosticMarkersRenderer = new TextMarkerService(Document);
                         _contextActionsRenderer = new ContextActionsRenderer(this, _diagnosticMarkersRenderer);
