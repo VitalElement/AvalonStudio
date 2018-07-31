@@ -1276,7 +1276,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                 if(viewPortLines < Document.LineCount)
                 {
-                    TextArea.ScrollToLine(line, 2, viewPortLines / 2);
+                    TextArea.ScrollToLine(line);
                 }
             });
         }
