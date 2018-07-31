@@ -24,7 +24,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
             return SourceText.From(stream, _defaultEncoding);
         }
 
-        public override async Task<TextAndVersion> LoadTextAndVersionAsync(Workspace workspace, DocumentId documentId, CancellationToken cancellationToken)
+        public override Task<TextAndVersion> LoadTextAndVersionAsync(Workspace workspace, DocumentId documentId, CancellationToken cancellationToken)
         {
             var fileInfo = new System.IO.FileInfo(_file.Location);
             DateTime prevLastWriteTime = fileInfo.LastWriteTimeUtc;
@@ -51,7 +51,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                 throw new IOException(message);
             }
 
-            return textAndVersion;
+            return Task.FromResult(textAndVersion);
         }
     }
 }

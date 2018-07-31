@@ -182,7 +182,7 @@ namespace AvalonStudio.Projects
             {
                 return VisualStudioSolution.Load(fileName);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 var solution = SerializedObject.Deserialize<AvalonStudioSolution>(fileName);
 

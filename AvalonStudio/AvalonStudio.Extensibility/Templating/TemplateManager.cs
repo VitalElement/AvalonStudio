@@ -95,7 +95,7 @@ namespace AvalonStudio.Extensibility.Templating
             {
                 _settingsLoader.RebuildCacheFromSettingsIfNotCurrent(forceCacheRebuild);
             }
-            catch (EngineInitializationException eiex)
+            catch (EngineInitializationException)
             {
                 ////Reporter.Error.WriteLine(eiex.Message.Bold().Red());
                 ////Reporter.Error.WriteLine(LocalizableStrings.SettingsReadError);

@@ -53,7 +53,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private SnippetManager _snippetManager;
         private InsertionContext _currentSnippetContext;
-        private bool _suppressIsDirtyNotifications = false;
 
         public IntellisenseViewModel Intellisense { get; }
         private Intellisense _intellisenseControl;

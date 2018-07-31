@@ -23,8 +23,6 @@ namespace AvalonStudio.Debugging
 
         private bool _enabled;
 
-        private bool firstStopInSession;
-
         private readonly List<RegisterViewModel> lastChangedRegisters;
 
         public RegistersViewModel() : base(new ObservableCollection<RegisterViewModel>())

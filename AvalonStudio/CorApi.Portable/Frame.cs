@@ -68,7 +68,7 @@ namespace CorApi.Portable
                 ilframe.CanSetIP(offset);
                 return true;
             }
-            catch (SharpGen.Runtime.SharpGenException e)
+            catch (SharpGen.Runtime.SharpGenException)
             {
                 return false;
             }

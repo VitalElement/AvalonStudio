@@ -542,7 +542,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                         GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, editor.SourceFile, diagnostics);
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                 }
             });

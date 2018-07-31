@@ -104,7 +104,7 @@ namespace AvalonStudio.Languages.Xaml
 
                 return cursor;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return cursor;
             }

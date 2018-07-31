@@ -675,9 +675,11 @@ namespace AvalonStudio.Toolchains.Standard
             }
         }
 
-        public virtual async Task BeforeBuild(IConsole console, IProject project)
+        public virtual Task BeforeBuild(IConsole console, IProject project)
         {
             _studio = IoC.Get<IStudio>();
+
+            return Task.CompletedTask;
         }
           
         public abstract Task<bool> InstallAsync(IConsole console, IProject project);
