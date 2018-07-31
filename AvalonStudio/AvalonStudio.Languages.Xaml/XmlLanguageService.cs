@@ -18,7 +18,7 @@ namespace AvalonStudio.Languages.Xaml
 {
     internal class XmlLanguageService : ILanguageService
     {
-        private static List<ITextEditorInputHelper> s_InputHelpers = new List<ITextEditorInputHelper>
+        private static readonly List<ITextEditorInputHelper> s_InputHelpers = new List<ITextEditorInputHelper>
         {
             new CompleteCloseTagCodeEditorHelper(),
             new TerminateElementCodeEditorHelper(),
@@ -90,8 +90,11 @@ namespace AvalonStudio.Languages.Xaml
             XmlDocument doc = null;
             try
             {
-                doc = new XmlDocument();
-                doc.XmlResolver = null; // Prevent DTDs from being downloaded.
+                doc = new XmlDocument
+                {
+                    XmlResolver = null // Prevent DTDs from being downloaded.
+                };
+
                 doc.LoadXml(text);
             }
             catch (XmlException ex)
@@ -113,12 +116,13 @@ namespace AvalonStudio.Languages.Xaml
 
             var element = XElement.Parse(text);
 
-            var settings = new XmlWriterSettings();
-            settings.OmitXmlDeclaration = true;
-            settings.Indent = true;
-            settings.NamespaceHandling = NamespaceHandling.OmitDuplicates;
-            settings.Indent = true;
-            settings.IndentChars = "  ";
+            var settings = new XmlWriterSettings
+            {
+                OmitXmlDeclaration = true,
+                Indent = true,
+                NamespaceHandling = NamespaceHandling.OmitDuplicates,
+                IndentChars = "  "
+            };
 
             using (var xmlWriter = XmlWriter.Create(stringBuilder, settings))
             {

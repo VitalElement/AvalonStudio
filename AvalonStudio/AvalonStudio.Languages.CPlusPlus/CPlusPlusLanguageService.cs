@@ -424,8 +424,11 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             foreach (var token in tokens.Tokens)
             {
-                var highlightData = new OffsetSyntaxHighlightingData();
-                highlightData.Start = token.Extent.Start.FileLocation.Offset;
+                var highlightData = new OffsetSyntaxHighlightingData
+                {
+                    Start = token.Extent.Start.FileLocation.Offset
+                };
+
                 highlightData.Length = token.Extent.End.FileLocation.Offset - highlightData.Start;
 
                 switch (token.Kind)
@@ -698,11 +701,13 @@ namespace AvalonStudio.Languages.CPlusPlus
                     {
                         var argument = cursor.GetArgument(i);
 
-                        var arg = new ParameterSymbol();
-                        arg.IsBuiltInType = IsBuiltInType(argument.CursorType);
-                        arg.Name = argument.Spelling;
+                        var arg = new ParameterSymbol
+                        {
+                            IsBuiltInType = IsBuiltInType(argument.CursorType),
+                            Name = argument.Spelling,
 
-                        arg.TypeDescription = argument.CursorType.Spelling;
+                            TypeDescription = argument.CursorType.Spelling
+                        };
                         result.Arguments.Add(arg);
                     }
 
@@ -881,9 +886,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 var args = new List<string>();
 
-                var superProject = file.Project.Solution.StartupProject as IStandardProject;
-
-                if (superProject == null)
+                if (!(file.Project.Solution.StartupProject is IStandardProject superProject))
                 {
                     superProject = file.Project as IStandardProject;
                 }
@@ -1230,10 +1233,11 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private static Signature SignatureFromSymbol(Symbol symbol)
         {
-            var result = new Signature();
-
-            result.Name = symbol.Name;
-            result.Description = symbol.BriefComment;
+            var result = new Signature
+            {
+                Name = symbol.Name,
+                Description = symbol.BriefComment
+            };
 
             if (symbol.IsBuiltInType)
             {

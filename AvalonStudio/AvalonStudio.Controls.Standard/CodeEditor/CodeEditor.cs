@@ -132,15 +132,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             TextArea.SelectionBrush = Brush.Parse("#AA569CD6");
             TextArea.SelectionCornerRadius = 0;
 
-            EventHandler<KeyEventArgs> tunneledKeyUpHandler = (send, ee) =>
+            void tunneledKeyUpHandler(object send, KeyEventArgs ee)
             {
                 if (CaretOffset > 0)
                 {
                     _intellisenseManager?.OnKeyUp(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
                 }
-            };
+            }
 
-            EventHandler<KeyEventArgs> tunneledKeyDownHandler = (send, ee) =>
+            void tunneledKeyDownHandler(object send, KeyEventArgs ee)
             {
                 if (CaretOffset > 0)
                 {
@@ -191,7 +191,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         }
                     }
                 }
-            };
+            }
 
             _disposables = new CompositeDisposable {
             this.GetObservable(LineNumbersVisibleProperty).Subscribe(s =>
@@ -471,21 +471,21 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                                 switch(e.Action)
                                 {
                                     case NotifyCollectionChangedAction.Add:
-                                        foreach(var item in  e.NewItems.Cast<(object tag, SyntaxHighlightDataList highlightList)>())
+                                        foreach(var (tag,highlightList)in  e.NewItems.Cast<(object tag, SyntaxHighlightDataList highlightList)>())
                                         {
-                                            _textColorizer.SetTransformations(item.tag, item.highlightList);
+                                            _textColorizer.SetTransformations(tag, highlightList);
                                         }
                                         break;
 
                                     case NotifyCollectionChangedAction.Remove:
-                                        foreach(var item in  e.OldItems.Cast<(object tag, SyntaxHighlightDataList highlightList)>())
+                                        foreach(var (tag,highlightList)in  e.OldItems.Cast<(object tag, SyntaxHighlightDataList highlightList)>())
                                         {
-                                            _textColorizer.RemoveAll(i => i.Tag == item.tag);
+                                            _textColorizer.RemoveAll(i => i.Tag == tag);
                                         }
                                         break;
 
                                     case NotifyCollectionChangedAction.Reset:
-                                        foreach(var item in  e.OldItems.Cast<(object tag, SyntaxHighlightDataList highlightList)>())
+                                        foreach(var (tag,highlightList)in  e.OldItems.Cast<(object tag, SyntaxHighlightDataList highlightList)>())
                                         {
                                             _textColorizer.RemoveAll(i => true);
                                         }
@@ -507,21 +507,21 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                                 switch(e.Action)
                                 {
                                     case NotifyCollectionChangedAction.Add:
-                                        foreach(var item in  e.NewItems.Cast<(object tag, IEnumerable<Diagnostic> diagnostics)>())
+                                        foreach(var (tag,diagnostics)in  e.NewItems.Cast<(object tag, IEnumerable<Diagnostic> diagnostics)>())
                                         {
-                                            _diagnosticMarkersRenderer.SetDiagnostics(item.tag, item.diagnostics);
+                                            _diagnosticMarkersRenderer.SetDiagnostics(tag, diagnostics);
                                         }
                                         break;
 
                                     case NotifyCollectionChangedAction.Remove:
-                                        foreach(var item in  e.OldItems.Cast<(object tag, IEnumerable<Diagnostic> diagnostics)>())
+                                        foreach(var (tag,diagnostics)in  e.OldItems.Cast<(object tag, IEnumerable<Diagnostic> diagnostics)>())
                                         {
-                                            _diagnosticMarkersRenderer.RemoveAll(x=>x.Tag == item.tag);
+                                            _diagnosticMarkersRenderer.RemoveAll(x=>x.Tag == tag);
                                         }
                                         break;
 
                                     case NotifyCollectionChangedAction.Reset:
-                                        foreach(var item in  e.OldItems.Cast<(object tag, IEnumerable<Diagnostic> diagnostics)>())
+                                        foreach(var (tag,diagnostics)in  e.OldItems.Cast<(object tag, IEnumerable<Diagnostic> diagnostics)>())
                                         {
                                             _diagnosticMarkersRenderer.RemoveAll(i => true);
                                         }
@@ -542,14 +542,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             
                             _scopeLineBackgroundRenderer.ApplyIndex(codeEditor.CodeIndex);
 
-                            foreach(var diagnostic in codeEditor.Diagnostics)
+                            foreach(var (tag,diagnostics)in codeEditor.Diagnostics)
                             {
-                                _diagnosticMarkersRenderer.SetDiagnostics(diagnostic.tag, diagnostic.diagnostics);
+                                _diagnosticMarkersRenderer.SetDiagnostics(tag, diagnostics);
                             }
 
-                            foreach(var highlightData in codeEditor.Highlights)
+                            foreach(var (tag,highlights)in codeEditor.Highlights)
                             {
-                                _textColorizer.SetTransformations(highlightData.tag, highlightData.highlights);
+                                _textColorizer.SetTransformations(tag, highlights);
                             }
 
                             TextArea.TextView.Redraw();
@@ -785,10 +785,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             var selectionSegment = GetSelectionSegment();
             var caretSegment = new TextSegment() { StartOffset = CaretOffset, EndOffset = CaretOffset };
 
-            var anchors = new TextSegmentCollection<TextSegment>(Document);
-
-            anchors.Add(selectionSegment);
-            anchors.Add(caretSegment);
+            var anchors = new TextSegmentCollection<TextSegment>(Document)
+            {
+                selectionSegment,
+                caretSegment
+            };
 
             action(startLine, endLine);
 

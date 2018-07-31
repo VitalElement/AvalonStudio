@@ -114,16 +114,17 @@ namespace AvalonStudio.Extensibility.Templating
         {
             if (template is DotNetTemplateAdaptor templateImpl)
             {
-                var parameterList = new List<string>();
-
-                parameterList.Add(templateImpl.DotnetTemplate.ShortName);
-                parameterList.Add("--output");
-                parameterList.Add(path);
-
-                foreach(var parameter in parameters)
+                var parameterList = new List<string>
                 {
-                    parameterList.Add($"--{parameter.name}");
-                    parameterList.Add(parameter.value);
+                    templateImpl.DotnetTemplate.ShortName,
+                    "--output",
+                    path
+                };
+
+                foreach (var (name, value) in parameters)
+                {
+                    parameterList.Add($"--{name}");
+                    parameterList.Add(value);
                 }
 
                 _commandInput.ResetArgs(parameterList.ToArray());                

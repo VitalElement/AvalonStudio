@@ -175,8 +175,8 @@ namespace AvalonStudio.Languages.CSharp
             new ConditionalWeakTable<ITextEditor, CSharpDataAssociation>();
 
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
-        private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
-        private MetadataHelper _metadataHelper;
+        private readonly Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
+        private readonly MetadataHelper _metadataHelper;
 
         private static readonly Microsoft.CodeAnalysis.SymbolDisplayFormat DefaultFormat = Microsoft.CodeAnalysis.SymbolDisplayFormat.MinimallyQualifiedFormat.
             WithGlobalNamespaceStyle(Microsoft.CodeAnalysis.SymbolDisplayGlobalNamespaceStyle.Omitted).
