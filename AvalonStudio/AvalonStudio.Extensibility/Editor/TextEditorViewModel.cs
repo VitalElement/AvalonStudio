@@ -117,7 +117,6 @@ namespace AvalonStudio.Extensibility.Editor
             base.OnSelected();
 
             IsFocused = true;
-            // how to tell the control to focus.
         }
 
         public void Focus ()
@@ -127,12 +126,12 @@ namespace AvalonStudio.Extensibility.Editor
 
         void ITextDocumentTabViewModel.GotoPosition(int line, int column)
         {
-
+            Offset = Document.GetOffset(line, column);
         }
 
         void ITextDocumentTabViewModel.GotoOffset(int offset)
         {
-
+            Offset = offset;
         }
 
         public virtual void Save()

@@ -313,6 +313,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return new TextLocation(loc.Line, loc.Column);
         }
 
+        public int GetOffset(int line, int column)
+        {
+            return _document.GetOffset(line, column);
+        }
+
         public void Undo ()
         {
             _document.UndoStack.Undo();

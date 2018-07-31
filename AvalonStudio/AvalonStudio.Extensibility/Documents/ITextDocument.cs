@@ -384,6 +384,8 @@ namespace AvalonStudio.Documents
 
         TextLocation GetLocation(int offset);
 
+        int GetOffset(int line, int column);
+
         string Text { get; }
 
         int TextLength { get; }

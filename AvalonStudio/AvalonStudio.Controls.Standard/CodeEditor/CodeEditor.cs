@@ -298,6 +298,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 if (Document?.TextLength > s)
                 {
                     CaretOffset = s;
+                    TextArea.Caret.BringCaretToView();
+                    Focus();
                 }
             }),
 
@@ -571,6 +573,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             _contextActionsRenderer.Providers.Add(contextActionProvider);
                         }
                     }
+
+                    TextArea.Caret.BringCaretToView();
+                    Focus();
                 }
                 else
                 {
@@ -1264,6 +1269,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
 
             _selectedDebugLineBackgroundRenderer.SetLocation(line, startColumn, endColumn);
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                var viewPortLines = (int)((TextArea as IScrollable).Viewport.Height);
+
+                if(viewPortLines < Document.LineCount)
+                {
+                    TextArea.ScrollToLine(line, 2, viewPortLines / 2);
+                }
+            });
         }
 
         private void ClearDebugHighlight()

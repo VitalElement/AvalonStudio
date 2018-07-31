@@ -344,15 +344,12 @@ namespace AvalonStudio.Studio
 
             if (shell.SelectedDocument is ITextDocumentTabViewModel fileTab)
             {
-                //await fileTab.WaitForEditorToLoadAsync();
-
                 if (debugHighlight)
                 {
                     if(fileTab is IDebugLineDocumentTabViewModel debugLineTab)
                     {
                         debugLineTab.DebugHighlight = new Debugging.DebugHighlightLocation { Line = line, StartColumn = startColumn, EndColumn = endColumn };
                     }
-                    //fileTab.Editor.SetDebugHighlight(line, startColumn, endColumn);
                 }
 
                 if (selectLine || debugHighlight)
