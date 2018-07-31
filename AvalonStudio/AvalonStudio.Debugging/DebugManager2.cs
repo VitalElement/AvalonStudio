@@ -179,8 +179,6 @@ namespace AvalonStudio.Debugging
 
         private void OnEndSession()
         {
-            _session?.Exit();
-
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 DebugSessionEnded?.Invoke(this, EventArgs.Empty);
@@ -203,7 +201,6 @@ namespace AvalonStudio.Debugging
                     _session.TargetExited -= _session_TargetExited;
                     _session.TargetStarted -= _session_TargetStarted;
                     _session.TargetReady -= _session_TargetReady;
-                    _session.Dispose();
                     _session = null;
                 }
             }
@@ -220,7 +217,7 @@ namespace AvalonStudio.Debugging
 
         public void Stop()
         {
-            OnEndSession();
+            _session.Exit();
         }
 
         public async void Start()
