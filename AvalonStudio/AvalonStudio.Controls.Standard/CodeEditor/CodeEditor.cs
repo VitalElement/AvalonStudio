@@ -13,6 +13,7 @@ using AvaloniaEdit.Editing;
 using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
 using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
+using AvalonStudio.Controls.Standard.CodeEditor.Highlighting;
 using AvalonStudio.Controls.Standard.CodeEditor.Refactoring;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.Debugging;
@@ -434,6 +435,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     {
                         _snippetManager.InitialiseSnippetsForProject(editor.SourceFile.Project);
                     }
+
+                    SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(editor.SourceFile.ContentType);
 
                     if(editor.Document is AvalonStudioTextDocument td && Document != td.Document)
                     {
