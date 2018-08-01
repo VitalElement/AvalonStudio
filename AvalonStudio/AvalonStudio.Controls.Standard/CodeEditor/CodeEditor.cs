@@ -301,7 +301,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     CaretOffset = s;
                     TextArea.Caret.BringCaretToView();
-                    Focus();
                 }
             }),
 
@@ -370,12 +369,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     EditorCaretOffset = TextArea.Caret.Offset;
                     Line = TextArea.Caret.Line;
                     Column = TextArea.Caret.Column;
-
-                    if(!IsFocused)
-                    {
-                        Focus();
-                    }
-
                 }
             }),
 

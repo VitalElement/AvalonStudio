@@ -321,8 +321,7 @@ namespace AvalonStudio.Languages.CSharp
             var semanticModel = await document.GetSemanticModelAsync();
 
             var completionService = CompletionService.GetService(document);
-            var completionTrigger = GetCompletionTrigger(previousChar);
-            var data = await completionService.GetCompletionsAsync(document, index, completionTrigger);
+            var data = await completionService.GetCompletionsAsync(document, index);
 
             if (data != null)
             {
