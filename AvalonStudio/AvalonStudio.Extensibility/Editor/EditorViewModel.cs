@@ -11,14 +11,17 @@ namespace AvalonStudio.Extensibility.Editor
     {
         private ISourceFile _sourceFile;
         private ColorScheme _colorScheme;
+        protected IStudio _studio;
 
         public EditorViewModel(ISourceFile file)
         {
+            _studio = IoC.Get<IStudio>();
+
             _sourceFile = file;
 
-            /*var settings = GlobalSettings.Settings.GetSettings<EditorSettings>();
+            var settings = GlobalSettings.Settings.GetSettings<EditorSettings>();
 
-            _colorScheme = ColorScheme.LoadColorScheme(settings.ColorScheme);*/
+            _colorScheme = ColorScheme.LoadColorScheme(settings.ColorScheme);
 
             Title = file?.Name;
         }

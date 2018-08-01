@@ -32,13 +32,10 @@ namespace AvalonStudio.Extensibility.Editor
         private ObservableCollection<(object tag, SyntaxHighlightDataList)> _highlights;
         private ObservableCollection<(object tag, IEnumerable<Diagnostic>)> _diagnostics;
         private IEnumerable<IndexEntry> _codeIndex;
-        private int _lastLineNumber;
         private CompositeDisposable _languageServiceDisposables;
 
         public CodeEditorViewModel(ITextDocument document, ISourceFile file) : base(document, file)
         {
-            _lastLineNumber = -1;
-
             _highlights = new ObservableCollection<(object tag, SyntaxHighlightDataList)>();
             _diagnostics = new ObservableCollection<(object tag, IEnumerable<Diagnostic>)>();
 
@@ -49,29 +46,6 @@ namespace AvalonStudio.Extensibility.Editor
             _analysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(async _ =>
             {
                 await DoCodeAnalysisAsync();
-            });
-
-            this.WhenAnyValue(x => x.Line).Subscribe(lineNumber =>
-            {
-                if (lineNumber != _lastLineNumber && lineNumber > 0)
-                {
-                    var line = Document.Lines[Line];
-
-                    var text = Document.GetText(line);
-
-                    if (string.IsNullOrWhiteSpace(text))
-                    {
-                        if (LanguageService?.InputHelpers != null)
-                        {
-                            foreach (var helper in LanguageService.InputHelpers)
-                            {
-                                helper.CaretMovedToEmptyLine(this);
-                            }
-                        }
-                    }
-
-                    _lastLineNumber = lineNumber;
-                }
             });
         }
 
@@ -109,42 +83,6 @@ namespace AvalonStudio.Extensibility.Editor
         {
             LanguageService?.UnregisterSourceFile(null);
             return base.OnClose();
-        }
-
-        public override bool OnTextEntered(string text)
-        {
-            bool handled = false;
-
-            if (LanguageService?.InputHelpers != null)
-            {
-                foreach (var helper in LanguageService.InputHelpers)
-                {
-                    if (helper.AfterTextInput(this, text))
-                    {
-                        handled = true;
-                    }
-                }
-            }
-
-            return handled;
-        }
-
-        public override bool OnBeforeTextEntered(string text)
-        {
-            bool handled = false;
-
-            if (LanguageService?.InputHelpers != null)
-            {
-                foreach (var helper in LanguageService.InputHelpers)
-                {
-                    if (helper.BeforeTextInput(this, text))
-                    {
-                        handled = true;
-                    }
-                }
-            }
-
-            return handled;
         }
 
         public override void OnTextChanged()
@@ -267,19 +205,29 @@ namespace AvalonStudio.Extensibility.Editor
                     c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;
 
             LanguageService = languageServiceProvider.CreateLanguageService();
-            LanguageService.RegisterSourceFile(this);
 
-            _languageServiceDisposables = new CompositeDisposable
+            if (LanguageService != null)
             {
-                Observable.FromEventPattern<DiagnosticsUpdatedEventArgs>(IoC.Get<IErrorList>(), nameof(IErrorList.DiagnosticsUpdated)).Subscribe(args =>
-                LanguageService_DiagnosticsUpdated(args.Sender, args.EventArgs))
-            };
+                LanguageService.RegisterSourceFile(this);
 
-            /*SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(sourceFile.ContentType);}*/
+                _languageServiceDisposables = new CompositeDisposable
+                {   
+                    Observable.FromEventPattern<DiagnosticsUpdatedEventArgs>(IoC.Get<IErrorList>(), nameof(IErrorList.DiagnosticsUpdated)).Subscribe(args =>
+                    LanguageService_DiagnosticsUpdated(args.Sender, args.EventArgs))
+                };
 
-            StartBackgroundWorkers();
+                if(LanguageService.InputHelpers != null)
+                {
+                    foreach(var helper in LanguageService.InputHelpers)
+                    {
+                        InputHelpers.Add(helper);
+                    }
+                }
 
-            DoCodeAnalysisAsync().GetAwaiter();
+                StartBackgroundWorkers();
+
+                DoCodeAnalysisAsync().GetAwaiter();
+            }
         }
 
         private void LanguageService_DiagnosticsUpdated(object sender, DiagnosticsUpdatedEventArgs e)
