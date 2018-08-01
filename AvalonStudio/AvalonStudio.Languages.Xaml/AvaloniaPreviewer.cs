@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Remote;
@@ -55,6 +55,7 @@ namespace AvalonStudio.Languages.Xaml
         private CompositeDisposable _disposables;
         private IDisposable _listener;
         private VisualBrush _visualBrush;
+        private CheckBox _showErrors;
 
         private static int FreeTcpPort()
         {
@@ -268,6 +269,8 @@ namespace AvalonStudio.Languages.Xaml
             _errorOverlay = e.NameScope.Find<Grid>("PART_ErrorOverlay");
             _errorText = e.NameScope.Find<TextBox>("PART_Errors");
 
+            _showErrors = e.NameScope.Find<CheckBox>("PART_ShowErrors");
+
             var background = e.NameScope.Find<ScrollViewer>("PART_Remote");
 
             background.Background = _visualBrush;
@@ -284,11 +287,14 @@ namespace AvalonStudio.Languages.Xaml
                     if (result.Error != null)
                     {
                         _errorText.Text = result.Error;
-                        _errorOverlay.IsVisible = true;
+                        _showErrors.IsVisible = true;
+
+                        _remote.InError = true;
                     }
                     else
                     {
-                        _errorOverlay.IsVisible = false;
+                        _remote.InError = false;
+                        _showErrors.IsVisible = false;
                         _errorText.Text = "";
                     }
                 }
