@@ -71,8 +71,8 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
         public void Disconnect()
         {
-            _cancellationSource.Cancel();
-            _terminal.Dispose();
+            _cancellationSource?.Cancel();
+            _terminal?.Dispose();
         }
 
         public void SendData(byte[] data)
