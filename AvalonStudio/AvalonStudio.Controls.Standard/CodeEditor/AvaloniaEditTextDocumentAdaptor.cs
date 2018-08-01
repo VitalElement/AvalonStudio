@@ -289,9 +289,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             Replace(offset, 0, text);
         }
 
-        public void Replace(int offset, int length, string text)
+        public void Replace(int offset, int length, string text, ReplaceMode replaceMode = ReplaceMode.Normal)
         {
-            _document.Replace(offset, length, text);
+            _document.Replace(offset, length, text, (AvaloniaEdit.Document.OffsetChangeMappingType)replaceMode);
         }
 
         public char GetCharAt(int offset)
