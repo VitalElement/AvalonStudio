@@ -39,6 +39,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Completion
             get { return Model.DisplayText; }
         }
 
+        public string FilterText => Model.FilterText;
+
         public int Priority
         {
             get { return Model.Priority; }

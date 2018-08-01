@@ -1,12 +1,14 @@
 ﻿using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using Microsoft.CodeAnalysis;
 using System.Collections.Concurrent;
+using System.Composition;
 using System.IO;
 
 namespace AvalonStudio.Projects.OmniSharp.Roslyn
 {
-    public class DocumentationProvider : IExtension
+    [Export(typeof(DocumentationProvider))]
+    [Shared]
+    public class DocumentationProvider : IActivatableExtension
     {
         private readonly ConcurrentDictionary<string, Microsoft.CodeAnalysis.DocumentationProvider> _assemblyPathToDocumentationProviderMap = new ConcurrentDictionary<string, Microsoft.CodeAnalysis.DocumentationProvider>();
 
@@ -15,8 +17,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
         }
 
         public void BeforeActivation()
-        {
-            IoC.RegisterConstant(this);
+        {            
         }
 
         public Microsoft.CodeAnalysis.DocumentationProvider GetDocumentationProvider(string location)

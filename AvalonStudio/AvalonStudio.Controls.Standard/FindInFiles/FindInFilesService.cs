@@ -1,10 +1,10 @@
 ﻿using AvaloniaEdit.Document;
 using AvaloniaEdit.Search;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Projects;
-using AvalonStudio.Shell;
 using System.Collections.Generic;
+using System.Composition;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -34,7 +34,9 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
     }
 
 
-    public class FindInFilesService : IFindInFilesService, IExtension
+    [Export(typeof(IFindInFilesService))]
+    [Shared]
+    public class FindInFilesService : IFindInFilesService, IActivatableExtension
     {
         private IEnumerable<FindResult> GetResults(ISearchStrategy strategy, ISourceFile file)
         {
@@ -58,16 +60,16 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
         public IEnumerable<FindResult> Find(string searchString, bool caseSensitive, bool wholeWords, bool regex, string[] fileMasks)
         {
-            var shell = IoC.Get<IShell>();
+            var studio = IoC.Get<IStudio>();
 
             var searchStrategy = SearchStrategyFactory.Create(searchString, !caseSensitive, wholeWords, regex ? SearchMode.RegEx : SearchMode.Normal);
 
-            if (shell.CurrentSolution == null)
+            if (studio.CurrentSolution == null)
             {
                 return Enumerable.Empty<FindResult>();
             }
 
-            var files = shell.CurrentSolution.Projects.SelectMany(p => p.SourceFiles);
+            var files = studio.CurrentSolution.Projects.SelectMany(p => p.SourceFiles);
 
             if (fileMasks != null && fileMasks.Count() > 0)
             {
@@ -86,7 +88,6 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
         public void BeforeActivation()
         {
-            IoC.RegisterConstant<IFindInFilesService>(this);
         }
 
         public void Activation()

@@ -21,12 +21,24 @@ namespace AvalonStudio.Packages
 
         public async Task<IEnumerable<string>> GetVersionsAsync()
         {
-            return (await _metaData.GetVersionsAsync()).Select(v => v.Version.Version.ToString(4));
+            return (await _metaData.GetAllVersionsAsync()).Select(v => v.Version.Version.ToString(4));
         }
 
         public override string ToString()
         {
             return Title;
+        }
+    }
+
+    public static class IPackageSearchMetadataExtensions
+    {
+        public static async Task<IEnumerable<VersionInfo>> GetAllVersionsAsync(this IPackageSearchMetadata metaData)
+        {
+            var versionData = await metaData.GetVersionsAsync();
+
+            var baseVersion = new List<VersionInfo> { new VersionInfo(metaData.Identity.Version) };
+
+            return versionData.Concat(baseVersion).OrderByDescending(v => v.Version);
         }
     }
 }

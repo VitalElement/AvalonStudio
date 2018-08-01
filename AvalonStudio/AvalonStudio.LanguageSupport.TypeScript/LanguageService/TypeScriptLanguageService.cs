@@ -2,10 +2,13 @@
 using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Languages;
 using AvalonStudio.LanguageSupport.TypeScript.Projects;
 using AvalonStudio.Projects;
+using AvalonStudio.Utils;
 using IridiumJS.Runtime;
 using Newtonsoft.Json;
 using System;
@@ -26,7 +29,6 @@ using File = System.IO.File;
 
 namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 {
-    [ExportLanguageService(ContentType)]
     public class TypeScriptLanguageService : ILanguageService
     {
         private const string ContentType = "TypeScript";
@@ -36,7 +38,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
         private static readonly ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation> dataAssociations =
             new ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation>();
 
-        public IEnumerable<ICodeEditorInputHelper> InputHelpers => null;
+        public IEnumerable<ITextEditorInputHelper> InputHelpers => null;
 
         public bool CanTriggerIntellisense(char currentChar, char previousChar)
         {
@@ -80,8 +82,6 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 @"(//[\t|\s|\w|\d|\.]*[\r\n|\n])|([\s|\t]*/\*[\t|\s|\w|\W|\d|\.|\r|\n]*\*/)|(\<[!%][ \r\n\t]*(--([^\-]|[\r\n]|-[^\-])*--[ \r\n\t%]*)\>)",
                 RegexOptions.Compiled);
 
-        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
-
         public TypeScriptLanguageService()
         {
 #if DEBUG
@@ -96,15 +96,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 #endif
         }
 
-        public IIndentationStrategy IndentationStrategy { get; }
-
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => null;
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => null;
 
         public string LanguageId => "ts";
-
-        public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
 
         public bool CanHandle(IEditor editor)
         {
@@ -120,7 +116,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return result;
         }
 
-        public async Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line,
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line,
             int column, List<UnsavedFile> unsavedFiles, char previousChar, string filter = "")
         {
             //Get position in text
@@ -142,7 +138,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             };
         }
 
-        private async Task<List<CodeCompletionData>> CodeCompleteAtAsync(IEditor editor, int index,
+        private async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ITextEditor editor, int index,
             List<UnsavedFile> unsavedFiles, string filter = "")
         {
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == editor.SourceFile.FilePath);
@@ -152,7 +148,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
             var editorCompletions = completions.Entries.Select(cc =>
                 {
-                    var ccData = new CodeCompletionData(cc.Name, cc.Name)
+                    var ccData = new CodeCompletionData(cc.Name, cc.SortText, cc.Name)
                     {
                         Kind = ConvertCodeCompletionKind(cc.Kind),
                         BriefComment = cc.Name
@@ -182,7 +178,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             }
         }
 
-        public int Format(IEditor editor, uint offset, uint length, int cursor)
+        public int Format(ITextEditor editor, uint offset, uint length, int cursor)
         {
             //STUB!
             return -1;
@@ -194,13 +190,13 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return Task.FromResult<QuickInfoResult>(null);
         }
 
-        public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
+        public Task<List<Symbol>> GetSymbolsAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, string name)
         {
             //STUB!
             return Task.FromResult(new List<Symbol>());
         }
 
-        public void RegisterSourceFile(IEditor editor)
+        public void RegisterSourceFile(ITextEditor editor)
         {
             var file = editor.SourceFile;
 
@@ -218,9 +214,10 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             dataAssociations.Add(file, association);
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor,
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor,
             List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
+            var errorList = IoC.Get<IErrorList>();
             var result = new CodeAnalysisResults();
             var diagnostics = new List<Diagnostic>();
 
@@ -241,14 +238,16 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 diagnostics.Add(new Diagnostic(
                     0, 0,
-                    editor.SourceFile.Project,                    
+                    editor.SourceFile.Project.Name,                    
                     editor.SourceFile.Location,
                     0,
                     "Code analysis language service call failed.",
+                    "INT001",
                     DiagnosticLevel.Error,
                     DiagnosticCategory.Compiler));
 
-                DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
+                errorList.Remove((this, editor.SourceFile));
+                errorList.Create((this, editor.SourceFile), null, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
 
                 return new CodeAnalysisResults();
             }
@@ -308,10 +307,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 diagnostics.Add(new Diagnostic(
                     diagnostic.Start,
                     diagnostic.Length,
-                    editor.SourceFile.Project,                    
+                    editor.SourceFile.Project.Name,                    
                     editor.SourceFile.Location,
                     GetLineNumber(currentFileConts, diagnostic.Start),
                     diagnostic.MessageText,
+                    "INT002",
                     diagnostic.Category == TSBridge.Ast.Diagnostics.Diagnostic.DiagnosticCategory.Error
                         ? DiagnosticLevel.Error
                         : DiagnosticLevel.Warning,
@@ -322,14 +322,16 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             diagnostics.Add(new Diagnostic(
                 0,
                 0,
-                editor.SourceFile.Project,                
+                editor.SourceFile.Project.Name,                
                 editor.SourceFile.Location,
                 0,
                 "Code analysis for TypeScript is experimental and unstable. Use with caution.",
+                "INT003",
                 DiagnosticLevel.Warning,
                 DiagnosticCategory.Compiler));
 
-            DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(this, editor.SourceFile, diagnostics.Count > 0 ? DiagnosticsUpdatedKind.DiagnosticsCreated : DiagnosticsUpdatedKind.DiagnosticsRemoved, diagnostics.ToImmutableArray()));
+            errorList.Remove((this, editor.SourceFile));
+            errorList.Create((this, editor.SourceFile), null, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
 
             return result;
         }
@@ -439,14 +441,14 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return document.Take(offset).Count(x => x == '\n') + 1;
         }
 
-        public Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
+        public Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             //STUB!
             //return new SignatureHelp();
             return Task.FromResult<SignatureHelp>(null);
         }
 
-        public int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
             var textDocument = editor.Document;
@@ -468,7 +470,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return result;
         }
 
-        public int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
@@ -531,7 +533,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
+        public IEnumerable<IContextActionProvider> GetContextActionProviders(ITextEditor editor)
         {
             return Enumerable.Empty<IContextActionProvider>();
         }

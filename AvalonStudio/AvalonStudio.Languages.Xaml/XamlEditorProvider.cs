@@ -22,9 +22,9 @@ namespace AvalonStudio.Languages.Xaml
             return result;
         }
 
-        public IFileDocumentTabViewModel CreateViewModel(ISourceFile file)
+        public ITextDocumentTabViewModel CreateViewModel(ISourceFile file, ITextDocument document)
         {
-            return new XamlEditorViewModel(file);
+            return new XamlEditorViewModel(document, file);
         }
     }
 }

@@ -2,13 +2,17 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Remote;
+using Avalonia.Controls.Shapes;
 using Avalonia.Data;
+using Avalonia.Media;
 using Avalonia.Remote.Protocol;
 using Avalonia.Remote.Protocol.Designer;
 using Avalonia.Remote.Protocol.Viewport;
 using Avalonia.Threading;
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
@@ -45,9 +49,12 @@ namespace AvalonStudio.Languages.Xaml
         private Center _remoteContainer;
         private Process _currentHost;
         private Grid _overlay;
+        private Grid _errorOverlay;
         private TextBlock _statusText;
+        private TextBox _errorText;
         private CompositeDisposable _disposables;
         private IDisposable _listener;
+        private VisualBrush _visualBrush;
 
         private static int FreeTcpPort()
         {
@@ -90,7 +97,7 @@ namespace AvalonStudio.Languages.Xaml
             if (File.Exists(file.Project.Executable))
             {
                 var port = FreeTcpPort();
-                
+
                 _listener = new BsonTcpTransport().Listen(IPAddress.Loopback, port, t =>
                 {
                     Dispatcher.UIThread.InvokeAsync(() =>
@@ -139,6 +146,14 @@ namespace AvalonStudio.Languages.Xaml
                     }
                 }, false, executeInShell: false);
             }
+            else
+            {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    _statusText.Text = "Please build your project to enable previewing and intellisense.";
+                    _overlay.IsVisible = true;
+                });
+            }
         }
 
         private void KillHost()
@@ -169,7 +184,36 @@ namespace AvalonStudio.Languages.Xaml
 
         public AvaloniaPreviewer()
         {
-            var shell = IoC.Get<IShell>();
+            _visualBrush = new VisualBrush
+            {
+                DestinationRect = new RelativeRect(0, 0, 20, 20, RelativeUnit.Absolute),
+                TileMode = TileMode.Tile,
+                Visual = new Canvas
+                {
+                    Width = 20,
+                    Height = 20,
+                    Background = ColorScheme.CurrentColorScheme.Background,
+                    Children =
+                    {
+                        new Rectangle
+                        {
+                            Height = 10,
+                            Width = 10,
+                            Fill = ColorScheme.CurrentColorScheme.BackgroundAccent
+                        },
+                        new Rectangle
+                        {
+                            Height = 10,
+                            Width = 10,
+                            Fill = ColorScheme.CurrentColorScheme.BackgroundAccent,
+                            [Canvas.LeftProperty] = 10,
+                            [Canvas.TopProperty] = 10
+                        }
+                    }
+                }
+            };
+
+            var studio = IoC.Get<IStudio>();
 
             _disposables = new CompositeDisposable
             {
@@ -186,7 +230,7 @@ namespace AvalonStudio.Languages.Xaml
                     OnSourceFileChanged(file);
                 }),
 
-                Observable.FromEventPattern<BuildEventArgs>(shell, nameof(shell.BuildStarting)).Subscribe(o =>
+                Observable.FromEventPattern<BuildEventArgs>(studio, nameof(studio.BuildStarting)).Subscribe(o =>
                 {
                     if (SourceFile.Project.Solution.StartupProject == o.EventArgs.Project && _currentHost != null)
                     {
@@ -194,7 +238,7 @@ namespace AvalonStudio.Languages.Xaml
                     }
                 }),
 
-                Observable.FromEventPattern<BuildEventArgs>(shell, nameof(shell.BuildCompleted)).Subscribe(o =>
+                Observable.FromEventPattern<BuildEventArgs>(studio, nameof(studio.BuildCompleted)).Subscribe(o =>
                 {
                     if (SourceFile != null && SourceFile.Project.Solution.StartupProject == o.EventArgs.Project)
                     {
@@ -219,8 +263,14 @@ namespace AvalonStudio.Languages.Xaml
             _remoteContainer = e.NameScope.Find<Center>("PART_Center");
 
             _overlay = e.NameScope.Find<Grid>("PART_Overlay");
-
             _statusText = e.NameScope.Find<TextBlock>("PART_Status");
+
+            _errorOverlay = e.NameScope.Find<Grid>("PART_ErrorOverlay");
+            _errorText = e.NameScope.Find<TextBox>("PART_Errors");
+
+            var background = e.NameScope.Find<ScrollViewer>("PART_Remote");
+
+            background.Background = _visualBrush;
         }
 
         private void OnMessage(IAvaloniaRemoteTransportConnection transport, object obj)
@@ -233,10 +283,14 @@ namespace AvalonStudio.Languages.Xaml
                 {
                     if (result.Error != null)
                     {
-                        IoC.Get<IConsole>().WriteLine(result.Error);
+                        _errorText.Text = result.Error;
+                        _errorOverlay.IsVisible = true;
                     }
-                    //_errorsContainer.IsVisible = result.Error != null;
-                    //_errors.Text = result.Error ?? "";
+                    else
+                    {
+                        _errorOverlay.IsVisible = false;
+                        _errorText.Text = "";
+                    }
                 }
                 if (obj is RequestViewportResizeMessage resize)
                 {

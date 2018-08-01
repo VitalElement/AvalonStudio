@@ -1,7 +1,7 @@
 ﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Extensibility.Settings;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Shell;
 using ReactiveUI;
@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
 {
-    public class EditorSettingsViewModel : SettingsViewModel, IExtension
+    public class EditorSettingsViewModel : SettingsViewModel, IActivatableExtension
     {
         private bool _removeTrailingWhiteSpaceOnSave;
         private bool _autoFormat;
@@ -93,7 +93,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     Save();
 
-                    IoC.Get<IShell>().CurrentColorScheme = loadedScheme;
+                    IoC.Get<IStudio>().CurrentColorScheme = loadedScheme;
                 }
             }
         }

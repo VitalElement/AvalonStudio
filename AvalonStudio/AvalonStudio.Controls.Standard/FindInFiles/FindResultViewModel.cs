@@ -1,6 +1,6 @@
 ﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
-using AvalonStudio.Shell;
 using ReactiveUI;
 using System.IO;
 
@@ -14,9 +14,9 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
             OpenCommand = ReactiveCommand.Create(() =>
             {
-                var shell =IoC.Get<IShell>();
+                var studio = IoC.Get<IStudio>();
 
-                shell.OpenDocumentAsync(Model.File, Model.LineNumber, focus: true, selectLine: true);
+                studio.OpenDocumentAsync(Model.File, Model.LineNumber, focus: true, selectLine: true);
             });
         }
 

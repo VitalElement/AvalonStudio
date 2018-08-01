@@ -1,6 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui" 
-             xmlns:vm="clr-namespace:AvalonStudio.Extensibility.Settings;assembly=AvalonStudio.Extensibility"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility">
+             xmlns:vm="clr-namespace:AvalonStudio.Extensibility.Settings;assembly=AvalonStudio.Shell.Extensibility"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Shell.Extensibility">
     <Grid>
         <DockPanel>
             <Grid DockPanel.Dock="Left" Width="300">

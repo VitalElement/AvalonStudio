@@ -6,6 +6,6 @@ namespace AvalonStudio.Shell
     public interface IEditorProvider
     {
         bool CanEdit(ISourceFile file);
-        IFileDocumentTabViewModel CreateViewModel(ISourceFile file);
+        ITextDocumentTabViewModel CreateViewModel(ISourceFile file, ITextDocument document);
     }
 }

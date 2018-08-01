@@ -43,7 +43,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     Width = height;
                     var textView = TextView;
 
-                    foreach (var breakPoint in _manager?.OfType<Breakpoint>().Where(bp => bp.FileName.IsSamePathAs(textView.Document.FileName)))
+                    foreach (var breakPoint in _manager?.OfType<Breakpoint>().Where(bp => bp.FileName.IsSamePathAs(_editor.Editor.SourceFile.FilePath)))
                     {
                         var visualLine = TextView.VisualLines.FirstOrDefault(vl => vl.FirstDocumentLine.LineNumber == breakPoint.Line);
 
@@ -102,7 +102,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 lineClicked = textView.Document.GetLineByOffset(offset).LineNumber; // convert from text line to visual line.
 
                 var currentBreakPoint =
-                    _manager.OfType<Breakpoint>().FirstOrDefault(bp => bp.FileName == textView.Document.FileName && bp.Line == lineClicked) as BreakEvent;
+                    _manager.OfType<Breakpoint>().FirstOrDefault(bp => bp.FileName == _editor.Editor.SourceFile.FilePath && bp.Line == lineClicked) as BreakEvent;
 
                 if (currentBreakPoint != null)
                 {
@@ -110,9 +110,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
                 else
                 {
-                    if (!string.IsNullOrEmpty(textView.Document.FileName))
+                    if (!string.IsNullOrEmpty(_editor.Editor.SourceFile.FilePath))
                     {
-                        _manager.Add(textView.Document.FileName, lineClicked);
+                        _manager.Add(_editor.Editor.SourceFile.FilePath, lineClicked);
                     }
                 }
             }

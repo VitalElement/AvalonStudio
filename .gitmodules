@@ -13,3 +13,9 @@
 [submodule "VtNetCore.Avalonia"]
 	path = VtNetCore.Avalonia
 	url = https://github.com/VitalElement/VtNetCore.Avalonia.git
+[submodule "AvalonStudio.Shell"]
+	path = AvalonStudio.Shell
+	url = https://github.com/VitalElement/AvalonStudio.Shell.git
+[submodule "DataGrid"]
+	path = DataGrid
+	url = https://github.com/AvaloniaUI/DataGrid.git

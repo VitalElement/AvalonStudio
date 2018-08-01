@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 namespace AvalonStudio.Toolchains.LocalGCC
 {
     [ExportToolchain]
+    [Shared]
     public class LocalGCCToolchain : GCCToolchain
     {
         private static string _contentDirectory;

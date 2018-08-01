@@ -6,11 +6,13 @@ using AvalonStudio.Toolchains.GCC;
 using AvalonStudio.Utils;
 using Mono.Debugging.Client;
 using System;
+using System.Composition;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debuggers.GDB.Local
 {
+    [Shared]
     [ExportDebugger]
     internal class LocalGdbDebugger : IDebugger2
     {

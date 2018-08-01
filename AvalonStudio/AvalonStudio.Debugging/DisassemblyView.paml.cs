@@ -6,8 +6,6 @@ namespace AvalonStudio.Debugging
 {
     public class DisassemblyView : UserControl
     {
-        private ListBox disassemblyList;
-
         public DisassemblyView()
         {
             InitializeComponent();

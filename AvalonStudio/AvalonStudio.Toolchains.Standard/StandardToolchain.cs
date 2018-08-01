@@ -1,6 +1,7 @@
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Shell;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -8,6 +9,7 @@ using AvalonStudio.Shell;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -21,10 +23,10 @@ namespace AvalonStudio.Toolchains.Standard
 
         private int fileCount;
         private int numTasks;
-        private IShell _shell;
-        private IStatusBar _statusBar;
+        private IStudio _studio;
+        private readonly IStatusBar _statusBar;
 
-        protected IShell Shell => _shell;
+        protected IStudio Studio => _studio;
 
         private readonly object resultLock = new object();
 
@@ -108,6 +110,7 @@ namespace AvalonStudio.Toolchains.Standard
             }
 
             console.Clear();
+            IoC.Get<IErrorList>().Remove(this);
 
             console.WriteLine("Starting Build...");
             console.WriteLine();
@@ -171,8 +174,10 @@ namespace AvalonStudio.Toolchains.Standard
 
                     if (result)
                     {
-                        var linkedReferences = new CompileResult();
-                        linkedReferences.Project = project as IStandardProject;
+                        var linkedReferences = new CompileResult
+                        {
+                            Project = project as IStandardProject
+                        };
 
                         foreach (var compiledProject in compiledProjects)
                         {
@@ -245,6 +250,8 @@ namespace AvalonStudio.Toolchains.Standard
             {
                 console.WriteLine("Starting Clean...");
 
+                IoC.Get<IErrorList>().Remove(this);
+
                 await CleanAll(console, project as IStandardProject, project as IStandardProject);
 
                 console.WriteLine("Clean Completed.");
@@ -290,9 +297,7 @@ namespace AvalonStudio.Toolchains.Standard
         {
             foreach (var reference in project.References)
             {
-                var standardReference = reference as IStandardProject;
-
-                if (standardReference != null)
+                if (reference is IStandardProject standardReference)
                 {
                     ClearBuildFlags(standardReference);
                 }
@@ -307,9 +312,7 @@ namespace AvalonStudio.Toolchains.Standard
 
             foreach (var reference in project.References)
             {
-                var standardReference = reference as IStandardProject;
-
-                if (standardReference != null)
+                if (reference is IStandardProject standardReference)
                 {
                     result += GetFileCount(standardReference);
                 }
@@ -463,9 +466,7 @@ namespace AvalonStudio.Toolchains.Standard
 
                     foreach (var reference in project.References)
                     {
-                        var standardReference = reference as IStandardProject;
-
-                        if (standardReference != null)
+                        if (reference is IStandardProject standardReference)
                         {
                             await CompileProject(console, superProject, standardReference, results);
                         }
@@ -498,8 +499,10 @@ namespace AvalonStudio.Toolchains.Standard
                             Directory.CreateDirectory(objDirectory);
                         }
 
-                        var compileResults = new CompileResult();
-                        compileResults.Project = project;
+                        var compileResults = new CompileResult
+                        {
+                            Project = project
+                        };
 
                         results.Add(compileResults);
 
@@ -532,9 +535,10 @@ namespace AvalonStudio.Toolchains.Standard
 
                                 if (System.IO.File.Exists(dependencyFile))
                                 {
-                                    var dependencies = new List<string>();
-
-                                    dependencies.Add(file.Location);
+                                    var dependencies = new List<string>
+                                    {
+                                        file.Location
+                                    };
                                     dependencies.AddRange(ProjectExtensions.GetDependencies(dependencyFile));
 
                                     foreach (var dependency in dependencies)
@@ -593,6 +597,10 @@ namespace AvalonStudio.Toolchains.Standard
                                         {
                                             console.WriteLine(output);
                                         }
+
+                                        var errorList = IoC.Get<IErrorList>();
+
+                                        errorList.Create(this, file.FilePath, Languages.DiagnosticSourceKind.Build, compileResult.Diagnostics.ToImmutableArray());
                                     }).GetAwaiter();
                                 }
                                 else
@@ -613,9 +621,7 @@ namespace AvalonStudio.Toolchains.Standard
         {
             foreach (var reference in project.References)
             {
-                var loadedReference = reference as IStandardProject;
-
-                if (loadedReference != null)
+                if (reference is IStandardProject loadedReference)
                 {
                     if (loadedReference.Type == ProjectType.Executable)
                     {
@@ -666,9 +672,11 @@ namespace AvalonStudio.Toolchains.Standard
             }
         }
 
-        public virtual async Task BeforeBuild(IConsole console, IProject project)
+        public virtual Task BeforeBuild(IConsole console, IProject project)
         {
-            _shell = IoC.Get<IShell>();
+            _studio = IoC.Get<IStudio>();
+
+            return Task.CompletedTask;
         }
           
         public abstract Task<bool> InstallAsync(IConsole console, IProject project);

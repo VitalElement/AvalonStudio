@@ -4,7 +4,6 @@
 // project unless explicitly authorized.
 //
 
-using SharpDX.Mathematics.Interop;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,27 +13,27 @@ namespace CorApi.Portable
 {
     public partial class ArrayValue
     {
-        public int[] GetDimensions()
+        public uint[] GetDimensions()
         {
             Debug.Assert(Rank != 0);
-            var dims = new int[Rank];
-            GetDimensions(dims.Length, dims);
+            var dims = new uint[Rank];
+            GetDimensions((uint)dims.Length, dims);
             
             return dims;
         }
 
-        public Value GetElement(int[] indices)
+        public Value GetElement(uint[] indices)
         {
             Debug.Assert(indices != null);
-            Value ppValue = GetElement(indices.Length, indices);
+            var ppValue = GetElement((uint)indices.Length, indices);
             return ppValue;
         }
 
-        public int[] GetBaseIndicies()
+        public uint[] GetBaseIndicies()
         {
             Debug.Assert(Rank != 0);
-            var baseIndicies = new int[Rank];
-            GetBaseIndicies(baseIndicies.Length, baseIndicies);
+            var baseIndicies = new uint[Rank];
+            GetBaseIndicies((uint)baseIndicies.Length, baseIndicies);
             
             return baseIndicies;
         }

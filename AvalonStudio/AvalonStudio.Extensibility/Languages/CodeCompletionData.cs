@@ -91,9 +91,10 @@ namespace AvalonStudio.Languages
 
     public class CodeCompletionData : IComparable<CodeCompletionData>
     {
-        public CodeCompletionData(string displayText, string insertionText, int? recommendedCaretOffset = null, CompletionItemSelectionBehavior selectionBehavior = CompletionItemSelectionBehavior.Default, int priority = 0)
+        public CodeCompletionData(string displayText, string filterText, string insertionText, int? recommendedCaretOffset = null, CompletionItemSelectionBehavior selectionBehavior = CompletionItemSelectionBehavior.Default, int priority = 0)
         {
             DisplayText = displayText;
+            FilterText = filterText;
             InsertionText = insertionText;
             RecommendedCaretPosition = recommendedCaretOffset;
             SelectionBehavior = selectionBehavior;
@@ -105,6 +106,8 @@ namespace AvalonStudio.Languages
         public int Priority { get; set; }
 
         public string DisplayText { get; set; }
+
+        public string FilterText { get; set; }
 
         public string InsertionText { get; set; }
 

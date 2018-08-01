@@ -22,7 +22,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Markup;
-using Avalonia.Markup.Xaml.Data;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
@@ -30,6 +29,8 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
+using Avalonia.Data;
+using Avalonia.Data.Converters;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 {
@@ -105,7 +106,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 
             Child = _mainMenu;
 
-            TextBlock.SetFontFamily(this, "Segoi UI");
+            TextBlock.SetFontFamily(this, new FontFamily("Segoi UI"));
             TextBlock.SetFontSize(this, 14);
             TextBlock.SetForeground(this, Application.Current.Resources["ThemeForegroundBrush"] as IBrush);
         }

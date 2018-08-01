@@ -1,20 +1,33 @@
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Studio;
+using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
+using AvalonStudio.Projects;
 using AvalonStudio.Shell;
+using AvalonStudio.Utils;
 using ReactiveUI;
+using System;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+using System.Composition;
+using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.ErrorList
 {
-    public class ErrorListViewModel : ToolViewModel, IExtension, IErrorList
+    [Export(typeof(IErrorList))]
+    [Export(typeof(IExtension))]
+    [ExportToolControl]
+    [Shared]
+    public class ErrorListViewModel : ToolViewModel, IActivatableExtension, IErrorList
     {
         private ObservableCollection<ErrorViewModel> errors;
 
         private ErrorViewModel selectedError;
-        private IShell shell;
+        private IStudio studio;
+
+        /// <inheritdoc/>
+        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
         public ErrorListViewModel() : base("Error List")
         {
@@ -35,11 +48,11 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                 {
                     if (value != null)
                     {
-                        var currentDocument = shell.CurrentSolution.FindFile(value.Model.File);
+                        var currentDocument = studio.CurrentSolution.FindFile(value.Model.File);
 
                         if (currentDocument != null)
                         {
-                            var document = await shell.OpenDocumentAsync(currentDocument, value.Line);
+                            var document = await studio.OpenDocumentAsync(currentDocument, value.Line);
 
                             if (document != null)
                             {
@@ -56,20 +69,55 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             get { return Location.Bottom; }
         }
 
+        /// <inheritdoc/>
         public ObservableCollection<ErrorViewModel> Errors
         {
             get { return errors; }
             set { this.RaiseAndSetIfChanged(ref errors, value); }
         }
 
+        /// <inheritdoc/>
+        public void Remove(object tag)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                var toRemove = Errors.Where(e => Equals(e.Tag, tag)).ToList();
+
+                foreach (var error in toRemove)
+                {
+                    Errors.Remove(error);
+                }
+
+                DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(tag, DiagnosticsUpdatedKind.DiagnosticsRemoved));
+            });
+        }
+        
+        /// <inheritdoc/>
+        public void Create(object tag, string filePath, DiagnosticSourceKind source, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
+        {
+            Dispatcher.UIThread.Post(() =>
+            {
+                foreach (var diagnostic in diagnostics)
+                {
+                    if (diagnostic.Level != DiagnosticLevel.Hidden)
+                    {
+                        Errors.InsertSorted(new ErrorViewModel(diagnostic, tag));
+                    }
+                }
+
+                DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(tag, filePath, DiagnosticsUpdatedKind.DiagnosticsCreated, source, diagnostics, diagnosticHighlights));
+            });
+        }
+
         public void BeforeActivation()
         {
-            IoC.RegisterConstant(this, typeof(IErrorList));
         }
 
         public void Activation()
         {
-            shell = IoC.Get<IShell>();
+            studio = IoC.Get<IStudio>();
+
+            IoC.Get<IShell>().CurrentPerspective.AddOrSelectTool(this);
         }
     }
 }

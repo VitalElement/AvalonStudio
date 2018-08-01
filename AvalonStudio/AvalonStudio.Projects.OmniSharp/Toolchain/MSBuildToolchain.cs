@@ -1,5 +1,7 @@
 using AvalonStudio.CommandLineTools;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Projects;
+using AvalonStudio.Languages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.OmniSharp;
@@ -7,8 +9,11 @@ using AvalonStudio.Projects.OmniSharp.Toolchain;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Composition;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -57,8 +62,11 @@ namespace AvalonStudio.Toolchains.MSBuild
     }
 
     [ExportToolchain]
+    [Shared]
     public class MSBuildToolchain : IToolchain
     {
+        private static readonly Regex errorRegex = new Regex(@"(?<filename>[A-z0-9-_.]+)(?:\()(?<line>\d+)(?:,)(?<column>\d+)(?:\))(?::\s+)(?<type>warning|error)(?:\s)(?<code>[A-Z0-9]+)(?::\s)(?<message>.*)(?:\[)(?<project_file>[^;]*?)(?:\])");
+
         public string BinDirectory => Path.Combine(Platform.ReposDirectory, "AvalonStudio.Languages.CSharp", "coreclr");
 
         public string Description => "Toolchain for MSBuild 15 (Dotnet Core Support)";
@@ -155,113 +163,71 @@ namespace AvalonStudio.Toolchains.MSBuild
             return tasks;
         }
 
+        private void ParseOutputForErrors(Dictionary<string, List<Diagnostic>> entries, string output)
+        {
+            if(string.IsNullOrWhiteSpace(output))
+            {
+                return;
+            }
+
+            var match = errorRegex.Match(output);
+
+            var filename = match.Groups["filename"].Value;
+            var type = match.Groups["type"].Value;
+            var lineText = match.Groups["line"].Value;
+            var columnText = match.Groups["column"].Value;
+            var code = match.Groups["code"].Value;
+            var message = match.Groups["message"].Value;
+            var project_file = match.Groups["project_file"].Value;
+            
+            if(match.Success)
+            {
+                int.TryParse(lineText, out int line);
+                int.TryParse(columnText, out int column);
+
+                if (!entries.ContainsKey(filename + project_file))
+                {
+                    entries[filename + project_file] = new List<Diagnostic>();
+                }
+
+                entries[filename + project_file].Add(new Diagnostic(0, 0, project_file, filename, line, message, code, type == "warning" ? DiagnosticLevel.Warning : DiagnosticLevel.Error, DiagnosticCategory.Compiler));
+            }
+        }
+
         public async Task<bool> BuildAsync(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null)
         {
-            var builtProjects = new List<IProject>();
+            var diagnosticEntries = new Dictionary<string, List<Diagnostic>>();
 
-            var cancellationSouce = new CancellationTokenSource();
+            var errorList = IoC.Get<IErrorList>();
+            errorList.Remove(this);
 
-            IEnumerable<IProject> projects = new List<IProject> { project };
-
-            projects = projects.Flatten(p => p.References);
-
-            var toBuild = projects.ToList();
-
-            using (var buildRunner = new BuildRunner())
+            var result = await Task.Factory.StartNew(() =>
             {
-                console.WriteLine($"Creating: {Environment.ProcessorCount} build nodes.");
-                await buildRunner.InitialiseAsync();
-
-                var startTime = DateTime.Now;
-
-                buildRunner.Start(cancellationSouce.Token, (node, proj) =>
+                var exitCode = PlatformSupport.ExecuteShellCommand(DotNetCliService.Instance.Info.Executable, $"build {Path.GetFileName(project.Location)}", (s, e) =>
                 {
-                    var netProject = proj as OmniSharpProject;
-
-                    if (netProject.RestoreRequired)
+                    console.WriteLine(e.Data);
+                    ParseOutputForErrors(diagnosticEntries, e.Data);
+                }, (s, e) =>
+                {
+                    if (e.Data != null)
                     {
-                        var buildResult = netProject.Restore(console).GetAwaiter().GetResult();
-
-                        if (!buildResult)
-                        {
-                            return false;
-                        }
-
-                        netProject.MarkRestored();
-                    }
-
-                    if (RequiresBuilding(proj))
-                    {
-                        var result = node.BuildProject(proj).GetAwaiter().GetResult();
-
                         console.WriteLine();
-                        console.WriteLine($"[{proj.Name}] Node = {node.Id}");
+                        console.WriteLine(e.Data);
 
-                        console.Write(result.consoleOutput);
-
-                        if (result.result)
-                        {
-                            foreach (var output in result.outputAssemblies)
-                            {
-                                console.WriteLine($"{proj.Name} -> {output}");
-                            }
-                        }
-
-                        return result.result;
+                        ParseOutputForErrors(diagnosticEntries, e.Data);
                     }
+                },
+                false, project.CurrentDirectory, false);
 
-                    console.WriteLine($"[Skipped] {proj.Name} -> {proj.Executable}");
+                return exitCode == 0;
+            });
 
-                    return true;
-                });
-
-                var buildTasks = QueueItems(toBuild, builtProjects, buildRunner);
-
-                bool canContinue = true;
-
-                while (true)
-                {
-                    var result = await Task.WhenAny(buildTasks);
-
-                    canContinue = result.Result.result;
-
-                    buildTasks.Remove(result);
-
-                    builtProjects.Add(result.Result.project);
-
-                    if (canContinue)
-                    {
-                        if (toBuild.Count > 0)
-                        {
-                            buildTasks = buildTasks.Concat(QueueItems(toBuild, builtProjects, buildRunner)).ToList();
-                        }
-
-                        if (toBuild.Count == 0 && buildTasks.Count == 0)
-                        {
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                cancellationSouce.Cancel();
-
-                var duration = DateTime.Now - startTime;
-
-                if (canContinue)
-                {
-                    console.WriteLine($"Build Successful - {duration.ToString()}");
-                    return true;
-                }
-                else
-                {
-                    console.WriteLine($"Build Failed - {duration.ToString()}");
-                    return false;
-                }
+            foreach(var key in diagnosticEntries.Keys)
+            {
+                errorList.Create(this, key, DiagnosticSourceKind.Build, diagnosticEntries[key].ToImmutableArray());
             }
+
+            return result;
         }
 
         public bool CanHandle(IProject project)
@@ -271,6 +237,9 @@ namespace AvalonStudio.Toolchains.MSBuild
 
         public async Task Clean(IConsole console, IProject project)
         {
+            var errorList = IoC.Get<IErrorList>();
+            errorList.Remove(this);
+
             await Task.Factory.StartNew(() =>
             {
                 console.Write($"Cleaning Project: {project.Name}...");

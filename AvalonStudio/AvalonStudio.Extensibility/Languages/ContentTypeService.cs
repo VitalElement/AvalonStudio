@@ -11,6 +11,7 @@ namespace AvalonStudio.Languages
     }
 
     [Export(typeof(IContentTypeService))]
+    [Shared]
     internal class ContentTypeService : IContentTypeService
     {
         public IReadOnlyDictionary<string, IContentType> ContentTypes => _contentTypes.Value;

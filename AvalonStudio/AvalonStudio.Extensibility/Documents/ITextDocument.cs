@@ -1,18 +1,50 @@
 ﻿using Avalonia.Input;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Languages;
 using AvalonStudio.Projects;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Threading.Tasks;
 
 namespace AvalonStudio.Documents
 {
+    public static class ITextEditorExtensions
+    {
+        public static IDocumentLine CurrentLine(this ITextEditor editor) => 
+            editor.Line > 0 && editor.Line <= editor.Document.LineCount ? 
+            editor.Document.Lines[editor.Line] : null;
+
+        public static IDocumentLine PreviousLine(this ITextEditor editor) =>
+            editor.CurrentLine()?.PreviousLine;
+
+        public static string CurrentLineText(this ITextEditor editor) => editor.Document.GetText(editor.CurrentLine());
+
+        public static string PreviousLineText(this ITextEditor editor) => editor.Document.GetText(editor.PreviousLine());
+    }
+
     public static class ITextDocumentExtensions
     {
         public static void TrimTrailingWhiteSpace(this ITextDocument document, ISegment line)
         {
-            document.Replace(line, document.GetText(line).TrimEnd());
+            var lineText = document.GetText(line);
+
+            var index = lineText.Length;
+
+            while (index > 0)
+            {
+                if (!char.IsWhiteSpace(lineText[index - 1]))
+                {
+                    break;
+                }
+
+                index--;
+            }
+
+            if (index != lineText.Length)
+            {
+                document.Replace(line.Offset + index, lineText.Length - index, "");
+            }
         }
 
         public static void TrimTrailingWhiteSpace(this ITextDocument document, int lineNumber)
@@ -70,6 +102,47 @@ namespace AvalonStudio.Documents
             }
             pos++; // go back the one character that isn't whitespace
             return new SimpleSegment(pos, offset - pos);
+        }
+
+        public static (int index, char character) GetLastNonWhiteSpaceCharBefore(this ITextDocument textSource, int index, int minIndex = 0)
+        {
+            while(index >= minIndex)
+            {
+                var currentChar = textSource.GetCharAt(index);
+
+                if (!char.IsWhiteSpace(currentChar))
+                {
+                    return (index, currentChar);
+                }
+
+                index--;
+            }
+
+            return (-1, '\0');
+        }
+
+        public static (int index, char character) GetLastCharMatching (this ITextDocument textSource, Predicate<char> predicate, int startIndex, int minIndex = 0, int skip = 0)
+        {
+            while (startIndex >= minIndex)
+            {
+                var currentChar = textSource.GetCharAt(startIndex);
+
+                if(predicate(currentChar))
+                {
+                    if (skip == 0)
+                    {
+                        return (startIndex, currentChar);
+                    }
+                    else
+                    {
+                        skip--;
+                    }
+                }
+
+                startIndex--;
+            }
+
+            return (-1, '\0');
         }
     }
 
@@ -303,13 +376,67 @@ namespace AvalonStudio.Documents
         public int InsertionLength => InsertedText.Length;
     }
 
+
+    /// !!! NOTE This enum must match the one in AvalonEdit !!!
+    /// <summary>
+	/// Contains predefined offset change mapping types.
+	/// </summary>
+	public enum ReplaceMode
+    {
+        /// <summary>
+        /// Normal replace.
+        /// Anchors in front of the replaced region will stay in front, anchors after the replaced region will stay after.
+        /// Anchors in the middle of the removed region will be deleted. If they survive deletion,
+        /// they move depending on their AnchorMovementType.
+        /// </summary>
+        /// <remarks>
+        /// This is the default implementation of DocumentChangeEventArgs when OffsetChangeMap is null,
+        /// so using this option usually works without creating an OffsetChangeMap instance.
+        /// This is equivalent to an OffsetChangeMap with a single entry describing the replace operation.
+        /// </remarks>
+        Normal,
+        /// <summary>
+        /// First the old text is removed, then the new text is inserted.
+        /// Anchors immediately in front (or after) the replaced region may move to the other side of the insertion,
+        /// depending on the AnchorMovementType.
+        /// </summary>
+        /// <remarks>
+        /// This is implemented as an OffsetChangeMap with two entries: the removal, and the insertion.
+        /// </remarks>
+        RemoveAndInsert,
+        /// <summary>
+        /// The text is replaced character-by-character.
+        /// Anchors keep their position inside the replaced text.
+        /// Anchors after the replaced region will move accordingly if the replacement text has a different length than the replaced text.
+        /// If the new text is shorter than the old text, anchors inside the old text that would end up behind the replacement text
+        /// will be moved so that they point to the end of the replacement text.
+        /// </summary>
+        /// <remarks>
+        /// On the OffsetChangeMap level, growing text is implemented by replacing the last character in the replaced text
+        /// with itself and the additional text segment. A simple insertion of the additional text would have the undesired
+        /// effect of moving anchors immediately after the replaced text into the replacement text if they used
+        /// AnchorMovementStyle.BeforeInsertion.
+        /// Shrinking text is implemented by removing the text segment that's too long; but in a special mode that
+        /// causes anchors to always survive irrespective of their <see cref="TextAnchor.SurviveDeletion"/> setting.
+        /// If the text keeps its old size, this is implemented as OffsetChangeMap.Empty.
+        /// </remarks>
+        CharacterReplace,
+        /// <summary>
+        /// Like 'Normal', but anchors with <see cref="TextAnchor.MovementType"/> = Default will stay in front of the
+        /// insertion instead of being moved behind it.
+        /// </summary>
+        KeepAnchorBeforeInsertion
+    }
+
     public interface ITextDocument
     {
         void Insert(int offset, string text);
 
-        void Replace(int offset, int length, string text);
+        void Replace(int offset, int length, string text, ReplaceMode replaceMode = ReplaceMode.Normal);
 
         TextLocation GetLocation(int offset);
+
+        int GetOffset(int line, int column);
 
         string Text { get; }
 
@@ -325,9 +452,51 @@ namespace AvalonStudio.Documents
 
         char GetCharAt(int offset);
 
+        void Undo();
+
+        void Redo();
+
         IDisposable RunUpdate();
 
         event EventHandler<DocumentChangeEventArgs> Changed;
+    }
+
+    public interface ITextEditor
+    {
+        int Offset { get; set; }
+
+        int Line { get; set; }
+
+        int Column { get; set; }
+
+        void IndentLine(int lineNumber);
+
+        ISourceFile SourceFile { get; }
+
+        ITextDocument Document { get; }
+
+        ISegment Selection { get; }
+
+        bool OnBeforeTextEntered(string text);
+
+        bool OnTextEntered(string text);
+
+        void OnTextChanged();
+    }
+
+    public interface ICodeEditor : ITextEditor
+    {
+        ILanguageService LanguageService { get; }
+
+        ObservableCollection<(object tag, SyntaxHighlightDataList highlights)> Highlights { get; }
+
+        ObservableCollection<(object tag, IEnumerable<Diagnostic> diagnostics)> Diagnostics { get; }
+
+        IEnumerable<IndexEntry> CodeIndex { get; }
+
+        void Comment();
+
+        void Uncomment();
     }
 
     public interface IEditor : IDisposable
@@ -338,7 +507,7 @@ namespace AvalonStudio.Documents
 
         int Column { get; set; }
 
-        ILanguageService LanguageService { get; }
+        //ILanguageService LanguageService { get; }
 
         ISourceFile SourceFile { get; }
 
@@ -356,7 +525,7 @@ namespace AvalonStudio.Documents
 
         void Comment();
 
-        void UnComment();
+        void Uncomment();
 
         void Undo();
 

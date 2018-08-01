@@ -39,10 +39,14 @@ namespace CorApi.Portable
             if (ilframe == null)
             {
                 offset = 0;
-                mappingResult = CorDebugMappingResult.MappingNoInformation;
+                mappingResult = CorDebugMappingResult.MappingNoInfo;
             }
             else
-                ilframe.GetIP(out offset, out mappingResult);
+            {
+
+                ilframe.GetIP(out uint uoffset, out mappingResult);
+                offset = (int)uoffset;
+            }
         }
 
         public void SetIP(int offset)
@@ -64,7 +68,7 @@ namespace CorApi.Portable
                 ilframe.CanSetIP(offset);
                 return true;
             }
-            catch (SharpDX.SharpDXException e)
+            catch (SharpGen.Runtime.SharpGenException)
             {
                 return false;
             }
@@ -129,7 +133,8 @@ namespace CorApi.Portable
         {
             var nativeFrame = QueryInterfaceOrNull<NativeFrame>();
             Debug.Assert(nativeFrame != null);
-            nativeFrame.GetIP(out offset);
+            nativeFrame.GetIP(out var uoffset);
+            offset = (int)uoffset;
         }
 
         public Value GetArgument(int index)
@@ -141,9 +146,9 @@ namespace CorApi.Portable
             Value value;
             try
             {
-                ilframe.GetArgument(index, out value);
+                ilframe.GetArgument((uint)index, out value);
             }
-            catch (SharpDX.SharpDXException e)
+            catch (SharpGen.Runtime.SharpGenException e)
             {
                 // If you are stopped in the Prolog, the variable may not be available.
                 // CORDBG_E_IL_VAR_NOT_AVAILABLE is returned after dubugee triggers StackOverflowException
@@ -168,9 +173,9 @@ namespace CorApi.Portable
 
             ValueEnum ve;
             ilframe.EnumerateArguments(out ve);
-            int count;
+            uint count;
             ve.GetCount(out count);
-            return count;
+            return (int)count;
         }
 
         public int GetLocalVariablesCount()
@@ -181,9 +186,9 @@ namespace CorApi.Portable
 
             ValueEnum ve;
             ilframe.EnumerateLocalVariables(out ve);
-            int count;
+            uint count;
             ve.GetCount(out count);
-            return count;
+            return (int)count;
         }
 
         public Value GetLocalVariable(int index)
@@ -195,9 +200,9 @@ namespace CorApi.Portable
             Value value;
             try
             {
-                ilframe.GetLocalVariable((int)index, out value);
+                ilframe.GetLocalVariable((uint)index, out value);
             }
-            catch (SharpDX.SharpDXException e)
+            catch (SharpGen.Runtime.SharpGenException e)
             {
                 // If you are stopped in the Prolog, the variable may not be available.
                 // CORDBG_E_IL_VAR_NOT_AVAILABLE is returned after dubugee triggers StackOverflowException

@@ -2,8 +2,8 @@
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Editing;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Languages;
-using AvalonStudio.Shell;
 using System.Collections.Generic;
 using System.IO;
 
@@ -68,13 +68,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
             {
                 CodeEditor editor = null;
 
-                if (CodeEditor.SourceFile.CompareTo(location.FileName) == 0)
+                /*if (CodeEditor.SourceFile.CompareTo(location.FileName) == 0)
                 {
                     editor = CodeEditor;
                 }
                 else
                 {
-                    var currentTab = IoC.Get<IShell>().GetDocument(location.FileName);
+                    var currentTab = IoC.Get<IStudio>().GetDocument(location.FileName);
 
                     if(currentTab is EditorAdaptor adaptor)
                     {
@@ -96,7 +96,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                             masterElement = currentElement;
                         }
                     }
-                }
+                }*/
             }
 
             if (masterElement != null)
@@ -141,9 +141,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
         {
             foreach(var location in _renameLocations)
             {
-                if (CodeEditor.SourceFile.CompareTo(location.FileName) != 0)
+                /*if (CodeEditor.SourceFile.CompareTo(location.FileName) != 0)
                 {
-                    var currentTab = IoC.Get<IShell>().GetDocument(location.FileName);
+                    var currentTab = IoC.Get<IStudio>().GetDocument(location.FileName);
 
                     if(currentTab == null) //then the file wasnt already opened and changes havent been applied yet.
                     {
@@ -184,7 +184,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Refactoring
                             throw new System.Exception("Error renaming symbol");
                         }                        
                     }
-                }
+                }*/
             }
 
             _renameLocations = null;

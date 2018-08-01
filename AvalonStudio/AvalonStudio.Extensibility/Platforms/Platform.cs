@@ -105,7 +105,7 @@ namespace AvalonStudio.Platforms
                         break;
 
                     case PlatformID.Unix:
-                        result = "ubuntu-";
+                        result = "linux-";
                         break;
                 }
 
@@ -610,10 +610,10 @@ namespace AvalonStudio.Platforms
             switch (PlatformIdentifier)
             {
                 case PlatformID.Win32NT:
-                    return path.Replace('/', '\\');
+                    return path.Replace('/', '\\').Trim();
 
                 default:
-                    return path.ToAvalonPath();
+                    return path.ToAvalonPath().Trim();
             }
         }
 

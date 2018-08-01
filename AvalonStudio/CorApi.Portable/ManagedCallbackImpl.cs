@@ -5,28 +5,19 @@
 //
 
 using System;
-using SharpDX;
-using SharpDX.Mathematics.Interop;
+using SharpGen.Runtime;
 using System.Diagnostics;
+using SharpGen.Runtime.Win32;
 
 namespace CorApi.Portable
 {
-    public class ManagedCallbackImpl : ManagedCallback, ManagedCallback2
+    public class ManagedCallbackImpl : CallbackBase, ManagedCallback, ManagedCallback2
     {
         private Action<ManagedCallbackType, CorEventArgs> _handleEvent;
 
         public ManagedCallbackImpl(Action<ManagedCallbackType, CorEventArgs> handleEvent)
         {
             _handleEvent = handleEvent;
-        }
-
-        public IntPtr GetNewIntPtr() => CppObject.ToCallbackPtr<ManagedCallback>(this);
-
-        public virtual IDisposable Shadow { get; set; }
-
-        public virtual void Dispose()
-        {
-
         }
 
         public virtual void OnBreak(AppDomain appDomainRef, Thread thread)
@@ -141,7 +132,7 @@ namespace CorApi.Portable
 
         public virtual void OnUpdateModuleSymbols_(AppDomain appDomainRef, Module moduleRef, IntPtr symbolStreamRef)
         {
-            _handleEvent(ManagedCallbackType.OnUpdateModuleSymbols, new UpdateModuleSymbolsEventArgs(appDomainRef, moduleRef, new Win32.ComStream(symbolStreamRef), ManagedCallbackType.OnUpdateModuleSymbols));
+            _handleEvent(ManagedCallbackType.OnUpdateModuleSymbols, new UpdateModuleSymbolsEventArgs(appDomainRef, moduleRef, new ComStream(symbolStreamRef), ManagedCallbackType.OnUpdateModuleSymbols));
         }
 
         // Get process from controller 

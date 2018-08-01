@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    [ExportLanguageService(ContentCapabilities.Xaml)]
     internal class XamlLanguageService : XmlLanguageService
     {
         public override string LanguageId => "xaml";
@@ -63,7 +62,7 @@ namespace AvalonStudio.Languages.Xaml
             return result;
         }
 
-        public override async Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
+        public override async Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             var results = new CodeCompletionResults();
 
@@ -84,7 +83,7 @@ namespace AvalonStudio.Languages.Xaml
                 {
                     foreach (var completion in completionSet.Completions)
                     {
-                        results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
+                        results.Completions.Add(new CodeCompletionData(completion.DisplayText, completion.DisplayText, completion.InsertText, completion.RecommendedCursorOffset)
                         {
                             BriefComment = completion.Description,
                             Kind = FromAvaloniaCompletionKind(completion.Kind),
@@ -110,7 +109,7 @@ namespace AvalonStudio.Languages.Xaml
             }
         }
 
-        public override void RegisterSourceFile(IEditor editor)
+        public override void RegisterSourceFile(ITextEditor editor)
         {
             if (engine == null)
             {

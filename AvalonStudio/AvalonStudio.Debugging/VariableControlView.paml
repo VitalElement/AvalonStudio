@@ -25,7 +25,7 @@
                 </MenuItem>
               </ContextMenu>
             </Grid.ContextMenu>
-            <StackPanel Orientation="Horizontal" Gap="4">
+            <StackPanel Orientation="Horizontal" Spacing="4">
               <TextBlock Text="{Binding DisplayName}"/>
               <TextBlock Margin="10 0 0 0" Grid.Column="1" Text="{Binding Value}"/>
               <TextBlock Margin="10 0 0 0" Grid.Column="2" Text="{Binding TypeName}"/>  

@@ -402,7 +402,7 @@
           </Popup>
 
           <Popup IsOpen="{Binding IsOpen, Mode=TwoWay}" Name="PART_PopupAssistant">
-            <local:IntellisenseAssistantUserControl />
+            <local:IntellisenseAssistantUserControl DataContext="{Binding SelectedCompletion}" />
           </Popup>
         </Grid>
       </ControlTemplate>

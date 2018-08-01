@@ -44,8 +44,8 @@ namespace CorApi.Portable
         public bool MoveNext()
         {
             Chain[] a = new Chain[1];
-            int c = 0;
-            m_enum.Next(a.Length, a, out c);
+            var c = 0u;
+            m_enum.Next((uint)a.Length, a, out c);
             if (c == 1) // S_OK && we got 1 new element
                 m_chain = new Chain(a[0].NativePointer);
             else

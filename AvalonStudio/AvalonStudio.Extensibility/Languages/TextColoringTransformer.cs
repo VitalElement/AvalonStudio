@@ -1,5 +1,4 @@
 ﻿using Avalonia.Media;
-using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.CodeEditor;
@@ -11,15 +10,23 @@ namespace AvalonStudio.Languages
 {
     public class TextColoringTransformer : GenericLineTransformer
     {
-        private readonly TextDocument document;
+        private TextDocument _document;
 
         public TextColoringTransformer(TextDocument document)
         {
-            this.document = document;
-
             TextTransformations = new TextSegmentCollection<TextTransformation>(document);
 
             ColorScheme = ColorScheme.Default;
+
+            _document = document;
+        }
+
+        public void Dispose()
+        {
+            TextTransformations.Disconnect(_document);
+            TextTransformations.Clear();
+            TextTransformations = null;
+            _document = null;
         }
 
         public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
@@ -65,16 +72,16 @@ namespace AvalonStudio.Languages
                 {
                     return new OpacityTextTransformation(
                         tag,
-                        document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
-                        document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
+                        _document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
+                        _document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
                         0.5);
                 }
                 else
                 {
                     return new ForegroundTextTransformation(
                         tag,
-                        document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
-                        document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
+                        _document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
+                        _document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
                         GetBrush(highlight.Type));
                 }
             }
@@ -101,18 +108,13 @@ namespace AvalonStudio.Languages
 
         public void SetTransformations(object tag, SyntaxHighlightDataList highlightData)
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
+            foreach (var highlight in highlightData)
             {
-                RemoveAll(transform => Equals(transform.Tag, tag));
-
-                foreach (var highlight in highlightData)
+                if (highlight.Type != HighlightType.None)
                 {
-                    if (highlight.Type != HighlightType.None)
-                    {
-                        TextTransformations.Add(GetTextTransformation(tag, highlight));
-                    }
+                    TextTransformations.Add(GetTextTransformation(tag, highlight));
                 }
-            });
+            }
         }
 
         public IBrush GetBrush(HighlightType type)

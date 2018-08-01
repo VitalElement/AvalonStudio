@@ -1,7 +1,4 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
-             xmlns:econt="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
-             xmlns:dcont="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging"
              xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
@@ -46,18 +43,20 @@
           </ContextMenu>
         </Grid.ContextMenu>
 
-        <editor:CodeEditor Name="editor"
+            <editor:CodeEditor Name="editor"
                            BorderThickness="0" Margin="0"
                            VerticalAlignment="Stretch"
-                           FontFamily="{Binding FontFamily}"
+                           FontFamily="{DynamicResource EditorFont}"
                            FontSize="{Binding VisualFontSize}"
-                           SourceFile="{Binding SourceFile}"
                            IsDirty="{Binding IsDirty}"
                            IsReadOnly="{Binding IsReadOnly}"
-                           SourceText="{Binding SourceText}"
                            HighlightSelectedWord="False"
                            ColorScheme="{Binding ColorScheme}"
-                           DocumentAccessor="{Binding DocumentAccessor}">          
+                           EditorCaretOffset="{Binding Offset}"
+                           Line="{Binding Line}"
+                           Column="{Binding Column}"
+                           Selection="{Binding Selection}"
+                           Editor="{Binding }">          
         </editor:CodeEditor>
       </Grid>
     </DockPanel>

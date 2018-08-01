@@ -1,12 +1,17 @@
-version: 0.4.3.{build}
+version: 0.4.6.{build}
 os: Visual Studio 2017
+install:
+  - if not exist dotnet-sdk-2.1.300-win-x64.zip appveyor DownloadFile https://download.microsoft.com/download/8/8/5/88544F33-836A-49A5-8B67-451C24709A8F/dotnet-sdk-2.1.300-win-x64.zip -FileName "dotnet-sdk-2.1.300-win-x64.zip"  
+  - cmd: 7z x dotnet-sdk-2.1.300-win-x64.zip -oc:\dotnet
 
 before_build: 
 - cmd: git submodule update --init --recursive
+- cmd: path c:\dotnet
+- cmd: dotnet --info  
 
 build_script:
 - cmd: dotnet --info
-- ps: $url1='https://img.shields.io/badge/version-v0.4.4' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
+- ps: $url1='https://img.shields.io/badge/version-v0.4.6' + $env:APPVEYOR_BUILD_NUMBER  + '-blue.svg'
 - ps: .\download.ps1 $url1 "latest-version-badge.svg"
 - cmd: dir "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\"
 - cmd: dir "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\"
@@ -34,3 +39,5 @@ notifications:
   on_build_failure: true
   on_build_status_changed: true
   
+cache:
+  dotnet-sdk-2.1.300-win-x64.zip

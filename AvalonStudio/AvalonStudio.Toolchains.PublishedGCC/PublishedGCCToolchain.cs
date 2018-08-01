@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 namespace AvalonStudio.Toolchains.PublishedGCC
 {
     [ExportToolchain]
+    [Shared]
     public class PublishedGCCToolchain : GCCToolchain
     {
         private string _executableExtension;
@@ -343,12 +344,20 @@ namespace AvalonStudio.Toolchains.PublishedGCC
         {
             var settings = project.GetToolchainSettings<GccToolchainSettings>();
 
+            var result = string.Empty;
+
+            if (_gccConfig != null && _gccConfig.SystemLibraryPaths != null)
+            {
+                foreach (var libraryPath in _gccConfig.SystemLibraryPaths)
+                {
+                    result += $"-Wl,-L\"{libraryPath}\" ";
+                }
+            }
+
             if (superProject != null && settings.LinkSettings.UseMemoryLayout && project.Type != ProjectType.StaticLibrary)
             {
                 // GenerateLinkerScript(superProject);
             }
-
-            var result = string.Empty;
 
             result += string.Format("{0} ", settings.LinkSettings.MiscLinkerArguments);
 

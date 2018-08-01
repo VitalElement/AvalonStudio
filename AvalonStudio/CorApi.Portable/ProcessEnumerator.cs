@@ -46,8 +46,8 @@ namespace CorApi.Portable
         public bool MoveNext()
         {
             var a = new Process[1];
-            int c = 0;
-            m_enum.Next(a.Length, a, out c);
+            var c = 0u;
+            m_enum.Next((uint)a.Length, a, out c);
             if (c == 1) // S_OK && we got 1 new element
                 m_proc = Process.GetCorProcess(a[0].NativePointer);
             else

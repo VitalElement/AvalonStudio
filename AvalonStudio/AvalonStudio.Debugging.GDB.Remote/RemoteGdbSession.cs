@@ -32,9 +32,9 @@ namespace AvalonStudio.Debugging.GDB.Remote
             console.Clear();
 
             var preInitCommand = settings.PreInitCommand?.Trim().ExpandVariables(environment);
-            var preInitCommandArguments = settings.PreInitCommandArgs.Trim().ExpandVariables(environment);
+            var preInitCommandArguments = settings.PreInitCommandArgs?.Trim().ExpandVariables(environment);
             var postInitCommand = settings.PostInitCommand?.Trim().ExpandVariables(environment);
-            var postInitCommandArguments = settings.PostInitCommandArgs.Trim().ExpandVariables(environment);
+            var postInitCommandArguments = settings.PostInitCommandArgs?.Trim().ExpandVariables(environment);
 
             if (!string.IsNullOrEmpty(preInitCommand))
             {
@@ -42,7 +42,7 @@ namespace AvalonStudio.Debugging.GDB.Remote
 
                 var gdbServerStartInfo = new ProcessStartInfo
                 {
-                    Arguments = preInitCommandArguments,
+                    Arguments = preInitCommandArguments ?? "",
                     FileName = preInitCommand,
                     WorkingDirectory = _project.CurrentDirectory,
 
@@ -124,15 +124,18 @@ namespace AvalonStudio.Debugging.GDB.Remote
 
             var commands = settings.GDBExitCommands?.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (var command in commands)
+            if (commands != null)
             {
-                var commandParts = command.Split(' ');
-                var args = command.Remove(0, commandParts[0].Length);
+                foreach (var command in commands)
+                {
+                    var commandParts = command.Split(' ');
+                    var args = command.Remove(0, commandParts[0].Length);
 
-                var arguments = args.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    var arguments = args.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                console.WriteLine($"Running GDB Command: {command}");
-                RunCommand(commandParts[0], arguments);
+                    console.WriteLine($"Running GDB Command: {command}");
+                    RunCommand(commandParts[0], arguments);
+                }
             }
 
             base.OnExit();
@@ -150,15 +153,18 @@ namespace AvalonStudio.Debugging.GDB.Remote
 
                 var commands = settings.GDBInitCommands?.ExpandVariables(environment).Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
-                foreach (var command in commands)
+                if (commands != null)
                 {
-                    var commandParts = command.Split(' ');
-                    var args = command.Remove(0, commandParts[0].Length);
+                    foreach (var command in commands)
+                    {
+                        var commandParts = command.Split(' ');
+                        var args = command.Remove(0, commandParts[0].Length);
 
-                    var arguments = args.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        var arguments = args.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                    console.WriteLine($"Running GDB Command: {command}");
-                    RunCommand(commandParts[0], arguments);
+                        console.WriteLine($"Running GDB Command: {command}");
+                        RunCommand(commandParts[0], arguments);
+                    }
                 }
 
                 console.WriteLine("[JLink] - Connected.");

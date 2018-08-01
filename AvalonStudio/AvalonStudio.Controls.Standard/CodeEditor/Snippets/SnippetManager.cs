@@ -1,6 +1,5 @@
 ﻿using AvaloniaEdit.Snippets;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.Languages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
@@ -10,19 +9,16 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using AvalonStudio.Projects;
+using System.Composition;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
 {
-    public class SnippetManager : IExtension
+    [Export(typeof(SnippetManager))]
+    [Shared]
+    public class SnippetManager : IActivatableExtension
     {
-        public void Activation()
+        public SnippetManager ()
         {
-        }
-
-        public void BeforeActivation()
-        {
-            IoC.RegisterConstant(this);
-
             var snippetFolders = Directory.EnumerateDirectories(Platform.SnippetsFolder).Concat(Directory.EnumerateDirectories(Platform.InBuiltSnippetsFolder));
 
             foreach (var folder in snippetFolders)
@@ -40,6 +36,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Snippets
                     }
                 }
             }
+        }
+
+        public void Activation()
+        {
+        }
+
+        public void BeforeActivation()
+        {
+   
         }
 
         public void InitialiseSnippetsForSolution(ISolution solution)

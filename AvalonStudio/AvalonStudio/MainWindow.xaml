@@ -1,0 +1,94 @@
+﻿<cont:MetroWindow xmlns="https://github.com/avaloniaui"
+                      xmlns:cont="clr-namespace:AvalonStudio.Shell.Controls;assembly=AvalonStudio.Shell"
+                      xmlns:ide="clr-namespace:AvalonStudio.Studio;assembly=AvalonStudio.Studio"
+                      xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+                      xmlns:id="clr-namespace:Dock.Avalonia;assembly=Dock.Avalonia"
+                      xmlns:shell="clr-namespace:AvalonStudio.Shell;assembly=AvalonStudio.Shell"
+                      xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      Icon="resm:AvalonStudio.Shell.Assets.logo-256.png?assembly=AvalonStudio.Shell"
+                      Title="AvalonStudio" MinWidth="400" MinHeight="200"
+                      BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}"
+                      FontFamily="{DynamicResource UiFont}" FontSize="14"
+                      Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized">
+    <cont:MetroWindow.TitleBarContent>
+    </cont:MetroWindow.TitleBarContent>
+
+    <cont:MetroWindow.Resources>
+        <id:DockDropHandler x:Key="DockDropHandler0" Id="0" />
+    </cont:MetroWindow.Resources>
+
+    <i:Interaction.Behaviors>
+        <beh:OpenCloseWindowBehavior DataContext="{Binding ModalDialog}" WindowType="{x:Type cont:ModalDialog}" IsOpen="{Binding ModalDialog.IsVisible}" />
+    </i:Interaction.Behaviors>
+
+    <cont:MetroWindow.Styles>
+        <Style Selector="ListBoxItem:selected">
+            <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+        </Style>
+
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+        </Style>
+
+        <Style Selector="TreeViewItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
+            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+        </Style>
+        <Style Selector="TreeViewItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
+            <Setter Property="TextBlock.Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+        </Style>
+
+        <Style Selector="DropDownItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+        </Style>
+        <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+        </Style>
+
+        <Style Selector="DropDownItem:selected">
+            <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+        </Style>
+        <Style Selector="DropDownItem:pointerover">
+            <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+        </Style>
+
+        <!-- GridSplitter.vertical -->
+        <Style Selector="GridSplitter:vertical">
+            <Setter Property="Width" Value="6" />
+            <Setter Property="Background" Value="#00FFFFFF" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}" />
+                </ControlTemplate>
+            </Setter>
+        </Style>
+        <!-- GridSplitter.horizontal -->
+        <Style Selector="GridSplitter:horizontal">
+            <Setter Property="Height" Value="6" />
+            <Setter Property="Background" Value="#00FFFFFF" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}" BorderThickness="1" />
+                </ControlTemplate>
+            </Setter>
+        </Style>
+    </cont:MetroWindow.Styles>
+
+    <cont:MetroWindow.KeyBindings>
+        <KeyBinding Command="{Binding EnableDebugModeCommand}" Gesture="CTRL+SHIFT+D" />
+    </cont:MetroWindow.KeyBindings>
+
+    <Grid RowDefinitions="*,25">
+        <i:Interaction.Behaviors>
+            <id:DropBehavior Context="{Binding Layout}" Handler="{StaticResource DockDropHandler0}" />
+        </i:Interaction.Behaviors>
+
+        <shell:ShellView DataContext="{Binding Shell}" />
+
+        <Grid Grid.Row="1" Grid.ColumnSpan="5">
+            <cont:StatusBar Margin="0 2 0 0" DataContext="{Binding Shell.StatusBar}" />
+        </Grid>
+
+        <ide:QuickCommander Width="450" MaxHeight="500" DataContext="{Binding Studio.QuickCommander}" VerticalAlignment="Top" />
+    </Grid>
+</cont:MetroWindow>

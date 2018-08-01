@@ -1,6 +1,5 @@
 ﻿using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
 using AvalonStudio.Documents;
-using AvalonStudio.Extensibility;
 using AvalonStudio.Projects.OmniSharp.Roslyn;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Text;
@@ -19,13 +18,15 @@ namespace AvalonStudio.Languages.CSharp
         private static readonly ImmutableArray<string> ExcludedRefactoringProviders = ImmutableArray.Create("ExtractInterface", "GenerateOverrides");
 
         private Microsoft.CodeAnalysis.Workspace _workspace;
+        private ICodeFixService _codeFixService;
 
-        public RoslynContextActionProvider(Microsoft.CodeAnalysis.Workspace workspace)
+        public RoslynContextActionProvider(Microsoft.CodeAnalysis.Workspace workspace, ICodeFixService codeFixService)
         {
+            _codeFixService = codeFixService;
             _workspace = workspace;
         }
 
-        public async Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken)
+        public async Task<IEnumerable<CodeFix>> GetCodeFixes(ITextEditor editor, int offset, int length, CancellationToken cancellationToken)
         {
             var textSpan = new TextSpan(offset, length);
 
@@ -37,23 +38,28 @@ namespace AvalonStudio.Languages.CSharp
 
             if (textSpan.End >= text.Length) return Array.Empty<CodeFix>();
 
-            var codeFixService = IoC.Get<ICodeFixService>();
-
-            var fixes = (await codeFixService.GetFixesAsync(document, textSpan, true, cancellationToken))
+            var fixes = (await _codeFixService.GetFixesAsync(document, textSpan, true, cancellationToken))
                 .SelectMany(f => f.Fixes)
                 .GroupBy(f => f.Action.EquivalenceKey)
                 .Select(group => group.First()).Select(fix => new CodeFix { Action = new RoslynCodeAction(fix.Action) });
 
-            var codeRefactorings = (await workspace.GetService<ICodeRefactoringService>().GetRefactoringsAsync(
-                document,
-                textSpan, cancellationToken).ConfigureAwait(false))
-                .Where(x => ExcludedRefactoringProviders.All(p => !x.Provider.GetType().Name.Contains(p)))
-                .SelectMany(refactoring => refactoring.Actions)
-                .GroupBy(f => f.EquivalenceKey)
-                .Select(group => group.First())
-                .Select(refactoring => new CodeFix { Action = new RoslynCodeAction(refactoring) });
+            try
+            {
+                var codeRefactorings = (await workspace.GetService<ICodeRefactoringService>().GetRefactoringsAsync(
+                    document,
+                    textSpan, cancellationToken).ConfigureAwait(false))
+                    .Where(x => ExcludedRefactoringProviders.All(p => !x.Provider.GetType().Name.Contains(p)))
+                    .SelectMany(refactoring => refactoring.Actions)
+                    .GroupBy(f => f.EquivalenceKey)
+                    .Select(group => group.First())
+                    .Select(refactoring => new CodeFix { Action = new RoslynCodeAction(refactoring) });
 
-            return fixes.Concat(codeRefactorings);
+                return fixes.Concat(codeRefactorings);
+            }
+            catch (TaskCanceledException)
+            {
+                return fixes;
+            }
 
             //var actions = new List<CodeAction>();
 

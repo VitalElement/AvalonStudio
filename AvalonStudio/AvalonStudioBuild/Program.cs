@@ -1,3 +1,4 @@
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
@@ -31,7 +32,7 @@ namespace AvalonStudio
 
             if (System.IO.File.Exists(solutionFile))
             {
-                return AvalonStudioSolution.LoadAsync(solutionFile).GetAwaiter().GetResult();
+                return VisualStudioSolution.Load(solutionFile);
             }
 
             throw new Exception("Solution file: " + options.Solution + "could not be found.");
@@ -406,7 +407,7 @@ namespace AvalonStudio
 
             var container = CompositionRoot.CreateContainer();
 
-            MinimalShell.Instance = container.GetExport<MinimalShell>();
+            var studio = container.GetExport<IStudio>();            
 
             Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier);
 

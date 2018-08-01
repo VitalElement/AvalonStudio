@@ -5,6 +5,8 @@
 //
 
 using CorApi.Portable.Win32;
+using SharpGen.Runtime;
+using SharpGen.Runtime.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1237,11 +1239,11 @@ namespace CorApi.Portable
 
     public partial class Process : IDisposable
     {
-        public int Id
+        public uint Id
         {
             get
             {
-                GetID(out int result);
+                GetID(out uint result);
 
                 return result;
             }
@@ -1341,7 +1343,7 @@ namespace CorApi.Portable
 
         public bool HasQueuedCallbacks(Thread thread)
         {
-            var result = new SharpDX.Mathematics.Interop.RawBool();
+            var result = new RawBool();
             HasQueuedCallbacks(thread, out result);
             return result;
         }

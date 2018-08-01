@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Extensibility.Plugin;
+﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using System.Collections.Generic;
@@ -9,9 +9,10 @@ namespace AvalonStudio.Toolchains.CustomGCC
     class CustomGCCToolchainProfile
     {
         public string BasePath { get; set; } = "";
+        public string[] ExtraPaths { get; set; } = new string[0];
     }
 
-    class CustomGCCToolchainProfiles : IExtension
+    class CustomGCCToolchainProfiles : IActivatableExtension
     {
         private static string ProfilesFile = Path.Combine(Platform.SettingsDirectory, "GccProfiles.json");
 

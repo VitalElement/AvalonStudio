@@ -1,15 +1,18 @@
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.Composition;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Standard.FindInFiles
 {
-    class FindInFilesViewModel : ToolViewModel, IExtension
+    [Export(typeof(FindInFilesViewModel))]
+    [ExportToolControl]
+    [Shared]
+    class FindInFilesViewModel : ToolViewModel, IActivatableExtension
     {
         private string _searchTerm;
         private ObservableCollection<FindResultViewModel> _results;
@@ -21,7 +24,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
         public FindInFilesViewModel() : base("Find Results")
         {
-            IsVisible = false;
+            Title = "Find Results";
 
             FindCommand = ReactiveCommand.Create(async () =>
             {
@@ -46,7 +49,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
         public void BeforeActivation()
         {
-            IoC.RegisterConstant(this);
+            
         }
 
         public ObservableCollection<FindResultViewModel> Results

@@ -21,8 +21,8 @@
     </Grid.ColumnDefinitions>
 
     <Panel Grid.ColumnSpan="4">
-      <StackPanel Gap="10">
-        <StackPanel Orientation="Horizontal" Gap="4">
+      <StackPanel Spacing="10">
+        <StackPanel Orientation="Horizontal" Spacing="4">
           <TextBlock Text="Language Standard:"/>
           <DropDown Items="{Binding CLanguageStandards}" SelectedIndex="{Binding CLanguageStandardSelectedIndex, Mode=TwoWay}"/>
 

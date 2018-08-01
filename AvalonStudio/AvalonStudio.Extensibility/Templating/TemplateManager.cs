@@ -16,7 +16,7 @@ using System.Globalization;
 using Microsoft.TemplateEngine.Orchestrator.RunnableProjects;
 using Microsoft.TemplateEngine.Orchestrator.RunnableProjects.Config;
 using Microsoft.TemplateEngine.Edge.TemplateUpdates;
-using AvalonStudio.Extensibility.Plugin;
+using System.Composition;
 
 namespace AvalonStudio.Extensibility.Templating
 {
@@ -31,7 +31,9 @@ namespace AvalonStudio.Extensibility.Templating
         Cancelled = unchecked((int)0x80004004)
     }
 
-    public class TemplateManager : IExtension
+    [Export(typeof(TemplateManager))]
+    [Shared]
+    public class TemplateManager : IActivatableExtension
     {
         private const string HostIdentifier = "AvalonStudio";
         private const string HostVersion = "1.0.0";
@@ -93,7 +95,7 @@ namespace AvalonStudio.Extensibility.Templating
             {
                 _settingsLoader.RebuildCacheFromSettingsIfNotCurrent(forceCacheRebuild);
             }
-            catch (EngineInitializationException eiex)
+            catch (EngineInitializationException)
             {
                 ////Reporter.Error.WriteLine(eiex.Message.Bold().Red());
                 ////Reporter.Error.WriteLine(LocalizableStrings.SettingsReadError);
@@ -112,16 +114,17 @@ namespace AvalonStudio.Extensibility.Templating
         {
             if (template is DotNetTemplateAdaptor templateImpl)
             {
-                var parameterList = new List<string>();
-
-                parameterList.Add(templateImpl.DotnetTemplate.ShortName);
-                parameterList.Add("--output");
-                parameterList.Add(path);
-
-                foreach(var parameter in parameters)
+                var parameterList = new List<string>
                 {
-                    parameterList.Add($"--{parameter.name}");
-                    parameterList.Add(parameter.value);
+                    templateImpl.DotnetTemplate.ShortName,
+                    "--output",
+                    path
+                };
+
+                foreach (var (name, value) in parameters)
+                {
+                    parameterList.Add($"--{name}");
+                    parameterList.Add(value);
                 }
 
                 _commandInput.ResetArgs(parameterList.ToArray());                
@@ -312,13 +315,11 @@ namespace AvalonStudio.Extensibility.Templating
         }
 
         public void BeforeActivation()
-        {
-            IoC.RegisterConstant(this);
+        {            
         }
 
         public void Activation()
         {
-
         }
 
         public void UpdateDefaultTemplates()

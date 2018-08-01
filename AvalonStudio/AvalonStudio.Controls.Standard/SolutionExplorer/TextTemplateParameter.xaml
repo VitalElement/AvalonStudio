@@ -1,6 +1,6 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <StackPanel Gap="4">
+  <StackPanel Spacing="4">
     <TextBlock Text="{Binding Name}" />
     <TextBox Name="PART_ValueTextBlock" Text="{Binding Value}" />
   </StackPanel>

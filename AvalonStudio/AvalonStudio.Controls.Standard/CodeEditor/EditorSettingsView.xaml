@@ -1,9 +1,9 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui">
-    <StackPanel Gap="8">
+    <StackPanel Spacing="8">
         <Grid>
             <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1" Padding="8 16 8 8" Margin="8" HorizontalAlignment="Left" VerticalAlignment="Top">
-                <StackPanel Orientation="Horizontal" Gap="40">
-                    <StackPanel Gap="12">
+                <StackPanel Orientation="Horizontal" Spacing="40">
+                    <StackPanel Spacing="12">
                         <DropDown Items="{Binding ColorSchemes}" SelectedIndex="{Binding SelectedColorSchemeIndex, Mode=TwoWay}" />
                     </StackPanel>
                 </StackPanel>
@@ -13,12 +13,12 @@
         
         <Grid>
             <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1" Padding="8 16 8 8" Margin="8" HorizontalAlignment="Left" VerticalAlignment="Top">
-                <StackPanel Orientation="Horizontal" Gap="40">
-                    <StackPanel Gap="12">
+                <StackPanel Orientation="Horizontal" Spacing="40">
+                    <StackPanel Spacing="12">
                         <CheckBox IsChecked="{Binding RemoveTrailingWhiteSpaceOnSave}">Remove Trailing Whitespace on Save</CheckBox>
                     </StackPanel>
 
-                    <StackPanel Gap="12">
+                    <StackPanel Spacing="12">
                         <CheckBox IsChecked="{Binding AutoFormat}">Automatically Format Code</CheckBox>
                     </StackPanel>
                 </StackPanel>

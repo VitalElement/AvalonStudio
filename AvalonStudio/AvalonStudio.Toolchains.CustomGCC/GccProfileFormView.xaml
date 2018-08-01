@@ -4,7 +4,7 @@
             <Setter Property="UseFloatingWatermark" Value="True" />
         </Style>
     </UserControl.Styles>
-    <StackPanel Gap="4">
+    <StackPanel Spacing="4">
         <TextBox Text="{Binding ProfileName}" Watermark="ProfileInstance" />
         <TextBox Text="{Binding Prefix}" Watermark="Toolchain Prefix (i.e. arm-none-eabi-)" />
         <TextBox Text="{Binding CCPrefix}" Watermark="CC Prefix (* to skip)" />

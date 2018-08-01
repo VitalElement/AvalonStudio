@@ -7,7 +7,7 @@
 namespace CorApi.Portable
 {
     using CorDebug;
-    using SharpDX;
+    using SharpGen.Runtime;
 
     [Shadow(typeof(ManagedCallbackShadow))]
     public partial interface ManagedCallback

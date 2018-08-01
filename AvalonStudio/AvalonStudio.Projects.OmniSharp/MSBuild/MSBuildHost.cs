@@ -61,7 +61,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                         var path = typeof(NextRequestType).Assembly.GetModules()[0].FullyQualifiedName;
                         path = Path.Combine(Path.GetDirectoryName(path), "host.csproj");
 
-                        string args = $"msbuild /m:1 /p:AvaloniaIdePort={l.Port} {path}";                        
+                        string args = $"msbuild /m:1 /p:AvaloniaIdePort={l.Port} \"{path}\"";                        
 
                         hostProcess = PlatformSupport.LaunchShellCommand("dotnet", args,
                         (sender, e) =>
@@ -188,7 +188,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
             });
         }
 
-        public async Task<(ProjectInfo info, List<string> projectReferences, string targetPath)> LoadProject(string solutionDirectory, string projectFile)
+        public async Task<(ProjectInfo info, List<string> projectReferences, string targetPath)> LoadProject(string solutionDirectory, string projectFile, ProjectId id = null)
         {
             lock (outputLines)
             {
@@ -233,9 +233,9 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                 if (loadData.CscCommandLine != null && loadData.CscCommandLine.Count > 0)
                 {
                     var projectOptions = ParseArguments(loadData.CscCommandLine.Skip(1));
-
+                    
                     var projectInfo = ProjectInfo.Create(
-                        ProjectId.CreateNewId(),
+                        id ?? ProjectId.CreateNewId(),
                         VersionStamp.Create(),
                         name: Path.GetFileNameWithoutExtension(projectFile),
                         assemblyName: Path.GetFileNameWithoutExtension(projectOptions.outputFile),
@@ -253,7 +253,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                     IoC.Get<IConsole>($"Project may have failed to load correctly: {Path.GetFileNameWithoutExtension(projectFile)}");
 
                     var projectInfo = ProjectInfo.Create(
-                        ProjectId.CreateNewId(),
+                        id ?? ProjectId.CreateNewId(),
                         VersionStamp.Create(),
                         Path.GetFileNameWithoutExtension(projectFile), Path.GetFileNameWithoutExtension(projectFile),
                         LanguageNames.CSharp,
