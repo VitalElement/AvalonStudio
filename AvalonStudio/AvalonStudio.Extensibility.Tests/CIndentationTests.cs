@@ -1,7 +1,4 @@
 ﻿using AvalonStudio.Editor;
-using System;
-using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace AvalonStudio.Extensibility.Tests
@@ -11,11 +8,8 @@ namespace AvalonStudio.Extensibility.Tests
         [Fact]
         public void DefaultIndentationCopiesPreviousLineIndentation()
         {
-            string testData = "    ";
+            var testEditor = TestEditorManager.Create("    |");
 
-            var testEditor = TestEditorManager.Create(testData);
-
-            testEditor.SetCursor(4);
             testEditor.Input("\n");
 
             Assert.Equal("    \n    ", testEditor.Document.Text);
@@ -24,11 +18,8 @@ namespace AvalonStudio.Extensibility.Tests
         [Fact]
         public void C_Indentation_Inserts_Indentation_When_NewLine_Inserted_Between_2_Braces ()
         {
-            string testData = "{}";
+            var testEditor = TestEditorManager.Create("{|}", new CBasedLanguageIndentationInputHelper());
 
-            var testEditor = TestEditorManager.Create(testData, new CBasedLanguageIndentationInputHelper());
-
-            testEditor.SetCursor(1);
             testEditor.Input("\n");
 
             Assert.Equal("{\n    \n}", testEditor.Document.Text);
@@ -37,11 +28,18 @@ namespace AvalonStudio.Extensibility.Tests
         [Fact]
         public void C_Indentation_ReIndents_Statement_With_Too_little_Indentation_On_SemiColon()
         {
-            string testData = "{\nstatement()\n}";
+            var testEditor = TestEditorManager.Create("{\nstatement()|\n}", new CBasedLanguageIndentationInputHelper());
 
-            var testEditor = TestEditorManager.Create(testData, new CBasedLanguageIndentationInputHelper());
+            testEditor.Input(";");
 
-            testEditor.SetCursor(13);
+            Assert.Equal("{\n    statement();\n}", testEditor.Document.Text);
+        }
+
+        [Fact]
+        public void C_Indentation_ReIndents_Statement_With_Too_Much_Indentation_On_SemiColon()
+        {
+            var testEditor = TestEditorManager.Create("{\n        statement()|\n}", new CBasedLanguageIndentationInputHelper());
+
             testEditor.Input(";");
 
             Assert.Equal("{\n    statement();\n}", testEditor.Document.Text);

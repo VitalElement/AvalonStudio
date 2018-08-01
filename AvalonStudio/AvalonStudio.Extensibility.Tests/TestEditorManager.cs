@@ -12,9 +12,29 @@ namespace AvalonStudio.Extensibility.Tests
     /// </summary>
     public class TestEditorManager
     {
+        /// <summary>
+        /// Creates an instance of TestEditorManager
+        /// </summary>
+        /// <param name="initialText">The initial text of the document. If this contains a '|' charactor, it will be removed and the editor caret position set to that location.</param>
+        /// <param name="helpers">Any helpers to use for testing.</param>
+        /// <returns></returns>
         public static TestEditorManager Create (string initialText, params ITextEditorInputHelper[] helpers)
         {
-            return new TestEditorManager(initialText, helpers);
+            var index = initialText.IndexOf('|');
+
+            if(index >= 0)
+            {
+                initialText = initialText.Replace("|", "");
+            }
+
+            var result = new TestEditorManager(initialText, helpers);
+
+            if(index >= 0)
+            {
+                result.SetCursor(index);
+            }
+
+            return result;
         }
 
         private TestEditorManager(string initialText, IEnumerable<ITextEditorInputHelper> helpers = null)
