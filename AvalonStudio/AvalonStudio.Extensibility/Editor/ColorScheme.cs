@@ -240,11 +240,15 @@ namespace AvalonStudio.Extensibility.Editor
         {
             if (colorScheme != CurrentColorScheme)
             {
-                Application.Current.Resources["EditorColorScheme"] = colorScheme;
-                Application.Current.Resources["EditorBackgroundBrush"] = colorScheme.Background;
-                Application.Current.Resources["EditorBackgroundAccentBrush"] = colorScheme.BackgroundAccent;
-                Application.Current.Resources["EditorForegroundBrush"] = colorScheme.Text;
-                Application.Current.Resources["EditorBorderBrush"] = colorScheme.Border;
+                if (Application.Current != null)
+                {
+                    Application.Current.Resources["EditorColorScheme"] = colorScheme;
+                    Application.Current.Resources["EditorBackgroundBrush"] = colorScheme.Background;
+                    Application.Current.Resources["EditorBackgroundAccentBrush"] = colorScheme.BackgroundAccent;
+                    Application.Current.Resources["EditorForegroundBrush"] = colorScheme.Text;
+                    Application.Current.Resources["EditorBorderBrush"] = colorScheme.Border;
+                }
+
                 CurrentColorScheme = colorScheme;
             }
         }

@@ -23,7 +23,7 @@ namespace AvalonStudio.Extensibility.Editor
 
             _colorScheme = ColorScheme.LoadColorScheme(settings.ColorScheme);
 
-            Title = file.Name;
+            Title = file?.Name;
         }
 
         ~EditorViewModel()

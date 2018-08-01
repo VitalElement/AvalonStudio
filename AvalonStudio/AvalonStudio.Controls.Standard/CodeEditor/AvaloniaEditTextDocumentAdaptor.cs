@@ -248,6 +248,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             }
         }
 
+        public static ITextDocument Create (string text)
+        {
+            return new AvalonStudioTextDocument(new AvaloniaEdit.Document.TextDocument(text));
+        }
+
         private AvaloniaEdit.Document.TextDocument _document;
         private readonly DocumentLinesCollection _lines;
 
@@ -284,9 +289,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             Replace(offset, 0, text);
         }
 
-        public void Replace(int offset, int length, string text)
+        public void Replace(int offset, int length, string text, ReplaceMode replaceMode = ReplaceMode.Normal)
         {
-            _document.Replace(offset, length, text);
+            _document.Replace(offset, length, text, (AvaloniaEdit.Document.OffsetChangeMappingType)replaceMode);
         }
 
         public char GetCharAt(int offset)

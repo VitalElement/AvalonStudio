@@ -1,8 +1,12 @@
 ﻿using Avalonia;
 using AvalonStudio.Documents;
+using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Projects;
 using ReactiveUI;
+using System.Collections.Generic;
 using System.IO;
+using System;
 
 namespace AvalonStudio.Extensibility.Editor
 {
@@ -18,17 +22,67 @@ namespace AvalonStudio.Extensibility.Editor
         private int _column;
         private bool _isFocused;
         private ISegment _selection;
+        private IList<ITextEditorInputHelper> _inputHelpers;
+        private int _lastLineNumber;
 
         public TextEditorViewModel(ITextDocument document, ISourceFile file) : base(file)
         {
+            _lastLineNumber = -1;
             _visualFontSize = _fontSize = 14;
             _zoomLevel = 1;
-            ZoomLevel = _studio.GlobalZoomLevel;
+
+            if (_studio != null)
+            {
+                ZoomLevel = _studio.GlobalZoomLevel;
+            }
+
             _document = document;
+
+            _inputHelpers = new List<ITextEditorInputHelper>();
+
+            _inputHelpers.Add(new DefaultIndentationInputHelper());
+
+            this.WhenAnyValue(x => x.Line).Subscribe(lineNumber =>
+            {
+                if (lineNumber != _lastLineNumber && lineNumber > 0)
+                {
+                    var line = Document.Lines[Line];
+
+                    var text = Document.GetText(line);
+
+                    if (string.IsNullOrWhiteSpace(text))
+                    {
+                        foreach (var helper in InputHelpers)
+                        {
+                            helper.CaretMovedToEmptyLine(this);
+                        }
+                    }
+
+                    _lastLineNumber = lineNumber;
+                }
+            });
+
+
         }
 
         ~TextEditorViewModel()
         {
+        }
+
+        public void SetCursorQuiet (int offset)
+        {
+            _offset = offset;
+
+            var location = Document.GetLocation(Offset);
+
+            _line = location.Line;
+            _column = location.Column;
+        }
+
+        public IList<ITextEditorInputHelper> InputHelpers
+        {
+            get { return _inputHelpers; }
+            set { this.RaiseAndSetIfChanged(ref _inputHelpers, value); }
         }
 
         public int Offset
@@ -72,7 +126,7 @@ namespace AvalonStudio.Extensibility.Editor
                 if (value != _zoomLevel)
                 {
                     _zoomLevel = value;
-                    _studio.GlobalZoomLevel = value;
+                    IoC.Get<IStudio>().GlobalZoomLevel = value;
                     InvalidateVisualFontSize();
 
                     ZoomLevelText = $"{ZoomLevel:0} %";
@@ -126,7 +180,7 @@ namespace AvalonStudio.Extensibility.Editor
             IsFocused = true;
         }
 
-        public void Focus ()
+        public void Focus()
         {
 
         }
@@ -157,12 +211,32 @@ namespace AvalonStudio.Extensibility.Editor
 
         public virtual bool OnBeforeTextEntered(string text)
         {
-            return false;
+            bool handled = false;
+
+            foreach (var helper in InputHelpers)
+            {
+                if (helper.BeforeTextInput(this, text))
+                {
+                    handled = true;
+                }
+            }
+
+            return handled;
         }
 
         public virtual bool OnTextEntered(string text)
         {
-            return false;
+            bool handled = false;
+
+            foreach (var helper in InputHelpers)
+            {
+                if (helper.AfterTextInput(this, text))
+                {
+                    handled = true;
+                }
+            }
+
+            return handled;
         }
 
         public virtual void OnTextChanged()
