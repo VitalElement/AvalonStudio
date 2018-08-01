@@ -104,6 +104,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public CodeEditor() : base(new TextArea(), null)
         {
+            TextArea.IndentationStrategy = null;
+
             _codeAnalysisRunner = new JobRunner(1);
 
             _shell = IoC.Get<IShell>();
