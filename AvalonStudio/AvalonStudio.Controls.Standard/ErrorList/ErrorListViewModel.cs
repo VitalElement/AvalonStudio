@@ -25,6 +25,11 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         private ErrorViewModel selectedError;
         private IStudio studio;
+        private bool _showErrors = true;
+        private bool _showWarnings = true;
+        private bool _fromBuild = true;
+        private bool _fromIntellisense = true;
+        private bool _showNotes = true;
 
         /// <inheritdoc/>
         public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
@@ -33,6 +38,36 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         {
             Title = "Error List";
             errors = new ObservableCollection<ErrorViewModel>();
+
+            FilteredErrors = errors.CreateDerivedCollection(x=>x, (error) =>
+            {
+                if(error.Level == DiagnosticLevel.Error && !ShowErrors)
+                {
+                    return false;
+                }
+
+                if(error.Level == DiagnosticLevel.Warning && !ShowWarnings)
+                {
+                    return false;
+                }
+
+                if(error.Level == DiagnosticLevel.Info && !ShowNotes)
+                {
+                    return false;
+                }
+
+                if(error.Source == DiagnosticSourceKind.Build && !FromBuild)
+                {
+                    return false;
+                }
+
+                if(error.Source == DiagnosticSourceKind.Analysis && !FromIntellisense)
+                {
+                    return false;
+                }
+
+                return true;
+            }, null, this.WhenAnyValue(x=>x.ShowErrors, x=>x.ShowWarnings, x=>x.FromBuild, x=>x.FromIntellisense, x=>x.ShowNotes));
         }
 
         public ErrorViewModel SelectedError
@@ -70,6 +105,39 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             get { return Location.Bottom; }
         }
 
+        public bool ShowErrors
+        {
+            get { return _showErrors; }
+            set { this.RaiseAndSetIfChanged(ref _showErrors, value); }
+        }
+
+        public bool ShowWarnings
+        {
+            get { return _showWarnings; }
+            set { this.RaiseAndSetIfChanged(ref _showWarnings, value); }
+        }
+
+        public bool ShowNotes
+        {
+            get { return _showNotes; }
+            set { this.RaiseAndSetIfChanged(ref _showNotes, value); }
+        }
+
+
+        public bool FromBuild
+        {
+            get { return _fromBuild; }
+            set { this.RaiseAndSetIfChanged(ref _fromBuild, value); }
+        }
+
+        public bool FromIntellisense
+        {
+            get { return _fromIntellisense; }
+            set { this.RaiseAndSetIfChanged(ref _fromIntellisense, value); }
+        }
+
+        public IReactiveDerivedList<ErrorViewModel> FilteredErrors { get; }
+
         /// <inheritdoc/>
         public ObservableCollection<ErrorViewModel> Errors
         {
@@ -92,7 +160,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                 DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(tag, DiagnosticsUpdatedKind.DiagnosticsRemoved));
             });
         }
-        
+
         /// <inheritdoc/>
         public void Create(object tag, string filePath, DiagnosticSourceKind source, ImmutableArray<Diagnostic> diagnostics, SyntaxHighlightDataList diagnosticHighlights = null)
         {

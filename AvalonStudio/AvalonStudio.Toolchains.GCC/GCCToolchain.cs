@@ -183,7 +183,9 @@ namespace AvalonStudio.Toolchains.GCC
                 int.TryParse(lineText, out int line);
                 int.TryParse(columnText, out int column);
 
-                diagnostics.Add(new Diagnostic(0, 0, file.Project.Name, filename, line, message, code, type == "error" ? DiagnosticLevel.Error : DiagnosticLevel.Warning, DiagnosticCategory.Compiler));
+                diagnostics.Add(new Diagnostic(0, 0, file.Project.Name,
+                filename, line, message, code,
+                type == "error" ? DiagnosticLevel.Error : DiagnosticLevel.Warning, DiagnosticCategory.Compiler, DiagnosticSourceKind.Build));
             }
         }
 
