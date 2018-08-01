@@ -24,6 +24,8 @@ namespace AvalonStudio.Debugging
             Dispatcher.UIThread.InvokeAsync(() => { IsVisible = false; });
 
             Frames = new ObservableCollection<FrameViewModel>();
+
+            Title = "Call Stack";
         }
 
         public FrameViewModel SelectedFrame

@@ -1,5 +1,4 @@
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms.Terminals;
 using AvalonStudio.Shell;
@@ -9,20 +8,24 @@ using VtNetCore.Avalonia;
 using System;
 using AvalonStudio.Platforms;
 using AvalonStudio.CommandLineTools;
+using AvalonStudio.Extensibility.Studio;
+using System.Composition;
 
 namespace AvalonStudio.Controls.Standard.Terminal
 {
-    public class TerminalViewModel : ToolViewModel, IExtension
+    [ExportToolControl]
+    [Export(typeof(IExtension))]
+    public class TerminalViewModel : ToolViewModel, IActivatableExtension
     {
         private IConnection _connection;
         private bool _terminalVisible;
-        private IShell _shell;
+        private IStudio _studio;
 
         public TerminalViewModel() : base("Terminal")
         {
         }
 
-        public override Location DefaultLocation => Location.BottomRight;
+        public override Location DefaultLocation => Location.Bottom;
 
         private void CreateConnection(string workingDirectory)
         {
@@ -56,9 +59,9 @@ namespace AvalonStudio.Controls.Standard.Terminal
         {
             CreateConnection(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
 
-            _shell = IoC.Get<IShell>();
+            _studio = IoC.Get<IStudio>();
 
-            Observable.FromEventPattern<SolutionChangedEventArgs>(_shell, nameof(_shell.SolutionChanged)).Subscribe(args =>
+            Observable.FromEventPattern<SolutionChangedEventArgs>(_studio, nameof(_studio.SolutionChanged)).Subscribe(args =>
             {
                 if (args.EventArgs.NewValue != null)
                 {
@@ -78,6 +81,11 @@ namespace AvalonStudio.Controls.Standard.Terminal
                     CreateConnection(workingDirectoy);
                 }
             });
+
+            var shell = IoC.Get<IShell>();
+
+            shell.MainPerspective.AddOrSelectTool(this);
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
         }
 
         private void Connection_Closed(object sender, System.EventArgs e)

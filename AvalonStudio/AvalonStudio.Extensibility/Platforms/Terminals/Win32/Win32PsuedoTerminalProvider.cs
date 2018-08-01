@@ -1,29 +1,19 @@
 ﻿using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using System;
+using System.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Pipes;
-using System.Linq;
 using System.Runtime.InteropServices;
 using static winpty.WinPty;
 
 namespace AvalonStudio.Platforms.Terminals.Win32
 {
+    [Shared]
+    [Export(typeof(IExtension))]
+    [Export(typeof(IPsuedoTerminalProvider))]
     public class Win32PsuedoTerminalProvider : IPsuedoTerminalProvider, IExtension
     {
-        public void Activation()
-        {
-        }
-
-        public void BeforeActivation()
-        {
-            if (Platforms.Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
-            {
-                IoC.RegisterConstant<IPsuedoTerminalProvider>(this);
-            }
-        }
-
         private static IntPtr TryGetHandle(Process p)
         {
             var result = IntPtr.Zero;
