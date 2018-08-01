@@ -61,15 +61,13 @@ namespace AvalonStudio.Extensibility.Editor
                     _lastLineNumber = lineNumber;
                 }
             });
-
-
         }
 
         ~TextEditorViewModel()
         {
         }
 
-        public void SetCursorQuiet (int offset)
+        public void SetCursorQuiet(int offset)
         {
             _offset = offset;
 
