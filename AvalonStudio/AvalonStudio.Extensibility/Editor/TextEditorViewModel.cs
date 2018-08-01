@@ -69,6 +69,16 @@ namespace AvalonStudio.Extensibility.Editor
         {
         }
 
+        public void SetCursorQuiet (int offset)
+        {
+            _offset = offset;
+
+            var location = Document.GetLocation(Offset);
+
+            _line = location.Line;
+            _column = location.Column;
+        }
+
         public IList<ITextEditorInputHelper> InputHelpers
         {
             get { return _inputHelpers; }

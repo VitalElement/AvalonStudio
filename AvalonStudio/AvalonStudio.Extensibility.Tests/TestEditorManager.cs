@@ -70,12 +70,7 @@ namespace AvalonStudio.Extensibility.Tests
 
         public void SetCursor (int offset)
         {
-            Editor.Offset = offset;
-
-            var location = Editor.Document.GetLocation(Editor.Offset);
-
-            Editor.Line = location.Line;
-            Editor.Column = location.Column;
+            (Editor as TextEditorViewModel).SetCursorQuiet(offset);
         }
 
         public ITextDocument Document { get; private set; }

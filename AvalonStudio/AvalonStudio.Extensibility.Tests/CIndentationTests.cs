@@ -45,5 +45,25 @@ namespace AvalonStudio.Extensibility.Tests
             Assert.Equal("{\n    statement();\n}", testEditor.Document.Text);
         }
 
+        [Fact]
+        public void C_Indentation_ReIndents_Line_Following_Conditional_Statement()
+        {
+            var testEditor = TestEditorManager.Create("{\n    if(statement)|\n}", new CBasedLanguageIndentationInputHelper());
+
+            testEditor.Input("\n");
+
+            Assert.Equal("{\n    if(statement)\n        \n}", testEditor.Document.Text);
+        }
+
+        [Fact]
+        public void C_Indentation_ReIndents_Line_Following_Else_Statement()
+        {
+            var testEditor = TestEditorManager.Create("{\n    if(statement)\n        statement;\n    else|\n}", new CBasedLanguageIndentationInputHelper());
+
+            testEditor.Input("\n");
+
+            Assert.Equal("{\n    if(statement)\n        statement;\n    else\n        \n}", testEditor.Document.Text);
+        }
+
     }
 }
