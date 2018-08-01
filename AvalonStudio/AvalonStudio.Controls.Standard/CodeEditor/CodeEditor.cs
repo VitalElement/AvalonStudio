@@ -578,8 +578,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                         }
                     }
 
-                    TextArea.Caret.BringCaretToView();
-                    Focus();
+                    Dispatcher.UIThread.Post(()=>
+                    {
+                        TextArea.ScrollToLine(Line);
+                        Focus();
+                    });
                 }
                 else
                 {
