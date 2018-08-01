@@ -11,7 +11,7 @@ namespace AvalonStudio.Extensibility.Tests
         [Fact]
         public void DefaultIndentationCopiesPreviousLineIndentation()
         {
-            string testData = @"    ";
+            string testData = "    ";
 
             var testEditor = TestEditorManager.Create(testData);
 
@@ -24,7 +24,7 @@ namespace AvalonStudio.Extensibility.Tests
         [Fact]
         public void C_Indentation_Inserts_Indentation_When_NewLine_Inserted_Between_2_Braces ()
         {
-            string testData = @"{}";
+            string testData = "{}";
 
             var testEditor = TestEditorManager.Create(testData, new CBasedLanguageIndentationInputHelper());
 
@@ -33,5 +33,19 @@ namespace AvalonStudio.Extensibility.Tests
 
             Assert.Equal("{\n    \n}", testEditor.Document.Text);
         }
+
+        [Fact]
+        public void C_Indentation_ReIndents_Statement_With_Too_little_Indentation_On_SemiColon()
+        {
+            string testData = "{\nstatement()\n}";
+
+            var testEditor = TestEditorManager.Create(testData, new CBasedLanguageIndentationInputHelper());
+
+            testEditor.SetCursor(13);
+            testEditor.Input(";");
+
+            Assert.Equal("{\n    statement();\n}", testEditor.Document.Text);
+        }
+
     }
 }
