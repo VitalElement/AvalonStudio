@@ -1,9 +1,6 @@
-﻿using AvalonStudio.Controls.Standard.CodeEditor;
-using AvalonStudio.Documents;
-using AvalonStudio.Editor;
-using AvalonStudio.Extensibility.Editor;
+﻿using AvalonStudio.Editor;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -12,43 +9,29 @@ namespace AvalonStudio.Extensibility.Tests
     public class CIndentationTests
     {
         [Fact]
-        public void Test ()
+        public void DefaultIndentationCopiesPreviousLineIndentation()
+        {
+            string testData = @"    ";
+
+            var testEditor = TestEditorManager.Create(testData);
+
+            testEditor.SetCursor(4);
+            testEditor.Input("\n");
+
+            Assert.Equal("    \n    ", testEditor.Document.Text);
+        }
+
+        [Fact]
+        public void C_Indentation_Inserts_Indentation_When_NewLine_Inserted_Between_2_Braces ()
         {
             string testData = @"{}";
 
-            var document = AvalonStudioTextDocument.Create(testData);
+            var testEditor = TestEditorManager.Create(testData, new CBasedLanguageIndentationInputHelper());
 
-            var editor = new TextEditorViewModel(document, null);
+            testEditor.SetCursor(1);
+            testEditor.Input("\n");
 
-            var helper = new CBasedLanguageIndentationInputHelper();
-
-            MoveCursor(editor, 2);
-
-            RunInput(editor, helper, "\n");
-        }
-
-        private void RunInput(ITextEditor editor, ITextEditorInputHelper helper, string text)
-        {
-            helper.BeforeTextInput(editor, text);
-            InputText(editor, text);
-            helper.AfterTextInput(editor, text);
-        }
-
-        private void InputText (ITextEditor editor, string text)
-        {
-            editor.Document.Replace(editor.Offset, 0, text);
-
-            MoveCursor(editor, editor.Offset + text.Length);
-        }
-
-        private void MoveCursor (ITextEditor editor, int offset)
-        {
-            editor.Offset = offset;
-
-            var location = editor.Document.GetLocation(editor.Offset);
-
-            editor.Line = location.Line;
-            editor.Column = location.Column;
+            Assert.Equal("{\n    \n}", testEditor.Document.Text);
         }
     }
 }
