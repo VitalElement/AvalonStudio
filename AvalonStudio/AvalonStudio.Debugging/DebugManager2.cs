@@ -312,7 +312,7 @@ namespace AvalonStudio.Debugging
 
                     ISourceFile file = null;
 
-                    var document = _studio.GetDocument(normalizedPath);
+                    var document = _studio.GetEditor(normalizedPath);
 
                     if (document != null)
                     {

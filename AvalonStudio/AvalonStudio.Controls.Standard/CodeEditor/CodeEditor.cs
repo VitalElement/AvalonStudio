@@ -14,7 +14,6 @@ using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
 using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
 using AvalonStudio.Controls.Standard.CodeEditor.Highlighting;
-using AvalonStudio.Controls.Standard.CodeEditor.Refactoring;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
@@ -53,10 +52,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private SnippetManager _snippetManager;
         private InsertionContext _currentSnippetContext;
-
+        
         public IntellisenseViewModel Intellisense { get; }
         private Intellisense _intellisenseControl;
         private IntellisenseManager _intellisenseManager;
+
+        private RenameControl _renameControl;
 
         private CompletionAssistantView _completionAssistantControl;
         private CompletionAssistantViewModel _completionAssistant;
@@ -86,9 +87,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private LineNumberMargin _lineNumberMargin;
         private BreakPointMargin _breakpointMargin;
         private SelectedLineBackgroundRenderer _selectedLineBackgroundRenderer;
-        private RenameManager _renameManager;
         private CompositeDisposable _disposables;
-        
 
         private ContextActionsRenderer _contextActionsRenderer;
 
@@ -109,8 +108,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _shell = IoC.Get<IShell>();
 
             _snippetManager = IoC.Get<SnippetManager>();
-
-            _renameManager = new RenameManager(this);
 
             _lineNumberMargin = new LineNumberMargin(this);
 
@@ -145,6 +142,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 if (CaretOffset > 0)
                 {
                     _intellisenseManager?.OnKeyDown(ee, CaretOffset, TextArea.Caret.Line, TextArea.Caret.Column);
+
+                   
 
                     if (ee.Key == Key.Tab && _currentSnippetContext == null && Editor is ICodeEditor codeEditor && codeEditor.LanguageService != null)
                     {
@@ -348,18 +347,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Subscribe(e =>
             {
-                //if (TextArea.Caret.Line != _lastLine && LanguageService != null)
-                //{
-                //    var line = Document.GetLineByNumber(TextArea.Caret.Line);
-
-                //    if (line.Length == 0)
-                //    {
-                //        _suppressIsDirtyNotifications = true;
-                //        LanguageService.IndentationStrategy?.IndentLine(Document, line);
-                //        _suppressIsDirtyNotifications = false;
-                //    }
-                //}
-
                 if(_isLoaded)
                 {
                     _lastLine = TextArea.Caret.Line;
@@ -367,6 +354,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     EditorCaretOffset = TextArea.Caret.Offset;
                     Line = TextArea.Caret.Line;
                     Column = TextArea.Caret.Column;
+
+                    var location = new TextViewPosition(Document.GetLocation(CaretOffset));
+
+                    var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
+                    var visualLocationTop = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineTop);
+
+                    var position = visualLocation - TextArea.TextView.ScrollOffset;
+                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
+
+                    _intellisenseControl.SetLocation(position);
                 }
             }),
 
@@ -388,14 +385,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             _intellisenseManager.SetCursor(offset, TextArea.Selection.StartPosition.Line, TextArea.Selection.StartPosition.Column, UnsavedFiles.ToList());
                         }
                     }
-
-                    var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
-                    var visualLocationTop = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineTop);
-
-                    var position = visualLocation - TextArea.TextView.ScrollOffset;
-                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
-
-                    _intellisenseControl.SetLocation(position);
 
                     _selectedWordBackgroundRenderer.SelectedWord = GetWordAtOffset(CaretOffset);
 
@@ -583,6 +572,24 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     }
                 }
             }),
+            this.GetObservable(RenameOpenProperty).Subscribe(open =>
+            {
+                if(_isLoaded && Editor != null)
+                {
+                    var token = Editor.Document.GetToken(CaretOffset);
+                    RenameText = Editor.Document.GetText(token);
+                    var location = new TextViewPosition(Document.GetLocation(token.Offset));
+
+                    var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
+                    var visualLocationTop = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineTop);
+
+                    var position = visualLocation - TextArea.TextView.ScrollOffset;
+                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
+
+                    _renameControl.SetLocation(position);
+                    _renameControl.Open(this, RenameText);
+                }
+            }),
 
             AddHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel),
             AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel)
@@ -657,22 +664,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
         }
 
-        public void BeginSymbolRename(int offset)
-        {
-            //if (LanguageService != null)
-            //{
-            //    Dispatcher.UIThread.InvokeAsync(async () =>
-            //    {
-            //        var renameLocations = await LanguageService.RenameSymbol(DocumentAccessor, "");
-
-            //        if (renameLocations != null)
-            //        {
-            //            _renameManager.Start(renameLocations, offset);
-            //        }
-            //    });
-            //}
-        }
-
         protected override void OnTextChanged(EventArgs e)
         {
             base.OnTextChanged(e);
@@ -681,26 +672,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 Editor?.OnTextChanged();
             }
-
-            //if (_isLoaded)
-            //{
-            //    if (!_suppressIsDirtyNotifications && !IsReadOnly)
-            //    {
-            //        IsDirty = true;
-
-            //        TriggerCodeAnalysis();
-            //    }
-            //}
-        }
-
-        public async Task<QuickInfoResult> GetSymbolAsync(int offset)
-        {
-            //if (LanguageService != null)
-            //{
-            //    return await LanguageService.QuickInfo(DocumentAccessor, UnsavedFiles, offset);
-            //}
-
-            return null;
         }
 
         public async Task<object> UpdateToolTipAsync()
@@ -1002,6 +973,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _toolTip = e.NameScope.Find<CodeEditorToolTip>("PART_Tooltip");
             _toolTip.AttachEditor(this);
 
+            _renameControl = e.NameScope.Find<RenameControl>("PART_RenameControl");
+            _renameControl.PlacementTarget = TextArea;
+
             _intellisenseControl = e.NameScope.Find<Intellisense>("PART_Intellisense");
             _completionAssistantControl = e.NameScope.Find<CompletionAssistantView>("PART_CompletionAssistant");
 
@@ -1216,6 +1190,24 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             get => GetValue(SelectionProperty);
             set => SetValue(SelectionProperty, value);
+        }
+
+        public static readonly AvaloniaProperty<string> RenameTextProperty =
+            AvaloniaProperty.Register<CodeEditor, string>(nameof(RenameText), defaultBindingMode: BindingMode.TwoWay);
+
+        public string RenameText
+        {
+            get => GetValue(RenameTextProperty);
+            set => SetValue(RenameTextProperty, value);
+        }
+
+        public static readonly AvaloniaProperty<bool> RenameOpenProperty =
+            AvaloniaProperty.Register<CodeEditor, bool>(nameof(RenameOpen), defaultBindingMode: BindingMode.TwoWay);
+
+        public bool RenameOpen
+        {
+            get => GetValue(RenameOpenProperty);
+            set => SetValue(RenameOpenProperty, value);
         }
 
         public int GetOffsetFromPoint(Point point)

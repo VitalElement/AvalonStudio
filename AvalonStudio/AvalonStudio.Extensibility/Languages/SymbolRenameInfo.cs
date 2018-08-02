@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AvalonStudio.Documents;
+using System.Collections.Generic;
 
 namespace AvalonStudio.Languages
 {
@@ -12,5 +13,7 @@ namespace AvalonStudio.Languages
         public string FileName { get; }
 
         public IEnumerable<LinePositionSpanTextChange> Changes { get; set; }
+
+        public IEnumerable<(TextLocation start, TextLocation end)> InitialLocations { get; set; }
     }
 }

@@ -178,7 +178,7 @@ namespace AvalonStudio.Languages.Xaml
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo)
+        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo, bool initialising)
         {
             throw new NotImplementedException();
         }

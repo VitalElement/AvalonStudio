@@ -13,6 +13,7 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -33,6 +34,9 @@ namespace AvalonStudio.Extensibility.Editor
         private ObservableCollection<(object tag, IEnumerable<Diagnostic>)> _diagnostics;
         private IEnumerable<IndexEntry> _codeIndex;
         private CompositeDisposable _languageServiceDisposables;
+        private string _renameText;
+        private bool _inRenameMode;
+        private bool _renameOpen;
 
         public CodeEditorViewModel(ITextDocument document, ISourceFile file) : base(document, file)
         {
@@ -46,6 +50,28 @@ namespace AvalonStudio.Extensibility.Editor
             _analysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(async _ =>
             {
                 await DoCodeAnalysisAsync();
+            });
+
+            RenameSymbolCommand = ReactiveCommand.Create(() =>
+            {
+                InRenameMode = true;
+            });
+
+            this.WhenAnyValue(x => x.RenameText).Subscribe(async text =>
+            {
+                if(_renameOpen && InRenameMode && !string.IsNullOrWhiteSpace(text))
+                {
+                    var renameInfo = await LanguageService.RenameSymbol(this, text);
+
+                    await ApplyRenameAsync(renameInfo);
+
+                    InRenameMode = false;
+                    _renameOpen = false;
+                }
+                else
+                {
+                    _renameOpen = true;
+                }
             });
         }
 
@@ -78,6 +104,20 @@ namespace AvalonStudio.Extensibility.Editor
             get { return _codeIndex; }
             set { this.RaiseAndSetIfChanged(ref _codeIndex, value); }
         }
+
+        public bool InRenameMode
+        {
+            get { return _inRenameMode; }
+            set { this.RaiseAndSetIfChanged(ref _inRenameMode, value); }
+        }
+
+        public string RenameText
+        {
+            get { return _renameText; }
+            set { this.RaiseAndSetIfChanged(ref _renameText, value); }
+        }
+
+        public ReactiveCommand RenameSymbolCommand { get; }
 
         public override bool OnClose()
         {
@@ -281,6 +321,43 @@ namespace AvalonStudio.Extensibility.Editor
                         }
                     }
                     break;
+            }
+        }
+
+        public async Task ApplyRenameAsync(IEnumerable<SymbolRenameInfo> renameOperation)
+        {
+            var studio = IoC.Get<IStudio>();
+
+            foreach (var location in renameOperation)
+            {
+                var currentTab = studio.GetEditor(location.FileName);
+
+                ITextDocument document = null;
+
+                if (currentTab != null)
+                {
+                    document = currentTab.Document;
+                }
+                else
+                {
+                    document = await studio.CreateDocumentAsync(location.FileName);
+                }
+
+                if (document != null)
+                {
+                    using (document.RunUpdate())
+                    {
+                        foreach (var change in location.Changes)
+                        {
+                            var start = document.GetOffset(change.StartLine, change.StartColumn);
+                            var end = document.GetOffset(change.EndLine, change.EndColumn);
+
+                            document.Replace(start, end - start, change.NewText);
+                        }
+                    }
+
+                    File.WriteAllText(location.FileName, document.Text);
+                }
             }
         }
     }

@@ -75,6 +75,43 @@ namespace AvalonStudio.Documents
             document.Replace(segment.Offset, segment.Length, text);
         }
 
+        public static ISegment GetToken(this ITextDocument document, int offset)
+        {
+            var result = string.Empty;
+
+            if (offset >= 0 && document.TextLength > offset)
+            {
+                var start = offset;
+
+                var currentChar = document.GetCharAt(offset);
+                var prevChar = '\0';
+
+                if (offset > 0)
+                {
+                    prevChar = document.GetCharAt(offset - 1);
+                }
+
+                var charClass = AvaloniaEdit.Document.TextUtilities.GetCharacterClass(currentChar);
+
+                if (charClass != AvaloniaEdit.Document.CharacterClass.LineTerminator && prevChar != ' ' &&
+                    AvaloniaEdit.Document.TextUtilities.GetCharacterClass(prevChar) != AvaloniaEdit.Document.CharacterClass.LineTerminator)
+                {
+                    start = TextUtilities.GetNextCaretPosition(document, offset, LogicalDirection.Backward,
+                        CaretPositioningMode.WordStart);
+                }
+
+                var end = TextUtilities.GetNextCaretPosition(document, start, LogicalDirection.Forward,
+                    CaretPositioningMode.WordBorder);
+
+                if (start >= 0 && end >= 0 && end < document.TextLength && end >= start)
+                {
+                    return new SimpleSegment(start, end - start);
+                }
+            }
+
+            return null;
+        }
+
         public static ISegment GetWhitespaceAfter(this ITextDocument textSource, int offset)
         {
             if (textSource == null)
@@ -442,6 +479,8 @@ namespace AvalonStudio.Documents
         string Text { get; }
 
         int TextLength { get; }
+
+        ISegment CreateAnchoredSegment(int offset, int length);
 
         IIndexableList<IDocumentLine> Lines { get; }
 

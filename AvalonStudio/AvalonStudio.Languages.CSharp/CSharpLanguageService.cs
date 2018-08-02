@@ -17,6 +17,7 @@ using AvalonStudio.Projects.OmniSharp.Roslyn.Editor;
 using AvalonStudio.Utils;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Classification;
+using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.Completion;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -930,9 +931,67 @@ namespace AvalonStudio.Languages.CSharp
             return null;
         }
 
-        public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo = "")
+        public async Task<bool> CanRenameAt(ITextEditor editor, int offset)
         {
-            /*if (editor.SourceFile is MetaDataFile)
+            if (editor.SourceFile is MetaDataFile)
+            {
+                return false;
+            }
+
+            var dataAssociation = GetAssociatedData(editor);
+
+            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
+
+            var document = GetDocument(dataAssociation, editor.SourceFile, workspace);
+
+            if (document != null)
+            {
+                var root = await document.GetSyntaxRootAsync();
+
+                var token = root.FindToken(offset);
+
+                if (token.IsMissing)
+                {
+                    return false;
+                }
+
+                var annotatedRoot = root.ReplaceToken(token, token.WithAdditionalAnnotations(RenameAnnotation.Create()));
+
+                var annotatedSolution = document.Project.Solution.WithDocumentSyntaxRoot(document.Id, annotatedRoot);
+                var annotatedDocument = annotatedSolution.GetDocument(document.Id);
+
+                annotatedRoot = await annotatedDocument.GetSyntaxRootAsync().ConfigureAwait(false);
+                var annotatedToken = annotatedRoot.FindToken(token.SpanStart);
+
+                var semanticModel = await annotatedDocument.GetSemanticModelAsync().ConfigureAwait(false);
+                var symbol = semanticModel?.GetDeclaredSymbol(annotatedToken.Parent);
+
+                return symbol != null;
+            }
+
+            return false;
+        }
+
+        private string SwapCase (string line)
+        {
+            StringBuilder result = new StringBuilder();
+
+            for (int i = 0; i < line.Length; i++)
+            {
+                if (char.IsUpper(line, i))
+                    result.Append(char.ToLower(line[i]));
+                else if (char.IsLower(line, i))
+                    result.Append(char.ToUpper(line[i]));
+                else
+                    result.Append(line[i]);
+            }
+
+            return result.ToString();
+        }
+
+        public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo, bool initial = false)
+        {
+            if (editor.SourceFile is MetaDataFile)
             {
                 return null;
             }
@@ -945,36 +1004,26 @@ namespace AvalonStudio.Languages.CSharp
 
             if (document != null)
             {
-                var sourceText = await document.GetTextAsync();
+                var symbol = SymbolFinder.FindSymbolAtPositionAsync(document, editor.Offset).GetAwaiter().GetResult();
 
-                var symbol = await SymbolFinder.FindSymbolAtPositionAsync(document, editor.CaretOffset);
-                var solution = workspace.CurrentSolution;
-
-                if (symbol != null)
+                if (initial)
                 {
-                    if (renameTo == string.Empty)
-                    {
-                        renameTo = "Test" + symbol.Name + "1";
-                    }
-
-                    try
-                    {
-                        solution = await Renamer.RenameSymbolAsync(solution, symbol, renameTo, workspace.Options);
-                    }
-                    catch (ArgumentException e)
-                    {
-                        return null;
-                    }
+                    renameTo = SwapCase(symbol.ToDisplayString());
                 }
 
+
+
+                var newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, symbol, renameTo, null).ConfigureAwait(false);
+
                 var changes = new Dictionary<string, SymbolRenameInfo>();
-                var solutionChanges = solution.GetChanges(workspace.CurrentSolution);
+
+                var solutionChanges = newSolution.GetChanges(workspace.CurrentSolution);
 
                 foreach (var projectChange in solutionChanges.GetProjectChanges())
                 {
                     foreach (var changedDocumentId in projectChange.GetChangedDocuments())
                     {
-                        var changedDocument = solution.GetDocument(changedDocumentId);
+                        var changedDocument = newSolution.GetDocument(changedDocumentId);
 
                         if (!changes.TryGetValue(changedDocument.FilePath, out var modifiedFileResponse))
                         {
@@ -993,7 +1042,7 @@ namespace AvalonStudio.Languages.CSharp
                 }
 
                 return changes.Values;
-            }*/
+            }
 
             return null;
         }
@@ -1012,37 +1061,4 @@ namespace AvalonStudio.Languages.CSharp
              };
         }
     }
-
-    //class RoslynHighlightProvider : ISyntaxHighlightingProvider
-    //{
-    //    private Microsoft.CodeAnalysis.Document _document;
-
-    //    public RoslynHighlightProvider(Microsoft.CodeAnalysis.Document document)
-    //    {
-    //        _document = document;
-    //    }
-
-    //    public List<OffsetSyntaxHighlightingData> GetHighlightedLine(ISegment line)
-    //    {
-    //        var result = new List<OffsetSyntaxHighlightingData>();
-
-    //        try
-    //        {
-    //            var highlightData = Classifier.GetClassifiedSpansAsync(_document, new TextSpan(line.Offset, line.Length)).GetAwaiter().GetResult();
-    //            var displayParts = Classifier.GetClassifiedSymbolDisplayPartsAsync(_document, new TextSpan(line.Offset, line.Length)).GetAwaiter().GetResult();
-
-    //            foreach (var span in highlightData)
-    //            {
-    //                result.Add(new OffsetSyntaxHighlightingData { Start = span.TextSpan.Start, Length = span.TextSpan.Length, Type = FromRoslynType(span.ClassificationType) });
-    //            }
-    //        }
-    //        catch (NullReferenceException)
-    //        {
-    //        }
-
-    //        return result;
-    //    }
-
-    //    
-    //}
 }

@@ -459,6 +459,16 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
             this.DisableDiagnostics();
         }
 
+        public AvalonEditTextContainer GetContainer (DocumentId documentId)
+        {
+            if (_openDocumentTextLoaders.ContainsKey(documentId))
+            {
+                return _openDocumentTextLoaders[documentId];
+            }
+
+            return null;
+        }
+
         protected override void ApplyDocumentTextChanged(DocumentId documentId, SourceText text)
         {
             if (_openDocumentTextLoaders.ContainsKey(documentId))
