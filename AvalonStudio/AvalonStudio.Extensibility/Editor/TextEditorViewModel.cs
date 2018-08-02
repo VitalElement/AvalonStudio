@@ -7,6 +7,7 @@ using ReactiveUI;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Extensibility.Editor
 {
@@ -24,6 +25,8 @@ namespace AvalonStudio.Extensibility.Editor
         private ISegment _selection;
         private IList<ITextEditorInputHelper> _inputHelpers;
         private int _lastLineNumber;
+
+        public event EventHandler<TooltipDataRequestEventArgs> TooltipContentRequested;
 
         public TextEditorViewModel(ITextDocument document, ISourceFile file) : base(file)
         {
@@ -247,6 +250,22 @@ namespace AvalonStudio.Extensibility.Editor
 
         public virtual void IndentLine(int lineNumber)
         {
+        }
+
+        public virtual Task<object> GetToolTipContentAsync(int offset)
+        {
+            var args = new TooltipDataRequestEventArgs(this, offset);
+
+            TooltipContentRequested?.Invoke(this, args);
+
+            if (args.GetViewModelAsyncTask != null)
+            {
+                return args.GetViewModelAsyncTask(this, offset);
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

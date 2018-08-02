@@ -98,17 +98,17 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public IEnumerable<char> IntellisenseTriggerCharacters => new[]
+        public IEnumerable<char> IntellisenseTriggerCharacters { get; } = new[]
         {
             '.', '>', '#'
         };
 
-        public IEnumerable<char> IntellisenseSearchCharacters => new[]
+        public IEnumerable<char> IntellisenseSearchCharacters { get; } = new[]
         {
             '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#', ','
         };
 
-        public IEnumerable<char> IntellisenseCompleteCharacters => new[]
+        public IEnumerable<char> IntellisenseCompleteCharacters { get; } = new[]
         {
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
@@ -557,7 +557,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public bool CanHandle(IEditor editor)
+        public bool CanHandle(ITextEditor editor)
         {
             var result = false;
 
@@ -592,7 +592,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        public void UnregisterSourceFile(IEditor editor)
+        public void UnregisterSourceFile(ITextEditor editor)
         {
             clangAccessJobRunner.InvokeAsync(() =>
             {
@@ -620,47 +620,45 @@ namespace AvalonStudio.Languages.CPlusPlus
             return cursor;
         }
 
-        public async Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<QuickInfoResult> QuickInfo(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
-            //    StyledText styledText = null;
-            //    var associatedData = GetAssociatedData(editor.SourceFile);
+            StyledText styledText = null;
 
-            //    var clangUnsavedFiles = new List<ClangUnsavedFile>();
+            var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
-            //    foreach (var unsavedFile in unsavedFiles)
-            //    {
-            //        clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
-            //    }
+            foreach (var unsavedFile in unsavedFiles)
+            {
+                clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+            }
 
-            //    await clangAccessJobRunner.InvokeAsync(() =>
-            //    {
-            //        var tu = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
+            await clangAccessJobRunner.InvokeAsync(() =>
+            {
+                var tu = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
 
-            //        if (tu != null)
-            //        {
-            //            var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(editor.SourceFile.FilePath), offset));
+                if (tu != null)
+                {
+                    var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(editor.SourceFile.FilePath), offset));
 
-            //            switch (cursor.Kind)
-            //            {
-            //                case NClang.CursorKind.MemberReferenceExpression:
-            //                case NClang.CursorKind.DeclarationReferenceExpression:
-            //                case NClang.CursorKind.CallExpression:
-            //                case NClang.CursorKind.TypeReference:
-            //                    styledText = InfoTextFromCursor(cursor.Referenced);
-            //                    break;
+                    switch (cursor.Kind)
+                    {
+                        case NClang.CursorKind.MemberReferenceExpression:
+                        case NClang.CursorKind.DeclarationReferenceExpression:
+                        case NClang.CursorKind.CallExpression:
+                        case NClang.CursorKind.TypeReference:
+                            styledText = InfoTextFromCursor(cursor.Referenced);
+                            break;
 
-            //                case NClang.CursorKind.NoDeclarationFound:
-            //                    break;
+                        case NClang.CursorKind.NoDeclarationFound:
+                            break;
 
-            //                default:
-            //                    styledText = InfoTextFromCursor(cursor);
-            //                    break;
-            //            }
-            //        }
-            //    });
+                        default:
+                            styledText = InfoTextFromCursor(cursor);
+                            break;
+                    }
+                }
+            });
 
-            //    return styledText == null ? null : new QuickInfoResult(styledText);
-            return null;
+            return styledText == null ? null : new QuickInfoResult(styledText);
         }
 
         private static Symbol SymbolFromClangCursor(ClangCursor cursor)
@@ -1350,12 +1348,12 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
+        public Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo)
+        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo)
         {
             throw new NotImplementedException();
         }

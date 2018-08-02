@@ -223,17 +223,17 @@ namespace AvalonStudio.Languages.CSharp
             return result;
         }
 
-        public IEnumerable<char> IntellisenseTriggerCharacters => new[]
+        public IEnumerable<char> IntellisenseTriggerCharacters { get; } = new[]
         {
             '.', '<', ':'
         };
 
-        public IEnumerable<char> IntellisenseSearchCharacters => new[]
+        public IEnumerable<char> IntellisenseSearchCharacters { get; } = new[]
         {
             '(', ')', '.', ':', '-', '>', ';', '<'
         };
 
-        public IEnumerable<char> IntellisenseCompleteCharacters => new[]
+        public IEnumerable<char> IntellisenseCompleteCharacters { get; } = new[]
         {
             '.', ':', ';', '-', ' ', '(', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
@@ -249,7 +249,7 @@ namespace AvalonStudio.Languages.CSharp
 
         public string LanguageId => "cs";
 
-        public bool CanHandle(IEditor editor)
+        public bool CanHandle(ITextEditor editor)
         {
             var result = false;
 
@@ -410,7 +410,7 @@ namespace AvalonStudio.Languages.CSharp
             return -1;
         }
 
-        public async Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
+        public async Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset)
         {
            /* var dataAssociation = GetAssociatedData(editor);
 
@@ -500,9 +500,9 @@ namespace AvalonStudio.Languages.CSharp
             return node;
         }
 
-        public async Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<QuickInfoResult> QuickInfo(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
-            /*var dataAssociation = GetAssociatedData(editor);
+            var dataAssociation = GetAssociatedData(editor);
 
             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
 
@@ -602,7 +602,7 @@ namespace AvalonStudio.Languages.CSharp
                 }
 
                 return new QuickInfoResult(styledText);
-            }*/
+            }
 
             return null;
         }
@@ -661,8 +661,6 @@ namespace AvalonStudio.Languages.CSharp
                     errorList.Create((diagnostics.Id, editor.SourceFile), editor.SourceFile.FilePath, DiagnosticSourceKind.Analysis, results.ToImmutableArray(), fadedCode);
                 });
             }
-
-            //SyntaxHighlighter = new RoslynHighlightProvider(GetDocument(association, editor.SourceFile));
         }
 
         private CSharpDataAssociation GetAssociatedData(ITextEditor editor)
@@ -866,12 +864,9 @@ namespace AvalonStudio.Languages.CSharp
             return result;
         }
 
-        public void UnregisterSourceFile(IEditor editor)
+        public void UnregisterSourceFile(ITextEditor editor)
         {
-            /*var association = GetAssociatedData(editor);
-
-            editor.TextEntered -= association.TextInputHandler;
-            editor.TextEntering -= association.BeforeTextInputHandler;
+            var association = GetAssociatedData(editor);
 
             if (!(editor.SourceFile is MetaDataFile))
             {
@@ -879,7 +874,7 @@ namespace AvalonStudio.Languages.CSharp
             }
 
             association.Solution = null;
-            dataAssociations.Remove(editor);*/
+            dataAssociations.Remove(editor);
         }
 
         private async Task<InvocationContext> GetInvocation(Microsoft.CodeAnalysis.Document document, int offset)
@@ -935,7 +930,7 @@ namespace AvalonStudio.Languages.CSharp
             return null;
         }
 
-        public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo = "")
+        public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo = "")
         {
             /*if (editor.SourceFile is MetaDataFile)
             {

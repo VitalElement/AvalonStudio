@@ -73,8 +73,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private ScopeLineBackgroundRenderer _scopeLineBackgroundRenderer;
 
-        public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
-
         private bool _isLoaded = false;
 
         private int _lastLine = -1;
@@ -707,44 +705,27 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public async Task<object> UpdateToolTipAsync()
         {
-            //if (VisualRoot == null)
-            //{
-            //    return null;
-            //}
+            if (VisualRoot == null)
+            {
+                return null;
+            }
 
-            //var mouseDevice = (VisualRoot as IInputRoot)?.MouseDevice;
-            //var position = GetPositionFromPoint(mouseDevice.GetPosition(this));
+            var mouseDevice = (VisualRoot as IInputRoot)?.MouseDevice;
+            var position = GetPositionFromPoint(mouseDevice.GetPosition(this));
 
-            //if (position.HasValue)
-            //{
-            //    var offset = Document.GetOffset(position.Value.Location);
+            if (position.HasValue && Editor != null)
+            {
+                var offset = Document.GetOffset(position.Value.Location);
 
-            //    var matching = _diagnosticMarkersRenderer?.GetMarkersAtOffset(offset).FirstOrDefault()?.Diagnostic;
+                var matching = _diagnosticMarkersRenderer?.GetMarkersAtOffset(offset).FirstOrDefault()?.Diagnostic;
 
-            //    if (matching != null && matching.Level != DiagnosticLevel.Hidden)
-            //    {
-            //        return new ErrorProbeViewModel(matching);
-            //    }
-
-            //    if (LanguageService != null)
-            //    {
-            //        var quickInfo = await LanguageService?.QuickInfo(DocumentAccessor, UnsavedFiles, offset);
-
-            //        if (quickInfo != null)
-            //        {
-            //            return new QuickInfoViewModel(quickInfo);
-            //        }
-            //    }
-
-            //    var tooltipRequestEventArgs = new TooltipDataRequestEventArgs();
-
-            //    RequestTooltipContent?.Invoke(this, tooltipRequestEventArgs);
-
-            //    if (tooltipRequestEventArgs.GetViewModelAsyncTask != null)
-            //    {
-            //        return await tooltipRequestEventArgs.GetViewModelAsyncTask(offset);
-            //    }
-            //}
+                if (matching != null && matching.Level != DiagnosticLevel.Hidden)
+                {
+                    return new ErrorProbeViewModel(matching);
+                }
+                
+                return await Editor.GetToolTipContentAsync(offset);
+            }
 
             return null;
         }

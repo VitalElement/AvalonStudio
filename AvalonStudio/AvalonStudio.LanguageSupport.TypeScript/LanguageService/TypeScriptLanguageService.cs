@@ -102,7 +102,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public string LanguageId => "ts";
 
-        public bool CanHandle(IEditor editor)
+        public bool CanHandle(ITextEditor editor)
         {
             var result = false;
 
@@ -184,7 +184,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return -1;
         }
 
-        public Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<QuickInfoResult> QuickInfo(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             //STUB!
             return Task.FromResult<QuickInfoResult>(null);
@@ -512,7 +512,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return result;
         }
 
-        public void UnregisterSourceFile(IEditor editor)
+        public void UnregisterSourceFile(ITextEditor editor)
         {
             _typeScriptContext.RemoveFile(editor.SourceFile.FilePath);
             dataAssociations.Remove(editor.SourceFile);
@@ -523,12 +523,12 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             await _typeScriptContext.LoadComponentsAsync();
         }
 
-        public Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
+        public Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo)
+        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo)
         {
             throw new NotImplementedException();
         }

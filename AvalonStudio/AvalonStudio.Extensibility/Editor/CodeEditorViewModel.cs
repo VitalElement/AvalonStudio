@@ -81,7 +81,7 @@ namespace AvalonStudio.Extensibility.Editor
 
         public override bool OnClose()
         {
-            LanguageService?.UnregisterSourceFile(null);
+            LanguageService?.UnregisterSourceFile(this);
             return base.OnClose();
         }
 
@@ -141,6 +141,26 @@ namespace AvalonStudio.Extensibility.Editor
         public override void IndentLine(int lineNumber)
         {
             base.IndentLine(lineNumber);
+        }
+
+        public override async Task<object> GetToolTipContentAsync(int offset)
+        {
+            if(LanguageService != null)
+            {
+                var unsavedFiles = IoC.Get<IShell>().Documents.OfType<ITextDocumentTabViewModel>()
+                .Where(x => x.IsDirty)
+                .Select(x => new UnsavedFile(x.SourceFile.FilePath, x.Document.Text))
+                .ToList();
+
+                var quickinfo = await LanguageService.QuickInfo(this, unsavedFiles, offset);
+
+                if(quickinfo != null)
+                {
+                    return new QuickInfoViewModel(quickinfo);
+                }
+            }
+
+            return base.GetToolTipContentAsync(offset);
         }
 
         private void TriggerCodeAnalysis()

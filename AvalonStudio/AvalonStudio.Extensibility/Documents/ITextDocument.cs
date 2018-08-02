@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Documents
 {
@@ -482,6 +483,10 @@ namespace AvalonStudio.Documents
         bool OnTextEntered(string text);
 
         void OnTextChanged();
+
+        Task<object> GetToolTipContentAsync(int offset);
+
+        event EventHandler<TooltipDataRequestEventArgs> TooltipContentRequested;
     }
 
     public interface ICodeEditor : ITextEditor
@@ -497,64 +502,5 @@ namespace AvalonStudio.Documents
         void Comment();
 
         void Uncomment();
-    }
-
-    public interface IEditor : IDisposable
-    {
-        int CaretOffset { get; set; }
-
-        int Line { get; set; }
-
-        int Column { get; set; }
-
-        //ILanguageService LanguageService { get; }
-
-        ISourceFile SourceFile { get; }
-
-        ITextDocument Document { get; }
-
-        void IndentLine(int line);
-
-        void FormatAll();
-
-        void Focus();
-
-        void TriggerCodeAnalysis();
-
-        void Save();
-
-        void Comment();
-
-        void Uncomment();
-
-        void Undo();
-
-        void Redo();
-
-        void SetDebugHighlight(int line, int startColumn, int endColumn);
-
-        void ClearDebugHighlight();
-
-        void GotoOffset(int offset);
-
-        void GotoPosition(int line, int column);
-
-        void RenameSymbol(int offset);
-
-        event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
-
-        /// <summary>
-        /// Occurs when the TextArea receives text input.
-        /// but occurs immediately before the TextArea handles the TextInput event.
-        /// </summary>
-        event EventHandler<TextInputEventArgs> TextEntering;
-
-        /// <summary>
-        /// Occurs when the TextArea receives text input.
-        /// but occurs immediately after the TextArea handles the TextInput event.
-        /// </summary>
-        event EventHandler<TextInputEventArgs> TextEntered;
-
-        event EventHandler LostFocus;
     }
 }
