@@ -76,19 +76,19 @@ namespace AvalonStudio.Languages
 
         Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName);
 
-        Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset);
+        Task<QuickInfoResult> QuickInfo(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset);
 
         Task<List<Symbol>> GetSymbolsAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, string name);
 
-        Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset);
+        Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset);
 
-        Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo);
+        Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo);
 
         void RegisterSourceFile(ITextEditor editor);
 
-        void UnregisterSourceFile(IEditor editor);
+        void UnregisterSourceFile(ITextEditor editor);
 
-        bool CanHandle(IEditor editor);
+        bool CanHandle(ITextEditor editor);
 
         int Format(ITextEditor editor, uint offset, uint length, int cursor);
 

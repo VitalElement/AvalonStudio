@@ -179,7 +179,7 @@ namespace AvalonStudio.Toolchains.MSBuild
             var code = match.Groups["code"].Value;
             var message = match.Groups["message"].Value;
             var project_file = match.Groups["project_file"].Value;
-            
+
             if(match.Success)
             {
                 int.TryParse(lineText, out int line);
@@ -190,7 +190,8 @@ namespace AvalonStudio.Toolchains.MSBuild
                     entries[filename + project_file] = new List<Diagnostic>();
                 }
 
-                entries[filename + project_file].Add(new Diagnostic(0, 0, project_file, filename, line, message, code, type == "warning" ? DiagnosticLevel.Warning : DiagnosticLevel.Error, DiagnosticCategory.Compiler));
+                entries[filename + project_file].Add(new Diagnostic(0, 0, project_file, filename, line, message, code,
+                type == "warning" ? DiagnosticLevel.Warning : DiagnosticLevel.Error, DiagnosticCategory.Compiler,DiagnosticSourceKind.Build));
             }
         }
 

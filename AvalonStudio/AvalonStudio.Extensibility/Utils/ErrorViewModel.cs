@@ -1,4 +1,4 @@
-﻿using Avalonia.Media;
+using Avalonia.Media;
 using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
@@ -44,6 +44,8 @@ namespace AvalonStudio.Utils
         {
             get { return Model.Level; }
         }
+
+        public DiagnosticSourceKind Source => Model.Source;
 
         public IBrush LevelBrush
         {

@@ -7,6 +7,7 @@ using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
@@ -317,16 +318,15 @@ namespace AvalonStudio.Studio
 
             if (currentTab == null)
             {
-                var document = await AvalonStudioTextDocument.CreateAsync(file);
-
                 var provider = IoC.Get<IStudio>().EditorProviders.FirstOrDefault(p => p.Value.CanEdit(file))?.Value;
 
                 if (provider != null)
                 {
-                    currentTab = provider.CreateViewModel(file, document);
+                    currentTab = await provider.CreateViewModel(file);
                 }
                 else
                 {
+                    var document = await AvalonStudioTextDocument.CreateAsync(file);
                     currentTab = new TextEditorViewModel(document, file);
                 }
             }
@@ -384,11 +384,16 @@ namespace AvalonStudio.Studio
             }
         }
 
-        public ITextDocumentTabViewModel GetDocument(string path)
+        public Task<ITextDocument> CreateDocumentAsync (string path)
+        {
+            return AvalonStudioTextDocument.CreateAsync(path);
+        }
+
+        public ITextEditor GetEditor(string path)
         {
             var shell = IoC.Get<IShell>();
 
-            return shell.Documents.OfType<TextEditorViewModel>().Where(d => d.SourceFile?.FilePath == path).FirstOrDefault();
+            return shell.Documents.OfType<TextEditorViewModel>().Where(d => d.SourceFile?.FilePath.CompareFilePath(path) == 0).FirstOrDefault();
         }
 
         public IProject GetDefaultProject()

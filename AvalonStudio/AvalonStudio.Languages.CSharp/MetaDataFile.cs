@@ -3,6 +3,7 @@ using AvalonStudio.Projects;
 using Microsoft.CodeAnalysis;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.CSharp
 {
@@ -63,6 +64,11 @@ namespace AvalonStudio.Languages.CSharp
 
         public void Delete()
         {
+        }
+
+        public async Task<string> GetTextAsync ()
+        {
+            return (await _document.GetTextAsync()).ToString();
         }
 
         public Stream OpenText()

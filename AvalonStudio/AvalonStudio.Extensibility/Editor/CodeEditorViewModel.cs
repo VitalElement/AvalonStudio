@@ -13,6 +13,7 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -33,6 +34,8 @@ namespace AvalonStudio.Extensibility.Editor
         private ObservableCollection<(object tag, IEnumerable<Diagnostic>)> _diagnostics;
         private IEnumerable<IndexEntry> _codeIndex;
         private CompositeDisposable _languageServiceDisposables;
+        private string _renameText;
+        private bool _inRenameMode;
 
         public CodeEditorViewModel(ITextDocument document, ISourceFile file) : base(document, file)
         {
@@ -46,6 +49,46 @@ namespace AvalonStudio.Extensibility.Editor
             _analysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(async _ =>
             {
                 await DoCodeAnalysisAsync();
+            });
+
+            RenameSymbolCommand = ReactiveCommand.Create(() =>
+            {
+                InRenameMode = true;
+            });
+
+            GotoDefinitionCommand = ReactiveCommand.Create(async () =>
+            {
+                var definition = await LanguageService?.GotoDefinition(this, Offset);
+
+                var studio = IoC.Get<IStudio>();
+
+                if (definition.MetaDataFile == null)
+                {
+                    var definedDocument = studio.CurrentSolution.FindFile(definition.FileName);
+
+                    if (definedDocument != null)
+                    {
+                        await studio.OpenDocumentAsync(definedDocument, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
+                    }
+                }
+                else
+                {
+                    await studio.OpenDocumentAsync(definition.MetaDataFile, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
+                }
+            });
+
+            this.WhenAnyValue(x => x.RenameText).Subscribe(async text =>
+            {
+                if(!string.IsNullOrWhiteSpace(text))
+                {
+                    var renameInfo = await LanguageService.RenameSymbol(this, text);
+
+                    await ApplyRenameAsync(renameInfo);
+
+                    InRenameMode = false;
+                }
+
+                RenameText = "";
             });
         }
 
@@ -79,9 +122,25 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _codeIndex, value); }
         }
 
+        public bool InRenameMode
+        {
+            get { return _inRenameMode; }
+            set { this.RaiseAndSetIfChanged(ref _inRenameMode, value); }
+        }
+
+        public string RenameText
+        {
+            get { return _renameText; }
+            set { this.RaiseAndSetIfChanged(ref _renameText, value); }
+        }
+
+        public ReactiveCommand RenameSymbolCommand { get; }
+
+        public ReactiveCommand GotoDefinitionCommand { get; }
+
         public override bool OnClose()
         {
-            LanguageService?.UnregisterSourceFile(null);
+            LanguageService?.UnregisterSourceFile(this);
             return base.OnClose();
         }
 
@@ -128,19 +187,61 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
+        private void ModifySelectedLines(Action<int, int> action)
+        {
+            var startLine = Document.GetLocation(Offset).Line;
+            var endLine = startLine;
+
+            if (Selection != null && Selection.Length > 0)
+            {
+                startLine = Document.GetLocation(Selection.Offset).Line;
+                endLine = Document.GetLocation(Selection.EndOffset).Line;
+            }
+
+            action(startLine, endLine);
+
+            Focus();
+        }
+
         public void Comment()
         {
-
+            ModifySelectedLines((start, end) =>
+            {
+                LanguageService.Comment(this, start, end, Offset);
+            });
         }
 
         public void Uncomment()
         {
-
+            ModifySelectedLines((start, end) =>
+            {
+                LanguageService.UnComment(this, start, end, Offset);
+            });
         }
 
         public override void IndentLine(int lineNumber)
         {
             base.IndentLine(lineNumber);
+        }
+
+        public override async Task<object> GetToolTipContentAsync(int offset)
+        {
+            if(LanguageService != null)
+            {
+                var unsavedFiles = IoC.Get<IShell>().Documents.OfType<ITextDocumentTabViewModel>()
+                .Where(x => x.IsDirty)
+                .Select(x => new UnsavedFile(x.SourceFile.FilePath, x.Document.Text))
+                .ToList();
+
+                var quickinfo = await LanguageService.QuickInfo(this, unsavedFiles, offset);
+
+                if(quickinfo != null)
+                {
+                    return new QuickInfoViewModel(quickinfo);
+                }
+            }
+
+            return base.GetToolTipContentAsync(offset);
         }
 
         private void TriggerCodeAnalysis()
@@ -261,6 +362,43 @@ namespace AvalonStudio.Extensibility.Editor
                         }
                     }
                     break;
+            }
+        }
+
+        public async Task ApplyRenameAsync(IEnumerable<SymbolRenameInfo> renameOperation)
+        {
+            var studio = IoC.Get<IStudio>();
+
+            foreach (var location in renameOperation)
+            {
+                var currentTab = studio.GetEditor(location.FileName);
+
+                ITextDocument document = null;
+
+                if (currentTab != null)
+                {
+                    document = currentTab.Document;
+                }
+                else
+                {
+                    document = await studio.CreateDocumentAsync(location.FileName);
+                }
+
+                if (document != null)
+                {
+                    using (document.RunUpdate())
+                    {
+                        foreach (var change in location.Changes)
+                        {
+                            var start = document.GetOffset(change.StartLine, change.StartColumn);
+                            var end = document.GetOffset(change.EndLine, change.EndColumn);
+
+                            document.Replace(start, end - start, change.NewText);
+                        }
+                    }
+
+                    File.WriteAllText(location.FileName, document.Text);
+                }
             }
         }
     }

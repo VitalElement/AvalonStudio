@@ -46,7 +46,7 @@ namespace AvalonStudio.Languages.Xaml
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
-        public virtual bool CanHandle(IEditor editor)
+        public virtual bool CanHandle(ITextEditor editor)
         {
             var result = false;
 
@@ -134,7 +134,7 @@ namespace AvalonStudio.Languages.Xaml
             return cursor;
         }
 
-        public Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<QuickInfoResult> QuickInfo(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             return Task.FromResult<QuickInfoResult>(null);
         }
@@ -153,7 +153,7 @@ namespace AvalonStudio.Languages.Xaml
         {
         }
 
-        public virtual void UnregisterSourceFile(IEditor editor)
+        public virtual void UnregisterSourceFile(ITextEditor editor)
         {
 
         }
@@ -173,12 +173,12 @@ namespace AvalonStudio.Languages.Xaml
             return caret;
         }
 
-        public Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
+        public Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo)
+        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo)
         {
             throw new NotImplementedException();
         }

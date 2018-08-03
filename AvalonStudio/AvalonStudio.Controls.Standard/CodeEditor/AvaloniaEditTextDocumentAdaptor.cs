@@ -234,11 +234,32 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
     //    internal CodeEditor EditorImpl => _codeEditor;
     //}
 
+    public class AvalonStudioTextDocumentAnchoredSegment : ISegment
+    {
+        private AvaloniaEdit.Document.AnchorSegment _impl;
+
+        public AvalonStudioTextDocumentAnchoredSegment (AvalonStudioTextDocument document, int start, int length)
+        {
+            _impl = new AvaloniaEdit.Document.AnchorSegment(document.Document, start, length);
+        }
+
+        public int Offset => _impl.Offset;
+
+        public int Length => _impl.Length;
+
+        public int EndOffset => _impl.EndOffset;
+    }
+
     public class AvalonStudioTextDocument : ITextDocument, IDisposable
     {
         public static async Task<ITextDocument> CreateAsync (ISourceFile file)
         {
-            using (var fileStream = File.OpenText(file.Location))
+            return await CreateAsync(file.Location);
+        }
+
+        public static async Task<ITextDocument> CreateAsync (string path)
+        {
+            using (var fileStream = File.OpenText(path))
             {
                 var text = await fileStream.ReadToEndAsync();
 
@@ -276,6 +297,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
         }
 
+        public ISegment CreateAnchoredSegment (int offset, int length)
+        {
+            return new AvalonStudioTextDocumentAnchoredSegment(this, offset, length);
+        }
+
         public string Text => _document.Text;
 
         public IIndexableList<IDocumentLine> Lines => _lines;
@@ -309,7 +335,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return _document.RunUpdate();
         }
 
-        public IDocumentLine GetLineByNumber(int lineNumber) => Lines[lineNumber - 1];
+        public IDocumentLine GetLineByNumber(int lineNumber) => Lines[lineNumber];
 
         public TextLocation GetLocation(int offset)
         {

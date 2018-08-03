@@ -13,7 +13,7 @@ namespace AvalonStudio.Languages.Xaml
     {
         public override string LanguageId => "xaml";
 
-        public override bool CanHandle(IEditor editor)
+        public override bool CanHandle(ITextEditor editor)
         {
             var result = false;
 
@@ -119,7 +119,7 @@ namespace AvalonStudio.Languages.Xaml
             CreateMetaDataIfRequired(editor.SourceFile.Project.Solution.StartupProject.Executable);
         }
 
-        public override void UnregisterSourceFile(IEditor editor)
+        public override void UnregisterSourceFile(ITextEditor editor)
         {
 
         }

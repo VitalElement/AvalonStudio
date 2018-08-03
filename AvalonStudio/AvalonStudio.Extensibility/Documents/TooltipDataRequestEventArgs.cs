@@ -5,6 +5,15 @@ namespace AvalonStudio.Documents
 {
     public class TooltipDataRequestEventArgs
     {
-        public Func<int, Task<object>> GetViewModelAsyncTask { get; set; }
+        public TooltipDataRequestEventArgs(ITextEditor editor, int offset)
+        {
+            Editor = editor;
+            Offset = offset;
+        }
+
+        public ITextEditor Editor { get; }
+        public int Offset { get; }
+
+        public Func<ITextEditor, int, Task<object>> GetViewModelAsyncTask { get; set; }
     }
 }

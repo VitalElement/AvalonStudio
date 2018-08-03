@@ -41,9 +41,11 @@ namespace AvalonStudio.Extensibility.Studio
 
         event EventHandler<BuildEventArgs> BuildCompleted;
 
-        ITextDocumentTabViewModel GetDocument(string path);
+        ITextEditor GetEditor(string path);
 
         void RemoveDocument(ISourceFile document);
+
+        Task<ITextDocument> CreateDocumentAsync(string path);
 
         Task<ITextDocumentTabViewModel> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true);
 

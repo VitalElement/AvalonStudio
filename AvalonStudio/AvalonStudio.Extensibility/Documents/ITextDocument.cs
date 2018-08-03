@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Documents
 {
@@ -72,6 +73,43 @@ namespace AvalonStudio.Documents
         public static void Replace(this ITextDocument document, ISegment segment, string text)
         {
             document.Replace(segment.Offset, segment.Length, text);
+        }
+
+        public static ISegment GetToken(this ITextDocument document, int offset)
+        {
+            var result = string.Empty;
+
+            if (offset >= 0 && document.TextLength > offset)
+            {
+                var start = offset;
+
+                var currentChar = document.GetCharAt(offset);
+                var prevChar = '\0';
+
+                if (offset > 0)
+                {
+                    prevChar = document.GetCharAt(offset - 1);
+                }
+
+                var charClass = AvaloniaEdit.Document.TextUtilities.GetCharacterClass(currentChar);
+
+                if (charClass != AvaloniaEdit.Document.CharacterClass.LineTerminator && prevChar != ' ' &&
+                    AvaloniaEdit.Document.TextUtilities.GetCharacterClass(prevChar) != AvaloniaEdit.Document.CharacterClass.LineTerminator)
+                {
+                    start = TextUtilities.GetNextCaretPosition(document, offset, LogicalDirection.Backward,
+                        CaretPositioningMode.WordStart);
+                }
+
+                var end = TextUtilities.GetNextCaretPosition(document, start, LogicalDirection.Forward,
+                    CaretPositioningMode.WordBorder);
+
+                if (start >= 0 && end >= 0 && end < document.TextLength && end >= start)
+                {
+                    return new SimpleSegment(start, end - start);
+                }
+            }
+
+            return null;
         }
 
         public static ISegment GetWhitespaceAfter(this ITextDocument textSource, int offset)
@@ -442,6 +480,8 @@ namespace AvalonStudio.Documents
 
         int TextLength { get; }
 
+        ISegment CreateAnchoredSegment(int offset, int length);
+
         IIndexableList<IDocumentLine> Lines { get; }
 
         IDocumentLine GetLineByNumber(int lineNumber);
@@ -482,6 +522,10 @@ namespace AvalonStudio.Documents
         bool OnTextEntered(string text);
 
         void OnTextChanged();
+
+        Task<object> GetToolTipContentAsync(int offset);
+
+        event EventHandler<TooltipDataRequestEventArgs> TooltipContentRequested;
     }
 
     public interface ICodeEditor : ITextEditor
@@ -497,64 +541,5 @@ namespace AvalonStudio.Documents
         void Comment();
 
         void Uncomment();
-    }
-
-    public interface IEditor : IDisposable
-    {
-        int CaretOffset { get; set; }
-
-        int Line { get; set; }
-
-        int Column { get; set; }
-
-        //ILanguageService LanguageService { get; }
-
-        ISourceFile SourceFile { get; }
-
-        ITextDocument Document { get; }
-
-        void IndentLine(int line);
-
-        void FormatAll();
-
-        void Focus();
-
-        void TriggerCodeAnalysis();
-
-        void Save();
-
-        void Comment();
-
-        void Uncomment();
-
-        void Undo();
-
-        void Redo();
-
-        void SetDebugHighlight(int line, int startColumn, int endColumn);
-
-        void ClearDebugHighlight();
-
-        void GotoOffset(int offset);
-
-        void GotoPosition(int line, int column);
-
-        void RenameSymbol(int offset);
-
-        event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
-
-        /// <summary>
-        /// Occurs when the TextArea receives text input.
-        /// but occurs immediately before the TextArea handles the TextInput event.
-        /// </summary>
-        event EventHandler<TextInputEventArgs> TextEntering;
-
-        /// <summary>
-        /// Occurs when the TextArea receives text input.
-        /// but occurs immediately after the TextArea handles the TextInput event.
-        /// </summary>
-        event EventHandler<TextInputEventArgs> TextEntered;
-
-        event EventHandler LostFocus;
     }
 }

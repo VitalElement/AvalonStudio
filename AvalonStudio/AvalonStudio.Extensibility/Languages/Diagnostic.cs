@@ -28,7 +28,8 @@ namespace AvalonStudio.Languages
 
     public class Diagnostic : TextSegment
     {
-        public Diagnostic(int offset, int length, string project, string file, int line, string message, string code, DiagnosticLevel level, DiagnosticCategory category)
+        public Diagnostic(int offset, int length, string project, string file, int line, string message, string code, DiagnosticLevel level,
+                          DiagnosticCategory category, DiagnosticSourceKind kind =DiagnosticSourceKind.Analysis)
         {
             StartOffset = offset;
             Length = length;
@@ -39,6 +40,7 @@ namespace AvalonStudio.Languages
             Level = level;
             Category = category;
             Code = code;
+            Source = kind;
         }
 
         public static readonly Color ErrorBrush = Color.FromRgb(253, 45, 45);
@@ -52,5 +54,6 @@ namespace AvalonStudio.Languages
         public string Code { get;  }
         public DiagnosticLevel Level { get; }
         public DiagnosticCategory Category { get; }
+        public DiagnosticSourceKind Source { get; }
     }
 }

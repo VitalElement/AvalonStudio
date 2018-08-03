@@ -14,7 +14,6 @@ using AvaloniaEdit.Rendering;
 using AvaloniaEdit.Snippets;
 using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
 using AvalonStudio.Controls.Standard.CodeEditor.Highlighting;
-using AvalonStudio.Controls.Standard.CodeEditor.Refactoring;
 using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
@@ -32,7 +31,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -58,6 +56,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private Intellisense _intellisenseControl;
         private IntellisenseManager _intellisenseManager;
 
+        private RenameControl _renameControl;
+
         private CompletionAssistantView _completionAssistantControl;
         private CompletionAssistantViewModel _completionAssistant;
 
@@ -73,46 +73,27 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private ScopeLineBackgroundRenderer _scopeLineBackgroundRenderer;
 
-        public event EventHandler<TooltipDataRequestEventArgs> RequestTooltipContent;
-
         private bool _isLoaded = false;
 
         private int _lastLine = -1;
 
         private bool _textEntering;
         private readonly IShell _shell;
-        private Subject<bool> _analysisTriggerEvents = new Subject<bool>();
-        private readonly JobRunner _codeAnalysisRunner;
-        private CancellationTokenSource _cancellationSource;
         private CodeEditorToolTip _toolTip;
         private LineNumberMargin _lineNumberMargin;
         private BreakPointMargin _breakpointMargin;
         private SelectedLineBackgroundRenderer _selectedLineBackgroundRenderer;
-        private RenameManager _renameManager;
         private CompositeDisposable _disposables;
-        
 
         private ContextActionsRenderer _contextActionsRenderer;
-
-        /// <summary>
-        ///     Write lock must be held before calling this.
-        /// </summary>
-        public void TriggerCodeAnalysis()
-        {
-            _analysisTriggerEvents.OnNext(true);
-        }
 
         public CodeEditor() : base(new TextArea(), null)
         {
             TextArea.IndentationStrategy = null;
 
-            _codeAnalysisRunner = new JobRunner(1);
-
             _shell = IoC.Get<IShell>();
 
             _snippetManager = IoC.Get<SnippetManager>();
-
-            _renameManager = new RenameManager(this);
 
             _lineNumberMargin = new LineNumberMargin(this);
 
@@ -290,8 +271,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     }
 
                     TextArea.TextView.InvalidateLayer(KnownLayer.Background);
-
-                    TriggerCodeAnalysis();
                 }
             }),
 
@@ -350,18 +329,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Subscribe(e =>
             {
-                //if (TextArea.Caret.Line != _lastLine && LanguageService != null)
-                //{
-                //    var line = Document.GetLineByNumber(TextArea.Caret.Line);
-
-                //    if (line.Length == 0)
-                //    {
-                //        _suppressIsDirtyNotifications = true;
-                //        LanguageService.IndentationStrategy?.IndentLine(Document, line);
-                //        _suppressIsDirtyNotifications = false;
-                //    }
-                //}
-
                 if(_isLoaded)
                 {
                     _lastLine = TextArea.Caret.Line;
@@ -369,6 +336,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     EditorCaretOffset = TextArea.Caret.Offset;
                     Line = TextArea.Caret.Line;
                     Column = TextArea.Caret.Column;
+
+                    var location = new TextViewPosition(Document.GetLocation(CaretOffset));
+
+                    var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
+                    var visualLocationTop = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineTop);
+
+                    var position = visualLocation - TextArea.TextView.ScrollOffset;
+                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
+
+                    _intellisenseControl.SetLocation(position);
                 }
             }),
 
@@ -390,14 +367,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             _intellisenseManager.SetCursor(offset, TextArea.Selection.StartPosition.Line, TextArea.Selection.StartPosition.Column, UnsavedFiles.ToList());
                         }
                     }
-
-                    var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
-                    var visualLocationTop = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineTop);
-
-                    var position = visualLocation - TextArea.TextView.ScrollOffset;
-                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
-
-                    _intellisenseControl.SetLocation(position);
 
                     _selectedWordBackgroundRenderer.SelectedWord = GetWordAtOffset(CaretOffset);
 
@@ -534,7 +503,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                             {
                                 _scopeLineBackgroundRenderer.ApplyIndex(codeIndex);
                             }));
-                            
+
                             _scopeLineBackgroundRenderer.ApplyIndex(codeEditor.CodeIndex);
 
                             foreach(var (tag,diagnostics)in codeEditor.Diagnostics)
@@ -583,6 +552,23 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     {
                         Document = null;
                     }
+                }
+            }),
+            this.GetObservable(RenameOpenProperty).Subscribe(open =>
+            {
+                if(_isLoaded && Editor != null)
+                {
+                    var token = Editor.Document.GetToken(CaretOffset);
+                    var location = new TextViewPosition(Document.GetLocation(token.Offset));
+
+                    var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
+                    var visualLocationTop = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineTop);
+
+                    var position = visualLocation - TextArea.TextView.ScrollOffset;
+                    position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
+
+                    _renameControl.SetLocation(position);
+                    _renameControl.Open(this, Editor.Document.GetText(token));
                 }
             }),
 
@@ -659,22 +645,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
         }
 
-        public void BeginSymbolRename(int offset)
-        {
-            //if (LanguageService != null)
-            //{
-            //    Dispatcher.UIThread.InvokeAsync(async () =>
-            //    {
-            //        var renameLocations = await LanguageService.RenameSymbol(DocumentAccessor, "");
-
-            //        if (renameLocations != null)
-            //        {
-            //            _renameManager.Start(renameLocations, offset);
-            //        }
-            //    });
-            //}
-        }
-
         protected override void OnTextChanged(EventArgs e)
         {
             base.OnTextChanged(e);
@@ -683,68 +653,31 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 Editor?.OnTextChanged();
             }
-
-            //if (_isLoaded)
-            //{
-            //    if (!_suppressIsDirtyNotifications && !IsReadOnly)
-            //    {
-            //        IsDirty = true;
-
-            //        TriggerCodeAnalysis();
-            //    }
-            //}
-        }
-
-        public async Task<QuickInfoResult> GetSymbolAsync(int offset)
-        {
-            //if (LanguageService != null)
-            //{
-            //    return await LanguageService.QuickInfo(DocumentAccessor, UnsavedFiles, offset);
-            //}
-
-            return null;
         }
 
         public async Task<object> UpdateToolTipAsync()
         {
-            //if (VisualRoot == null)
-            //{
-            //    return null;
-            //}
+            if (VisualRoot == null)
+            {
+                return null;
+            }
 
-            //var mouseDevice = (VisualRoot as IInputRoot)?.MouseDevice;
-            //var position = GetPositionFromPoint(mouseDevice.GetPosition(this));
+            var mouseDevice = (VisualRoot as IInputRoot)?.MouseDevice;
+            var position = GetPositionFromPoint(mouseDevice.GetPosition(this));
 
-            //if (position.HasValue)
-            //{
-            //    var offset = Document.GetOffset(position.Value.Location);
+            if (position.HasValue && Editor != null)
+            {
+                var offset = Document.GetOffset(position.Value.Location);
 
-            //    var matching = _diagnosticMarkersRenderer?.GetMarkersAtOffset(offset).FirstOrDefault()?.Diagnostic;
+                var matching = _diagnosticMarkersRenderer?.GetMarkersAtOffset(offset).FirstOrDefault()?.Diagnostic;
 
-            //    if (matching != null && matching.Level != DiagnosticLevel.Hidden)
-            //    {
-            //        return new ErrorProbeViewModel(matching);
-            //    }
+                if (matching != null && matching.Level != DiagnosticLevel.Hidden)
+                {
+                    return new ErrorProbeViewModel(matching);
+                }
 
-            //    if (LanguageService != null)
-            //    {
-            //        var quickInfo = await LanguageService?.QuickInfo(DocumentAccessor, UnsavedFiles, offset);
-
-            //        if (quickInfo != null)
-            //        {
-            //            return new QuickInfoViewModel(quickInfo);
-            //        }
-            //    }
-
-            //    var tooltipRequestEventArgs = new TooltipDataRequestEventArgs();
-
-            //    RequestTooltipContent?.Invoke(this, tooltipRequestEventArgs);
-
-            //    if (tooltipRequestEventArgs.GetViewModelAsyncTask != null)
-            //    {
-            //        return await tooltipRequestEventArgs.GetViewModelAsyncTask(offset);
-            //    }
-            //}
+                return await Editor.GetToolTipContentAsync(offset);
+            }
 
             return null;
         }
@@ -767,175 +700,19 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return result;
         }
 
-        private void ModifySelectedLines(Action<int, int> action)
-        {
-            var selection = TextArea.Selection;
-
-            var startLine = Document.GetLineByOffset(CaretOffset).LineNumber;
-            var endLine = startLine;
-
-            if (selection.Length > 0)
-            {
-                startLine = selection.StartPosition.Line;
-                endLine = selection.EndPosition.Line;
-            }
-
-            var selectionSegment = GetSelectionSegment();
-            var caretSegment = new TextSegment() { StartOffset = CaretOffset, EndOffset = CaretOffset };
-
-            var anchors = new TextSegmentCollection<TextSegment>(Document)
-            {
-                selectionSegment,
-                caretSegment
-            };
-
-            action(startLine, endLine);
-
-            SetSelection(selectionSegment);
-
-            CaretOffset = caretSegment.StartOffset;
-
-            Focus();
-        }
-
         protected override void OnLostFocus(RoutedEventArgs e)
         {
             base.OnLostFocus(e);
 
-            // _intellisenseManager?.CloseIntellisense();
+            _intellisenseManager?.CloseIntellisense();
 
-            //_completionAssistant?.Close();
-        }
-
-        public void CommentSelection()
-        {
-            //if (LanguageService != null)
-            //{
-            //    ModifySelectedLines((start, end) =>
-            //    {
-            //        LanguageService.Comment(DocumentAccessor, start, end, CaretOffset);
-            //    });
-            //}
-        }
-
-        public void UncommentSelection()
-        {
-            //if (LanguageService != null)
-            //{
-            //    ModifySelectedLines((start, end) =>
-            //    {
-            //        LanguageService.UnComment(DocumentAccessor, start, end, CaretOffset);
-            //    });
-            //}
+            _completionAssistant?.Close();
         }
 
         public void SetSelection(TextSegment segment)
         {
             SelectionStart = segment.StartOffset;
             SelectionLength = segment.Length;
-        }
-
-        private void StartBackgroundWorkers()
-        {
-            _cancellationSource = new CancellationTokenSource();
-
-            Task.Factory.StartNew(() =>
-            {
-                _codeAnalysisRunner.RunLoop(_cancellationSource.Token);
-                _cancellationSource = null;
-            });
-        }
-
-        public void ShutdownBackgroundWorkers()
-        {
-            _cancellationSource?.Cancel();
-        }
-
-        /*private void RegisterLanguageService(ISourceFile sourceFile)
-        {
-            UnRegisterLanguageService();
-
-            if (sourceFile.Project?.Solution != null)
-            {
-                _snippetManager.InitialiseSnippetsForSolution(sourceFile.Project.Solution);
-            }
-
-            if (sourceFile.Project != null)
-            {
-                _snippetManager.InitialiseSnippetsForProject(sourceFile.Project);
-            }
-
-            var contentTypeService = ContentTypeServiceInstance.Instance;
-
-            LanguageService = IoC.Get<IStudio>().LanguageServices.FirstOrDefault(
-                o => o.Metadata.TargetCapabilities.Any(
-                    c => contentTypeService.CapabilityAppliesToContentType(c, sourceFile.ContentType)))?.Value;
-
-            SyntaxHighlighting = CustomHighlightingManager.Instance.GetDefinition(sourceFile.ContentType);
-
-            if (LanguageService != null)
-            {
-                LanguageService.RegisterSourceFile(DocumentAccessor);
-
-                
-                
-
-                
-
-                TextArea.IndentationStrategy = LanguageService.IndentationStrategy;
-
-                if (TextArea.IndentationStrategy == null)
-                {
-                    TextArea.IndentationStrategy = new DefaultIndentationStrategy();
-                }
-
-                _languageServiceDisposables = new CompositeDisposable
-                {
-                    Observable.FromEventPattern<DiagnosticsUpdatedEventArgs>(LanguageService, nameof(LanguageService.DiagnosticsUpdated)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(args =>
-                    LanguageService_DiagnosticsUpdated(args.Sender, args.EventArgs))
-                };
-            }
-
-            StartBackgroundWorkers();
-
-            Document.TextChanged += TextDocument_TextChanged;
-
-            TextArea.TextEntering += TextArea_TextEntering;
-
-            TextArea.TextEntered += TextArea_TextEntered;
-
-            DoCodeAnalysisAsync().GetAwaiter();
-        }*/
-
-        private void LanguageService_DiagnosticsUpdated(object sender, DiagnosticsUpdatedEventArgs e)
-        {
-            /*if (e.AssociatedSourceFile == SourceFile)
-            {
-                _diagnosticMarkersRenderer?.RemoveAll(marker => Equals(marker.Tag, e.Tag));
-
-                var collection = new TextSegmentCollection<Diagnostic>(Document);
-
-                foreach (var diagnostic in e.Diagnostics)
-                {
-                    collection.Add(diagnostic);
-                }
-
-                if (e.Kind == DiagnosticsUpdatedKind.DiagnosticsCreated)
-                {
-                    _diagnosticMarkersRenderer?.SetDiagnostics(e.Tag, collection);
-
-                    if (e.DiagnosticHighlights != null)
-                    {
-                        _textColorizer.SetTransformations(e.Tag, e.DiagnosticHighlights);
-                    }
-                }
-
-                _contextActionsRenderer.OnDiagnosticsUpdated();
-            }
-
-            IoC.Get<IErrorList>().UpdateDiagnostics(e);
-
-            TextArea.TextView.Redraw();*/
         }
 
         private void TextArea_TextEntered(object sender, TextInputEventArgs e)
@@ -959,67 +736,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _textEntering = true;
         }
 
-        private void UnRegisterLanguageService()
-        {
-            if (_scopeLineBackgroundRenderer != null)
-            {
-                TextArea.TextView.BackgroundRenderers.Remove(_scopeLineBackgroundRenderer);
-                _scopeLineBackgroundRenderer.Dispose();
-                _scopeLineBackgroundRenderer = null;
-            }
-
-            if (_textColorizer != null)
-            {
-                TextArea.TextView.LineTransformers.Remove(_textColorizer);
-                _textColorizer.Dispose();
-                _textColorizer = null;
-            }
-
-            if (_diagnosticMarkersRenderer != null)
-            {
-                TextArea.TextView.BackgroundRenderers.Remove(_diagnosticMarkersRenderer);
-                _diagnosticMarkersRenderer.Dispose();
-                _diagnosticMarkersRenderer = null;
-            }
-
-            ShutdownBackgroundWorkers();
-
-            /*if (SourceFile != null)
-            {
-                UnsavedFile unsavedFile = null;
-
-                lock (UnsavedFiles)
-                {
-                    unsavedFile = UnsavedFiles.BinarySearch(SourceFile.Location);
-                }
-
-                if (unsavedFile != null)
-                {
-                    lock (UnsavedFiles)
-                    {
-                        UnsavedFiles.Remove(unsavedFile);
-                    }
-                }
-            }*/
-
-            //if (LanguageService != null)
-            //{
-            //    LanguageService.UnregisterSourceFile(DocumentAccessor);
-            //    LanguageService = null;
-            //}
-
-            TextArea.TextEntering -= TextArea_TextEntering;
-            TextArea.TextEntered -= TextArea_TextEntered;
-
-            _intellisenseManager = null;
-        }
-
         protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
         {
             base.OnTemplateApplied(e);
 
             _toolTip = e.NameScope.Find<CodeEditorToolTip>("PART_Tooltip");
             _toolTip.AttachEditor(this);
+
+            _renameControl = e.NameScope.Find<RenameControl>("PART_RenameControl");
+            _renameControl.PlacementTarget = TextArea;
 
             _intellisenseControl = e.NameScope.Find<Intellisense>("PART_Intellisense");
             _completionAssistantControl = e.NameScope.Find<CompletionAssistantView>("PART_CompletionAssistant");
@@ -1237,6 +962,24 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             set => SetValue(SelectionProperty, value);
         }
 
+        public static readonly AvaloniaProperty<string> RenameTextProperty =
+            AvaloniaProperty.Register<CodeEditor, string>(nameof(RenameText), defaultBindingMode: BindingMode.TwoWay);
+
+        public string RenameText
+        {
+            get => GetValue(RenameTextProperty);
+            set => SetValue(RenameTextProperty, value);
+        }
+
+        public static readonly AvaloniaProperty<bool> RenameOpenProperty =
+            AvaloniaProperty.Register<CodeEditor, bool>(nameof(RenameOpen), defaultBindingMode: BindingMode.TwoWay);
+
+        public bool RenameOpen
+        {
+            get => GetValue(RenameOpenProperty);
+            set => SetValue(RenameOpenProperty, value);
+        }
+
         public int GetOffsetFromPoint(Point point)
         {
             var position = GetPositionFromPoint(point);
@@ -1308,7 +1051,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             {
                 var viewPortLines = (int)((TextArea as IScrollable).Viewport.Height);
 
-                if(viewPortLines < Document.LineCount)
+                if (viewPortLines < Document.LineCount)
                 {
                     TextArea.ScrollToLine(line);
                 }
@@ -1329,7 +1072,31 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         internal void Close()
         {
-            UnRegisterLanguageService();
+            if (_scopeLineBackgroundRenderer != null)
+            {
+                TextArea.TextView.BackgroundRenderers.Remove(_scopeLineBackgroundRenderer);
+                _scopeLineBackgroundRenderer.Dispose();
+                _scopeLineBackgroundRenderer = null;
+            }
+
+            if (_textColorizer != null)
+            {
+                TextArea.TextView.LineTransformers.Remove(_textColorizer);
+                _textColorizer.Dispose();
+                _textColorizer = null;
+            }
+
+            if (_diagnosticMarkersRenderer != null)
+            {
+                TextArea.TextView.BackgroundRenderers.Remove(_diagnosticMarkersRenderer);
+                _diagnosticMarkersRenderer.Dispose();
+                _diagnosticMarkersRenderer = null;
+            }
+
+            TextArea.TextEntering -= TextArea_TextEntering;
+            TextArea.TextEntered -= TextArea_TextEntered;
+
+            _intellisenseManager = null;
 
             _disposables.Dispose();
 

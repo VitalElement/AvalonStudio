@@ -9,7 +9,35 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <EmbeddedResource Include="CodeEditor\CodeEditor.xaml" />
+    <EmbeddedResource Include="CodeEditor\CodeEditorToolTip.xaml" />
+    <EmbeddedResource Include="CodeEditor\CompletionAssistantView.xaml" />
+    <EmbeddedResource Include="CodeEditor\EditorSettingsView.xaml" />
+    <EmbeddedResource Include="CodeEditor\Intellisense.xaml" />
+    <EmbeddedResource Include="CodeEditor\IntellisenseAssistantUserControl.xaml" />
+    <EmbeddedResource Include="CodeEditor\IntellisenseUserControl.xaml" />
+    <EmbeddedResource Include="CodeEditor\SignatureView.xaml" />
+    <EmbeddedResource Include="CodeEditor\SymbolView.xaml" />
+    <EmbeddedResource Include="FindInFiles\FindInFilesView.xaml" />
+    <EmbeddedResource Include="SettingsDialog\SettingsDialogView.xaml" />
+    <EmbeddedResource Include="SolutionExplorer\Icons\Icons.xaml" />
+    <EmbeddedResource Include="SolutionExplorer\TemplateView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SolutionExplorer\TextTemplateParameter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AboutScreen\AboutDialogView.paml" />
+    <EmbeddedResource Include="CodeEditor\ErrorProbeView.paml" />
+    <EmbeddedResource Include="CodeEditor\SignatureHelpView.paml" />
+    <EmbeddedResource Include="Console\ConsoleView.paml" />
+    <EmbeddedResource Include="ErrorList\ErrorListView.paml" />
+    <EmbeddedResource Include="ExtensionManagerDialog\ExtensionManagerDialogView.paml" />
+    <EmbeddedResource Include="SolutionExplorer\NewItemDialogView.paml" />
+    <EmbeddedResource Include="SolutionExplorer\NewProjectDialogView.paml" />
+    <EmbeddedResource Include="SolutionExplorer\ProjectConfigurationDialogView.paml" />
+    <EmbeddedResource Include="SolutionExplorer\SolutionExplorerView.paml" />
+    <EmbeddedResource Include="WelcomeScreen\WelcomeScreenView.paml" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="AboutScreen\Assets\logo-256.png" />
