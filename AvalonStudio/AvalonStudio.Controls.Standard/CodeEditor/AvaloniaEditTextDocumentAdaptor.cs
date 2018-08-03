@@ -335,7 +335,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             return _document.RunUpdate();
         }
 
-        public IDocumentLine GetLineByNumber(int lineNumber) => Lines[lineNumber - 1];
+        public IDocumentLine GetLineByNumber(int lineNumber) => Lines[lineNumber];
 
         public TextLocation GetLocation(int offset)
         {
