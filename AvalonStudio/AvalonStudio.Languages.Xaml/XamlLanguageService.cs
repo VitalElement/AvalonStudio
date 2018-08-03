@@ -1,4 +1,4 @@
-﻿using Avalonia.Ide.CompletionEngine;
+using Avalonia.Ide.CompletionEngine;
 using Avalonia.Ide.CompletionEngine.AssemblyMetadata;
 using Avalonia.Ide.CompletionEngine.SrmMetadataProvider;
 using Avalonia.Threading;
@@ -12,21 +12,6 @@ namespace AvalonStudio.Languages.Xaml
     internal class XamlLanguageService : XmlLanguageService
     {
         public override string LanguageId => "xaml";
-
-        public override bool CanHandle(ITextEditor editor)
-        {
-            var result = false;
-
-            switch (Path.GetExtension(editor.SourceFile.Location))
-            {
-                case ".xaml":
-                case ".paml":
-                    result = true;
-                    break;
-            }
-
-            return result;
-        }
 
         public override bool CanTriggerIntellisense(char currentChar, char previousChar)
         {
@@ -62,19 +47,19 @@ namespace AvalonStudio.Languages.Xaml
             return result;
         }
 
-        public override async Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
+        public override async Task<CodeCompletionResults> CodeCompleteAtAsync(int index, int line, int column, IEnumerable<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             var results = new CodeCompletionResults();
 
             string text = string.Empty;
 
-            CreateMetaDataIfRequired(editor.SourceFile.Project.Solution.StartupProject.Executable);
+            CreateMetaDataIfRequired(_editor.SourceFile.Project.Solution.StartupProject.Executable);
 
             if (metaData != null)
             {
                 await Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    text = editor.Document.Text;
+                    text = _editor.Document.Text;
                 });
 
                 var completionSet = engine.GetCompletions(metaData, text, index);
@@ -109,19 +94,16 @@ namespace AvalonStudio.Languages.Xaml
             }
         }
 
-        public override void RegisterSourceFile(ITextEditor editor)
+        public override void RegisterEditor(ITextEditor editor)
         {
+            base.RegisterEditor(editor);
+
             if (engine == null)
             {
                 engine = new CompletionEngine();
             }
 
             CreateMetaDataIfRequired(editor.SourceFile.Project.Solution.StartupProject.Executable);
-        }
-
-        public override void UnregisterSourceFile(ITextEditor editor)
-        {
-
         }
     }
 }

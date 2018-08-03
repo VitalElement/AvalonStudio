@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
@@ -534,7 +534,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                         _disposables.Add(_intellisenseManager);
 
-                        foreach (var contextActionProvider in codeEditor.LanguageService.GetContextActionProviders(codeEditor))
+                        foreach (var contextActionProvider in codeEditor.LanguageService.GetContextActionProviders())
                         {
                             _contextActionsRenderer.Providers.Add(contextActionProvider);
                         }

@@ -1,15 +1,10 @@
-﻿using AvaloniaEdit.Indentation;
-using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
-using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
@@ -26,7 +21,7 @@ namespace AvalonStudio.Languages.Xaml
             new InsertExtraNewLineBetweenAttributesOnEnterCodeInputHelper()
         };
 
-        public IIndentationStrategy IndentationStrategy { get; } = new XamlIndentationStrategy();
+        protected ITextEditor _editor;
 
         public virtual string LanguageId => "xml";
 
@@ -46,21 +41,6 @@ namespace AvalonStudio.Languages.Xaml
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
-        public virtual bool CanHandle(ITextEditor editor)
-        {
-            var result = false;
-
-            switch (Path.GetExtension(editor.SourceFile.Location))
-            {
-                case ".xml":
-                case ".csproj":
-                    result = true;
-                    break;
-            }
-
-            return result;
-        }
-
         public virtual bool CanTriggerIntellisense(char currentChar, char previousChar)
         {
             bool result = false;
@@ -73,19 +53,19 @@ namespace AvalonStudio.Languages.Xaml
             return result;
         }
 
-        public virtual Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
+        public virtual Task<CodeCompletionResults> CodeCompleteAtAsync(int index, int line, int column, IEnumerable<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             return Task.FromResult<CodeCompletionResults>(null);
         }
 
-        public int Comment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(int firstLine, int endLine, int caret = -1, bool format = true)
         {
             return caret;
         }
 
-        public int Format(ITextEditor editor, uint offset, uint length, int cursor)
+        public int Format(uint offset, uint length, int cursor)
         {
-            var text = editor.Document.GetText((int)offset, (int)length);
+            var text = _editor.Document.GetText((int)offset, (int)length);
 
             XmlDocument doc = null;
             try
@@ -129,17 +109,17 @@ namespace AvalonStudio.Languages.Xaml
                 element.Save(xmlWriter);
             }
 
-            editor.Document.Replace(0, editor.Document.TextLength, stringBuilder.ToString());
+            _editor.Document.Replace(0, _editor.Document.TextLength, stringBuilder.ToString());
 
             return cursor;
         }
 
-        public Task<QuickInfoResult> QuickInfo(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<QuickInfoResult> QuickInfo(IEnumerable<UnsavedFile> unsavedFiles, int offset)
         {
             return Task.FromResult<QuickInfoResult>(null);
         }
 
-        public Task<List<Symbol>> GetSymbolsAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, string name)
+        public Task<List<Symbol>> GetSymbolsAsync(IEnumerable<UnsavedFile> unsavedFiles, string name)
         {
             return Task.FromResult<List<Symbol>>(null);
         }
@@ -149,41 +129,42 @@ namespace AvalonStudio.Languages.Xaml
             return char.IsLetterOrDigit(data);
         }
 
-        public virtual void RegisterSourceFile(ITextEditor editornew)
+        public virtual void RegisterEditor(ITextEditor editor)
         {
+            _editor = editor;
         }
 
-        public virtual void UnregisterSourceFile(ITextEditor editor)
+        public virtual void UnregisterEditor()
         {
 
         }
 
-        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEnumerable<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             return Task.FromResult(new CodeAnalysisResults());
         }
 
-        public Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
+        public Task<SignatureHelp> SignatureHelp(IEnumerable<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             return Task.FromResult<SignatureHelp>(null);
         }
 
-        public int UnComment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(int firstLine, int endLine, int caret = -1, bool format = true)
         {
             return caret;
         }
 
-        public Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset)
+        public Task<GotoDefinitionInfo> GotoDefinition(int offset)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo)
+        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(string renameTo)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IContextActionProvider> GetContextActionProviders(ITextEditor editor)
+        public IEnumerable<IContextActionProvider> GetContextActionProviders()
         {
             return Enumerable.Empty<IContextActionProvider>();
         }

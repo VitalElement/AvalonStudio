@@ -384,7 +384,7 @@
 
             await intellisenseJobRunner.InvokeAsync(() =>
             {
-                var task = languageService.SignatureHelp(editor, unsavedFiles, offset, currentWord);
+                var task = languageService.SignatureHelp(unsavedFiles, offset, currentWord);
                 task.Wait();
 
                 signatureHelp = task.Result;
@@ -549,7 +549,7 @@
                                 _console.WriteLine($"Query Language Service {index}, {line}, {column}");
                             }
 
-                            var task = languageService.CodeCompleteAtAsync(editor, index, line, column, unsavedFiles, previousChar);
+                            var task = languageService.CodeCompleteAtAsync(index, line, column, unsavedFiles, previousChar);
                             task.Wait();
 
                             result = task.Result;

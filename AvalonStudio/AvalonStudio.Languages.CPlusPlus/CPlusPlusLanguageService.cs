@@ -36,6 +36,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
+        private ITextEditor _editor;
 
         public CPlusPlusLanguageService()
         {
@@ -178,8 +179,8 @@ namespace AvalonStudio.Languages.CPlusPlus
             return CodeCompletionKind.None;
         }
 
-        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column,
-            List<UnsavedFile> unsavedFiles, char lastChar, string filter)
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(int index, int line, int column,
+            IEnumerable<UnsavedFile> unsavedFiles, char lastChar, string filter)
         {
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
@@ -192,11 +193,11 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             await clangAccessJobRunner.InvokeAsync(() =>
             {
-                var translationUnit = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
+                var translationUnit = GetAndParseTranslationUnit(clangUnsavedFiles);
 
                 if (translationUnit != null)
                 {
-                    var completionResults = translationUnit.CodeCompleteAt(editor.SourceFile.Location, line, column, clangUnsavedFiles.ToArray(),
+                    var completionResults = translationUnit.CodeCompleteAt(_editor.SourceFile.Location, line, column, clangUnsavedFiles.ToArray(),
                         CodeCompleteFlags.IncludeBriefComments | CodeCompleteFlags.IncludeMacros | CodeCompleteFlags.IncludeCodePatterns);
                     completionResults.Sort();
 
@@ -204,8 +205,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     if (result.Contexts == CompletionContext.Unexposed && lastChar == ':')
                     {
-                        result.Contexts = CompletionContext.AnyType; // special case Class::<- here static class member access. 
-                      }
+                        result.Contexts = CompletionContext.AnyType; // special case Class::<- here static class member access.
+                    }
 
                     foreach (var codeCompletion in completionResults.Results)
                     {
@@ -220,11 +221,11 @@ namespace AvalonStudio.Languages.CPlusPlus
                                     typedText = chunk.Text;
                                 }
 
-                                  // TODO construct chunks into replacement text.
+                                // TODO construct chunks into replacement text.
 
-                                  // i.e. do should insert do {} while();
+                                // i.e. do should insert do {} while();
 
-                                  switch (chunk.Kind)
+                                switch (chunk.Kind)
                                 {
                                     case CompletionChunkKind.LeftParen:
                                     case CompletionChunkKind.LeftAngle:
@@ -253,8 +254,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                                 if (completion.Kind == CodeCompletionKind.OverloadCandidate)
                                 {
-                                      //Console.WriteLine("TODO Implement overload candidate.");
-                                  }
+                                    //Console.WriteLine("TODO Implement overload candidate.");
+                                }
                             }
                         }
                     }
@@ -516,7 +517,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles,
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEnumerable<UnsavedFile> unsavedFiles,
             Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
@@ -531,18 +532,18 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 try
                 {
-                    var translationUnit = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
+                    var translationUnit = GetAndParseTranslationUnit(clangUnsavedFiles);
 
                     if (translationUnit != null)
                     {
-                        if (editor.SourceFile != null && translationUnit != null)
+                        if (_editor.SourceFile != null && translationUnit != null)
                         {
                             ScanTokens(translationUnit, result.SyntaxHighlightingData);
 
                             GenerateHighlightData(translationUnit.GetCursor(), result.SyntaxHighlightingData, result.IndexItems);
                         }
 
-                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, editor.SourceFile, diagnostics);
+                        GenerateDiagnostics(translationUnit.DiagnosticSet.Items, translationUnit, _editor.SourceFile, diagnostics);
                     }
                 }
                 catch (Exception)
@@ -551,39 +552,16 @@ namespace AvalonStudio.Languages.CPlusPlus
             });
 
             var errorList = IoC.Get<IErrorList>();
-            errorList.Remove((this, editor.SourceFile));
-            errorList.Create((this, editor.SourceFile), editor.SourceFile.FilePath, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
+            errorList.Remove((this, _editor.SourceFile));
+            errorList.Create((this, _editor.SourceFile), _editor.SourceFile.FilePath, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
 
             return result;
         }
 
-        public bool CanHandle(ITextEditor editor)
+        public void RegisterEditor(ITextEditor editor)
         {
-            var result = false;
+            _editor = editor;
 
-            switch (Path.GetExtension(editor.SourceFile.Location))
-            {
-                case ".h":
-                case ".cpp":
-                case ".hpp":
-                case ".c":
-                    result = true;
-                    break;
-            }
-
-            if (result)
-            {
-                if (!(editor.SourceFile.Project is IStandardProject))
-                {
-                    result = false;
-                }
-            }
-
-            return result;
-        }
-
-        public void RegisterSourceFile(ITextEditor editor)
-        {
             if (clangAccessJobRunner == null)
             {
                 clangAccessJobRunner = new JobRunner();
@@ -592,7 +570,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        public void UnregisterSourceFile(ITextEditor editor)
+        public void UnregisterEditor()
         {
             clangAccessJobRunner.InvokeAsync(() =>
             {
@@ -601,7 +579,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             });
         }
 
-        public int Format(ITextEditor editor, uint offset, uint length, int cursor)
+        public int Format(uint offset, uint length, int cursor)
         {
             bool replaceCursor = cursor >= 0 ? true : false;
 
@@ -610,17 +588,17 @@ namespace AvalonStudio.Languages.CPlusPlus
                 cursor = 0;
             }
 
-            var replacements = ClangFormat.FormatXml(editor.SourceFile.Location, editor.Document.Text, offset, length, (uint)cursor);
+            var replacements = ClangFormat.FormatXml(_editor.SourceFile.Location, _editor.Document.Text, offset, length, (uint)cursor);
 
             if (replacements != null)
             {
-                return ApplyReplacements(editor.Document, cursor, replacements, replaceCursor);
+                return ApplyReplacements(_editor.Document, cursor, replacements, replaceCursor);
             }
 
             return cursor;
         }
 
-        public async Task<QuickInfoResult> QuickInfo(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<QuickInfoResult> QuickInfo(IEnumerable<UnsavedFile> unsavedFiles, int offset)
         {
             StyledText styledText = null;
 
@@ -633,11 +611,11 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             await clangAccessJobRunner.InvokeAsync(() =>
             {
-                var tu = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
+                var tu = GetAndParseTranslationUnit(clangUnsavedFiles);
 
                 if (tu != null)
                 {
-                    var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(editor.SourceFile.FilePath), offset));
+                    var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(_editor.SourceFile.FilePath), offset));
 
                     switch (cursor.Kind)
                     {
@@ -768,7 +746,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public async Task<List<Symbol>> GetSymbolsAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, string name)
+        public async Task<List<Symbol>> GetSymbolsAsync(IEnumerable<UnsavedFile> unsavedFiles, string name)
         {
             var results = new List<Symbol>();
 
@@ -783,7 +761,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 await clangAccessJobRunner.InvokeAsync(() =>
                 {
-                    var translationUnit = GetAndParseTranslationUnit(editor, clangUnsavedFiles);
+                    var translationUnit = GetAndParseTranslationUnit(clangUnsavedFiles);
 
                     if (translationUnit != null)
                     {
@@ -800,10 +778,10 @@ namespace AvalonStudio.Languages.CPlusPlus
             return results;
         }
 
-        public int Comment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
-            var textDocument = editor.Document;
+            var textDocument = _editor.Document;
 
             using (textDocument.RunUpdate())
             {
@@ -816,17 +794,17 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                     var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                    result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                    result = Format((uint)startOffset, (uint)(endOffset - startOffset), caret);
                 }
             }
             return result;
         }
 
-        public int UnComment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
-            var textDocument = editor.Document;
+            var textDocument = _editor.Document;
 
             using (textDocument.RunUpdate())
             {
@@ -845,7 +823,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                 {
                     var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                     var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                    result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                    result = Format((uint)startOffset, (uint)(endOffset - startOffset), caret);
                 }
             }
 
@@ -874,11 +852,11 @@ namespace AvalonStudio.Languages.CPlusPlus
             }
         }
 
-        private ClangTranslationUnit GenerateTranslationUnit(ITextEditor editor, List<ClangUnsavedFile> unsavedFiles)
+        private ClangTranslationUnit GenerateTranslationUnit(List<ClangUnsavedFile> unsavedFiles)
         {
             ClangTranslationUnit result = null;
 
-            var file = editor.SourceFile;
+            var file = _editor.SourceFile;
 
             if (System.IO.File.Exists(file.Location))
             {
@@ -968,11 +946,11 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        private ClangTranslationUnit GetAndParseTranslationUnit(ITextEditor editor, List<ClangUnsavedFile> unsavedFiles)
+        private ClangTranslationUnit GetAndParseTranslationUnit(List<ClangUnsavedFile> unsavedFiles)
         {
             if (_translationUnit == null)
             {
-                _translationUnit = GenerateTranslationUnit(editor, unsavedFiles);
+                _translationUnit = GenerateTranslationUnit(unsavedFiles);
             }
 
             // Always do a reparse, as a workaround for some issues in libclang 3.7.1
@@ -1320,20 +1298,20 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public async Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
+        public async Task<SignatureHelp> SignatureHelp(IEnumerable<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             SignatureHelp result = null;
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
             foreach (var unsavedFile in unsavedFiles)
             {
-                if (Platform.CompareFilePath(unsavedFile.FileName, editor.SourceFile.Location) != 0)
+                if (Platform.CompareFilePath(unsavedFile.FileName, _editor.SourceFile.Location) != 0)
                 {
                     clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
                 }
             }
 
-            var symbols = await GetSymbolsAsync(editor, unsavedFiles, methodName);
+            var symbols = await GetSymbolsAsync(unsavedFiles, methodName);
 
             if (symbols.Count > 0)
             {
@@ -1348,17 +1326,17 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset)
+        public Task<GotoDefinitionInfo> GotoDefinition(int offset)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<GotoDefinitionInfo>(null);
         }
 
-        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo)
+        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(string renameTo)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<IEnumerable<SymbolRenameInfo>>(null);
         }
 
-        public IEnumerable<IContextActionProvider> GetContextActionProviders(ITextEditor editor)
+        public IEnumerable<IContextActionProvider> GetContextActionProviders()
         {
             return Enumerable.Empty<IContextActionProvider>();
         }
