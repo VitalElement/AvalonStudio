@@ -62,38 +62,46 @@ namespace AvalonStudio.Languages
         IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables { get; }
 
         bool CanTriggerIntellisense(char currentChar, char previousChar);
+
         IEnumerable<char> IntellisenseSearchCharacters { get; }
+
         IEnumerable<char> IntellisenseCompleteCharacters { get; }
+
         IEnumerable<ITextEditorInputHelper> InputHelpers { get; }
 
         bool IsValidIdentifierCharacter(char data);
 
-        Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "");
+        /// <summary>
+        /// Registers the editor that the instance of the language service is associated with.
+        /// Called when the editor is opened.
+        /// </summary>
+        void RegisterEditor(ITextEditor editor);
 
-        Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);        
+        /// <summary>
+        /// Unregisters the editor. Called when the editor is closed.
+        /// </summary>
+        void UnregisterEditor();
 
-        IEnumerable<IContextActionProvider> GetContextActionProviders(ITextEditor editor);
+        int Format(uint offset, uint length, int cursor);
 
-        Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName);
+        int Comment(int firstLine, int endLine, int caret = -1, bool format = true);
 
-        Task<QuickInfoResult> QuickInfo(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset);
+        int UnComment(int firstLine, int endLine, int caret = -1, bool format = true);
 
-        Task<List<Symbol>> GetSymbolsAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, string name);
+        Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEnumerable<UnsavedFile> unsavedFiles, Func<bool> interruptRequested);
 
-        Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset);
+        Task<CodeCompletionResults> CodeCompleteAtAsync(int index, int line, int column, IEnumerable<UnsavedFile> unsavedFiles, char lastChar, string filter = "");
 
-        Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo);
+        Task<SignatureHelp> SignatureHelp(IEnumerable<UnsavedFile> unsavedFiles, int offset, string methodName);
 
-        void RegisterSourceFile(ITextEditor editor);
+        Task<QuickInfoResult> QuickInfo(IEnumerable<UnsavedFile> unsavedFiles, int offset);
 
-        void UnregisterSourceFile(ITextEditor editor);
+        IEnumerable<IContextActionProvider> GetContextActionProviders();
 
-        bool CanHandle(ITextEditor editor);
+        Task<GotoDefinitionInfo> GotoDefinition(int offset);
 
-        int Format(ITextEditor editor, uint offset, uint length, int cursor);
+        Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(string renameTo);
 
-        int Comment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
-
-        int UnComment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true);
+        Task<List<Symbol>> GetSymbolsAsync(IEnumerable<UnsavedFile> unsavedFiles, string name);
     }
 }

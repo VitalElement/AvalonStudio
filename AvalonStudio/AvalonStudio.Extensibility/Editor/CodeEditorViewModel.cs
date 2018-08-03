@@ -1,4 +1,4 @@
-﻿using Avalonia.Threading;
+using Avalonia.Threading;
 using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility.Languages;
@@ -58,7 +58,7 @@ namespace AvalonStudio.Extensibility.Editor
 
             GotoDefinitionCommand = ReactiveCommand.Create(async () =>
             {
-                var definition = await LanguageService?.GotoDefinition(this, Offset);
+                var definition = await LanguageService?.GotoDefinition(Offset);
 
                 var studio = IoC.Get<IStudio>();
 
@@ -79,9 +79,9 @@ namespace AvalonStudio.Extensibility.Editor
 
             this.WhenAnyValue(x => x.RenameText).Subscribe(async text =>
             {
-                if(!string.IsNullOrWhiteSpace(text))
+                if (!string.IsNullOrWhiteSpace(text))
                 {
-                    var renameInfo = await LanguageService.RenameSymbol(this, text);
+                    var renameInfo = await LanguageService.RenameSymbol(text);
 
                     await ApplyRenameAsync(renameInfo);
 
@@ -140,7 +140,7 @@ namespace AvalonStudio.Extensibility.Editor
 
         public override bool OnClose()
         {
-            LanguageService?.UnregisterSourceFile(this);
+            LanguageService?.UnregisterEditor();
             return base.OnClose();
         }
 
@@ -174,7 +174,7 @@ namespace AvalonStudio.Extensibility.Editor
             {
                 if (GlobalSettings.Settings.GetSettings<EditorSettings>().AutoFormat)
                 {
-                    var caretOffset = LanguageService.Format(this, 0, (uint)Document.TextLength, Offset);
+                    var caretOffset = LanguageService.Format(0, (uint)Document.TextLength, Offset);
 
                     // some language services manually set the caret themselves and return -1 to indicate this.
                     if (caretOffset >= 0)
@@ -207,7 +207,7 @@ namespace AvalonStudio.Extensibility.Editor
         {
             ModifySelectedLines((start, end) =>
             {
-                LanguageService.Comment(this, start, end, Offset);
+                LanguageService.Comment(start, end, Offset);
             });
         }
 
@@ -215,7 +215,7 @@ namespace AvalonStudio.Extensibility.Editor
         {
             ModifySelectedLines((start, end) =>
             {
-                LanguageService.UnComment(this, start, end, Offset);
+                LanguageService.UnComment(start, end, Offset);
             });
         }
 
@@ -226,16 +226,16 @@ namespace AvalonStudio.Extensibility.Editor
 
         public override async Task<object> GetToolTipContentAsync(int offset)
         {
-            if(LanguageService != null)
+            if (LanguageService != null)
             {
                 var unsavedFiles = IoC.Get<IShell>().Documents.OfType<ITextDocumentTabViewModel>()
                 .Where(x => x.IsDirty)
                 .Select(x => new UnsavedFile(x.SourceFile.FilePath, x.Document.Text))
                 .ToList();
 
-                var quickinfo = await LanguageService.QuickInfo(this, unsavedFiles, offset);
+                var quickinfo = await LanguageService.QuickInfo(unsavedFiles, offset);
 
-                if(quickinfo != null)
+                if (quickinfo != null)
                 {
                     return new QuickInfoViewModel(quickinfo);
                 }
@@ -260,7 +260,7 @@ namespace AvalonStudio.Extensibility.Editor
             {
                 if (LanguageService != null)
                 {
-                    var result = await LanguageService.RunCodeAnalysisAsync(this, unsavedFiles, () => false);
+                    var result = await LanguageService.RunCodeAnalysisAsync(unsavedFiles, () => false);
 
                     Dispatcher.UIThread.Post(() =>
                     {
@@ -309,17 +309,17 @@ namespace AvalonStudio.Extensibility.Editor
 
             if (LanguageService != null)
             {
-                LanguageService.RegisterSourceFile(this);
+                LanguageService.RegisterEditor(this);
 
                 _languageServiceDisposables = new CompositeDisposable
-                {   
+                {
                     Observable.FromEventPattern<DiagnosticsUpdatedEventArgs>(IoC.Get<IErrorList>(), nameof(IErrorList.DiagnosticsUpdated)).Subscribe(args =>
                     LanguageService_DiagnosticsUpdated(args.Sender, args.EventArgs))
                 };
 
-                if(LanguageService.InputHelpers != null)
+                if (LanguageService.InputHelpers != null)
                 {
-                    foreach(var helper in LanguageService.InputHelpers)
+                    foreach (var helper in LanguageService.InputHelpers)
                     {
                         InputHelpers.Add(helper);
                     }

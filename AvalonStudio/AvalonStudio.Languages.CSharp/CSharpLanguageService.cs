@@ -1,4 +1,4 @@
-﻿using Avalonia.Media;
+using Avalonia.Media;
 using Avalonia.Threading;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
@@ -178,6 +178,7 @@ namespace AvalonStudio.Languages.CSharp
         private Dictionary<string, Func<string, string>> _snippetCodeGenerators;
         private readonly Dictionary<string, Func<int, int, int, string>> _snippetDynamicVars;
         private readonly MetadataHelper _metadataHelper;
+        private ITextEditor _editor;
 
         private static readonly Microsoft.CodeAnalysis.SymbolDisplayFormat DefaultFormat = Microsoft.CodeAnalysis.SymbolDisplayFormat.MinimallyQualifiedFormat.
             WithGlobalNamespaceStyle(Microsoft.CodeAnalysis.SymbolDisplayGlobalNamespaceStyle.Omitted).
@@ -306,19 +307,19 @@ namespace AvalonStudio.Languages.CSharp
                 : CompletionTrigger.Invoke;
         }
 
-        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char previousChar, string filter)
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(int index, int line, int column, IEnumerable<UnsavedFile> unsavedFiles, char previousChar, string filter)
         {
-            if (editor.SourceFile is MetaDataFile)
+            if (_editor.SourceFile is MetaDataFile)
             {
                 return null;
             }
 
             var result = new CodeCompletionResults();
 
-            var dataAssociation = GetAssociatedData(editor);
+            var dataAssociation = GetAssociatedData(_editor);
 
             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
-            var document = workspace.GetDocument(editor.SourceFile);
+            var document = workspace.GetDocument(_editor.SourceFile);
             var semanticModel = await document.GetSemanticModelAsync();
 
             var completionService = CompletionService.GetService(document);
@@ -394,16 +395,16 @@ namespace AvalonStudio.Languages.CSharp
             return result;
         }
 
-        public int Format(ITextEditor editor, uint offset, uint length, int cursor)
+        public int Format(uint offset, uint length, int cursor)
         {
-            if (editor.SourceFile is MetaDataFile)
+            if (_editor.SourceFile is MetaDataFile)
             {
                 return cursor;
             }
 
-            var dataAssociation = GetAssociatedData(editor);
+            var dataAssociation = GetAssociatedData(_editor);
 
-            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(editor.SourceFile);
+            var document = RoslynWorkspace.GetWorkspace(dataAssociation.Solution).GetDocument(_editor.SourceFile);
             var formattedDocument = Formatter.FormatAsync(document).GetAwaiter().GetResult();
 
             RoslynWorkspace.GetWorkspace(dataAssociation.Solution).TryApplyChanges(formattedDocument.Project.Solution);
@@ -411,15 +412,15 @@ namespace AvalonStudio.Languages.CSharp
             return -1;
         }
 
-        public async Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset)
+        public async Task<GotoDefinitionInfo> GotoDefinition(int offset)
         {
-            var dataAssociation = GetAssociatedData(editor);
+            var dataAssociation = GetAssociatedData(_editor);
 
-            var document = GetDocument(dataAssociation, editor.SourceFile);
+            var document = GetDocument(dataAssociation, _editor.SourceFile);
 
             var semanticModel = await document.GetSemanticModelAsync();
 
-            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, editor.Offset, RoslynWorkspace.GetWorkspace(dataAssociation.Solution));
+            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, _editor.Offset, RoslynWorkspace.GetWorkspace(dataAssociation.Solution));
 
             if (symbol != null && !(symbol is Microsoft.CodeAnalysis.INamespaceSymbol))
             {
@@ -453,7 +454,7 @@ namespace AvalonStudio.Languages.CSharp
                         var metadataLocation = await _metadataHelper.GetSymbolLocationFromMetadata(symbol, metadataDocument, cancellationSource.Token);
                         var lineSpan = metadataLocation.GetMappedLineSpan();
 
-                        var metaDataFile = new MetaDataFile(editor.SourceFile.Project, metadataDocument, metadataDocument.Name, _metadataHelper.GetSymbolName(symbol));
+                        var metaDataFile = new MetaDataFile(_editor.SourceFile.Project, metadataDocument, metadataDocument.Name, _metadataHelper.GetSymbolName(symbol));
 
                         return new GotoDefinitionInfo
                         {
@@ -501,13 +502,13 @@ namespace AvalonStudio.Languages.CSharp
             return node;
         }
 
-        public async Task<QuickInfoResult> QuickInfo(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public async Task<QuickInfoResult> QuickInfo(IEnumerable<UnsavedFile> unsavedFiles, int offset)
         {
-            var dataAssociation = GetAssociatedData(editor);
+            var dataAssociation = GetAssociatedData(_editor);
 
             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
 
-            var document = GetDocument(dataAssociation, editor.SourceFile, workspace);
+            var document = GetDocument(dataAssociation, _editor.SourceFile, workspace);
 
             var semanticModel = await document.GetSemanticModelAsync();
 
@@ -608,14 +609,16 @@ namespace AvalonStudio.Languages.CSharp
             return null;
         }
 
-        public Task<List<Symbol>> GetSymbolsAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, string name)
+        public Task<List<Symbol>> GetSymbolsAsync(IEnumerable<UnsavedFile> unsavedFiles, string name)
         {
             return null;
             //throw new NotImplementedException();
         }
 
-        public void RegisterSourceFile(ITextEditor editor)
+        public void RegisterEditor(ITextEditor editor)
         {
+            _editor = editor;
+
             if (dataAssociations.TryGetValue(editor, out CSharpDataAssociation association))
             {
                 throw new Exception("Source file already registered with language service.");
@@ -777,17 +780,17 @@ namespace AvalonStudio.Languages.CSharp
             return result;
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEnumerable<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var result = new CodeAnalysisResults();
 
             var textLength = 0;
 
-            await Dispatcher.UIThread.InvokeAsync(() => { textLength = editor.Document.TextLength; });
+            await Dispatcher.UIThread.InvokeAsync(() => { textLength = _editor.Document.TextLength; });
 
-            var dataAssociation = GetAssociatedData(editor);
+            var dataAssociation = GetAssociatedData(_editor);
 
-            var document = GetDocument(dataAssociation, editor.SourceFile);
+            var document = GetDocument(dataAssociation, _editor.SourceFile);
 
             if (document == null)
             {
@@ -813,10 +816,10 @@ namespace AvalonStudio.Languages.CSharp
             return result;
         }
 
-        public int Comment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
-            var textDocument = editor.Document;
+            var textDocument = _editor.Document;
 
             using (textDocument.RunUpdate())
             {
@@ -829,17 +832,17 @@ namespace AvalonStudio.Languages.CSharp
                 {
                     var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                     var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                    result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                    result = Format((uint)startOffset, (uint)(endOffset - startOffset), caret);
                 }
             }
             return result;
         }
 
-        public int UnComment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
-            var textDocument = editor.Document;
+            var textDocument = _editor.Document;
 
             using (textDocument.RunUpdate())
             {
@@ -858,24 +861,24 @@ namespace AvalonStudio.Languages.CSharp
                 {
                     var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                     var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                    result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                    result = Format((uint)startOffset, (uint)(endOffset - startOffset), caret);
                 }
             }
 
             return result;
         }
 
-        public void UnregisterSourceFile(ITextEditor editor)
+        public void UnregisterEditor()
         {
-            var association = GetAssociatedData(editor);
+            var association = GetAssociatedData(_editor);
 
-            if (!(editor.SourceFile is MetaDataFile))
+            if (!(_editor.SourceFile is MetaDataFile))
             {
-                RoslynWorkspace.GetWorkspace(association.Solution).CloseDocument(editor.SourceFile);
+                RoslynWorkspace.GetWorkspace(association.Solution).CloseDocument(_editor.SourceFile);
             }
 
             association.Solution = null;
-            dataAssociations.Remove(editor);
+            dataAssociations.Remove(_editor);
         }
 
         private async Task<InvocationContext> GetInvocation(Microsoft.CodeAnalysis.Document document, int offset)
@@ -913,13 +916,13 @@ namespace AvalonStudio.Languages.CSharp
             return null;
         }
 
-        public async Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
+        public async Task<SignatureHelp> SignatureHelp(IEnumerable<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
-            var dataAssociation = GetAssociatedData(editor);
+            var dataAssociation = GetAssociatedData(_editor);
 
             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
 
-            var document = workspace.GetDocument(editor.SourceFile);
+            var document = workspace.GetDocument(_editor.SourceFile);
 
             var invocation = await GetInvocation(document, offset);
 
@@ -931,18 +934,18 @@ namespace AvalonStudio.Languages.CSharp
             return null;
         }
 
-        public async Task<bool> CanRenameAt(ITextEditor editor, int offset)
+        public async Task<bool> CanRenameAt(int offset)
         {
-            if (editor.SourceFile is MetaDataFile)
+            if (_editor.SourceFile is MetaDataFile)
             {
                 return false;
             }
 
-            var dataAssociation = GetAssociatedData(editor);
+            var dataAssociation = GetAssociatedData(_editor);
 
             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
 
-            var document = GetDocument(dataAssociation, editor.SourceFile, workspace);
+            var document = GetDocument(dataAssociation, _editor.SourceFile, workspace);
 
             if (document != null)
             {
@@ -972,7 +975,7 @@ namespace AvalonStudio.Languages.CSharp
             return false;
         }
 
-        private string SwapCase (string line)
+        private string SwapCase(string line)
         {
             StringBuilder result = new StringBuilder();
 
@@ -989,22 +992,22 @@ namespace AvalonStudio.Languages.CSharp
             return result.ToString();
         }
 
-        public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo)
+        public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(string renameTo)
         {
-            if (editor.SourceFile is MetaDataFile)
+            if (_editor.SourceFile is MetaDataFile)
             {
                 return null;
             }
 
-            var dataAssociation = GetAssociatedData(editor);
+            var dataAssociation = GetAssociatedData(_editor);
 
             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
 
-            var document = GetDocument(dataAssociation, editor.SourceFile, workspace);
+            var document = GetDocument(dataAssociation, _editor.SourceFile, workspace);
 
             if (document != null)
             {
-                var symbol = SymbolFinder.FindSymbolAtPositionAsync(document, editor.Offset).GetAwaiter().GetResult();
+                var symbol = SymbolFinder.FindSymbolAtPositionAsync(document, _editor.Offset).GetAwaiter().GetResult();
 
                 var newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, symbol, renameTo, null).ConfigureAwait(false);
 
@@ -1040,13 +1043,13 @@ namespace AvalonStudio.Languages.CSharp
             return null;
         }
 
-        public IEnumerable<IContextActionProvider> GetContextActionProviders(ITextEditor editor)
+        public IEnumerable<IContextActionProvider> GetContextActionProviders()
         {
-             var dataAssociation = GetAssociatedData(editor);
+            var dataAssociation = GetAssociatedData(_editor);
 
-             var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
+            var workspace = RoslynWorkspace.GetWorkspace(dataAssociation.Solution);
 
-             var service = workspace.GetService<ICodeFixService>();
+            var service = workspace.GetService<ICodeFixService>();
 
             return new List<IContextActionProvider>
              {

@@ -1,4 +1,4 @@
-﻿using AvaloniaEdit.Indentation;
+using AvaloniaEdit.Indentation;
 using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
@@ -37,6 +37,8 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         private static readonly ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation> dataAssociations =
             new ConditionalWeakTable<ISourceFile, TypeScriptDataAssociation>();
+
+        private ITextEditor _editor;
 
         public IEnumerable<ITextEditorInputHelper> InputHelpers => null;
 
@@ -102,25 +104,11 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
 
         public string LanguageId => "ts";
 
-        public bool CanHandle(ITextEditor editor)
-        {
-            var result = false;
-
-            switch (Path.GetExtension(editor.SourceFile.Location))
-            {
-                case ".ts":
-                    result = true;
-                    break;
-            }
-
-            return result;
-        }
-
-        public async Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line,
-            int column, List<UnsavedFile> unsavedFiles, char previousChar, string filter = "")
+        public async Task<CodeCompletionResults> CodeCompleteAtAsync(int index, int line,
+            int column, IEnumerable<UnsavedFile> unsavedFiles, char previousChar, string filter = "")
         {
             //Get position in text
-            var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == editor.SourceFile.FilePath);
+            var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == _editor.SourceFile.FilePath);
             var currentFileConts = currentUnsavedFile.Contents;
             var lines = currentFileConts.Split('\n');
             var caretPosition = 0;
@@ -130,7 +118,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             }
             caretPosition += column;
 
-            var completionDataList = await CodeCompleteAtAsync(editor, caretPosition, unsavedFiles, filter);
+            var completionDataList = await CodeCompleteAtAsync(caretPosition, unsavedFiles, filter);
             return new CodeCompletionResults
             {
                 Completions = completionDataList,
@@ -138,13 +126,13 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             };
         }
 
-        private async Task<List<CodeCompletionData>> CodeCompleteAtAsync(ITextEditor editor, int index,
-            List<UnsavedFile> unsavedFiles, string filter = "")
+        private async Task<List<CodeCompletionData>> CodeCompleteAtAsync(int index,
+            IEnumerable<UnsavedFile> unsavedFiles, string filter = "")
         {
-            var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == editor.SourceFile.FilePath);
-            var currentFileConts = currentUnsavedFile?.Contents ?? File.ReadAllText(editor.SourceFile.FilePath);
+            var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == _editor.SourceFile.FilePath);
+            var currentFileConts = currentUnsavedFile?.Contents ?? File.ReadAllText(_editor.SourceFile.FilePath);
             var caretPosition = index;
-            var completions = await _typeScriptContext.GetCompletionsAtPositionAsync(editor.SourceFile.FilePath, caretPosition);
+            var completions = await _typeScriptContext.GetCompletionsAtPositionAsync(_editor.SourceFile.FilePath, caretPosition);
 
             var editorCompletions = completions.Entries.Select(cc =>
                 {
@@ -178,26 +166,28 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             }
         }
 
-        public int Format(ITextEditor editor, uint offset, uint length, int cursor)
+        public int Format(uint offset, uint length, int cursor)
         {
             //STUB!
             return -1;
         }
 
-        public Task<QuickInfoResult> QuickInfo(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<QuickInfoResult> QuickInfo(IEnumerable<UnsavedFile> unsavedFiles, int offset)
         {
             //STUB!
             return Task.FromResult<QuickInfoResult>(null);
         }
 
-        public Task<List<Symbol>> GetSymbolsAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, string name)
+        public Task<List<Symbol>> GetSymbolsAsync(IEnumerable<UnsavedFile> unsavedFiles, string name)
         {
             //STUB!
             return Task.FromResult(new List<Symbol>());
         }
 
-        public void RegisterSourceFile(ITextEditor editor)
+        public void RegisterEditor(ITextEditor editor)
         {
+            _editor = editor;
+
             var file = editor.SourceFile;
 
             _typeScriptContext = _typeScriptContext ?? ((TypeScriptProject)file.Project).TypeScriptContext;
@@ -214,14 +204,14 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             dataAssociations.Add(file, association);
         }
 
-        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor,
-            List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public async Task<CodeAnalysisResults> RunCodeAnalysisAsync(
+            IEnumerable<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             var errorList = IoC.Get<IErrorList>();
             var result = new CodeAnalysisResults();
             var diagnostics = new List<Diagnostic>();
 
-            var file = editor.SourceFile;
+            var file = _editor.SourceFile;
             var dataAssociation = GetAssociatedData(file);
 
             var currentUnsavedFile = unsavedFiles.FirstOrDefault(f => f.FileName == file.FilePath);
@@ -238,16 +228,16 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             {
                 diagnostics.Add(new Diagnostic(
                     0, 0,
-                    editor.SourceFile.Project.Name,                    
-                    editor.SourceFile.Location,
+                    _editor.SourceFile.Project.Name,
+                    _editor.SourceFile.Location,
                     0,
                     "Code analysis language service call failed.",
                     "INT001",
                     DiagnosticLevel.Error,
                     DiagnosticCategory.Compiler));
 
-                errorList.Remove((this, editor.SourceFile));
-                errorList.Create((this, editor.SourceFile), null, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
+                errorList.Remove((this, _editor.SourceFile));
+                errorList.Create((this, _editor.SourceFile), null, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
 
                 return new CodeAnalysisResults();
             }
@@ -300,15 +290,15 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 HighlightNode(rootStatement, result);
             }
 
-            // Diagnostics            
+            // Diagnostics
             foreach (var diagnostic in syntaxTree.ParseDiagnostics)
             {
                 // Convert diagnostics
                 diagnostics.Add(new Diagnostic(
                     diagnostic.Start,
                     diagnostic.Length,
-                    editor.SourceFile.Project.Name,                    
-                    editor.SourceFile.Location,
+                    _editor.SourceFile.Project.Name,
+                    _editor.SourceFile.Location,
                     GetLineNumber(currentFileConts, diagnostic.Start),
                     diagnostic.MessageText,
                     "INT002",
@@ -322,16 +312,16 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             diagnostics.Add(new Diagnostic(
                 0,
                 0,
-                editor.SourceFile.Project.Name,                
-                editor.SourceFile.Location,
+                _editor.SourceFile.Project.Name,
+                _editor.SourceFile.Location,
                 0,
                 "Code analysis for TypeScript is experimental and unstable. Use with caution.",
                 "INT003",
                 DiagnosticLevel.Warning,
                 DiagnosticCategory.Compiler));
 
-            errorList.Remove((this, editor.SourceFile));
-            errorList.Create((this, editor.SourceFile), null, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
+            errorList.Remove((this, _editor.SourceFile));
+            errorList.Create((this, _editor.SourceFile), null, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
 
             return result;
         }
@@ -441,17 +431,17 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return document.Take(offset).Count(x => x == '\n') + 1;
         }
 
-        public Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
+        public Task<SignatureHelp> SignatureHelp(IEnumerable<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             //STUB!
             //return new SignatureHelp();
             return Task.FromResult<SignatureHelp>(null);
         }
 
-        public int Comment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
-            var textDocument = editor.Document;
+            var textDocument = _editor.Document;
 
             using (textDocument.RunUpdate())
             {
@@ -464,17 +454,17 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 {
                     var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                     var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                    result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                    result = Format((uint)startOffset, (uint)(endOffset - startOffset), caret);
                 }
             }
             return result;
         }
 
-        public int UnComment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(int firstLine, int endLine, int caret = -1, bool format = true)
         {
             var result = caret;
 
-            var textDocument = editor.Document;
+            var textDocument = _editor.Document;
 
             using (textDocument.RunUpdate())
             {
@@ -493,7 +483,7 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
                 {
                     var startOffset = textDocument.GetLineByNumber(firstLine).Offset;
                     var endOffset = textDocument.GetLineByNumber(endLine).EndOffset;
-                    result = Format(editor, (uint)startOffset, (uint)(endOffset - startOffset), caret);
+                    result = Format((uint)startOffset, (uint)(endOffset - startOffset), caret);
                 }
             }
 
@@ -512,10 +502,10 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             return result;
         }
 
-        public void UnregisterSourceFile(ITextEditor editor)
+        public void UnregisterEditor()
         {
-            _typeScriptContext.RemoveFile(editor.SourceFile.FilePath);
-            dataAssociations.Remove(editor.SourceFile);
+            _typeScriptContext.RemoveFile(_editor.SourceFile.FilePath);
+            dataAssociations.Remove(_editor.SourceFile);
         }
 
         public async Task PrepareLanguageServiceAsync()
@@ -523,17 +513,17 @@ namespace AvalonStudio.LanguageSupport.TypeScript.LanguageService
             await _typeScriptContext.LoadComponentsAsync();
         }
 
-        public Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset)
+        public Task<GotoDefinitionInfo> GotoDefinition(int offset)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<GotoDefinitionInfo>(null);
         }
 
-        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo)
+        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(string renameTo)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<IEnumerable<SymbolRenameInfo>>(null);
         }
 
-        public IEnumerable<IContextActionProvider> GetContextActionProviders(ITextEditor editor)
+        public IEnumerable<IContextActionProvider> GetContextActionProviders()
         {
             return Enumerable.Empty<IContextActionProvider>();
         }

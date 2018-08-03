@@ -15,7 +15,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Commands
 
         private async Task GoToDefinition(ICodeEditor editor)
         {
-            var definition = await editor.LanguageService?.GotoDefinition(editor, 1);
+            var definition = await editor.LanguageService?.GotoDefinition(1);
 
             var studio = IoC.Get<IStudio>();
 
