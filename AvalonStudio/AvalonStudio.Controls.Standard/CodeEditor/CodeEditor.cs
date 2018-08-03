@@ -577,7 +577,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 if(_isLoaded && Editor != null)
                 {
                     var token = Editor.Document.GetToken(CaretOffset);
-                    RenameText = Editor.Document.GetText(token);
                     var location = new TextViewPosition(Document.GetLocation(token.Offset));
 
                     var visualLocation = TextArea.TextView.GetVisualPosition(location, VisualYPosition.LineBottom);
@@ -587,7 +586,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                     position = position.Transform(TextArea.TextView.TransformToVisual(TextArea).Value);
 
                     _renameControl.SetLocation(position);
-                    _renameControl.Open(this, RenameText);
+                    _renameControl.Open(this, Editor.Document.GetText(token));
                 }
             }),
 

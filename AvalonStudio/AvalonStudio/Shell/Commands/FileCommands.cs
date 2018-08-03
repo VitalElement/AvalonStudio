@@ -5,6 +5,7 @@ using ReactiveUI;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Studio;
 using System.Reactive.Linq;
+using Avalonia;
 
 namespace AvalonStudio.Shell.Commands
 {
@@ -46,6 +47,6 @@ namespace AvalonStudio.Shell.Commands
         private void Save() => _studio.Save();
         private void SaveAll() => _studio.SaveAll();
 
-        private void Exit() => Environment.Exit(0);
+        private void Exit() => Application.Current.Exit();
     }
 }

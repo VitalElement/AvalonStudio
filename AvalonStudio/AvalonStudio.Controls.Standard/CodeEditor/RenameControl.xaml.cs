@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
-using AvalonStudio.Documents;
 using System.Reactive.Disposables;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor
@@ -26,6 +25,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _editor = editor;
             _textBox.AcceptsReturn = false;
             _textBox.Text = text;
+            _textBox.CaretIndex = text.Length;
             _textBox.SelectionStart = text.Length;
             _textBox.SelectionEnd = 0;
             _popup.Open();
@@ -69,8 +69,17 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             _popup.LostFocus += (sender, _) =>
             {
-                _editor = null;
-                _popup.Close();
+                if (_editor != null)
+                {
+                    _editor.RenameOpen = false;
+                    _editor = null;
+                }
+
+                if (_popup.IsOpen)
+                {
+                    _popup.Close();
+                }
+
                 PlacementTarget.Focus();
             };
         }

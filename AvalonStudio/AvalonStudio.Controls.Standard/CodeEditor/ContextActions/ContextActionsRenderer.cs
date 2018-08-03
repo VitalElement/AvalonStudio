@@ -186,7 +186,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             if (_popup.IsOpen && _popup.ItemsSource != null)
             {
                 _popup.IsMenuOpen = true;
-                _popup.Focus();
             }
             else
             {

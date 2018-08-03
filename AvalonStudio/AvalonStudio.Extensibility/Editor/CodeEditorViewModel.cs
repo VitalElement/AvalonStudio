@@ -36,7 +36,6 @@ namespace AvalonStudio.Extensibility.Editor
         private CompositeDisposable _languageServiceDisposables;
         private string _renameText;
         private bool _inRenameMode;
-        private bool _renameOpen;
 
         public CodeEditorViewModel(ITextDocument document, ISourceFile file) : base(document, file)
         {
@@ -59,19 +58,16 @@ namespace AvalonStudio.Extensibility.Editor
 
             this.WhenAnyValue(x => x.RenameText).Subscribe(async text =>
             {
-                if(_renameOpen && InRenameMode && !string.IsNullOrWhiteSpace(text))
+                if(!string.IsNullOrWhiteSpace(text))
                 {
                     var renameInfo = await LanguageService.RenameSymbol(this, text);
 
                     await ApplyRenameAsync(renameInfo);
 
                     InRenameMode = false;
-                    _renameOpen = false;
                 }
-                else
-                {
-                    _renameOpen = true;
-                }
+
+                RenameText = "";
             });
         }
 
