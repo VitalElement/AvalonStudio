@@ -989,7 +989,7 @@ namespace AvalonStudio.Languages.CSharp
             return result.ToString();
         }
 
-        public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo, bool initial = false)
+        public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo)
         {
             if (editor.SourceFile is MetaDataFile)
             {
@@ -1005,13 +1005,6 @@ namespace AvalonStudio.Languages.CSharp
             if (document != null)
             {
                 var symbol = SymbolFinder.FindSymbolAtPositionAsync(document, editor.Offset).GetAwaiter().GetResult();
-
-                if (initial)
-                {
-                    renameTo = SwapCase(symbol.ToDisplayString());
-                }
-
-
 
                 var newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, symbol, renameTo, null).ConfigureAwait(false);
 

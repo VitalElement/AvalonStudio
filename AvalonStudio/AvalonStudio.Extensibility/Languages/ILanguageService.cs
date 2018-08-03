@@ -82,7 +82,7 @@ namespace AvalonStudio.Languages
 
         Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset);
 
-        Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo, bool initalise = false);
+        Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo);
 
         void RegisterSourceFile(ITextEditor editor);
 
