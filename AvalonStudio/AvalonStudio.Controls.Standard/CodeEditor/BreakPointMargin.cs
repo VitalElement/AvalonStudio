@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media;
 using AvaloniaEdit.Editing;
@@ -25,8 +25,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public BreakPointMargin(CodeEditor editor, BreakpointStore manager)
         {
-            _manager = manager ?? throw new ArgumentNullException(nameof(manager));
-            _editor = editor ?? throw new ArgumentNullException(nameof(editor));
+            _manager = manager;
+            _editor = editor;
         }
 
         public override void Render(DrawingContext context)
