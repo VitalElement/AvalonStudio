@@ -1,8 +1,11 @@
 ﻿using AvalonStudio.Documents;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
@@ -23,9 +26,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             return false;
         }
 
-        public ITextDocumentTabViewModel CreateViewModel(ISourceFile file, ITextDocument document)
+        public async Task<ITextDocumentTabViewModel> CreateViewModel(ISourceFile file)
         {
-            return new CodeEditorViewModel(document, file);
+            return new CodeEditorViewModel(await IoC.Get<IStudio>().CreateDocumentAsync(file.FilePath), file);
         }
     }
 }

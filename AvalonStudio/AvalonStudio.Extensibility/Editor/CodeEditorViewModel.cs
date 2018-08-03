@@ -56,6 +56,27 @@ namespace AvalonStudio.Extensibility.Editor
                 InRenameMode = true;
             });
 
+            GotoDefinitionCommand = ReactiveCommand.Create(async () =>
+            {
+                var definition = await LanguageService?.GotoDefinition(this, Offset);
+
+                var studio = IoC.Get<IStudio>();
+
+                if (definition.MetaDataFile == null)
+                {
+                    var definedDocument = studio.CurrentSolution.FindFile(definition.FileName);
+
+                    if (definedDocument != null)
+                    {
+                        await studio.OpenDocumentAsync(definedDocument, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
+                    }
+                }
+                else
+                {
+                    await studio.OpenDocumentAsync(definition.MetaDataFile, definition.Line, definition.Column, definition.Column, selectLine: true, focus: true);
+                }
+            });
+
             this.WhenAnyValue(x => x.RenameText).Subscribe(async text =>
             {
                 if(!string.IsNullOrWhiteSpace(text))
@@ -114,6 +135,8 @@ namespace AvalonStudio.Extensibility.Editor
         }
 
         public ReactiveCommand RenameSymbolCommand { get; }
+
+        public ReactiveCommand GotoDefinitionCommand { get; }
 
         public override bool OnClose()
         {

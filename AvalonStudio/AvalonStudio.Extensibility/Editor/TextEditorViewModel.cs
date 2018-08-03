@@ -264,7 +264,7 @@ namespace AvalonStudio.Extensibility.Editor
             }
             else
             {
-                return null;
+                return Task.FromResult<object>(null);
             }
         }
     }

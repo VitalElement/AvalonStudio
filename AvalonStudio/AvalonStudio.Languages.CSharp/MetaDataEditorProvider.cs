@@ -1,9 +1,13 @@
 ﻿using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Documents;
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
+using System;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.CSharp
 {
@@ -12,12 +16,18 @@ namespace AvalonStudio.Languages.CSharp
     {
         public bool CanEdit(ISourceFile file)
         {
+            if(file is MetaDataFile)
+            {
+                return false;
+            }
+
             return Path.GetExtension(file.FilePath) == ".cs";
         }
 
-        public ITextDocumentTabViewModel CreateViewModel(ISourceFile file, ITextDocument document)
+        public async Task<ITextDocumentTabViewModel> CreateViewModel(ISourceFile file)
         {
-            return new CodeEditorViewModel(document, file);
+
+            return new CodeEditorViewModel(await IoC.Get<IStudio>().CreateDocumentAsync(file.FilePath), file);
         }
     }
 
@@ -29,9 +39,14 @@ namespace AvalonStudio.Languages.CSharp
             return file.FilePath.StartsWith("$metadata");
         }
 
-        public ITextDocumentTabViewModel CreateViewModel(ISourceFile file, ITextDocument document)
+        public async Task<ITextDocumentTabViewModel> CreateViewModel(ISourceFile file)
         {
-            return new TextEditorViewModel(document, file) { IsReadOnly = true };
+            if (file is MetaDataFile metaDataFile)
+            {
+                return new CodeEditorViewModel(AvalonStudioTextDocument.Create(await metaDataFile.GetTextAsync()), file) { IsReadOnly = true };
+            }
+
+            throw new NotSupportedException();
         }
     }
 }

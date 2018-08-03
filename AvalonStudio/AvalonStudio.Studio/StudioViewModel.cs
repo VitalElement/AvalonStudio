@@ -318,16 +318,15 @@ namespace AvalonStudio.Studio
 
             if (currentTab == null)
             {
-                var document = await AvalonStudioTextDocument.CreateAsync(file);
-
                 var provider = IoC.Get<IStudio>().EditorProviders.FirstOrDefault(p => p.Value.CanEdit(file))?.Value;
 
                 if (provider != null)
                 {
-                    currentTab = provider.CreateViewModel(file, document);
+                    currentTab = await provider.CreateViewModel(file);
                 }
                 else
                 {
+                    var document = await AvalonStudioTextDocument.CreateAsync(file);
                     currentTab = new TextEditorViewModel(document, file);
                 }
             }

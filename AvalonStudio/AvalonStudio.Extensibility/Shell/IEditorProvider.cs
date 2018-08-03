@@ -1,11 +1,12 @@
 ﻿using AvalonStudio.Documents;
 using AvalonStudio.Projects;
+using System.Threading.Tasks;
 
 namespace AvalonStudio.Shell
 {
     public interface IEditorProvider
     {
         bool CanEdit(ISourceFile file);
-        ITextDocumentTabViewModel CreateViewModel(ISourceFile file, ITextDocument document);
+        Task<ITextDocumentTabViewModel> CreateViewModel(ISourceFile file);
     }
 }

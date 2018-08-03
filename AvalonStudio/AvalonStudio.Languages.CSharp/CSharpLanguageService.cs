@@ -413,13 +413,13 @@ namespace AvalonStudio.Languages.CSharp
 
         public async Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset)
         {
-           /* var dataAssociation = GetAssociatedData(editor);
+            var dataAssociation = GetAssociatedData(editor);
 
             var document = GetDocument(dataAssociation, editor.SourceFile);
 
             var semanticModel = await document.GetSemanticModelAsync();
 
-            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, editor.CaretOffset, RoslynWorkspace.GetWorkspace(dataAssociation.Solution));
+            var symbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, editor.Offset, RoslynWorkspace.GetWorkspace(dataAssociation.Solution));
 
             if (symbol != null && !(symbol is Microsoft.CodeAnalysis.INamespaceSymbol))
             {
@@ -464,7 +464,7 @@ namespace AvalonStudio.Languages.CSharp
                         };
                     }
                 }
-            }*/
+            }
 
             return null;
         }
