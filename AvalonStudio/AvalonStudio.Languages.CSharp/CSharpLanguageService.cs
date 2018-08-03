@@ -845,7 +845,7 @@ namespace AvalonStudio.Languages.CSharp
             {
                 for (int line = firstLine; line <= endLine; line++)
                 {
-                    var docLine = textDocument.GetLineByNumber(firstLine);
+                    var docLine = textDocument.GetLineByNumber(line);
                     var index = textDocument.GetText(docLine).IndexOf("//");
 
                     if (index >= 0)

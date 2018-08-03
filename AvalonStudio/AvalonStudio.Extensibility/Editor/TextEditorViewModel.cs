@@ -183,7 +183,7 @@ namespace AvalonStudio.Extensibility.Editor
 
         public void Focus()
         {
-
+            IsFocused = true;
         }
 
         void ITextDocumentTabViewModel.GotoPosition(int line, int column)

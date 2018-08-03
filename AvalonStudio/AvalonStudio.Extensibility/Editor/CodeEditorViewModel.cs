@@ -164,14 +164,36 @@ namespace AvalonStudio.Extensibility.Editor
             }
         }
 
+        private void ModifySelectedLines(Action<int, int> action)
+        {
+            var startLine = Document.GetLocation(Offset).Line;
+            var endLine = startLine;
+
+            if (Selection != null && Selection.Length > 0)
+            {
+                startLine = Document.GetLocation(Selection.Offset).Line;
+                endLine = Document.GetLocation(Selection.EndOffset).Line;
+            }
+
+            action(startLine, endLine);
+
+            Focus();
+        }
+
         public void Comment()
         {
-
+            ModifySelectedLines((start, end) =>
+            {
+                LanguageService.Comment(this, start, end, Offset);
+            });
         }
 
         public void Uncomment()
         {
-
+            ModifySelectedLines((start, end) =>
+            {
+                LanguageService.UnComment(this, start, end, Offset);
+            });
         }
 
         public override void IndentLine(int lineNumber)
