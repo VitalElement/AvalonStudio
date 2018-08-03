@@ -98,7 +98,8 @@ namespace AvalonStudio.Projects.OmniSharp
                         try
                         {
                             // todo restore packages and re-evaluate.
-                            await RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
+                            var (project, projectReferences, targetPath) = await RoslynWorkspace.GetWorkspace(Solution).ReevaluateProject(this);
+                            detectedTargetPath = targetPath;
                             statusBar.ClearText();
                         }
                         catch(Exception)

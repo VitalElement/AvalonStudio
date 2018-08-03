@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 
-namespace AvalonStudio.Controls.Standard.CodeEditor
+namespace AvalonStudio.Extensibility.Languages
 {
     public class QuickInfoView : UserControl
     {

@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\AvalonStudio.Shell\Dock\src\Dock.Model.ReactiveUI\Dock.Model.ReactiveUI.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
   </ItemGroup>
 

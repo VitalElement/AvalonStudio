@@ -2,6 +2,7 @@
 using AvalonStudio.Controls;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,9 @@ using System.Xml.Linq;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    [ExportLanguageService(ContentCapabilities.Xml)]
     internal class XmlLanguageService : ILanguageService
     {
-        private static List<ICodeEditorInputHelper> s_InputHelpers = new List<ICodeEditorInputHelper>
+        private static readonly List<ITextEditorInputHelper> s_InputHelpers = new List<ITextEditorInputHelper>
         {
             new CompleteCloseTagCodeEditorHelper(),
             new TerminateElementCodeEditorHelper(),
@@ -26,13 +26,11 @@ namespace AvalonStudio.Languages.Xaml
             new InsertExtraNewLineBetweenAttributesOnEnterCodeInputHelper()
         };
 
-        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
-
         public IIndentationStrategy IndentationStrategy { get; } = new XamlIndentationStrategy();
 
         public virtual string LanguageId => "xml";
 
-        public IEnumerable<ICodeEditorInputHelper> InputHelpers => s_InputHelpers;
+        public IEnumerable<ITextEditorInputHelper> InputHelpers => s_InputHelpers;
 
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators => new Dictionary<string, Func<string, string>>();
 
@@ -48,9 +46,7 @@ namespace AvalonStudio.Languages.Xaml
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
-        public IObservable<SyntaxHighlightDataList> AdditionalHighlightingData => throw new NotImplementedException();
-
-        public virtual bool CanHandle(IEditor editor)
+        public virtual bool CanHandle(ITextEditor editor)
         {
             var result = false;
 
@@ -77,25 +73,28 @@ namespace AvalonStudio.Languages.Xaml
             return result;
         }
 
-        public virtual Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
+        public virtual Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             return Task.FromResult<CodeCompletionResults>(null);
         }
 
-        public int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             return caret;
         }
 
-        public int Format(IEditor editor, uint offset, uint length, int cursor)
+        public int Format(ITextEditor editor, uint offset, uint length, int cursor)
         {
             var text = editor.Document.GetText((int)offset, (int)length);
 
             XmlDocument doc = null;
             try
             {
-                doc = new XmlDocument();
-                doc.XmlResolver = null; // Prevent DTDs from being downloaded.
+                doc = new XmlDocument
+                {
+                    XmlResolver = null // Prevent DTDs from being downloaded.
+                };
+
                 doc.LoadXml(text);
             }
             catch (XmlException ex)
@@ -108,7 +107,7 @@ namespace AvalonStudio.Languages.Xaml
 
                 return cursor;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return cursor;
             }
@@ -117,12 +116,13 @@ namespace AvalonStudio.Languages.Xaml
 
             var element = XElement.Parse(text);
 
-            var settings = new XmlWriterSettings();
-            settings.OmitXmlDeclaration = true;
-            settings.Indent = true;
-            settings.NamespaceHandling = NamespaceHandling.OmitDuplicates;
-            settings.Indent = true;
-            settings.IndentChars = "  ";
+            var settings = new XmlWriterSettings
+            {
+                OmitXmlDeclaration = true,
+                Indent = true,
+                NamespaceHandling = NamespaceHandling.OmitDuplicates,
+                IndentChars = "  "
+            };
 
             using (var xmlWriter = XmlWriter.Create(stringBuilder, settings))
             {
@@ -134,12 +134,12 @@ namespace AvalonStudio.Languages.Xaml
             return cursor;
         }
 
-        public Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<QuickInfoResult> QuickInfo(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             return Task.FromResult<QuickInfoResult>(null);
         }
 
-        public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
+        public Task<List<Symbol>> GetSymbolsAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, string name)
         {
             return Task.FromResult<List<Symbol>>(null);
         }
@@ -149,41 +149,41 @@ namespace AvalonStudio.Languages.Xaml
             return char.IsLetterOrDigit(data);
         }
 
-        public virtual void RegisterSourceFile(IEditor editornew)
+        public virtual void RegisterSourceFile(ITextEditor editornew)
         {
         }
 
-        public virtual void UnregisterSourceFile(IEditor editor)
+        public virtual void UnregisterSourceFile(ITextEditor editor)
         {
 
         }
 
-        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             return Task.FromResult(new CodeAnalysisResults());
         }
 
-        public Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
+        public Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             return Task.FromResult<SignatureHelp>(null);
         }
 
-        public int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             return caret;
         }
 
-        public Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
+        public Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo)
+        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
+        public IEnumerable<IContextActionProvider> GetContextActionProviders(ITextEditor editor)
         {
             return Enumerable.Empty<IContextActionProvider>();
         }

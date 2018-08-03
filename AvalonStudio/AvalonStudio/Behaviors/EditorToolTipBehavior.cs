@@ -1,4 +1,5 @@
 using AvalonStudio.Controls;
+using AvalonStudio.Extensibility.Editor;
 using System;
 using System.Threading.Tasks;
 

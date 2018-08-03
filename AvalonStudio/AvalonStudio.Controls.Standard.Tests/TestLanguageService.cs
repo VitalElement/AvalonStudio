@@ -1,6 +1,6 @@
-﻿using AvaloniaEdit.Indentation;
-using AvalonStudio.Documents;
+﻿using AvalonStudio.Documents;
 using AvalonStudio.Editor;
+using AvalonStudio.Extensibility.Languages;
 using AvalonStudio.Extensibility.Languages.CompletionAssistance;
 using AvalonStudio.Languages;
 using System;
@@ -21,17 +21,13 @@ namespace AvalonStudio.Controls.Standard.Tests
 
         public string LanguageId => "cpp";
 
-        public IIndentationStrategy IndentationStrategy => throw new NotImplementedException();
-
         public IEnumerable<char> IntellisenseSearchCharacters => throw new NotImplementedException();
 
         public IEnumerable<char> IntellisenseCompleteCharacters => throw new NotImplementedException();
 
-        public IEnumerable<ICodeEditorInputHelper> InputHelpers => throw new NotImplementedException();
+        public IEnumerable<ITextEditorInputHelper> InputHelpers => throw new NotImplementedException();
 
-        public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
-
-        public bool CanHandle(IEditor editor)
+        public bool CanHandle(ITextEditor editor)
         {
             throw new NotImplementedException();
         }
@@ -41,37 +37,37 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
-        public Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
+        public Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             throw new NotImplementedException();
         }
 
-        public int Comment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             throw new NotImplementedException();
         }
 
-        public int Format(IEditor editor, uint offset, uint length, int cursor)
+        public int Format(ITextEditor editor, uint offset, uint length, int cursor)
         {
             throw new NotImplementedException();
         }        
 
-        public IEnumerable<IContextActionProvider> GetContextActionProviders(IEditor editor)
+        public IEnumerable<IContextActionProvider> GetContextActionProviders(ITextEditor editor)
         {
             throw new NotImplementedException();
         }
 
-        public Task<QuickInfoResult> QuickInfo(IEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public Task<QuickInfoResult> QuickInfo(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset)
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Symbol>> GetSymbolsAsync(IEditor editor, List<UnsavedFile> unsavedFiles, string name)
+        public Task<List<Symbol>> GetSymbolsAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, string name)
         {
             throw new NotImplementedException();
         }
 
-        public Task<GotoDefinitionInfo> GotoDefinition(IEditor editor, int offset)
+        public Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset)
         {
             throw new NotImplementedException();
         }
@@ -81,32 +77,32 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
-        public void RegisterSourceFile(IEditor editor)
+        public void RegisterSourceFile(ITextEditor editor)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(IEditor editor, string renameTo)
+        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             throw new NotImplementedException();
         }
 
-        public Task<SignatureHelp> SignatureHelp(IEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
+        public Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             throw new NotImplementedException();
         }
 
-        public int UnComment(IEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
         {
             throw new NotImplementedException();
         }
 
-        public void UnregisterSourceFile(IEditor editor)
+        public void UnregisterSourceFile(ITextEditor editor)
         {
             throw new NotImplementedException();
         }

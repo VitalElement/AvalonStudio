@@ -13,7 +13,6 @@ namespace AvalonStudio.Debugging
     using System;
     using System.Composition;
     using System.Reactive.Linq;
-    using System.Threading.Tasks;
     using System.Xml;
 
     [Export(typeof(IExtension)), Export(typeof(IDebugManager2)), Shared]
@@ -179,18 +178,6 @@ namespace AvalonStudio.Debugging
 
         private void OnEndSession()
         {
-            _session?.Exit();
-
-            Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                DebugSessionEnded?.Invoke(this, EventArgs.Empty);
-
-                _studio.CurrentPerspective = Perspective.Normal;
-
-                _lastDocument?.ClearDebugHighlight();
-                _lastDocument = null;
-            });
-
             lock (_sessionLock)
             {
                 if (_session != null)
@@ -203,13 +190,24 @@ namespace AvalonStudio.Debugging
                     _session.TargetExited -= _session_TargetExited;
                     _session.TargetStarted -= _session_TargetStarted;
                     _session.TargetReady -= _session_TargetReady;
-                    _session.Dispose();
+
+                    _session?.Dispose();
                     _session = null;
                 }
             }
 
-            // This will save breakpoints that were moved to be closer to actual sequence points.
-            Breakpoints.Save();
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                DebugSessionEnded?.Invoke(this, EventArgs.Empty);
+
+                _studio.CurrentPerspective = Perspective.Normal;
+
+                _lastDocument?.ClearDebugHighlight();
+                _lastDocument = null;
+
+                // This will save breakpoints that were moved to be closer to actual sequence points.
+                Breakpoints.Save();
+            });
         }
 
         public void Restart()
@@ -220,7 +218,7 @@ namespace AvalonStudio.Debugging
 
         public void Stop()
         {
-            OnEndSession();
+            _session.Exit();
         }
 
         public async void Start()
@@ -314,7 +312,7 @@ namespace AvalonStudio.Debugging
 
                     ISourceFile file = null;
 
-                    var document = _studio.GetDocument(normalizedPath);
+                    var document = _studio.GetEditor(normalizedPath);
 
                     if (document != null)
                     {

@@ -2,7 +2,7 @@
 
 namespace AvalonStudio.Languages
 {
-    public class LanguageServiceMetadata
+    public class LanguageServiceProviderMetadata
     {
         public IEnumerable<string> TargetCapabilities { get; set; }
     }

@@ -1,5 +1,5 @@
 ﻿using Avalonia.Threading;
-using AvalonStudio.Controls;
+using AvalonStudio.Controls.Standard.CodeEditor;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
@@ -7,6 +7,7 @@ using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Languages;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
@@ -35,14 +36,14 @@ namespace AvalonStudio.Studio
 
         [ImportingConstructor]
         public StudioViewModel([ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
-            [ImportMany] IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> languageServices,
+            [ImportMany] IEnumerable<Lazy<ILanguageServiceProvider, LanguageServiceProviderMetadata>> languageServiceProviders,
             [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             IContentTypeService contentTypeService)
         {
             EditorProviders = editorProviders;
-            LanguageServices = languageServices;
+            LanguageServiceProviders = languageServiceProviders;
             SolutionTypes = solutionTypes;
             ProjectTypes = projectTypes;
             TestFrameworks = testFrameworks;
@@ -59,7 +60,7 @@ namespace AvalonStudio.Studio
 
             this.WhenAnyValue(x => x.GlobalZoomLevel).Subscribe(zoomLevel =>
             {
-                foreach (var document in IoC.Get<IShell>().Documents.OfType<EditorViewModel>())
+                foreach (var document in IoC.Get<IShell>().Documents.OfType<TextEditorViewModel>())
                 {
                     document.ZoomLevel = zoomLevel;
                 }
@@ -91,7 +92,7 @@ namespace AvalonStudio.Studio
 
         public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
 
-        public IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
+        public IEnumerable<Lazy<ILanguageServiceProvider, LanguageServiceProviderMetadata>> LanguageServiceProviders { get; }
 
         public IEnumerable<Lazy<ITestFramework>> TestFrameworks { get; }
 
@@ -200,9 +201,9 @@ namespace AvalonStudio.Studio
         {
             var shell = IoC.Get<IShell>();
 
-            if (shell.SelectedDocument is IFileDocumentTabViewModel document)
+            if (shell.SelectedDocument is ITextDocumentTabViewModel document)
             {
-                document.Editor.Save();
+                document.Save();
             }
         }
 
@@ -210,9 +211,9 @@ namespace AvalonStudio.Studio
         {
             var shell = IoC.Get<IShell>();
 
-            foreach (var document in shell.Documents.OfType<IFileDocumentTabViewModel>())
+            foreach (var document in shell.Documents.OfType<ITextDocumentTabViewModel>())
             {
-                document.Editor?.Save();
+                document.Save();
             }
         }
 
@@ -309,11 +310,11 @@ namespace AvalonStudio.Studio
             }
         }
 
-        public IFileDocumentTabViewModel OpenDocument(ISourceFile file)
+        private async Task<ITextDocumentTabViewModel> OpenDocumentAsync(ISourceFile file)
         {
             var shell = IoC.Get<IShell>();
 
-            var currentTab = shell.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(t => t.SourceFile?.FilePath == file.FilePath);
+            var currentTab = shell.Documents.OfType<ITextDocumentTabViewModel>().FirstOrDefault(t => t.SourceFile?.FilePath == file.FilePath);
 
             if (currentTab == null)
             {
@@ -321,55 +322,45 @@ namespace AvalonStudio.Studio
 
                 if (provider != null)
                 {
-                    currentTab = provider.CreateViewModel(file);
-
-                    shell.AddOrSelectDocument(currentTab);
+                    currentTab = await provider.CreateViewModel(file);
                 }
                 else
                 {
-                    var newTab = new TextEditorViewModel(file);
-
-                    shell.AddOrSelectDocument(newTab);
-
-                    currentTab = newTab;
+                    var document = await AvalonStudioTextDocument.CreateAsync(file);
+                    currentTab = new TextEditorViewModel(document, file);
                 }
             }
-            else
-            {
-                shell.AddOrSelectDocument(currentTab);
-            }
+
+            shell.AddOrSelectDocument(currentTab);
 
             return currentTab;
         }
 
-        public async Task<IFileDocumentTabViewModel> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
+        public async Task<ITextDocumentTabViewModel> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true)
         {
             var shell = IoC.Get<IShell>();
 
-            var currentTab = OpenDocument(file);
+            var currentTab = await OpenDocumentAsync(file);
 
-            if (shell.SelectedDocument is IFileDocumentTabViewModel fileTab)
+            if (shell.SelectedDocument is ITextDocumentTabViewModel fileTab)
             {
-                await fileTab.WaitForEditorToLoadAsync();
-
                 if (debugHighlight)
                 {
                     if(fileTab is IDebugLineDocumentTabViewModel debugLineTab)
                     {
                         debugLineTab.DebugHighlight = new Debugging.DebugHighlightLocation { Line = line, StartColumn = startColumn, EndColumn = endColumn };
                     }
-                    //fileTab.Editor.SetDebugHighlight(line, startColumn, endColumn);
                 }
 
                 if (selectLine || debugHighlight)
                 {
-                    fileTab.Editor.GotoPosition(line, startColumn != -1 ? startColumn : 1);
+                    fileTab.GotoPosition(line, startColumn != -1 ? startColumn : 1);
                 }
 
                 if (focus)
                 {
                     shell.Select(fileTab);
-                    fileTab.Editor.Focus();
+                    fileTab.Focus();
                 }
 
                 if (currentTab is TextEditorViewModel editor)
@@ -385,7 +376,7 @@ namespace AvalonStudio.Studio
         {
             var shell = IoC.Get<IShell>();
 
-            var document = shell.Documents.OfType<IFileDocumentTabViewModel>().FirstOrDefault(d => d.SourceFile == file);
+            var document = shell.Documents.OfType<ITextDocumentTabViewModel>().FirstOrDefault(d => d.SourceFile == file);
 
             if (document != null)
             {
@@ -393,11 +384,16 @@ namespace AvalonStudio.Studio
             }
         }
 
-        public IFileDocumentTabViewModel GetDocument(string path)
+        public Task<ITextDocument> CreateDocumentAsync (string path)
+        {
+            return AvalonStudioTextDocument.CreateAsync(path);
+        }
+
+        public ITextEditor GetEditor(string path)
         {
             var shell = IoC.Get<IShell>();
 
-            return shell.Documents.OfType<TextEditorViewModel>().Where(d => d.SourceFile?.FilePath == path).FirstOrDefault();
+            return shell.Documents.OfType<TextEditorViewModel>().Where(d => d.SourceFile?.FilePath.CompareFilePath(path) == 0).FirstOrDefault();
         }
 
         public IProject GetDefaultProject()

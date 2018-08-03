@@ -11,9 +11,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.Commands
     {
         [ExportCommandDefinition("Editor.GoToDefinition")]
         public CommandDefinition GoToDefintionCommand =>
-            new CommandDefinition("Go to Definition", null, ReactiveCommand.CreateFromTask<IEditor>(GoToDefinition));
+            new CommandDefinition("Go to Definition", null, ReactiveCommand.CreateFromTask<ICodeEditor>(GoToDefinition));
 
-        private async Task GoToDefinition(IEditor editor)
+        private async Task GoToDefinition(ICodeEditor editor)
         {
             var definition = await editor.LanguageService?.GotoDefinition(editor, 1);
 

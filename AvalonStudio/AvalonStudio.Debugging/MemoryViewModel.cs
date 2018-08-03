@@ -83,10 +83,6 @@
             SelectedIndex = (long)(address / Columns);
         }
 
-        public new async void Invalidate()
-        {
-        }
-
         public void BeforeActivation()
         {
         }

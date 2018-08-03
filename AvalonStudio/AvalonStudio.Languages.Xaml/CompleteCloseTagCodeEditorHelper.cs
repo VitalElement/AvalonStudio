@@ -6,13 +6,13 @@ using System;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    class CompleteCloseTagCodeEditorHelper : ICodeEditorInputHelper
+    class CompleteCloseTagCodeEditorHelper : ITextEditorInputHelper
     {
-        public void AfterTextInput(ILanguageService languageServivce, IEditor editor, TextInputEventArgs args)
+        public bool AfterTextInput(ITextEditor editor, string text)
         {
-            if (args.Text == ">")
+            if (text == ">")
             {
-                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.CaretOffset - 1));
+                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.Offset - 1));
 
                 if (textBefore.Length > 2 && textBefore[textBefore.Length - 1] != '/')
                 {
@@ -21,15 +21,22 @@ namespace AvalonStudio.Languages.Xaml
                         || state.State == XmlParser.ParserState.StartElement
                         || state.State == XmlParser.ParserState.AfterAttributeValue))
                     {
-                        var caret = editor.CaretOffset;
+                        var caret = editor.Offset;
                         editor.Document.Insert(caret, $"</{state.TagName}>");
-                        editor.CaretOffset = caret;
+                        editor.Offset = caret;
                     }
                 }
             }
+
+            return false;
         }
 
-        public void BeforeTextInput(ILanguageService languageService, IEditor editor, TextInputEventArgs args)
+        public bool BeforeTextInput(ITextEditor editor, string text)
+        {
+            return false;
+        }
+
+        public void CaretMovedToEmptyLine(ITextEditor editor)
         {
         }
     }

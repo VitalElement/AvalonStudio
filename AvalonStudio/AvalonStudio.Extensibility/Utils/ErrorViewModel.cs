@@ -2,23 +2,21 @@ using Avalonia.Media;
 using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
+using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using System;
 using System.IO;
 
-namespace AvalonStudio.Controls.Standard.ErrorList
+namespace AvalonStudio.Utils
 {
     public class ErrorViewModel : ViewModel<Diagnostic>, IComparable<ErrorViewModel>
     {
-        public ErrorViewModel(Diagnostic model, object tag, ISourceFile associatedFile) : base(model)
+        public ErrorViewModel(Diagnostic model, object tag) : base(model)
         {
             Tag = tag;
-            AssociatedFile = associatedFile;
         }
 
         public object Tag { get; private set; }
-
-        public ISourceFile AssociatedFile { get; }
 
         public string File
         {
@@ -32,7 +30,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         public string Project
         {
-            get { return Model.Project.Name; }
+            get { return Model.Project; }
         }
 
         public int Line
@@ -40,10 +38,14 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             get { return Model.Line; }
         }
 
+        public string Code => Model.Code;
+
         public DiagnosticLevel Level
         {
             get { return Model.Level; }
         }
+
+        public DiagnosticSourceKind Source => Model.Source;
 
         public IBrush LevelBrush
         {
@@ -66,7 +68,19 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         public int CompareTo(ErrorViewModel other)
         {
-            return Line.CompareTo(other.Line);
+            var result = File.CompareFilePath(other.File);
+
+            if(result == 0)
+            {
+                result = Line.CompareTo(other.Line);
+
+                if(result == 0)
+                {
+                    result = Code.CompareTo(other.Code);
+                }
+            }
+
+            return result;
         }
     }
 }

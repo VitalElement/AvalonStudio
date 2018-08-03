@@ -1,4 +1,4 @@
-﻿using Avalonia.Media;
+using Avalonia.Media;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Studio;
@@ -60,11 +60,11 @@ namespace AvalonStudio.Studio
                 }
             });
 
-            EnterCommand = ReactiveCommand.Create(() =>
+            EnterCommand = ReactiveCommand.Create(async () =>
             {
                 var selectedResult = SelectedResult.Model;
-                IoC.Get<IStudio>().OpenDocument(selectedResult);
                 IsVisible = false;
+                await IoC.Get<IStudio>().OpenDocumentAsync(selectedResult, 1);
             });
 
             EscapeCommand = ReactiveCommand.Create(() =>
@@ -96,7 +96,7 @@ namespace AvalonStudio.Studio
 
                 await Task.Run(() =>
                 {
-                    foreach (var project in IoC.Get<IStudio>().CurrentSolution.Projects)
+                    foreach (var project in IoC.Get<IStudio>().CurrentSolution.Projects.ToList())
                     {
                         project.SourceFiles?.Select(sf =>
                         {

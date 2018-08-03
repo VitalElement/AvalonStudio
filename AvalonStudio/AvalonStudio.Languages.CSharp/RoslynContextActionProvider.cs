@@ -26,7 +26,7 @@ namespace AvalonStudio.Languages.CSharp
             _workspace = workspace;
         }
 
-        public async Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken)
+        public async Task<IEnumerable<CodeFix>> GetCodeFixes(ITextEditor editor, int offset, int length, CancellationToken cancellationToken)
         {
             var textSpan = new TextSpan(offset, length);
 

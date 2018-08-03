@@ -382,7 +382,7 @@ namespace AvalonStudio.Debugging.GDB
                 sfile = frameData.GetValue("file");
             if (sfile == null)
                 sfile = frameData.GetValue("from");
-            SourceLocation loc = new SourceLocation(func ?? "?", sfile, line);
+            var loc = new SourceLocation(func ?? "?", sfile, line, -1, -1, -1, null);
 
             long addr;
             if (!string.IsNullOrEmpty(sadr))

@@ -31,6 +31,7 @@ using System.Linq;
 using System.Windows.Input;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
+using Avalonia.Threading;
 
 namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 {
@@ -168,13 +169,16 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 
                 if(value)
                 {
-                    var _firstItem = _mainItem.ItemContainerGenerator.Containers.Select(c => c.ContainerControl).OfType<MenuItem>().FirstOrDefault();
-
-                    if(_firstItem != null)
+                    Dispatcher.UIThread.Post(() =>
                     {
-                        _firstItem.IsSelected = true;
-                        _firstItem.Focus();
-                    }
+                        var _firstItem = _mainItem.ItemContainerGenerator.Containers.Select(c => c.ContainerControl).OfType<MenuItem>().FirstOrDefault();
+
+                        if (_firstItem != null)
+                        {
+                            _firstItem.IsSelected = true;
+                            _firstItem.Focus();
+                        }
+                    });
                 }
             }
         }
@@ -183,7 +187,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 
         public new void Focus()
         {
-            _mainItem.Focus();
+            IsMenuOpen = true;
         }
 
         public void OpenAtLineStart(CodeEditor editor)

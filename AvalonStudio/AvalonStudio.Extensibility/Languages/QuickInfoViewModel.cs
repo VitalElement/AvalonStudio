@@ -1,9 +1,10 @@
-﻿using AvalonStudio.Languages;
+﻿using AvalonStudio.Controls;
+using AvalonStudio.Languages;
 using AvalonStudio.MVVM;
 
-namespace AvalonStudio.Controls.Standard.CodeEditor
+namespace AvalonStudio.Extensibility.Languages
 {
-    class QuickInfoViewModel : ViewModel<QuickInfoResult>
+    public class QuickInfoViewModel : ViewModel<QuickInfoResult>
     {
         public QuickInfoViewModel(QuickInfoResult model) : base(model)
         {

@@ -6,12 +6,12 @@ namespace AvalonStudio.Languages
 {
     [MetadataAttribute]
     [AttributeUsage(AttributeTargets.Class)]
-    public class ExportLanguageServiceAttribute : ExportAttribute
+    public class ExportLanguageServiceProviderAttribute : ExportAttribute
     {
         public IEnumerable<string> TargetCapabilities { get; }
 
-        public ExportLanguageServiceAttribute(params string[] targetCapabilities)
-            : base (typeof(ILanguageService))
+        public ExportLanguageServiceProviderAttribute(params string[] targetCapabilities)
+            : base (typeof(ILanguageServiceProvider))
         {
             TargetCapabilities = targetCapabilities;
         }

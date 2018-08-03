@@ -9,12 +9,11 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    [ExportLanguageService(ContentCapabilities.Xaml)]
     internal class XamlLanguageService : XmlLanguageService
     {
         public override string LanguageId => "xaml";
 
-        public override bool CanHandle(IEditor editor)
+        public override bool CanHandle(ITextEditor editor)
         {
             var result = false;
 
@@ -63,7 +62,7 @@ namespace AvalonStudio.Languages.Xaml
             return result;
         }
 
-        public override async Task<CodeCompletionResults> CodeCompleteAtAsync(IEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
+        public override async Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             var results = new CodeCompletionResults();
 
@@ -110,7 +109,7 @@ namespace AvalonStudio.Languages.Xaml
             }
         }
 
-        public override void RegisterSourceFile(IEditor editor)
+        public override void RegisterSourceFile(ITextEditor editor)
         {
             if (engine == null)
             {
@@ -120,7 +119,7 @@ namespace AvalonStudio.Languages.Xaml
             CreateMetaDataIfRequired(editor.SourceFile.Project.Solution.StartupProject.Executable);
         }
 
-        public override void UnregisterSourceFile(IEditor editor)
+        public override void UnregisterSourceFile(ITextEditor editor)
         {
 
         }

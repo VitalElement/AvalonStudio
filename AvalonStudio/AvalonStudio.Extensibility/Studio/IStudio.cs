@@ -13,7 +13,7 @@ namespace AvalonStudio.Extensibility.Studio
 {
     public interface IStudio
     {
-        IEnumerable<Lazy<ILanguageService, LanguageServiceMetadata>> LanguageServices { get; }
+        IEnumerable<Lazy<ILanguageServiceProvider, LanguageServiceProviderMetadata>> LanguageServiceProviders { get; }
         IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> SolutionTypes { get; }
         IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
         IEnumerable<Lazy<IEditorProvider>> EditorProviders { get; }
@@ -41,13 +41,13 @@ namespace AvalonStudio.Extensibility.Studio
 
         event EventHandler<BuildEventArgs> BuildCompleted;
 
-        IFileDocumentTabViewModel GetDocument(string path);
-
-        IFileDocumentTabViewModel OpenDocument(ISourceFile file);
+        ITextEditor GetEditor(string path);
 
         void RemoveDocument(ISourceFile document);
 
-        Task<IFileDocumentTabViewModel> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true);
+        Task<ITextDocument> CreateDocumentAsync(string path);
+
+        Task<ITextDocumentTabViewModel> OpenDocumentAsync(ISourceFile file, int line, int startColumn = -1, int endColumn = -1, bool debugHighlight = false, bool selectLine = false, bool focus = true);
 
         void CloseDocumentsForProject(IProject project);
 

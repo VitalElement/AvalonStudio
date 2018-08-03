@@ -43,19 +43,20 @@
           </ContextMenu>
         </Grid.ContextMenu>
 
-        <editor:CodeEditor Name="editor"
+            <editor:CodeEditor Name="editor"
                            BorderThickness="0" Margin="0"
                            VerticalAlignment="Stretch"
                            FontFamily="{DynamicResource EditorFont}"
                            FontSize="{Binding VisualFontSize}"
-                           SourceFile="{Binding SourceFile}"
                            IsDirty="{Binding IsDirty}"
                            IsReadOnly="{Binding IsReadOnly}"
-                           SourceText="{Binding SourceText}"
                            HighlightSelectedWord="False"
                            ColorScheme="{Binding ColorScheme}"
-                           DebugHighlight="{Binding DebugHighlight}"
-                           DocumentAccessor="{Binding DocumentAccessor}">          
+                           EditorCaretOffset="{Binding Offset}"
+                           Line="{Binding Line}"
+                           Column="{Binding Column}"
+                           Selection="{Binding Selection}"
+                           Editor="{Binding }">          
         </editor:CodeEditor>
       </Grid>
     </DockPanel>
