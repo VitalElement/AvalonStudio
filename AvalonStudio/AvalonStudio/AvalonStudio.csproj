@@ -58,4 +58,12 @@
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Avalonia.Windowing">
+      <HintPath>Avalonia.Windowing.dll</HintPath>
+    </Reference>
+    <Reference Include="Avalonia.Gpu">
+      <HintPath>Avalonia.Gpu.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 </Project>

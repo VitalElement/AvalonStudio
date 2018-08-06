@@ -10,6 +10,7 @@ using Serilog;
 using System;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility;
+using Avalonia.Windowing;
 
 namespace AvalonStudio
 {
@@ -69,7 +70,7 @@ namespace AvalonStudio
         }
 
         public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>().UsePlatformDetect();
+        => AppBuilder.Configure<App>().UseWinit().UseSkia();
 
         public override void Initialize()
         {

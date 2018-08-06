@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Avalonia.Windowing</name>
+    </assembly>
+    <members>
+        <member name="T:Avalonia.Windowing.Bindings.GlWindowWrapper">
+            <summary>
+            A window and GL context pair.
+            Due to platform specific quirks, the ordering of window and context creation must be controlled by winit.
+            </summary>
+        </member>
+        <member name="T:Avalonia.Windowing.Bindings.IWindowWrapper">
+            <summary>
+            An interface used to abstract between Window and GlWindow.
+            </summary>
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Key1">
+            The '1' key over the letters.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Key2">
+            The '2' key over the letters.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Key3">
+            The '3' key over the letters.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Key4">
+            The '4' key over the letters.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Key5">
+            The '5' key over the letters.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Key6">
+            The '6' key over the letters.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Key7">
+            The '7' key over the letters.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Key8">
+            The '8' key over the letters.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Key9">
+            The '9' key over the letters.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Key0">
+            The '0' key over the 'O' and 'P' keys.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Escape">
+            The Escape key, next to F1.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Snapshot">
+            Print Screen/SysRq.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Scroll">
+            Scroll Lock.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Pause">
+            Pause/Break key, next to Scroll lock.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Insert">
+            `Insert`, next to Backspace.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Back">
+            The Backspace key, right over Enter.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Return">
+            The Enter key.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Space">
+            The space bar.
+        </member>
+        <member name="F:Avalonia.Windowing.VirtualKeyCode.Compose">
+            The "Compose" key on Linux.
+        </member>
+    </members>
+</doc>
