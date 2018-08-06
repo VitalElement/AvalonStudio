@@ -15,10 +15,10 @@ namespace AvalonStudio.Languages.Xaml
     {
         private static readonly List<ITextEditorInputHelper> s_InputHelpers = new List<ITextEditorInputHelper>
         {
-            new XmlIndentationTextInputHelper()
-            /*new CompleteCloseTagCodeEditorHelper(),
+            new XmlIndentationTextInputHelper(),
+            new CompleteCloseTagCodeEditorHelper(),
             new TerminateElementCodeEditorHelper(),
-            new InsertQuotesForPropertyValueCodeEditorHelper(),
+            /*new InsertQuotesForPropertyValueCodeEditorHelper(),
             new InsertExtraNewLineBetweenAttributesOnEnterCodeInputHelper()*/
         };
 

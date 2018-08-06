@@ -56,5 +56,25 @@ namespace AvalonStudio.Languages.Xaml.Tests
 
             testEditor.AssertEditorState("<Tag>\n  <Tag />\n  |\n</Tag>");
         }
+
+        [Fact]
+        public void Xml_Reindentation_Occurs_On_Element_Close()
+        {
+            var testEditor = TestEditorManager.Create("<Tag>\n    <Tag /|\n</Tag>", new XmlIndentationTextInputHelper());
+
+            testEditor.Input(">");
+
+            testEditor.AssertEditorState("<Tag>\n  <Tag />|\n</Tag>");
+        }
+
+        [Fact]
+        public void Xml_Reindentation_Occurs_On_Element_ShortClose()
+        {
+            var testEditor = TestEditorManager.Create("<Tag>\n    <Tag |\n</Tag>", new XmlIndentationTextInputHelper());
+
+            testEditor.Input("/");
+
+            testEditor.AssertEditorState("<Tag>\n  <Tag /|\n</Tag>");
+        }
     }
 }

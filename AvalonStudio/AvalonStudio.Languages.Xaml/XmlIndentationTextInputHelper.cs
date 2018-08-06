@@ -2,48 +2,63 @@
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AvalonStudio.Languages.Xaml
 {
     public class XmlIndentationTextInputHelper : ITextEditorInputHelper
     {
-        public bool AfterTextInput(ITextEditor editor, string inputText)
+        private void Indent (ITextEditor editor, XmlParser parser)
         {
-            if (inputText == "\n")
+            switch (parser.State)
             {
-                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.Offset));
-
-                var parser = XmlParser.Parse(textBefore);
-
-                switch (parser.State)
-                {
-                    case XmlParser.ParserState.None:
-                        var prevTagWhitespace = editor.Document.GetWhitespaceBefore(parser.ContainingTagStart);
-
+                case XmlParser.ParserState.None:
+                    {
                         var currentLineWhitespace = editor.Document.GetWhitespaceAfter(editor.CurrentLine().Offset);
 
-                        if (parser.NestingLevel > 0)
-                        {
-                            editor.Document.Replace(currentLineWhitespace,
-                                editor.Document.GetText(prevTagWhitespace) +
-                                new string(' ', 2));
-                        }
-                        else
-                        {
-                            editor.Document.Replace(currentLineWhitespace,
-                                editor.Document.GetText(prevTagWhitespace));
-                        }
+                        editor.Document.Replace(currentLineWhitespace, new string(' ', 2 * parser.NestingLevel));
+                    }
+                    break;
 
-                        if(editor.Offset < editor.Document.TextLength && editor.Document.Text[editor.Offset] == '<')
-                        {
-                            editor.Document.Insert(editor.Offset, "\n" + editor.Document.GetText(prevTagWhitespace));
+                case XmlParser.ParserState.InsideElement:
+                    {
+                        var currentLineWhitespace = editor.Document.GetWhitespaceAfter(editor.CurrentLine().Offset);
 
-                            editor.Offset = editor.PreviousLine().Offset + editor.PreviousLine().Length;
+                        var location = editor.Document.GetLocation(parser.ElementNameEnd.Value);
+                        var line = editor.Document.GetLineByNumber(location.Line);
+
+                        var whitespace = parser.ElementNameEnd - line.Offset;
+
+                        editor.Document.Replace(currentLineWhitespace, new string(' ', whitespace.Value + 2));
+                    }
+                    break;
+            }
+        }
+
+        public bool AfterTextInput(ITextEditor editor, string inputText)
+        {
+            switch (inputText)
+            {
+                case "\n":
+                case ">":
+                case "/":
+                    {
+                        var textBefore = editor.Document.GetText(0, Math.Max(0, editor.CurrentLine().Offset));
+
+                        var parser = XmlParser.Parse(textBefore);
+
+                        Indent(editor, parser);
+
+                        if(parser.State == XmlParser.ParserState.None && inputText == "\n")
+                        {
+                            if (editor.Offset < editor.Document.TextLength && editor.Document.Text[editor.Offset] == '<')
+                            {
+                                editor.Document.Insert(editor.Offset, "\n" + new string(' ', 2 * (parser.NestingLevel - 1)));
+
+                                editor.Offset = editor.PreviousLine().Offset + editor.PreviousLine().Length;
+                            }
                         }
-                        break;
-                }
+                    }
+                    break;
             }
 
             return false;
@@ -56,6 +71,11 @@ namespace AvalonStudio.Languages.Xaml
 
         public void CaretMovedToEmptyLine(ITextEditor editor)
         {
+            var textBefore = editor.Document.GetText(0, Math.Max(0, editor.CurrentLine().Offset));
+
+            var parser = XmlParser.Parse(textBefore);
+
+            Indent(editor, parser);
         }
     }
 }
