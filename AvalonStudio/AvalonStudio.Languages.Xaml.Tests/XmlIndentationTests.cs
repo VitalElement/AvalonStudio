@@ -18,6 +18,16 @@ namespace AvalonStudio.Languages.Xaml.Tests
         }
 
         [Fact]
+        public void Xml_Indentation_Doesnt_Indentation_When_NewLine_Inserted_Between_Tags_But_After_Short_Closed_Tag()
+        {
+            var testEditor = TestEditorManager.Create("<Tag>\n  <Tag/>\n  |/Tag>", new XmlIndentationTextInputHelper());
+
+            testEditor.Input("<");
+
+            testEditor.AssertEditorState("<Tag>\n  <Tag/>\n<|/Tag>");
+        }
+
+        [Fact]
         public void Xml_Indentation_Inserts_Indentation_When_NewLine_Inserted_Between_Nested_Tags()
         {
             var testEditor = TestEditorManager.Create("<Tag>\n  <Tag>|</Tag>\n</Tag>", new XmlIndentationTextInputHelper());
