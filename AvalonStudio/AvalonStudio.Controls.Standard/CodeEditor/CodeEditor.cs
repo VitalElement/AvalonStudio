@@ -263,17 +263,14 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                     _lineNumberMargin.Background = colorScheme.Background;
 
-                    if (_textColorizer != null)
-                    {
-                        _textColorizer.ColorScheme = colorScheme;
-                    }
-
                     if(_diagnosticMarkersRenderer != null)
                     {
                         _diagnosticMarkersRenderer.ColorScheme = colorScheme;
                     }
 
+                    _textColorizer?.RecalculateBrushes();
                     TextArea.TextView.InvalidateLayer(KnownLayer.Background);
+                    TextArea.TextView.Redraw();
                 }
             }),
 

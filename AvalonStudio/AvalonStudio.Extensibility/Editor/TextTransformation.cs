@@ -3,6 +3,7 @@
     using Avalonia.Media;
     using AvaloniaEdit.Document;
     using AvalonStudio.CodeEditor;
+    using AvalonStudio.Languages;
 
     public abstract class TextTransformation : TextSegment
     {
@@ -20,12 +21,15 @@
 
     public class ForegroundTextTransformation : TextTransformation
     {
-        public ForegroundTextTransformation(object tag, int startOffset, int endOffset, IBrush foreground) : base(tag, startOffset, endOffset)
+        public ForegroundTextTransformation(object tag, int startOffset, int endOffset, IBrush foreground, HighlightType type) : base(tag, startOffset, endOffset)
         {
             Foreground = foreground;
+            Type = type;
         }
 
-        public IBrush Foreground { get; }
+        public IBrush Foreground { get; set; }
+
+        public HighlightType Type { get; }
 
         public override void Transform(GenericLineTransformer transformer, DocumentLine line)
         {
