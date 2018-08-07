@@ -48,6 +48,6 @@ namespace AvalonStudio.Shell.Commands
         private void ShowExtensionsPage() =>
             _shell.AddDocument(new ExtensionManagerDialogViewModel(_extensionManager));
 
-        private void ShowOptionsPage() => _shell.AddDocument(IoC.Get<SettingsDialogViewModel>());
+        private void ShowOptionsPage() => _shell.AddOrSelectDocument(IoC.Get<SettingsDialogViewModel>());
     }
 }

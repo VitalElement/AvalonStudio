@@ -56,8 +56,6 @@ namespace AvalonStudio.TextEditor.Rendering
                     if (geometry != null)
                     {
                         drawingContext.DrawGeometry(BackgroundBrush, BorderPen, geometry);
-
-
                     }
                 }
             }
