@@ -17,18 +17,31 @@ namespace AvalonStudio.Languages.Xaml
             {
                 case XmlParser.ParserState.None:
                     {
-                        var currentLineWhitespace = editor.Document.GetWhitespaceAfter(offset);
+                        var line = editor.Document.GetLineByNumber(editor.Document.GetLocation(offset).Line);
 
-                        editor.Document.Replace(currentLineWhitespace, new string(' ', 2 * parser.NestingLevel));
+                        var nextText = editor.Document.GetText(offset, line.EndOffset - offset);
+
+                        int nestOffset = 0;
+
+                        if(nextText.Contains("</"))
+                        {
+                            nestOffset = -1;
+                        }
+
+                        var currentLineWhitespace = editor.Document.GetWhitespaceAfter(line.Offset);
+
+                        editor.Document.Replace(currentLineWhitespace, new string(' ', 2 * (parser.NestingLevel + nestOffset)));
                     }
                     break;
 
                 case XmlParser.ParserState.InsideElement:
                     {
-                        var currentLineWhitespace = editor.Document.GetWhitespaceAfter(offset);
+                        var line = editor.Document.GetLineByNumber(editor.Document.GetLocation(offset).Line);
+
+                        var currentLineWhitespace = editor.Document.GetWhitespaceAfter(line.Offset);
 
                         var location = editor.Document.GetLocation(parser.ElementNameEnd.Value);
-                        var line = editor.Document.GetLineByNumber(location.Line);
+                        line = editor.Document.GetLineByNumber(location.Line);
 
                         var whitespace = parser.ElementNameEnd - line.Offset;
 
@@ -44,20 +57,29 @@ namespace AvalonStudio.Languages.Xaml
         {
             switch (inputText)
             {
-                case "\n":
+                case "<":
                 case ">":
                 case "/":
                     {
-                        var parser = Indent(editor, editor.CurrentLine().Offset);
+                        Indent(editor, editor.CurrentLine().Offset);
+                    }
+                    break;
 
-                        if(parser.State == XmlParser.ParserState.None && inputText == "\n")
+                case "\n":
+                    var textBefore = editor.Document.GetText(0, Math.Max(0, editor.CurrentLine().Offset));
+                    var parser = XmlParser.Parse(textBefore);
+
+                    if (parser.State == XmlParser.ParserState.None && inputText == "\n")
+                    {
+                        if (editor.Offset < editor.Document.TextLength && editor.Document.Text[editor.Offset] == '<')
                         {
-                            if (editor.Offset < editor.Document.TextLength && editor.Document.Text[editor.Offset] == '<')
-                            {
-                                editor.Document.Insert(editor.Offset, "\n" + new string(' ', 2 * (parser.NestingLevel > 0 ? parser.NestingLevel - 1 : 0)));
+                            var line = editor.CurrentLine();
+                            var currentLineWhitespace = editor.Document.GetWhitespaceAfter(line.Offset);
 
-                                editor.Offset = editor.PreviousLine().Offset + editor.PreviousLine().Length;
-                            }
+                            editor.Document.Replace(currentLineWhitespace, new string(' ', 2 * parser.NestingLevel) + "\n");
+
+                            Indent(editor, editor.CurrentLine().Offset);
+                            editor.Offset = editor.PreviousLine().Offset + editor.PreviousLine().Length;
                         }
                     }
                     break;
