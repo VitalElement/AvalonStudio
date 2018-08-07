@@ -72,6 +72,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         private TextColoringTransformer _textColorizer;
 
         private ScopeLineBackgroundRenderer _scopeLineBackgroundRenderer;
+        private BracketMatchingBackgroundRenderer _bracketMatchingBackgroundRenderer;
 
         private bool _isLoaded = false;
 
@@ -100,6 +101,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _breakpointMargin = new BreakPointMargin(this, IoC.Get<IDebugManager2>()?.Breakpoints);
 
             _selectedLineBackgroundRenderer = new SelectedLineBackgroundRenderer(this);
+            _bracketMatchingBackgroundRenderer = new BracketMatchingBackgroundRenderer(this);
 
             _selectedWordBackgroundRenderer = new SelectedWordBackgroundRenderer();
 
@@ -111,6 +113,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             TextArea.TextView.BackgroundRenderers.Add(_selectedDebugLineBackgroundRenderer);
             TextArea.TextView.LineTransformers.Add(_selectedDebugLineBackgroundRenderer);
+            TextArea.TextView.BackgroundRenderers.Add(_bracketMatchingBackgroundRenderer);
 
             TextArea.SelectionBrush = Brush.Parse("#AA569CD6");
             TextArea.SelectionCornerRadius = 0;
@@ -412,6 +415,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
                         _textColorizer = new TextColoringTransformer(Document);
                         _scopeLineBackgroundRenderer = new ScopeLineBackgroundRenderer(Document);
+
 
                         TextArea.TextView.BackgroundRenderers.Add(_scopeLineBackgroundRenderer);
                         TextArea.TextView.LineTransformers.Insert(0, _textColorizer);
