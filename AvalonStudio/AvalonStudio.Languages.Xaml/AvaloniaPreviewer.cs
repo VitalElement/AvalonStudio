@@ -218,7 +218,10 @@ namespace AvalonStudio.Languages.Xaml
 
             _disposables = new CompositeDisposable
             {
-                this.GetObservable(XamlProperty).Subscribe(xaml =>
+                this.GetObservable(XamlProperty)
+                .Throttle(TimeSpan.FromMilliseconds(100))
+                .ObserveOn(AvaloniaScheduler.Instance)
+                .Subscribe(xaml =>
                 {
                     _connection?.Send(new UpdateXamlMessage
                     {

@@ -300,7 +300,7 @@
             return result;
         }
 
-        private bool DoComplete(bool includeLastChar, int caretOffset = 0)
+        private bool DoComplete(bool includeInputText, bool searchAndReopen, int caretOffset = 0, string inputText = "")
         {
             int caretIndex = -1;
 
@@ -313,25 +313,18 @@
             {
                 result = true;
 
-                var offset = 0;
-
-                if (includeLastChar)
-                {
-                    offset = 1;
-                }
-
                 using (editor.Document.RunUpdate())
                 {
                     int wordStart = editor.Document.GetIntellisenseStartPosition(caretIndex + caretOffset, languageService.IsValidIdentifierCharacter);
 
-                    if (caretIndex - wordStart - offset >= 0 && intellisenseControl.SelectedCompletion != null)
+                    if (caretIndex - wordStart >= 0 && intellisenseControl.SelectedCompletion != null)
                     {
-                        //if(editor.Document.GetCharAt(wordStart) == intellisenseControl.SelectedCompletion.Model.InsertionText[0])
-                        //{
-                        //    offset = 0;
-                        //}
+                        if(intellisenseControl.SelectedCompletion.Model.InsertionText.Contains(inputText))
+                        {
+                            includeInputText = false;
+                        }
 
-                        editor.Document.Replace(wordStart, caretIndex - wordStart - offset,
+                        editor.Document.Replace(wordStart, caretIndex - wordStart,
                                 intellisenseControl.SelectedCompletion.Model.InsertionText);
 
                         var length = intellisenseControl.SelectedCompletion.Model.InsertionText.Length;
@@ -341,16 +334,28 @@
                             length = intellisenseControl.SelectedCompletion.Model.RecommendedCaretPosition.Value;
                         }
 
-                        caretIndex = wordStart + length + offset;
+                        caretIndex = wordStart + length;
 
-                        editor.Offset = caretIndex;
+                        if(includeInputText && inputText != string.Empty)
+                        {
+                            editor.Document.Insert(caretIndex, inputText);
+                            caretIndex += inputText.Length;
+                        }
 
-                        if (intellisenseControl.SelectedCompletion.Model.RecommendImmediateSuggestions)
+                        if (_studio.DebugMode)
+                        {
+                            _console.WriteLine($"Completed: {caretIndex}");
+                        }
+
+                        if (intellisenseControl.SelectedCompletion.Model.RecommendImmediateSuggestions || searchAndReopen)
                         {
                             hiddenOverride = true;
+                            _justOpened = true;
                         }
                     }
                 }
+
+                editor.Offset = caretIndex;
             }
 
             CloseIntellisense();
@@ -527,7 +532,12 @@
 
                     if (_studio.DebugMode)
                     {
-                        _console.WriteLine("Set Cursor");
+                      _console.WriteLine($"Set Cursor {index}");
+
+                        if(index != 270)
+                        {
+
+                        }
                     }
 
                     _requestingData = true;
@@ -598,11 +608,16 @@
                 char currentChar = e.Text[0];
                 char previousChar = '\0';
 
+                if (caretIndex >= 2)
+                {
+                    previousChar = editor.Document.GetCharAt(caretIndex - 2);
+                }
+
                 if (intellisenseControl.IsVisible)
                 {
                     if (IsCompletionChar(currentChar))
                     {
-                        DoComplete(true, -1);
+                        DoComplete(true, IsSearchChar(currentChar) && IsTriggerChar(currentChar, previousChar, !_hidden), - 1, e.Text);
                     }
                 }
 
@@ -614,14 +629,9 @@
                     }
                 }
 
-                if (currentChar.IsWhiteSpace() || IsSearchChar(currentChar))
+                if (!_justOpened &&(currentChar.IsWhiteSpace() || IsSearchChar(currentChar)))
                 {
                     SetCursor(caretIndex, line, column, CodeEditor.UnsavedFiles, false);
-                }
-
-                if (caretIndex >= 2)
-                {
-                    previousChar = editor.Document.GetCharAt(caretIndex - 2);
                 }
 
                 if (IsTriggerChar(currentChar, previousChar, !_hidden))
@@ -630,7 +640,7 @@
                     {
                         OpenIntellisense(currentChar, previousChar, caretIndex);
                     }
-                    else
+                    else if (!_justOpened)
                     {
                         if (!UpdateFilter(caretIndex))
                         {
@@ -687,7 +697,7 @@
 
                     case Key.Tab:
                     case Key.Enter:
-                        DoComplete(false);
+                        DoComplete(false, false);
                         e.Handled = true;
                         break;
                 }
