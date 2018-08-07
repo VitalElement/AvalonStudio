@@ -32,12 +32,12 @@ namespace AvalonStudio.Languages.Xaml
 
         public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables => new Dictionary<string, Func<int, int, int, string>>();
 
-        public IEnumerable<char> IntellisenseSearchCharacters => new[]
+        public IEnumerable<char> IntellisenseSearchCharacters { get; } = new[]
         {
-            '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#', ','
+            '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#', ',',' '
         };
 
-        public IEnumerable<char> IntellisenseCompleteCharacters => new[]
+        public IEnumerable<char> IntellisenseCompleteCharacters { get; } = new[]
         {
             ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
