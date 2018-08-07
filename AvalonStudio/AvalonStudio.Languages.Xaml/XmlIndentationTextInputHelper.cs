@@ -7,13 +7,17 @@ namespace AvalonStudio.Languages.Xaml
 {
     public class XmlIndentationTextInputHelper : ITextEditorInputHelper
     {
-        private void Indent (ITextEditor editor, XmlParser parser)
+        public static XmlParser Indent (ITextEditor editor, int offset)
         {
+            var textBefore = editor.Document.GetText(0, Math.Max(0, offset));
+
+            var parser = XmlParser.Parse(textBefore);
+
             switch (parser.State)
             {
                 case XmlParser.ParserState.None:
                     {
-                        var currentLineWhitespace = editor.Document.GetWhitespaceAfter(editor.CurrentLine().Offset);
+                        var currentLineWhitespace = editor.Document.GetWhitespaceAfter(offset);
 
                         editor.Document.Replace(currentLineWhitespace, new string(' ', 2 * parser.NestingLevel));
                     }
@@ -21,7 +25,7 @@ namespace AvalonStudio.Languages.Xaml
 
                 case XmlParser.ParserState.InsideElement:
                     {
-                        var currentLineWhitespace = editor.Document.GetWhitespaceAfter(editor.CurrentLine().Offset);
+                        var currentLineWhitespace = editor.Document.GetWhitespaceAfter(offset);
 
                         var location = editor.Document.GetLocation(parser.ElementNameEnd.Value);
                         var line = editor.Document.GetLineByNumber(location.Line);
@@ -32,6 +36,8 @@ namespace AvalonStudio.Languages.Xaml
                     }
                     break;
             }
+
+            return parser;
         }
 
         public bool AfterTextInput(ITextEditor editor, string inputText)
@@ -42,11 +48,7 @@ namespace AvalonStudio.Languages.Xaml
                 case ">":
                 case "/":
                     {
-                        var textBefore = editor.Document.GetText(0, Math.Max(0, editor.CurrentLine().Offset));
-
-                        var parser = XmlParser.Parse(textBefore);
-
-                        Indent(editor, parser);
+                        var parser = Indent(editor, editor.CurrentLine().Offset);
 
                         if(parser.State == XmlParser.ParserState.None && inputText == "\n")
                         {
@@ -71,11 +73,7 @@ namespace AvalonStudio.Languages.Xaml
 
         public void CaretMovedToEmptyLine(ITextEditor editor)
         {
-            var textBefore = editor.Document.GetText(0, Math.Max(0, editor.CurrentLine().Offset));
-
-            var parser = XmlParser.Parse(textBefore);
-
-            Indent(editor, parser);
+            Indent(editor, editor.CurrentLine().Offset);
         }
     }
 }

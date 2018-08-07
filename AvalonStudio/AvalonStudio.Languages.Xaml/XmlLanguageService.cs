@@ -66,53 +66,18 @@ namespace AvalonStudio.Languages.Xaml
 
         public int Format(uint offset, uint length, int cursor)
         {
-            var text = _editor.Document.GetText((int)offset, (int)length);
+            var start = _editor.Document.GetLocation((int)offset);
+            var end = _editor.Document.GetLocation((int)(offset + length));
 
-            XmlDocument doc = null;
-            try
+            using (_editor.Document.RunUpdate())
             {
-                doc = new XmlDocument
+                for (int i = start.Line; i < end.Line; i++)
                 {
-                    XmlResolver = null // Prevent DTDs from being downloaded.
-                };
-
-                doc.LoadXml(text);
-            }
-            catch (XmlException ex)
-            {
-                // handle xml files without root element (https://bugzilla.xamarin.com/show_bug.cgi?id=4748)
-                if (ex.Message == "Root element is missing.")
-                {
-
+                    XmlIndentationTextInputHelper.Indent(_editor, _editor.Document.Lines[i].Offset);
                 }
-
-                return cursor;
             }
-            catch (Exception)
-            {
-                return cursor;
-            }
-
-            var stringBuilder = new StringBuilder();
-
-            var element = XElement.Parse(text);
-
-            var settings = new XmlWriterSettings
-            {
-                OmitXmlDeclaration = true,
-                Indent = true,
-                NamespaceHandling = NamespaceHandling.OmitDuplicates,
-                IndentChars = "  "
-            };
-
-            using (var xmlWriter = XmlWriter.Create(stringBuilder, settings))
-            {
-                element.Save(xmlWriter);
-            }
-
-            _editor.Document.Replace(0, _editor.Document.TextLength, stringBuilder.ToString());
-
-            return cursor;
+            
+            return _editor.Offset;
         }
 
         public Task<QuickInfoResult> QuickInfo(IEnumerable<UnsavedFile> unsavedFiles, int offset)
