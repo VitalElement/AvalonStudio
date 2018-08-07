@@ -54,7 +54,7 @@ namespace AvalonStudio.Languages.Xaml
                         {
                             if (editor.Offset < editor.Document.TextLength && editor.Document.Text[editor.Offset] == '<')
                             {
-                                editor.Document.Insert(editor.Offset, "\n" + new string(' ', 2 * (parser.NestingLevel - 1)));
+                                editor.Document.Insert(editor.Offset, "\n" + new string(' ', 2 * (parser.NestingLevel > 0 ? parser.NestingLevel - 1 : 0)));
 
                                 editor.Offset = editor.PreviousLine().Offset + editor.PreviousLine().Length;
                             }
