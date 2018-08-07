@@ -30,7 +30,7 @@ namespace AvalonStudio.Languages.Xaml
                     {
                         var caret = editor.Offset;
                         editor.Document.Insert(caret, ">");
-                        editor.Offset = caret;
+                        editor.Offset = caret +  (state.TagName == string.Empty ? 0 : 1);
                     }
                 }
             }
