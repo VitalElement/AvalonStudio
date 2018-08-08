@@ -329,7 +329,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
             Observable.FromEventPattern(TextArea.Caret, nameof(TextArea.Caret.PositionChanged)).Subscribe(e =>
             {
-                if(_isLoaded)
+                if(_isLoaded && Document != null)
                 {
                     _lastLine = TextArea.Caret.Line;
 
