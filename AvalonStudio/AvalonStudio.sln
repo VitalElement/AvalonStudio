@@ -130,6 +130,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.DataGrid", "..\Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.DataGrid.Themes.Default", "..\DataGrid\src\Avalonia.DataGrid.Themes.Default\Avalonia.DataGrid.Themes.Default.csproj", "{E23DB11F-D547-42C6-A128-AF6F23DF315A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Languages.Xaml.Tests", "AvalonStudio.Languages.Xaml.Tests\AvalonStudio.Languages.Xaml.Tests.csproj", "{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1022,6 +1024,22 @@ Global
 		{E23DB11F-D547-42C6-A128-AF6F23DF315A}.Release|x64.Build.0 = Release|Any CPU
 		{E23DB11F-D547-42C6-A128-AF6F23DF315A}.Release|x86.ActiveCfg = Release|Any CPU
 		{E23DB11F-D547-42C6-A128-AF6F23DF315A}.Release|x86.Build.0 = Release|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Debug|ARM.Build.0 = Debug|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Debug|x64.Build.0 = Debug|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Debug|x86.Build.0 = Debug|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Release|ARM.ActiveCfg = Release|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Release|ARM.Build.0 = Release|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Release|x64.ActiveCfg = Release|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Release|x64.Build.0 = Release|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Release|x86.ActiveCfg = Release|Any CPU
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1064,6 +1082,7 @@ Global
 		{79EDFD78-6ED2-426D-AD07-61617DD4ED29} = {E22D2558-C9DA-4E94-9014-084F28A38431}
 		{67E9AA4C-81DC-45AE-9F08-F4F4734F57E1} = {0DACCA4D-C93E-45AC-8206-FF2E5C0BC587}
 		{C5351CEE-B3DB-4D28-AAC2-E735E67DD642} = {0DACCA4D-C93E-45AC-8206-FF2E5C0BC587}
+		{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7} = {528C3D32-4210-4109-AE60-B965C6BED1C3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54EEE82F-58D0-4EF3-990D-CBFA0C11A3D6}

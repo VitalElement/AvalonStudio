@@ -20,7 +20,7 @@ namespace AvalonStudio.TextEditor.Rendering
         {
             _textEditor = textEditor;
 
-            BorderPen = new Pen(BorderBrush);
+            BorderPen = new Pen(BackgroundBrush);
         }
 
         public KnownLayer Layer => KnownLayer.Background;
@@ -56,8 +56,6 @@ namespace AvalonStudio.TextEditor.Rendering
                     if (geometry != null)
                     {
                         drawingContext.DrawGeometry(BackgroundBrush, BorderPen, geometry);
-
-
                     }
                 }
             }
