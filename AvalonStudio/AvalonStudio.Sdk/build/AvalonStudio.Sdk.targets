@@ -1,0 +1,128 @@
+<Project>
+
+  <PropertyGroup>
+    <ExtensionOutputPath Condition="'$(ExtensionOutputPath)' == ''">$(OutputPath)</ExtensionOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AvalonStudioSdkToolsPath>$(MSBuildThisFileDirectory)..\tools\</AvalonStudioSdkToolsPath>
+    <AvalonStudioSdkBuildTasksAssembly>$(AvalonStudioSdkToolsPath)AvalonStudio.Sdk.Build.Tasks.dll</AvalonStudioSdkBuildTasksAssembly>
+  </PropertyGroup>
+
+  <UsingTask TaskName="AvalonStudio.Sdk.Build.Tasks.GenerateExtensionManifest"
+             AssemblyFile="$(AvalonStudioSdkBuildTasksAssembly)" />
+
+  <PropertyGroup>
+    <BuildDependsOn>
+      $(BuildDependsOn);
+      GenerateExtensionPackage
+    </BuildDependsOn>
+    <GenerateExtensionPackageDependsOn>
+      GenerateExtensionManifest;
+      CreateExtensionPackage
+    </GenerateExtensionPackageDependsOn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(PackingAvalonStudioExtension)' == 'True'">
+    <NoBuild>True</NoBuild>
+    <IncludeBuildOutput>False</IncludeBuildOutput>
+    <PackageType>AvalonStudioExtension</PackageType>
+    <PackageOutputPath>$(ExtensionOutputPath)</PackageOutputPath>
+    <!-- NuGet 4.8+ -->
+    <SuppressDependenciesWhenPacking>True</SuppressDependenciesWhenPacking>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackExtension</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+
+  <!--
+    ================================================================================
+    
+      GenerateExtensionPackage
+      
+      Main target for generating the extension package, it's added to the end
+      of the Build target dependencies.
+      
+    ================================================================================
+  -->
+  <Target Name="GenerateExtensionPackage"
+          DependsOnTargets="$(GenerateExtensionPackageDependsOn)" />
+
+  <PropertyGroup>
+    <ExtensionManifest Condition="'$(ExtensionManifest)' == ''">extension.json</ExtensionManifest>
+    <_IntermediateExtensionManifest Condition="'$(_IntermediateExtensionManifest)' == ''">$(BaseIntermediateOutputPath)$(ExtensionManifest)</_IntermediateExtensionManifest>
+  </PropertyGroup>
+
+  <!--
+    ================================================================================
+    
+      GenerateExtensionManifest
+      
+      Checks if the extension manifest exists, and generates the final extension
+      manifest after verifying that its contents are correct and replacing tokens.
+      
+    ================================================================================
+  -->
+  <Target Name="GenerateExtensionManifest"
+          Inputs="$(ExtensionManifest)"
+          Outputs="$(_IntermediateExtensionManifest)">
+
+    <Error Code="AsSdk0001"
+           Text="Extension manifest not found!"
+           Condition="!Exists('$(ExtensionManifest)')" />
+
+    <Copy SourceFiles="$(ExtensionManifest)"
+          DestinationFolder="$(BaseIntermediateOutputPath)" />
+    
+    <GenerateExtensionManifest Source="$(ExtensionManifest)"
+                               Target="$(_IntermediateExtensionManifest)" />
+
+  </Target>
+
+  <!--
+    ================================================================================
+    
+      CreateExtensionPackage
+    
+      Builds the Pack target on this project, passing
+      PackingAvalonStudioExtension=True, which enables a property group that
+      sets the correct properties to pack the extension.
+
+    ================================================================================
+  -->
+  <Target Name="CreateExtensionPackage">
+
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="Pack"
+             Properties="PackingAvalonStudioExtension=True" />
+
+  </Target>
+
+  <!--
+    ================================================================================
+    
+      PackExtension
+    
+      Includes the publish output in the extension package, as well as the
+      extension manifest.
+
+    ================================================================================
+  -->
+  <Target Name="PackExtension"
+          DependsOnTargets="Publish">
+
+    <ItemGroup>
+      <_GeneratedFiles Include="$(PublishDepsFilePath)" />
+      <_GeneratedFiles Include="$(_IntermediateExtensionManifest)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="@(_GeneratedFiles)">
+        <PackagePath>tools\%(_GeneratedFiles.RecursiveDir)%(_GeneratedFiles.Filename)%(_GeneratedFiles.Extension)</PackagePath>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="@(ResolvedFileToPublish->'$([MSBuild]::NormalizeDirectory($(PublishDir)))%(RelativePath)')">
+        <PackagePath>tools\%(ResolvedFileToPublish.RelativePath)</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+
+  </Target>
+
+</Project>
