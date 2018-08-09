@@ -118,8 +118,8 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             var offset = _editor.CaretOffset;
             var document = _editor.Document;
-
-            if (offset != -1)
+                        
+            if (offset != -1 && document != null)
             {
                 var caretChar = '\0';
                 var behindCaretChar = '\0';
