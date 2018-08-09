@@ -18,6 +18,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Update="System.Reactive" Version="4.0.0" />
+    <PackageReference Update="System.Reactive.Core" Version="4.0.0" />
+    <PackageReference Update="System.Reactive.Interfaces" Version="4.0.0" />
+    <PackageReference Update="System.Reactive.Linq" Version="4.0.0" />
+    <PackageReference Update="System.Reactive.PlatformServices" Version="4.0.0" />
+    <PackageReference Update="System.ValueTuple" Version="4.5.0" />
     <PackageReference Update="Avalonia" Version="$(AvaloniaVersion)" />
     <PackageReference Update="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
     <PackageReference Update="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
