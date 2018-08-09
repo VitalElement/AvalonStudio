@@ -26,8 +26,158 @@ using System.Xml.Linq;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
+    class CompilationEntry
+    {
+        public string Directory { get; set; }
+        public string File { get; set; }
+        public List<string> Arguments { get; set; }
+    }
+
     internal class CPlusPlusLanguageService : ILanguageService
     {
+        static void AddArguments(List<string> list, IEnumerable<string> arguments)
+        {
+            if (list != null && arguments != null)
+            {
+                foreach (var argument in arguments)
+                {
+                    AddArgument(list, argument);
+                }
+            }
+        }
+
+        static void AddArgument(List<string> list, string argument)
+        {
+            if (list != null)
+            {
+                if (!list.Contains(argument))
+                {
+                    list.Add(argument);
+                }
+            }
+        }
+
+        static IEnumerable<CompilationEntry> GenerateFileEntries(IStandardProject project, IStandardProject superProject)
+        {
+            foreach (var file in project.SourceFiles.Where(f =>
+            {
+                switch (f.Extension)
+                {
+                    case ".c":
+                    case ".cpp":
+                        return true;
+                }
+
+                return false;
+            }))
+            {
+                var args = new List<string>();
+
+                var toolchainIncludes = superProject?.ToolChain?.GetToolchainIncludes(file);
+
+                if (toolchainIncludes != null)
+                {
+                    AddArguments(args, toolchainIncludes.Select(s => $"-isystem{s}"));
+                }
+
+                // toolchain includes
+                // This code is same as in toolchain, get compiler arguments... does this need a refactor, or toolchain get passed in? Clang take GCC compatible arguments.
+                // perhaps this language service has its own clang tool chain, to generate compiler arguments from project configuration?
+
+                // Referenced includes
+                var referencedIncludes = project.GetReferencedIncludes();
+
+                AddArguments(args, referencedIncludes.Select(s => $"-I{s}"));
+
+                // global includes
+                var globalIncludes = superProject?.GetGlobalIncludes();
+
+                AddArguments(args, globalIncludes?.Select(s => $"-I{s}"));
+
+                // includes
+                AddArguments(args, project.Includes.Select(s => $"-I{Path.Combine(project.CurrentDirectory, s.Value)}"));
+
+                var referencedDefines = project.GetReferencedDefines();
+
+                AddArguments(args, referencedDefines.Select(s => $"-D{s}"));
+
+                // global includes
+                var globalDefines = superProject?.GetGlobalDefines();
+
+                AddArguments(args, globalDefines?.Select(s => $"-D{s}"));
+
+                AddArguments(args, project.Defines.Select(s => $"-D{s.Value}"));
+
+                switch (file.Extension)
+                {
+                    case ".c":
+                        {
+                            AddArguments(args, superProject?.CCompilerArguments);
+                        }
+                        break;
+
+                    case ".cpp":
+                        {
+                            AddArguments(args, superProject?.CppCompilerArguments);
+                        }
+                        break;
+                }
+
+                // TODO do we mark files as class header? CAn clang auto detect this?
+                //if (file.Language == Language.Cpp)
+                {
+                    args.Add("-xc++");
+                    args.Add("-std=c++14");
+                    args.Add("-D__STDC__"); // This is needed to ensure inbuilt functions are appropriately prototyped.
+                }
+
+                args.Add("-Wunused-variable");
+
+                yield return new CompilationEntry
+                {
+                    Arguments = args,
+                    Directory = project.CurrentDirectory,
+                    File = file.Location
+                };
+            }
+        }
+
+        static IEnumerable<CompilationEntry> GenerateEntries(List<IProject> visitedProjects, IStandardProject project, IStandardProject superProject)
+        {
+            var result = Enumerable.Empty<CompilationEntry>();
+
+            if (!visitedProjects.Contains(project))
+            {
+                visitedProjects.Add(project);
+
+                foreach (var reference in project.References)
+                {
+                    result = result.Concat(GenerateEntries(visitedProjects, reference as IStandardProject, superProject));
+                }
+
+                return result.Concat(GenerateFileEntries(project, superProject));
+            }
+
+            return result;
+        }
+
+        public static void GenerateClangCompilationDatabase(IStandardProject testproject)
+        {
+            var super = testproject.Solution.StartupProject as IStandardProject;
+
+            var list = new List<IProject>();
+
+            var compilationEntries = GenerateEntries(list, testproject, super).ToArray();
+
+            SerializedObject.Serialize("c:\\dev\\repos\\compile_commands.json", compilationEntries);
+
+
+            foreach (var compilationEntry in compilationEntries.Select(e=>e.File))
+            {
+                Console.WriteLine(compilationEntry);
+            }
+        }
+
         private static readonly ClangIndex index = ClangService.CreateIndex();
 
         private ClangTranslationUnit _translationUnit;
@@ -560,6 +710,8 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public void RegisterEditor(ITextEditor editor)
         {
+            GenerateClangCompilationDatabase(editor.SourceFile.Project.Solution.StartupProject as IStandardProject);
+
             _editor = editor;
 
             if (clangAccessJobRunner == null)
@@ -830,7 +982,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        private void AddArguments(List<string> list, IEnumerable<string> arguments)
+        /*private void AddArguments(List<string> list, IEnumerable<string> arguments)
         {
             if (list != null && arguments != null)
             {
@@ -850,7 +1002,7 @@ namespace AvalonStudio.Languages.CPlusPlus
                     list.Add(argument);
                 }
             }
-        }
+        }*/
 
         private ClangTranslationUnit GenerateTranslationUnit(List<ClangUnsavedFile> unsavedFiles)
         {
@@ -902,7 +1054,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 AddArguments(args, globalDefines?.Select(s => $"-D{s}"));
 
-                AddArguments(args, project.Defines.Select(s => $"-D{s}"));
+                AddArguments(args, project.Defines.Select(s => $"-D{s.Value}"));
 
                 switch (file.Extension)
                 {
