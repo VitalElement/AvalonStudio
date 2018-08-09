@@ -17,6 +17,7 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
+using ReactiveUI;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -220,7 +221,7 @@ namespace AvalonStudio.Languages.Xaml
             {
                 this.GetObservable(XamlProperty)
                 .Throttle(TimeSpan.FromMilliseconds(100))
-                .ObserveOn(AvaloniaScheduler.Instance)
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(xaml =>
                 {
                     _connection?.Send(new UpdateXamlMessage

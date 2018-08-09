@@ -259,11 +259,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public static async Task<ITextDocument> CreateAsync (string path)
         {
-            using (var fileStream = File.OpenText(path))
+           // using (var fileStream = File.ReadAllText(path))
             {
-                var text = await fileStream.ReadToEndAsync();
+             //   var text = await fileStream.r();
 
-                var document = new AvaloniaEdit.Document.TextDocument(text);
+                var document = new AvaloniaEdit.Document.TextDocument(File.ReadAllText(path));
 
                 return new AvalonStudioTextDocument(document);
             }

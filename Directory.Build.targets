@@ -3,10 +3,10 @@
   <PropertyGroup>
     <AvaloniaVersion>0.6.2-build5845-beta</AvaloniaVersion>
     <AvaloniaBehaviorsVersion>0.6.2-build520-alpha</AvaloniaBehaviorsVersion>
-    <GitInfoVersion>2.0.11</GitInfoVersion>
+    <GitInfoVersion>2.0.14</GitInfoVersion>
     <MicrosoftExtensionsDependencyModelVersion>2.0.4</MicrosoftExtensionsDependencyModelVersion>
-    <NewtonsoftJsonVersion>10.0.3</NewtonsoftJsonVersion>
-    <ReactiveUIVersion>8.3.1</ReactiveUIVersion>
+    <NewtonsoftJsonVersion>11.0.2</NewtonsoftJsonVersion>
+    <ReactiveUIVersion>8.4.4</ReactiveUIVersion>
     <RoslynVersion>2.8.2</RoslynVersion>
     <SystemCompositionVersion>1.2.0</SystemCompositionVersion>
     <SystemDiagnosticsProcessVersion>4.3.0</SystemDiagnosticsProcessVersion>

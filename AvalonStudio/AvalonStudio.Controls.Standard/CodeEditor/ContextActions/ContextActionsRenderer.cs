@@ -23,6 +23,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Languages;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -70,7 +71,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             _diagnosticsChanged = new Subject<Unit>();
 
             _diagnosticsChanged.Merge(positionChanged).Merge(textChanged).Throttle(TimeSpan.FromMilliseconds(100))
-                .ObserveOn(AvaloniaScheduler.Instance).Subscribe(async e =>
+                .ObserveOn(RxApp.MainThreadScheduler).Subscribe(async e =>
                 {
                     await QueryCodeActions();
                 });

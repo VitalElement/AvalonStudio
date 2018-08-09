@@ -46,7 +46,7 @@ namespace AvalonStudio.Extensibility.Editor
 
             RegisterLanguageService(file);
 
-            _analysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(300)).ObserveOn(AvaloniaScheduler.Instance).Subscribe(async _ =>
+            _analysisTriggerEvents.Throttle(TimeSpan.FromMilliseconds(300)).ObserveOn(RxApp.MainThreadScheduler).Subscribe(async _ =>
             {
                 await DoCodeAnalysisAsync();
             });

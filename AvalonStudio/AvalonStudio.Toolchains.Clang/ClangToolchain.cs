@@ -377,7 +377,7 @@ namespace AvalonStudio.Toolchains.Clang
             globalIncludes.Select(s => result += $"-I\"{s}\" ").ToList();
 
             // includes
-            project.Includes.Select(s => result += $"-I\"{ Path.Combine(project.CurrentDirectory, s.Value)}\" ").ToList();
+            //project.Includes.Select(s => result += $"-I\"{ Path.Combine(project.CurrentDirectory, s.Value)}\" ").ToList();
 
             var referencedDefines = project.GetReferencedDefines();
             referencedDefines.Select(s => result += $"-D{s} ").ToList();

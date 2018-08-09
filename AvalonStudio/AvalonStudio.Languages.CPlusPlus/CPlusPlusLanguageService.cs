@@ -1,3 +1,4 @@
+using Avalonia.Threading;
 using AvaloniaEdit.Indentation;
 using AvaloniaEdit.Indentation.CSharp;
 using AvalonStudio.CodeEditor;
@@ -13,10 +14,16 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Utils;
+using Microsoft.Extensions.Logging;
 using NClang;
+using OmniSharp.Extensions.LanguageServer.Client;
+using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
+using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using Serilog.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -26,6 +33,32 @@ using System.Xml.Linq;
 
 namespace AvalonStudio.Languages.CPlusPlus
 {
+
+    class LoggerFactory : ILoggerFactory
+    {
+        private readonly SerilogLoggerProvider _loggerProvider;
+
+        public LoggerFactory()
+        {
+            _loggerProvider = new SerilogLoggerProvider(new Serilog.LoggerConfiguration().CreateLogger());
+        }
+
+        public void AddProvider(ILoggerProvider provider)
+        {
+
+        }
+
+        public ILogger CreateLogger(string categoryName)
+        {
+            return _loggerProvider.CreateLogger(categoryName);
+        }
+
+        public void Dispose()
+        {
+
+        }
+    }
+
     class CompilationEntry
     {
         public string Directory { get; set; }
@@ -73,11 +106,21 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 var args = new List<string>();
 
+                // TODO do we mark files as class header? CAn clang auto detect this?
+                //if (file.Language == Language.Cpp)
+                {
+                    args.Add("-xc++");
+                    args.Add("-std=c++14");
+                    args.Add("-D__STDC__"); // This is needed to ensure inbuilt functions are appropriately prototyped.
+
+                    args.Add("-Wunused-variable");
+                }
+
                 var toolchainIncludes = superProject?.ToolChain?.GetToolchainIncludes(file);
 
                 if (toolchainIncludes != null)
                 {
-                    AddArguments(args, toolchainIncludes.Select(s => $"-isystem{s}"));
+                    AddArguments(args, toolchainIncludes.Select(s => $"-isystem{s.NormalizePath()}"));
                 }
 
                 // toolchain includes
@@ -87,15 +130,15 @@ namespace AvalonStudio.Languages.CPlusPlus
                 // Referenced includes
                 var referencedIncludes = project.GetReferencedIncludes();
 
-                AddArguments(args, referencedIncludes.Select(s => $"-I{s}"));
+                AddArguments(args, referencedIncludes.Select(s => $"-I{superProject.CurrentDirectory.MakeRelativePath(s.NormalizePath())}"));
 
                 // global includes
                 var globalIncludes = superProject?.GetGlobalIncludes();
 
-                AddArguments(args, globalIncludes?.Select(s => $"-I{s}"));
+                AddArguments(args, globalIncludes?.Select(s => $"-I{superProject.CurrentDirectory.MakeRelativePath(s.NormalizePath())}"));
 
                 // includes
-                AddArguments(args, project.Includes.Select(s => $"-I{Path.Combine(project.CurrentDirectory, s.Value)}"));
+                AddArguments(args, project.Includes.Select(s => $"-I{superProject.CurrentDirectory.MakeRelativePath(Path.Combine(project.CurrentDirectory, s.Value).NormalizePath())}"));
 
                 var referencedDefines = project.GetReferencedDefines();
 
@@ -123,21 +166,15 @@ namespace AvalonStudio.Languages.CPlusPlus
                         break;
                 }
 
-                // TODO do we mark files as class header? CAn clang auto detect this?
-                //if (file.Language == Language.Cpp)
-                {
-                    args.Add("-xc++");
-                    args.Add("-std=c++14");
-                    args.Add("-D__STDC__"); // This is needed to ensure inbuilt functions are appropriately prototyped.
-                }
+                
 
-                args.Add("-Wunused-variable");
+                args.Add(superProject.CurrentDirectory.MakeRelativePath(file.Location));
 
                 yield return new CompilationEntry
                 {
                     Arguments = args,
-                    Directory = project.CurrentDirectory,
-                    File = file.Location
+                    Directory = superProject.CurrentDirectory,
+                    File = superProject.CurrentDirectory.MakeRelativePath(file.Location)
                 };
             }
         }
@@ -150,7 +187,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 visitedProjects.Add(project);
 
-                foreach (var reference in project.References)
+                foreach (var reference in project.References.OfType<IStandardProject>())
                 {
                     result = result.Concat(GenerateEntries(visitedProjects, reference as IStandardProject, superProject));
                 }
@@ -169,7 +206,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             var compilationEntries = GenerateEntries(list, testproject, super).ToArray();
 
-            SerializedObject.Serialize("c:\\dev\\repos\\compile_commands.json", compilationEntries);
+            SerializedObject.Serialize("c:\\users\\dan\\repos\\compile_commands.json", compilationEntries);
 
 
             foreach (var compilationEntry in compilationEntries.Select(e=>e.File))
@@ -678,8 +715,13 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             var diagnostics = new List<Diagnostic>();
 
+            string text = "";
+
+            await Dispatcher.UIThread.InvokeAsync(() => { text = _editor.Document.Text; });
+
             await clangAccessJobRunner.InvokeAsync(() =>
             {
+                _client.TextDocument.DidChange(_editor.SourceFile.Location, "cpp", text);
                 try
                 {
                     var translationUnit = GetAndParseTranslationUnit(clangUnsavedFiles);
@@ -702,23 +744,179 @@ namespace AvalonStudio.Languages.CPlusPlus
             });
 
             var errorList = IoC.Get<IErrorList>();
-            errorList.Remove((this, _editor.SourceFile));
-            errorList.Create((this, _editor.SourceFile), _editor.SourceFile.FilePath, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
+           // errorList.Remove((this, _editor.SourceFile));
+//            errorList.Create((this, _editor.SourceFile), _editor.SourceFile.FilePath, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
 
             return result;
         }
 
+        static LanguageClient _client;
+
         public void RegisterEditor(ITextEditor editor)
         {
             GenerateClangCompilationDatabase(editor.SourceFile.Project.Solution.StartupProject as IStandardProject);
-
-            _editor = editor;
 
             if (clangAccessJobRunner == null)
             {
                 clangAccessJobRunner = new JobRunner();
 
                 Task.Factory.StartNew(() => { clangAccessJobRunner.RunLoop(_runnerCanellationSource.Token); });
+
+                if (_client == null)
+                {
+                    _client = new LanguageClient(new LoggerFactory(), new ProcessStartInfo("c:\\Program Files\\LLVM\\bin\\clangd.exe")
+                    {
+                        //Arguments = "-clion-mode"//"-compile-commands-dir=c:\\users\\repos\\ILMD"
+                    });
+
+                    var doc = _client.ClientCapabilities.TextDocument = new TextDocumentClientCapabilities
+                    {
+                        CodeAction = new CodeActionCapability { DynamicRegistration = true },
+                        CodeLens = new CodeLensCapability { DynamicRegistration = true },
+                        ColorProvider = new ColorProviderCapability { DynamicRegistration = true },
+                        Completion = new CompletionCapability
+                        {
+                            CompletionItem = new CompletionItemCapability
+                            {
+                                CommitCharactersSupport = true,
+                                DocumentationFormat = new Container<MarkupKind>(MarkupKind.Markdown, MarkupKind.Plaintext),
+                                SnippetSupport = true
+                            },
+                            CompletionItemKind = new CompletionItemKindCapability { ValueSet = new Container<CompletionItemKind>((CompletionItemKind[])Enum.GetValues(typeof(CompletionItemKind))) },
+                            ContextSupport = true,
+                            DynamicRegistration = true
+                        },
+                        Definition = new DefinitionCapability
+                        {
+                            DynamicRegistration = true,
+                        },
+                        DocumentHighlight = new DocumentHighlightCapability
+                        {
+                            DynamicRegistration = true,
+                        },
+                        DocumentLink = new DocumentLinkCapability
+                        {
+                            DynamicRegistration = true,
+                        },
+                        DocumentSymbol = new DocumentSymbolCapability
+                        {
+                            DynamicRegistration = true,
+                            SymbolKind = new SymbolKindCapability
+                            {
+                                ValueSet = new Container<SymbolKind>((SymbolKind[])Enum.GetValues(typeof(SymbolKind)))
+                            }
+                        },
+                        Formatting = new DocumentFormattingCapability
+                        {
+                            DynamicRegistration = true
+                        },
+                        Hover = new HoverCapability
+                        {
+                            DynamicRegistration = true,
+                            ContentFormat = new Container<MarkupKind>((MarkupKind[])Enum.GetValues(typeof(MarkupKind)))
+                        },
+                        Implementation = new ImplementationCapability { DynamicRegistration = true },
+                        OnTypeFormatting = new DocumentOnTypeFormattingCapability { DynamicRegistration = true },
+                        PublishDiagnostics = new PublishDiagnosticsCapability { RelatedInformation = true },
+                        RangeFormatting = new DocumentRangeFormattingCapability { DynamicRegistration = true },
+                        References = new ReferencesCapability { DynamicRegistration = true },
+                        Rename = new RenameCapability { DynamicRegistration = true },
+                        SignatureHelp = new SignatureHelpCapability
+                        {
+                            DynamicRegistration = true,
+                            SignatureInformation = new SignatureInformationCapability
+                            {
+                                ContentFormat = new Container<MarkupKind>((MarkupKind[])Enum.GetValues(typeof(MarkupKind)))
+                            }
+                        },
+                        Synchronization = new SynchronizationCapability { DidSave = true, DynamicRegistration = true, WillSave = true, WillSaveWaitUntil = true },
+                        TypeDefinition = new TypeDefinitionCapability { DynamicRegistration = true },
+                    };
+
+                    var workspace = _client.ClientCapabilities.Workspace = new WorkspaceClientCapabilities
+                    {
+                        ApplyEdit = true,
+                        Configuration = true,
+                        DidChangeConfiguration = new DidChangeConfigurationCapability { DynamicRegistration = true },
+                        DidChangeWatchedFiles = new DidChangeWatchedFilesCapability { DynamicRegistration = true },
+                        ExecuteCommand = new ExecuteCommandCapability { DynamicRegistration = true },
+                        Symbol = new WorkspaceSymbolCapability
+                        {
+                            DynamicRegistration = true,
+                            SymbolKind = new SymbolKindCapability
+                            {
+                                ValueSet = new Container<SymbolKind>((SymbolKind[])Enum.GetValues(typeof(SymbolKind)))
+                            }
+                        },
+                        WorkspaceEdit = new WorkspaceEditCapability { DocumentChanges = true },
+                        WorkspaceFolders = true
+                    };
+                }
+
+                clangAccessJobRunner.InvokeAsync(() =>
+                {
+                    _client.Initialize(editor.SourceFile.Project.Solution.CurrentDirectory).Wait();
+
+
+                    _client.TextDocument.OnPublishDiagnostics((uri, diags) =>
+                    {
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
+                            var errorList = IoC.Get<IErrorList>();
+                            errorList.Remove((this, _editor.SourceFile));
+
+                            var diagnostics = new List<Diagnostic>();
+
+                            foreach (var d in diags)
+                            {
+                                var start = editor.Document.GetOffset((int)d.Range.Start.Line + 1, (int)d.Range.Start.Character + 1);
+                                var end = editor.Document.GetOffset((int)d.Range.End.Line + 1, (int)d.Range.End.Character + 1);
+
+                                DiagnosticLevel level = DiagnosticLevel.Error;
+
+                                switch (d.Severity)
+                                {
+                                    case OmniSharp.Extensions.LanguageServer.Protocol.Models.DiagnosticSeverity.Error:
+                                        level = DiagnosticLevel.Error;
+                                        break;
+                                    case OmniSharp.Extensions.LanguageServer.Protocol.Models.DiagnosticSeverity.Warning:
+                                        level = DiagnosticLevel.Warning;
+                                        break;
+
+                                    case OmniSharp.Extensions.LanguageServer.Protocol.Models.DiagnosticSeverity.Information:
+                                        level = DiagnosticLevel.Info;
+                                        break;
+
+                                    case OmniSharp.Extensions.LanguageServer.Protocol.Models.DiagnosticSeverity.Hint:
+                                        level = DiagnosticLevel.Info;
+                                        break;
+                                }
+
+                                diagnostics.Add(new Diagnostic(start, end - start, "project", uri.ToString(), (int)d.Range.Start.Line, d.Message, d.Code.ToString(), level, DiagnosticCategory.Compiler));
+                            }
+                            errorList.Create((this, _editor.SourceFile), _editor.SourceFile.FilePath, DiagnosticSourceKind.Analysis, diagnostics.ToImmutableArray());
+                        });
+                    });
+                });
+
+
+
+                
+
+                //GenerateClangCompilationDatabase(editor.SourceFile.Project.Solution.StartupProject as IStandardProject);
+
+                _editor = editor;
+
+
+
+                var text = editor.Document.Text;
+
+
+                clangAccessJobRunner.InvokeAsync(() =>
+                {
+
+                    _client.TextDocument.DidOpen(_editor.SourceFile.Location, "cpp");
+                });
             }
         }
 
@@ -1450,9 +1648,9 @@ namespace AvalonStudio.Languages.CPlusPlus
             return result;
         }
 
-        public async Task<SignatureHelp> SignatureHelp(IEnumerable<UnsavedFile> unsavedFiles, int offset, string methodName)
+        public async Task<Extensibility.Languages.CompletionAssistance.SignatureHelp> SignatureHelp(IEnumerable<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
-            SignatureHelp result = null;
+            Extensibility.Languages.CompletionAssistance.SignatureHelp result = null;
             var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
             foreach (var unsavedFile in unsavedFiles)
@@ -1467,7 +1665,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             if (symbols.Count > 0)
             {
-                result = new SignatureHelp(offset - methodName.Length);
+                result = new Extensibility.Languages.CompletionAssistance.SignatureHelp(offset - methodName.Length);
 
                 foreach (var symbol in symbols)
                 {

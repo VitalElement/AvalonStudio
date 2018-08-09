@@ -500,6 +500,6 @@ namespace AvalonStudio.Studio
             set { this.RaiseAndSetIfChanged(ref _globalZoomLevel, value); }
         }
 
-        public bool DebugMode { get; set; }
+        public bool DebugMode { get; set; } = true;
     }
 }
