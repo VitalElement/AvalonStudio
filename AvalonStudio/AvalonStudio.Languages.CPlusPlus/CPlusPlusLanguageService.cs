@@ -17,6 +17,8 @@ using AvalonStudio.Utils;
 using Microsoft.Extensions.Logging;
 using NClang;
 using OmniSharp.Extensions.LanguageServer.Client;
+using OmniSharp.Extensions.LanguageServer.Client.Utilities;
+using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using Serilog.Extensions.Logging;
@@ -206,7 +208,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
             var compilationEntries = GenerateEntries(list, testproject, super).ToArray();
 
-            SerializedObject.Serialize("c:\\users\\dan\\repos\\compile_commands.json", compilationEntries);
+            SerializedObject.Serialize("c:\\dev\\repos\\compile_commands.json", compilationEntries);
 
 
             foreach (var compilationEntry in compilationEntries.Select(e=>e.File))
@@ -366,17 +368,54 @@ namespace AvalonStudio.Languages.CPlusPlus
             return CodeCompletionKind.None;
         }
 
+        private  static CodeCompletionKind FromLspKind (CompletionItemKind kind)
+        {
+            switch(kind)
+            {
+                case CompletionItemKind.Class:
+                    return CodeCompletionKind.ClassPublic;
+
+                case CompletionItemKind.Method:
+                    return CodeCompletionKind.MethodPublic;
+
+                    case CompletionItemKind.Keyword:
+                    return CodeCompletionKind.Keyword;
+
+                case CompletionItemKind.Interface:
+                    return CodeCompletionKind.InterfacePublic;
+
+                default:
+                    return CodeCompletionKind.Macro;
+            }
+        }
+
         public async Task<CodeCompletionResults> CodeCompleteAtAsync(int index, int line, int column,
             IEnumerable<UnsavedFile> unsavedFiles, char lastChar, string filter)
         {
-            var clangUnsavedFiles = new List<ClangUnsavedFile>();
+            var result = new CodeCompletionResults();
+
+            await clangAccessJobRunner.InvokeAsync(async () =>
+            {
+                var completions = _client.TextDocument.Completions(_editor.SourceFile.Location, line, column).GetAwaiter().GetResult();
+
+                foreach (var completion in completions)
+                {
+                    result.Completions.Add(new CodeCompletionData(completion.FilterText, completion.FilterText, completion.InsertText)
+                    {
+                        Kind = FromLspKind(completion.Kind),
+                         BriefComment = completion.Documentation?.String
+                    });
+                }
+
+                result.Contexts = CompletionContext.AnyType;
+            });
+
+           /* var clangUnsavedFiles = new List<ClangUnsavedFile>();
 
             foreach (var unsavedFile in unsavedFiles)
             {
                 clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
             }
-
-            var result = new CodeCompletionResults();
 
             await clangAccessJobRunner.InvokeAsync(() =>
             {
@@ -449,7 +488,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                     completionResults.Dispose();
                 }
-            });
+            });*/
 
             return result;
         }
@@ -950,43 +989,53 @@ namespace AvalonStudio.Languages.CPlusPlus
 
         public async Task<QuickInfoResult> QuickInfo(IEnumerable<UnsavedFile> unsavedFiles, int offset)
         {
-            StyledText styledText = null;
+            var location = _editor.Document.GetLocation(offset);
+            var hover = await _client.TextDocument.Hover(_editor.SourceFile.Location, location.Line - 1, location.Column - 1);
 
-            var clangUnsavedFiles = new List<ClangUnsavedFile>();
-
-            foreach (var unsavedFile in unsavedFiles)
+            if (hover != null)
             {
-                clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
+                return new QuickInfoResult(StyledText.Create().Append(hover.Contents.MarkupContent.Value));
             }
-
-            await clangAccessJobRunner.InvokeAsync(() =>
+            else
             {
-                var tu = GetAndParseTranslationUnit(clangUnsavedFiles);
+                StyledText styledText = null;
 
-                if (tu != null)
+                var clangUnsavedFiles = new List<ClangUnsavedFile>();
+
+                foreach (var unsavedFile in unsavedFiles)
                 {
-                    var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(_editor.SourceFile.FilePath), offset));
-
-                    switch (cursor.Kind)
-                    {
-                        case NClang.CursorKind.MemberReferenceExpression:
-                        case NClang.CursorKind.DeclarationReferenceExpression:
-                        case NClang.CursorKind.CallExpression:
-                        case NClang.CursorKind.TypeReference:
-                            styledText = InfoTextFromCursor(cursor.Referenced);
-                            break;
-
-                        case NClang.CursorKind.NoDeclarationFound:
-                            break;
-
-                        default:
-                            styledText = InfoTextFromCursor(cursor);
-                            break;
-                    }
+                    clangUnsavedFiles.Add(new ClangUnsavedFile(unsavedFile.FileName, unsavedFile.Contents));
                 }
-            });
 
-            return styledText == null ? null : new QuickInfoResult(styledText);
+                await clangAccessJobRunner.InvokeAsync(() =>
+                {
+                    var tu = GetAndParseTranslationUnit(clangUnsavedFiles);
+
+                    if (tu != null)
+                    {
+                        var cursor = tu.GetCursor(tu.GetLocationForOffset(tu.GetFile(_editor.SourceFile.FilePath), offset));
+
+                        switch (cursor.Kind)
+                        {
+                            case NClang.CursorKind.MemberReferenceExpression:
+                            case NClang.CursorKind.DeclarationReferenceExpression:
+                            case NClang.CursorKind.CallExpression:
+                            case NClang.CursorKind.TypeReference:
+                                styledText = InfoTextFromCursor(cursor.Referenced);
+                                break;
+
+                            case NClang.CursorKind.NoDeclarationFound:
+                                break;
+
+                            default:
+                                styledText = InfoTextFromCursor(cursor);
+                                break;
+                        }
+                    }
+                });
+
+                return styledText == null ? null : new QuickInfoResult(styledText);
+            }
         }
 
         private static Symbol SymbolFromClangCursor(ClangCursor cursor)
@@ -1681,9 +1730,54 @@ namespace AvalonStudio.Languages.CPlusPlus
             return Task.FromResult<GotoDefinitionInfo>(null);
         }
 
-        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(string renameTo)
+        public Task<WorkspaceEdit> Rename(string filePath, int line, int column, string newName, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return Task.FromResult<IEnumerable<SymbolRenameInfo>>(null);
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException("Argument cannot be null, empty, or entirely composed of whitespace: 'filePath'.", nameof(filePath));
+
+            Uri documentUri = DocumentUri.FromFileSystemPath(filePath);
+
+            return Rename(documentUri, line, column, newName, cancellationToken);
+        }
+
+        public Task<WorkspaceEdit> Rename(Uri documentUri, int line, int column, string newName, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return  _client.SendRequest<WorkspaceEdit>(DocumentNames.Rename, new RenameParams
+            {
+                TextDocument = new TextDocumentIdentifier
+                {
+                    Uri = documentUri
+                },
+                Position = new Position { Line = line, Character = column },
+                NewName = newName
+            }, cancellationToken);
+        }
+
+
+        public async Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(string renameTo)
+        {
+            var edits = await Rename(_editor.SourceFile.Location, _editor.Line - 1, _editor.Column - 1, renameTo);
+
+            var changes = new Dictionary<string, SymbolRenameInfo>();
+
+            foreach (var edit in edits.Changes)
+            {
+                var filePath = DocumentUri.GetFileSystemPath(edit.Key);
+
+                if (!changes.TryGetValue(filePath, out var modifiedFileResponse))
+                {
+                    modifiedFileResponse = new SymbolRenameInfo(filePath);
+                    changes[filePath] = modifiedFileResponse;
+                }
+
+                var linePositionSpanTextChanges = edit.Value.Select(x => new LinePositionSpanTextChange { StartLine = (int)x.Range.Start.Line + 1, StartColumn = (int)x.Range.Start.Character + 1, EndLine = (int)x.Range.End.Line + 1, EndColumn = (int)x.Range.End.Character + 1, NewText = x.NewText });
+
+                modifiedFileResponse.Changes = modifiedFileResponse.Changes != null
+                    ? modifiedFileResponse.Changes.Union(linePositionSpanTextChanges)
+                    : linePositionSpanTextChanges;
+            }
+
+            return changes.Values;
         }
 
         public IEnumerable<IContextActionProvider> GetContextActionProviders()
