@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Media;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
+using AvalonStudio.Extensibility.Editor;
 using AvalonStudio.Utils;
 using System;
 using System.Collections.Generic;
@@ -168,9 +169,12 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         private void Highlight(DrawingContext drawingContext, IEnumerable<Rect> rects)
         {
-            foreach (var rect in rects)
+            if (ColorScheme.CurrentColorScheme != null)
             {
-                drawingContext.FillRectangle(_editor.ColorScheme.BracketMatch, rect);
+                foreach (var rect in rects)
+                {
+                    drawingContext.FillRectangle(ColorScheme.CurrentColorScheme.BracketMatch, rect);
+                }
             }
         }
     }
