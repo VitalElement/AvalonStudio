@@ -201,7 +201,7 @@ namespace AvalonStudio.Studio
         {
             var shell = IoC.Get<IShell>();
 
-            if (shell.SelectedDocument is ITextDocumentTabViewModel document)
+            if (shell.SelectedDocument is ITextDocumentTabViewModel document && document.IsDirty)
             {
                 document.Save();
             }
@@ -211,7 +211,7 @@ namespace AvalonStudio.Studio
         {
             var shell = IoC.Get<IShell>();
 
-            foreach (var document in shell.Documents.OfType<ITextDocumentTabViewModel>())
+            foreach (var document in shell.Documents.OfType<ITextDocumentTabViewModel>().Where(x=>x.IsDirty))
             {
                 document.Save();
             }
