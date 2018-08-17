@@ -115,7 +115,7 @@
         {
             get
             {
-                return Location.MiddleTop;
+                return Location.Top;
             }
         }
     }
