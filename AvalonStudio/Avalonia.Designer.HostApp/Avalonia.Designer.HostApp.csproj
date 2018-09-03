@@ -1,13 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <TieredCompilation>True</TieredCompilation>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop">
-      <Version>0.6.2-build5392-beta</Version>
-    </PackageReference>
+    <PackageReference Include="Avalonia.Desktop" />
   </ItemGroup>
 </Project>
