@@ -141,7 +141,13 @@ namespace AvalonStudio.Languages.Xaml
                     {
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
+                            if (!_overlay.IsVisible)
+                            {
+                                _statusText.Text = "Your app must target Avalonia version >= '0.6.2-build5810-beta' to be compatible with the previewer.\r\n\r\n";
+                            }
+
                             _statusText.Text += e.Data + "\r\n";
+
                             _overlay.IsVisible = true;
                         });
                     }
