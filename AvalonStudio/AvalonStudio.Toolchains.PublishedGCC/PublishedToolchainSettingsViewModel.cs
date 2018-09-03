@@ -28,7 +28,16 @@ namespace AvalonStudio.Toolchains.PublishedGCC
             
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
-                AvailableToolchains = new ObservableCollection<PackageMetaData>(await GccConfigurationsManager.GetRemotePackagesAsync());
+                try
+                {
+                    var packages = await GccConfigurationsManager.GetRemotePackagesAsync();
+
+                    AvailableToolchains = new ObservableCollection<PackageMetaData>(packages);
+                }
+                catch(System.Exception)
+                {
+                    AvailableToolchains = new ObservableCollection<PackageMetaData>();
+                }
 
                 if (!string.IsNullOrEmpty(_settings.Toolchain))
                 {
