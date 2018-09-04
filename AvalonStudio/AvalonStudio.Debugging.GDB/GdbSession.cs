@@ -86,7 +86,7 @@ namespace AvalonStudio.Debugging.GDB
         /// <summary>
 		/// Raised when the debugging session is paused
 		/// </summary>
-		private event EventHandler<TargetEventArgs> TargetStoppedWhenSuppressed;
+		public event EventHandler<TargetEventArgs> TargetStoppedWhenSuppressed;
 
         public GdbSession(string gdbExecutable, string runCommand = "-exec-run", bool detectAsync = true, bool waitForStopBeforeRunning = false)
         {
