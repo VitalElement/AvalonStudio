@@ -5,5 +5,6 @@
                      Document="{Binding Document}" EditorCaretOffset="{Binding CaretIndex, Mode=TwoWay}"
                      BackgroundRenderers="{Binding BackgroundRenderers}"
                      LineNumbersVisible="false" ShowBreakpoints="false" IsReadOnly="true"
+                     HorizontalScrollBarVisibility="Auto"
                      HighlightSelectedLine="false" HighlightSelectedWord="false" />
 </UserControl>

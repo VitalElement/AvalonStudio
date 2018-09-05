@@ -46,6 +46,7 @@
             <editor:CodeEditor Name="editor"
                            BorderThickness="0" Margin="0"
                            VerticalAlignment="Stretch"
+                           HorizontalScrollBarVisibility="Auto"
                            FontFamily="{DynamicResource EditorFont}"
                            FontSize="{Binding VisualFontSize}"
                            IsDirty="{Binding IsDirty}"
