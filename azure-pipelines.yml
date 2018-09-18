@@ -14,7 +14,7 @@ jobs:
       dotnet --info
       dotnet tool install -g Cake.Tool --version 0.30.0
       export PATH="$PATH:$HOME/.dotnet/tools"
-      dotnet cake build.cake -Target="Test" -Platform="Any CPU" -Configuration="Release"
+      dotnet cake build.cake -Configuration="Release"
 - job: macOS
   pool:
     vmImage: 'xcode9-macos10.13'
@@ -30,7 +30,7 @@ jobs:
       dotnet --info
       dotnet tool install -g Cake.Tool --version 0.30.0
       export PATH="$PATH:$HOME/.dotnet/tools"
-      dotnet cake build.cake -Target="Test" -Platform="Any CPU" -Configuration="Release"
+      dotnet cake build.cake -Configuration="Release"
 - job: Windows
   pool:
     vmImage: 'vs2017-win2017'
@@ -46,4 +46,4 @@ jobs:
       dotnet --info
       dotnet tool install -g Cake.Tool --version 0.30.0
       set PATH=%PATH%;%USERPROFILE%\.dotnet\tools
-      dotnet cake build.cake -Target="Test" -Platform="Any CPU" -Configuration="Release"
+      dotnet cake build.cake -Configuration="Release"
