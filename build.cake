@@ -137,7 +137,7 @@ public NuGetPackSettings GetPackSettings(string rid, string version, string nuge
 // INFORMATION
 ///////////////////////////////////////////////////////////////////////////////
 
-Information("Building version {0} of AvaloniaEdit ({1}, {2}, {3}) using version {4} of Cake.", 
+Information("Building version {0} of AvalonStudio ({1}, {2}, {3}) using version {4} of Cake.", 
     version,
     platform,
     configuration,
