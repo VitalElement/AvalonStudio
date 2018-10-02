@@ -10,7 +10,7 @@
                       Title="AvalonStudio" MinWidth="400" MinHeight="200"
                       BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}"
                       FontFamily="{DynamicResource UiFont}" FontSize="14"
-                      Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized">
+                      Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized" RenderOptions.BitmapInterpolationMode="HighQuality" UseLayoutRounding="True">
     <cont:MetroWindow.TitleBarContent>
     </cont:MetroWindow.TitleBarContent>
 
@@ -29,13 +29,6 @@
 
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
             <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
-        </Style>
-
-        <Style Selector="TreeViewItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
-            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
-        </Style>
-        <Style Selector="TreeViewItem:selected /template/ ContentPresenter#PART_HeaderPresenter">
-            <Setter Property="TextBlock.Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
         </Style>
 
         <Style Selector="DropDownItem:selected /template/ ContentPresenter">
