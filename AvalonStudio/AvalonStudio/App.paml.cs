@@ -10,6 +10,7 @@ using Serilog;
 using System;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility;
+using System.IO;
 
 namespace AvalonStudio
 {
@@ -69,7 +70,25 @@ namespace AvalonStudio
         }
 
         public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>().UsePlatformDetect();
+        {
+            var result = AppBuilder.Configure<App>();
+            
+            if(Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
+            {
+                result.UseAvaloniaNative(Path.Combine(Directory.GetCurrentDirectory(), "libAvalonia.Native.OSX.dylib"))
+                    .UseSkia();
+            }
+            else if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+            {
+                result.UseWin32().UseDirect2D1();
+            }
+            else
+            {
+                result.UsePlatformDetect();
+            }
+
+            return result;
+        }
 
         public override void Initialize()
         {
