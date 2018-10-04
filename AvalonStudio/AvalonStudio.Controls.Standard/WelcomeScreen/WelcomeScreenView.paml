@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui">
+<UserControl xmlns="https://github.com/avaloniaui">
   <UserControl.Styles>
     <Style Selector="Button.videofeed">
       <Setter Property="Template">
@@ -13,79 +13,76 @@
     </Style>
   </UserControl.Styles>
 
-  <ScrollViewer>
-    <Grid RowDefinitions="80, *" ColumnDefinitions="250, 400, 250">
-      <Grid Grid.RowSpan="2" RowDefinitions="100, *" Background="{DynamicResource ThemeControlBackgroundBrush}">
-        <TextBlock FontSize="35" FontWeight="Light" Margin="10 0">AvalonStudio</TextBlock>
+  <Grid ColumnDefinitions="300, *">
+    <Grid Background="{DynamicResource ThemeControlBackgroundBrush}">
 
-        <StackPanel Spacing="0" Grid.Column="0" Grid.Row="1">
-          <StackPanel Margin="10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <TextBlock Classes="h1" FontWeight="Light">Start</TextBlock>
-          </StackPanel>
-          <StackPanel Margin="10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <Button Content="New Solution" Command="{Binding NewSolution}" Classes="hyperlink h3"/>
-            <Button Content="Open Solution" Command="{Binding OpenSolution}" Classes="hyperlink h3"/>
-          </StackPanel>
-
-          <TextBlock Text=" "/>
-          <TextBlock Text=" "/>
-
-          <StackPanel Margin="10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <TextBlock Classes="h1" FontWeight="Light">Recent Solutions</TextBlock>
-          </StackPanel>
-
-          <StackPanel Margin="10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
-            <ListBox Items="{Binding RecentProjects}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
-              <ListBox.ItemTemplate>
-                <DataTemplate >
-                  <Button Content="{Binding Name}" Command="{Binding ClickCommand}" Classes="hyperlink h3"/>
-                </DataTemplate>
-              </ListBox.ItemTemplate>
-            </ListBox>
-          </StackPanel>
+      <StackPanel Spacing="0" Grid.Column="0" Grid.Row="1">
+        <StackPanel Margin="10 15 10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
+        <TextBlock Classes="h1" FontWeight="Light">Start</TextBlock>
         </StackPanel>
-      </Grid>
+        <StackPanel Margin="10 15 0 0" VerticalAlignment="Top" HorizontalAlignment="Left">
+          <Button Content="New Solution" Command="{Binding NewSolution}" Classes="hyperlink h3"/>
+          <Button Content="Open Solution" Command="{Binding OpenSolution}" Classes="hyperlink h3"/>
+        </StackPanel>
+
+        <TextBlock Text=" "/>
+        <TextBlock Text=" "/>
+
+        <StackPanel Margin="10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
+        <TextBlock Classes="h1" FontWeight="Light">Recent Solutions</TextBlock>
+        </StackPanel>
+
+        <StackPanel Margin="10 0" VerticalAlignment="Top" HorizontalAlignment="Left">
+          <ItemsControl Items="{Binding RecentProjects}" BorderThickness="0">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate >
+                <Button Content="{Binding Name}" Command="{Binding ClickCommand}" Classes="hyperlink h3"/>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </StackPanel>
+    </Grid>
 
 
-      <!--RSS NEWS FEED-->
-      <StackPanel Spacing="0" Margin="20 0" Grid.Column="1" Grid.Row="2">
-        <StackPanel Margin="0 0" VerticalAlignment="Top">
+    <!--RSS NEWS FEED-->
+      <ScrollViewer Grid.Column="1">
+        <StackPanel Spacing="0" Margin="20 15 20 0" Grid.Column="1" Grid.Row="2">
+          <StackPanel Margin="0 0" VerticalAlignment="Top">
           <TextBlock Classes="h1" FontWeight="Light" Grid.Column="2">News</TextBlock>
-        </StackPanel>
+          </StackPanel>
 
-        <StackPanel Margin="5 0" VerticalAlignment="Top" HorizontalAlignment="Center">
-          <ListBox Items="{Binding NewsFeed}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
-            <ListBox.ItemTemplate>
+          <ItemsControl Items="{Binding NewsFeed}" BorderThickness="0">
+            <ItemsControl.ItemTemplate>
               <DataTemplate>
                 <StackPanel>
                   <Button Content="{Binding Title}" Command="{Binding ClickCommand}" Classes="hyperlink h3" />
                   <TextBlock Margin="0 0 5 10" Text="{Binding Content}"  TextWrapping="Wrap" />
                 </StackPanel>
               </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
         </StackPanel>
-      </StackPanel>
+      </ScrollViewer>
 
       <!--RSS VIDEO FEED-->
-      <StackPanel Spacing="0" Grid.Column="2" Grid.Row="2">
-        <StackPanel Margin="0 0" VerticalAlignment="Top">
-          <TextBlock Classes="h1" FontWeight="Light" Grid.Column="3">Videos</TextBlock>
-        </StackPanel>
+        <!-- <StackPanel Spacing="0" Margin="0 15 0 0" Grid.Column="2" Grid.Row="2">
+            <StackPanel Margin="0 0" VerticalAlignment="Top">
+            <TextBlock Classes="h1" FontWeight="Light" Grid.Column="3">Videos</TextBlock>
+            </StackPanel>
 
-        <StackPanel Margin="5 0" VerticalAlignment="Top" HorizontalAlignment="Center">
-          <ListBox Items="{Binding VideoFeed}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
-            <ListBox.ItemTemplate>
-              <DataTemplate>
-                <StackPanel HorizontalAlignment="Left" Margin="0 0 0 10">
-                  <Button Content="{Binding Title}" HorizontalAlignment="Left" HorizontalContentAlignment="Left" Command="{Binding ClickCommand}" Classes="hyperlink h3"/>
-                  <Button Margin="0 5 0 0" Content="{Binding Image}" HorizontalAlignment="Left"  HorizontalContentAlignment="Left" Command="{Binding ClickCommand}" Classes="videofeed"/>
-                </StackPanel>
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
-        </StackPanel>
-      </StackPanel>
-    </Grid>
-  </ScrollViewer>
+            <StackPanel Margin="5 0" VerticalAlignment="Top" HorizontalAlignment="Center">
+              <ListBox Items="{Binding VideoFeed}" SelectedItem="{Binding SelectedTemplate}" BorderThickness="0">
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel HorizontalAlignment="Left" Margin="0 0 0 10">
+                      <Button Content="{Binding Title}" HorizontalAlignment="Left" HorizontalContentAlignment="Left" Command="{Binding ClickCommand}" Classes="hyperlink h3"/>
+                      <Button Margin="0 5 0 0" Content="{Binding Image}" HorizontalAlignment="Left"  HorizontalContentAlignment="Left" Command="{Binding ClickCommand}" Classes="videofeed"/>
+                    </StackPanel>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </StackPanel>
+          </StackPanel>-->
+        </Grid>
 </UserControl>

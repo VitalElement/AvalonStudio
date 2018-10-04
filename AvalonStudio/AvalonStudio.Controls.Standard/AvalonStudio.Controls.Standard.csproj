@@ -53,6 +53,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.6.2-build5392-beta" />
     <PackageReference Include="GitInfo" Version="2.0.10" />
+    <PackageReference Include="Microsoft.SyndicationFeed.ReaderWriter" Version="1.0.2" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>
