@@ -75,7 +75,7 @@ namespace AvalonStudio
             
             if(Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
             {
-                result.UseAvaloniaNative(Path.Combine(Directory.GetCurrentDirectory(), "libAvalonia.Native.OSX.dylib"))
+                result.UseAvaloniaNative()
                     .UseSkia();
             }
             else if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
