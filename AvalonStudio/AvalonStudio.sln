@@ -130,7 +130,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.DataGrid", "..\Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.DataGrid.Themes.Default", "..\DataGrid\src\Avalonia.DataGrid.Themes.Default\Avalonia.DataGrid.Themes.Default.csproj", "{E23DB11F-D547-42C6-A128-AF6F23DF315A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Languages.Xaml.Tests", "AvalonStudio.Languages.Xaml.Tests\AvalonStudio.Languages.Xaml.Tests.csproj", "{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Languages.Xaml.Tests", "AvalonStudio.Languages.Xaml.Tests\AvalonStudio.Languages.Xaml.Tests.csproj", "{0316DBA2-9687-4A1F-94F7-7940A7D3AFC7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensibility", "Extensibility", "{71112312-3BD0-4EE4-8039-F4DF970ECAD9}"
 EndProject
