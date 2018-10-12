@@ -33,7 +33,7 @@ jobs:
       dotnet cake build.cake -Configuration="Release"
 - job: Windows
   pool:
-    vmImage: 'vs2017-win2017'
+    vmImage: 'vs2017-win2016'
   steps:
   - task: DotNetCoreInstaller@0
     inputs:
