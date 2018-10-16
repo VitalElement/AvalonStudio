@@ -252,7 +252,7 @@ namespace AvalonStudio.Extensibility.Editor
         {
         }
 
-        public virtual Task<object> GetToolTipContentAsync(int offset)
+        public virtual async Task<object> GetToolTipContentAsync(int offset)
         {
             var args = new TooltipDataRequestEventArgs(this, offset);
 
@@ -260,11 +260,11 @@ namespace AvalonStudio.Extensibility.Editor
 
             if (args.GetViewModelAsyncTask != null)
             {
-                return args.GetViewModelAsyncTask(this, offset);
+                return await args.GetViewModelAsyncTask(this, offset);
             }
             else
             {
-                return Task.FromResult<object>(null);
+                return null;
             }
         }
     }

@@ -241,7 +241,7 @@ namespace AvalonStudio.Extensibility.Editor
                 }
             }
 
-            return base.GetToolTipContentAsync(offset);
+            return await base.GetToolTipContentAsync(offset);
         }
 
         private void TriggerCodeAnalysis()
