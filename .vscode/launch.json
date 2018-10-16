@@ -10,7 +10,7 @@
             "request": "launch",
             //"preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceRoot}/AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.0/AvalonStudio.dll",
+            "program": "${workspaceRoot}/AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.1/AvalonStudio.dll",
             "args": [],
             "cwd": "${workspaceRoot}/AvalonStudio/AvalonStudio",
             // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
