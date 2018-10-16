@@ -16,11 +16,11 @@
   <ItemGroup>
     <EmbeddedResource Include="Assets\**" Exclude="@(EmbeddedResource)" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.6.2-build5392-beta" />
     <PackageReference Include="Avalonia.Desktop" Version="0.6.2-build5392-beta" />
-    <PackageReference Include="Avalonia.Native" Version="0.7.0-build4201810121" />
+    <PackageReference Include="Avalonia.Native" Version="0.7.0-build42018101613" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.6.2-build5392-beta" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.60.0.1" />    
     <PackageReference Include="GitInfo" Version="2.0.10" />

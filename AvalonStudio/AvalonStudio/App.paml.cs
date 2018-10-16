@@ -75,8 +75,11 @@ namespace AvalonStudio
             
             if(Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
             {
-                result.UseAvaloniaNative()
-                    .UseSkia();
+                result.UseAvaloniaNative(null, opts=>{
+					opts.UseDeferredRendering = false;
+					opts.UseGpu = true;
+					opts.MacOptions.ShowInDock = true;
+				}).UseSkia();
             }
             else if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {
