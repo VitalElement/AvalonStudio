@@ -4,6 +4,7 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Remote;
 using Avalonia.Controls.Shapes;
 using Avalonia.Data;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Remote.Protocol;
 using Avalonia.Remote.Protocol.Designer;
@@ -82,7 +83,7 @@ namespace AvalonStudio.Languages.Xaml
             get => GetValue(SourceFileProperty);
             set => SetValue(SourceFileProperty, value);
         }
-
+        
         private void OnSourceFileChanged(ISourceFile file)
         {
             KillHost();
@@ -191,6 +192,28 @@ namespace AvalonStudio.Languages.Xaml
 
         public AvaloniaPreviewer()
         {
+            AddHandler(PointerWheelChangedEvent, (sender, e) =>
+            {
+                if (_remote != null)
+                {
+                    var delta = e.Delta.Y / 25;
+
+                    if (e.InputModifiers == InputModifiers.Control)
+                    {
+                        delta = e.Delta.Y / 100;
+                    }
+
+                    var zoomLevel = _remote.ZoomLevel + delta;
+
+                    if (zoomLevel < 0.25)
+                    {
+                        zoomLevel = 0.25;
+                    }
+
+                    _remote.ZoomLevel = zoomLevel;
+                }
+            }, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+
             _visualBrush = new VisualBrush
             {
                 DestinationRect = new RelativeRect(0, 0, 20, 20, RelativeUnit.Absolute),
@@ -306,11 +329,6 @@ namespace AvalonStudio.Languages.Xaml
                         _showErrors.IsVisible = false;
                         _errorText.Text = "";
                     }
-                }
-                if (obj is RequestViewportResizeMessage resize)
-                {
-                    _remote.Width = Math.Min(4096, Math.Max(resize.Width, 1));
-                    _remote.Height = Math.Min(4096, Math.Max(resize.Height, 1));
                 }
             });
         }
