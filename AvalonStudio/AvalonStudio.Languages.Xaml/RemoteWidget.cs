@@ -33,10 +33,12 @@ namespace AvalonStudio.Languages.Xaml
             {
                 _zoomLevel = value;
 
+                var scaling = GetScaling();
+
                 _connection.Send(new ClientRenderInfoMessage
                 {
-                    DpiX = (96 * 1.5) * ZoomLevel,
-                    DpiY = (96 * 1.5) * ZoomLevel
+                    DpiX = (96 * scaling) * ZoomLevel,
+                    DpiY = (96 * scaling) * ZoomLevel
                 });
 
                 Width = Math.Min(4096, Math.Max(_width * ZoomLevel, 1));
@@ -58,10 +60,13 @@ namespace AvalonStudio.Languages.Xaml
                     Avalonia.Remote.Protocol.Viewport.PixelFormat.Rgba8888,
                 }
             });
+
+            var scaling = GetScaling();
+
             _connection.Send(new ClientRenderInfoMessage
             {
-                DpiX = (96 * 1.5) * ZoomLevel,
-                DpiY = (96 * 1.5) * ZoomLevel
+                DpiX = (96 * scaling) * ZoomLevel,
+                DpiY = (96 * scaling) * ZoomLevel
             });
 
             AddHandler(KeyUpEvent, OnKeyUp, Avalonia.Interactivity.RoutingStrategies.Tunnel);
@@ -69,6 +74,23 @@ namespace AvalonStudio.Languages.Xaml
             AddHandler(KeyDownEvent, OnKeyDown, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 
             AddHandler(TextInputEvent, OnTextInput, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+        }
+
+        private double GetScaling ()
+        {
+            var window = (Window)VisualRoot;
+
+            if (window == null)
+            {
+                window = Application.Current.MainWindow;
+            }
+
+            if (window != null)
+            {
+                return window.PlatformImpl.Scaling;
+            }
+
+            return 1;
         }
 
         public bool InError
