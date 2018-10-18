@@ -294,7 +294,6 @@ Task("Copy-Redist-Files-NetCore")
 
 Task("Zip-NetCore")
     .IsDependentOn("Publish-NetCore")
-    .WithCriteria(()=>isMainRepo && isMasterBranch  && !isPullRequest)
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
@@ -353,8 +352,6 @@ Task("Default")
     .IsDependentOn("Publish-NetCore")
     .IsDependentOn("Copy-Redist-Files-NetCore")
     .IsDependentOn("Zip-NetCore");
-    //.IsDependentOn("Generate-NuGetPackages")
-    //.IsDependentOn("Publish-AppVeyorNuget");
 
 Task("OSX")
     .IsDependentOn("Run-Net-Core-Unit-Tests");
