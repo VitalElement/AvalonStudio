@@ -55,7 +55,7 @@ var isNuGetRelease = isTagged && isReleasable;
 // VERSION
 ///////////////////////////////////////////////////////////////////////////////
 
-var version = "0.4.5";
+var version = "0.5";
 
 if (isRunningOnAppVeyor)
 {
@@ -137,7 +137,7 @@ public NuGetPackSettings GetPackSettings(string rid, string version, string nuge
 // INFORMATION
 ///////////////////////////////////////////////////////////////////////////////
 
-Information("Building version {0} of AvaloniaEdit ({1}, {2}, {3}) using version {4} of Cake.", 
+Information("Building version {0} of AvalonStudio ({1}, {2}, {3}) using version {4} of Cake.", 
     version,
     platform,
     configuration,
@@ -167,8 +167,7 @@ Information("IsNuGetRelease: " + isNuGetRelease);
 
 var avalonBuildRIDs = new List<string>
 {
-    "win7-x64",
-    "ubuntu.14.04-x64"
+    "win7-x64"
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -177,6 +176,7 @@ var avalonBuildRIDs = new List<string>
 
 Task("Clean")
 .Does(()=>{
+    CleanDirectory(zipRootDir);
     CleanDirectory(nugetRoot);
     CleanDirectories(buildDirs);
 });
@@ -295,7 +295,6 @@ Task("Copy-Redist-Files-NetCore")
 
 Task("Zip-NetCore")
     .IsDependentOn("Publish-NetCore")
-    .WithCriteria(()=>isMainRepo && isMasterBranch  && !isPullRequest)
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
@@ -305,6 +304,11 @@ Task("Zip-NetCore")
             var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
 
             Zip(outputDir.FullPath, zipRootDir.CombineWithFilePath(project.Name + "-" + runtime + fileZipSuffix));
+
+            if(DirectoryExists(outputDir))
+            {
+                DeleteDirectory(outputDir);
+            }
         }
     }    
 });
@@ -350,13 +354,16 @@ Task("Publish-AppVeyorNuget")
 });
 
 Task("Default")
-    .IsDependentOn("Restore-NetCore")
-    .IsDependentOn("Build-NetCore")
+    .IsDependentOn("Clean")
     .IsDependentOn("Run-Net-Core-Unit-Tests")
     .IsDependentOn("Publish-NetCore")
     .IsDependentOn("Copy-Redist-Files-NetCore")
-    .IsDependentOn("Zip-NetCore")
-    .IsDependentOn("Generate-NuGetPackages")
-    .IsDependentOn("Publish-AppVeyorNuget");
+    .IsDependentOn("Zip-NetCore");
+
+Task("OSX")
+    .IsDependentOn("Run-Net-Core-Unit-Tests");
+
+Task("Linux")
+    .IsDependentOn("Run-Net-Core-Unit-Tests");
 
 RunTarget(target);

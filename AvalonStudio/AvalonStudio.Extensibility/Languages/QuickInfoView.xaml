@@ -1,0 +1,4 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" FontFamily="{DynamicResource UiFont}" FontSize="14"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Shell.Extensibility">
+    <cont:FormattedTextBlock StyledText="{Binding StyledText}" TextWrapping="Wrap" />
+</UserControl>

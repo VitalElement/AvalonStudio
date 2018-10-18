@@ -2,6 +2,7 @@
 {
     using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Languages.CompletionAssistance;
+    using AvalonStudio.Extensibility.Studio;
     using AvalonStudio.MVVM;
     using AvalonStudio.Shell;
     using AvalonStudio.Utils;
@@ -36,7 +37,7 @@
 
             IsVisible = true;
 
-            if (IoC.Get<IShell>().DebugMode)
+            if (IoC.Get<IStudio>().DebugMode)
             {
                 IoC.Get<IConsole>().WriteLine($"[Signature Help] - PushMethod - {CurrentMethod.SelectedSignature.Name}");
             }
@@ -62,7 +63,7 @@
                 IsVisible = false;
             }
 
-            if (IoC.Get<IShell>().DebugMode)
+            if (IoC.Get<IStudio>().DebugMode)
             {
                 IoC.Get<IConsole>().WriteLine($"[Signature Help] - PopMethod - {CurrentMethod?.SelectedSignature.Name ?? "null"}");
             }

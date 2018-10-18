@@ -55,7 +55,8 @@ namespace AvalonStudio.Platforms
                 { "SolutionFileName", Path.GetFileName(project.Solution.Location) },
                 { "SolutionPath", project.Solution.Location.ToPlatformPath() },
                 { "SolutionDir", Path.GetDirectoryName(project.Solution.Location) + "/".ToPlatformPath() },
-                { "SolutionName", project.Solution.Name }
+                { "SolutionName", project.Solution.Name },
+                { "CopyCommand", Platform.PlatformIdentifier == PlatformID.Win32NT ? "copy" : "cp" }
             };
 
             if (project.Executable != null)

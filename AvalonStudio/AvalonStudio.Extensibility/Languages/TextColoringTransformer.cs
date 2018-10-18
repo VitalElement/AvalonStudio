@@ -1,5 +1,4 @@
 ﻿using Avalonia.Media;
-using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.CodeEditor;
@@ -11,20 +10,24 @@ namespace AvalonStudio.Languages
 {
     public class TextColoringTransformer : GenericLineTransformer
     {
-        private readonly TextDocument document;
+        private TextDocument _document;
 
         public TextColoringTransformer(TextDocument document)
         {
-            this.document = document;
-
             TextTransformations = new TextSegmentCollection<TextTransformation>(document);
 
-            ColorScheme = ColorScheme.Default;
+            _document = document;
+        }
+
+        public void Dispose()
+        {
+            TextTransformations.Disconnect(_document);
+            TextTransformations.Clear();
+            TextTransformations = null;
+            _document = null;
         }
 
         public TextSegmentCollection<TextTransformation> TextTransformations { get; private set; }
-
-        public ColorScheme ColorScheme { get; set; }
 
         protected override void TransformLine(DocumentLine line, ITextRunConstructionContext context)
         {
@@ -65,17 +68,17 @@ namespace AvalonStudio.Languages
                 {
                     return new OpacityTextTransformation(
                         tag,
-                        document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
-                        document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
+                        _document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
+                        _document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
                         0.5);
                 }
                 else
                 {
                     return new ForegroundTextTransformation(
                         tag,
-                        document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
-                        document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
-                        GetBrush(highlight.Type));
+                        _document.GetOffset(lineColumnHighlight.StartLine, lineColumnHighlight.StartColumn),
+                        _document.GetOffset(lineColumnHighlight.EndLine, lineColumnHighlight.EndColumn),
+                        GetBrush(highlight.Type), highlight.Type);
                 }
             }
             else
@@ -94,83 +97,88 @@ namespace AvalonStudio.Languages
                     tag,
                     highlight.Start,
                     highlight.Start + highlight.Length,
-                    GetBrush(highlight.Type));
+                    GetBrush(highlight.Type), highlight.Type);
                 }
             }
         }
 
         public void SetTransformations(object tag, SyntaxHighlightDataList highlightData)
         {
-            Dispatcher.UIThread.InvokeAsync(() =>
+            foreach (var highlight in highlightData)
             {
-                RemoveAll(transform => Equals(transform.Tag, tag));
-
-                foreach (var highlight in highlightData)
+                if (highlight.Type != HighlightType.None)
                 {
-                    if (highlight.Type != HighlightType.None)
-                    {
-                        TextTransformations.Add(GetTextTransformation(tag, highlight));
-                    }
+                    TextTransformations.Add(GetTextTransformation(tag, highlight));
                 }
-            });
+            }
+        }
+
+        public void RecalculateBrushes ()
+        {
+            foreach(var transformation in TextTransformations.OfType<ForegroundTextTransformation>())
+            {
+                transformation.Foreground = GetBrush(transformation.Type);
+            }
         }
 
         public IBrush GetBrush(HighlightType type)
         {
             IBrush result;
 
+            var colorScheme = ColorScheme.CurrentColorScheme;
+
             switch (type)
             {
                 case HighlightType.DelegateName:
-                    result = ColorScheme.DelegateName;
+                    result = colorScheme.DelegateName;
                     break;
 
                 case HighlightType.Comment:
-                    result = ColorScheme.Comment;
+                    result = colorScheme.Comment;
                     break;
 
                 case HighlightType.Identifier:
-                    result = ColorScheme.Identifier;
+                    result = colorScheme.Identifier;
                     break;
 
                 case HighlightType.Keyword:
-                    result = ColorScheme.Keyword;
+                    result = colorScheme.Keyword;
                     break;
 
                 case HighlightType.Literal:
-                    result = ColorScheme.Literal;
+                    result = colorScheme.Literal;
                     break;
 
                 case HighlightType.NumericLiteral:
-                    result = ColorScheme.NumericLiteral;
+                    result = colorScheme.NumericLiteral;
                     break;
 
                 case HighlightType.Punctuation:
-                    result = ColorScheme.Punctuation;
+                    result = colorScheme.Punctuation;
                     break;
 
                 case HighlightType.InterfaceName:
-                    result = ColorScheme.InterfaceType;
+                    result = colorScheme.InterfaceType;
                     break;
 
                 case HighlightType.ClassName:
-                    result = ColorScheme.Type;
+                    result = colorScheme.Type;
                     break;
 
                 case HighlightType.CallExpression:
-                    result = ColorScheme.CallExpression;
+                    result = colorScheme.CallExpression;
                     break;
 
                 case HighlightType.EnumTypeName:
-                    result = ColorScheme.EnumType;
+                    result = colorScheme.EnumType;
                     break;
 
                 case HighlightType.Operator:
-                    result = ColorScheme.Operator;
+                    result = colorScheme.Operator;
                     break;
 
                 case HighlightType.StructName:
-                    result = ColorScheme.StructName;
+                    result = colorScheme.StructName;
                     break;
 
                 default:

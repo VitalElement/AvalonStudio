@@ -1,9 +1,9 @@
-using Avalonia.Input;
 using AvalonStudio.Controls;
+using AvalonStudio.Extensibility.Editor;
 using System;
 using System.Threading.Tasks;
 
-namespace AvalonStudio.Behaviors
+namespace AvalonStudio.Shell.Behaviors
 {
     public class EditorToolTipBehavior : TooltipBehavior
     {

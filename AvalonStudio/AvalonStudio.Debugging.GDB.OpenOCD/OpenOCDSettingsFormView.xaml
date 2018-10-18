@@ -1,12 +1,12 @@
 <UserControl xmlns="https://github.com/avaloniaui">
-    <StackPanel Gap="10">
-        <StackPanel Orientation="Horizontal" Gap="5">
+    <StackPanel Spacing="10">
+        <StackPanel Orientation="Horizontal" Spacing="5">
             <TextBlock Text="Interface Config File" />
             <TextBox Text="{Binding InterfaceConfigFile}" IsReadOnly="true" Width="400" />
             <Button Content="Browse" Command="{Binding BrowseInterfaceConfigFileCommand}" />
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal" Gap="5">
+        <StackPanel Orientation="Horizontal" Spacing="5">
             <TextBlock Text="Target Config File" />
             <TextBox Text="{Binding TargetConfigFile}" IsReadOnly="true" Width="400" />
             <Button Content="Browse" Command="{Binding BrowseTargetConfigFileCommand}" />

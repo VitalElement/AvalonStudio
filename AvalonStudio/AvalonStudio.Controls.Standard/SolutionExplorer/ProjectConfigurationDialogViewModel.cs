@@ -23,11 +23,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             _onClose = onClose;
         }
 
-        public override void Close()
+        public override bool OnClose()
         {
-            base.Close();
+            bool result = base.OnClose();
 
             _onClose?.Invoke();
+
+            return result;
         }
 
         public object CompileContent { get; set; }

@@ -23,6 +23,7 @@ namespace AvalonStudio.Toolchains.Clang
     }
 
     [ExportToolchain]
+    [Shared]
     public class ClangToolchain : GCCToolchain
     {
         private static string _contentDirectory;

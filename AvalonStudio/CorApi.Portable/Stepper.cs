@@ -4,14 +4,15 @@
 // project unless explicitly authorized.
 //
 
-using SharpDX.Mathematics.Interop;
+using SharpGen.Runtime;
+using SharpGen.Runtime.Win32;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace CorApi.Portable
 {
-    public partial class Stepper
+    public partial class Stepper : ComObject
     {
         public void SetJmcStatus(bool status)
         {
@@ -20,7 +21,7 @@ namespace CorApi.Portable
 
         public void StepRange(RawBool bStepIn, CorDebugStepRange[] ranges)
         {
-            StepRange(bStepIn, ranges, ranges.Length);
+            StepRange(bStepIn, ranges, (uint)ranges.Length);
         }
     }
 }

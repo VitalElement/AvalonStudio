@@ -42,23 +42,25 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
         {
             _timer.Stop();
 
-            if (_editor?.Document != null)
+            var editor = _editor;
+
+            if (editor?.Document != null)
             {
                 var dataContext = await OnBeforePopupOpen();
 
                 if (dataContext != null)
                 {
-                    if (_editor.IsPointerOver)
+                    if (editor.IsPointerOver)
                     {
                         _viewHost.DataContext = dataContext;
                         var mouseDevice = (VisualRoot as IInputRoot)?.MouseDevice;
-                        _lastPoint = mouseDevice.GetPosition(_editor);
+                        _lastPoint = mouseDevice.GetPosition(editor);
 
                         // adjust offset so popup is always a little bit below the line queried.
-                        var translated = _editor.TranslatePoint(_lastPoint, _editor.TextArea.TextView);
-                        var delta = (translated.Y % _editor.TextArea.TextView.DefaultLineHeight);
+                        var translated = editor.TranslatePoint(_lastPoint, editor.TextArea.TextView);
+                        var delta = (translated.Y % editor.TextArea.TextView.DefaultLineHeight);
 
-                        _popup.VerticalOffset = (_editor.TextArea.TextView.DefaultLineHeight - delta) + 1;
+                        _popup.VerticalOffset = (editor.TextArea.TextView.DefaultLineHeight - delta) + 1;
 
                         _popup.Open();
                     }

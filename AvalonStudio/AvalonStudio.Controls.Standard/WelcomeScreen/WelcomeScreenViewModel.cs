@@ -1,38 +1,52 @@
-﻿namespace AvalonStudio.Controls.Standard.WelcomeScreen
-{
-    using Avalonia.Media.Imaging;
-    using AvalonStudio.Controls.Standard.SolutionExplorer;
-    using AvalonStudio.Extensibility;
-    using AvalonStudio.Extensibility.Plugin;
-    using AvalonStudio.Platforms;
-    using AvalonStudio.Shell;
-    using ReactiveUI;
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Reactive.Disposables;
-    using System.Reactive.Linq;
-    using System.Threading.Tasks;
+﻿using Avalonia.Media.Imaging;
+using Avalonia.Threading;
+using Microsoft.SyndicationFeed;
+using AvalonStudio.Controls.Standard.SolutionExplorer;
+using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
+using AvalonStudio.Platforms;
+using AvalonStudio.Shell;
+using ReactiveUI;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Composition;
+using System.IO;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using System.Xml;
+using Microsoft.SyndicationFeed.Rss;
+using System.Linq;
+using System.Net;
 
-    public class WelcomeScreenViewModel : DocumentTabViewModel, IExtension
+namespace AvalonStudio.Controls.Standard.WelcomeScreen
+{
+    [Export(typeof(WelcomeScreenViewModel))]
+    [Export(typeof(IExtension))]
+    [Shared]
+    public class WelcomeScreenViewModel : DocumentTabViewModel, IActivatableExtension
     {
+        private ISolutionExplorer _solutionExplorer;
+
         private ObservableCollection<RecentProjectViewModel> _recentProjects;
         private ObservableCollection<NewsFeedViewModel> _newsFeed;
         private ObservableCollection<VideoFeedViewModel> _videoFeed;
-        ISolutionExplorer _solutionExplorer;
         private CompositeDisposable _disposables;
 
-        public WelcomeScreenViewModel()
+        [ImportingConstructor]
+        public WelcomeScreenViewModel(ISolutionExplorer solutionExplorer)
         {
             Title = "Start Page";
+
+            _solutionExplorer = solutionExplorer;
 
             _recentProjects = new ObservableCollection<RecentProjectViewModel>();
             _newsFeed = new ObservableCollection<NewsFeedViewModel>();
             _videoFeed = new ObservableCollection<VideoFeedViewModel>();
 
-            NewSolution = ReactiveCommand.Create(() => _solutionExplorer?.NewSolution());
-            OpenSolution = ReactiveCommand.Create(() => _solutionExplorer?.OpenSolution());
+            NewSolution = ReactiveCommand.Create(_solutionExplorer.NewSolution);
+            OpenSolution = ReactiveCommand.Create(_solutionExplorer.OpenSolution);
 
             LoadRecentProjects();
         }
@@ -45,24 +59,28 @@
         public void Activation()
         {
             var shell = IoC.Get<IShell>();
-            shell.AddDocument(this, false);
+            var studio = IoC.Get<IStudio>();
+
+            shell.AddOrSelectDocument(this);
 
             _disposables = new CompositeDisposable
             {
-                Observable.FromEventPattern<SolutionChangedEventArgs>(shell, nameof(shell.SolutionChanged)).Subscribe(o => ShellOnSolutionChanged(o.Sender, o.EventArgs))
+                Observable.FromEventPattern<SolutionChangedEventArgs>(studio, nameof(studio.SolutionChanged)).Subscribe(o => ShellOnSolutionChanged(o.Sender, o.EventArgs))
             };
             //shell.SolutionChanged += ShellOnSolutionChanged;
 
-            //LoadNewsFeed().GetAwaiter().GetResult();
-            //LoadVideoFeed().GetAwaiter().GetResult();
+            LoadNewsFeed();
+            //LoadVideoFeed();
             _solutionExplorer = IoC.Get<ISolutionExplorer>();
         }
 
-        public override void Close()
+        public override bool OnClose()
         {
-            base.Close();
+            bool result = base.OnClose();
 
             _disposables.Dispose();
+
+            return result;
         }
 
         public void BeforeActivation()
@@ -93,73 +111,72 @@
             }
         }
 
-        //private async Task LoadNewsFeed()
-        //{
-        //    // RSS Releated
-        //    //var rssurl = @"http://sxp.microsoft.com/feeds/2.0/devblogs";
-        //    //var reader = XmlReader.Create(rssurl);
-        //    /*var feed = await LoadFeed(reader);
-        //    reader.Close();*/
-
-        //    /*if (feed == null)
-        //    {
-        //        return;
-        //    }
-
-        //    foreach (var syndicationItem in feed.Items)
-        //    {
-        //        var content = syndicationItem.Summary.Text;
-
-        //        int maxCharCount = 150;
-
-        //        if (content.Length >= maxCharCount)
-        //        {
-        //            content = content.StripHTML().Truncate(maxCharCount, "...");
-        //        }
-
-        //        var link = syndicationItem.Links.LastOrDefault();
-        //        var url = "";
-
-        //        if (link != null)
-        //        {
-        //            url = link.Uri.AbsoluteUri;
-        //        }
-
-        //        _newsFeed.Add(new NewsFeedViewModel(url, content, syndicationItem.Categories.Count > 0 ? syndicationItem.Categories[0].Label : "null", syndicationItem.Authors[0].Name, syndicationItem.Title.Text));
-        //    }*/
-        //}
-
-        //private async Task LoadVideoFeed()
-        //{
-        //    var rssurl = @"https://www.youtube.com/feeds/videos.xml?channel_id=UCOWs5Rx9ot7p10mqYyzjyUA";
-        //    //var reader = XmlReader.Create(rssurl);
-        //    /*var feed = await LoadFeed(reader);
-
-        //    reader.Close();
-
-        //    if (feed == null)
-        //    {
-        //        return;
-        //    }
-
-        //    foreach (var syndicationItem in feed.Items)
-        //    {
-        //        var youtubeID = syndicationItem.Id.Replace("yt:video:", "");
-        //        var url = "https://www.youtube.com/watch?v=" + youtubeID;
-
-        //        var image = await SaveThumbnail(youtubeID);
-
-        //        _videoFeed.Add(new VideoFeedViewModel(url, syndicationItem.Title.Text, image));
-        //    }*/
-        //}
-
-        /*private async Task<SyndicationFeed> LoadFeed(XmlReader reader)
+        private async void LoadNewsFeed()
         {
-            return await Task.Factory.StartNew<SyndicationFeed>(() =>
+            // RSS Releated
+            var rssurl = @"http://go.microsoft.com/fwlink/?linkid=84795&clcid=409";
+
+            using (var reader = XmlReader.Create(rssurl))
             {
-                return SyndicationFeed.Load(reader);
-            });
-        }*/
+                var feedReader = new RssFeedReader(reader);
+
+                while (await feedReader.Read())
+                {
+                    switch (feedReader.ElementType)
+                    {
+                        case SyndicationElementType.Item:
+                            var syndicationItem = await feedReader.ReadItem();
+
+                            var content = syndicationItem.Description;
+
+                            int maxCharCount = 150;
+
+                            if (content.Length >= maxCharCount)
+                            {
+                                content = content.StripHTML().Truncate(maxCharCount, "...");
+                            }
+
+                            var link = syndicationItem.Links.LastOrDefault();
+                            var url = "";
+
+                            if (link != null)
+                            {
+                                url = link.Uri.AbsoluteUri;
+                            }
+
+                            _newsFeed.Add(new NewsFeedViewModel(url, content, syndicationItem.Categories.FirstOrDefault()?.Name, syndicationItem.Contributors.FirstOrDefault()?.Name, syndicationItem.Title));
+                            break;
+                    }
+                }
+            }
+        }
+
+        private async void LoadVideoFeed()
+        {
+            var rssurl = @"https://www.youtube.com/feeds/videos.xml?channel_id=UCOWs5Rx9ot7p10mqYyzjyUA";
+            using (var reader = XmlReader.Create(rssurl))
+            {
+                var feedReader = new RssFeedReader(reader);
+
+                while (await feedReader.Read())
+                {
+                    switch (feedReader.ElementType)
+                    {
+                        case SyndicationElementType.Item:
+                            var item = await feedReader.ReadItem();
+
+                            var youtubeID = item.Id.Replace("yt:video:", "");
+                            var url = "https://www.youtube.com/watch?v=" + youtubeID;
+
+                            var image = await SaveThumbnail(youtubeID);
+
+                            _videoFeed.Add(new VideoFeedViewModel(url, item.Title, image));
+                            break;
+                    }
+                }
+
+            }
+        }
 
         private async Task<IBitmap> SaveThumbnail(string youtubeID)
         {
@@ -177,10 +194,10 @@
 
             var thumbnail = "https://i4.ytimg.com/vi/" + youtubeID + "/hqdefault.jpg";
 
-            /*using (WebClient client = new WebClient())
+            using (var client = new WebClient())
             {
                 await client.DownloadFileTaskAsync(new Uri(thumbnail), savePath);
-            }*/
+            }
 
             return new Bitmap(savePath);
         }

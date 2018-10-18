@@ -1,7 +1,4 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:ucont="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging" MinHeight="200">
-  <cont:ToolControl Title="Locals">
-    <ucont:VariableControlView Grid.Row="1" />
-  </cont:ToolControl>
+  <ucont:VariableControlView Grid.Row="1" />
 </UserControl>

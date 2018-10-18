@@ -6,19 +6,19 @@ using System;
 
 namespace AvalonStudio.Languages.Xaml
 {
-    class InsertExtraNewLineBetweenAttributesOnEnterCodeInputHelper : ICodeEditorInputHelper
+    class InsertExtraNewLineBetweenAttributesOnEnterCodeInputHelper : ITextEditorInputHelper
     {
-        public void AfterTextInput(ILanguageService languageServivce, IEditor editor, TextInputEventArgs args)
+        public bool AfterTextInput(ITextEditor editor, string text)
         {
-
+            return false;
         }
 
-        public void BeforeTextInput(ILanguageService languageService, IEditor editor, TextInputEventArgs args)
+        public bool BeforeTextInput(ITextEditor editor, string text)
         {
-            if (args.Text == "\n")
+            if (text == "\n")
             {
                 //Check if we are not inside a tag
-                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.CaretOffset));
+                var textBefore = editor.Document.GetText(0, Math.Max(0, editor.Offset));
 
                 var state = XmlParser.Parse(textBefore);
                 if (state.State == XmlParser.ParserState.None)
@@ -26,11 +26,11 @@ namespace AvalonStudio.Languages.Xaml
                     //Find latest tag end
                     var idx = textBefore.LastIndexOf('>');
 
-                    if (idx != -1 && editor.Document.TextLength > editor.CaretOffset)
+                    if (idx != -1 && editor.Document.TextLength > editor.Offset)
                     {
                         state = XmlParser.Parse(editor.Document.GetText(0, Math.Max(0, idx)));
 
-                        if ((state.State == XmlParser.ParserState.StartElement || state.State == XmlParser.ParserState.AfterAttributeValue) && editor.Document.Text[editor.CaretOffset] == '<')
+                        if ((state.State == XmlParser.ParserState.StartElement || state.State == XmlParser.ParserState.AfterAttributeValue) && editor.Document.Text[editor.Offset] == '<')
                         {
                             var newline = "\n";
 
@@ -42,11 +42,11 @@ namespace AvalonStudio.Languages.Xaml
                                 editor.Document.TrimTrailingWhiteSpace(editor.Line + 1);
                             }
 
-                            editor.Document.Insert(editor.CaretOffset, newline);
+                            editor.Document.Insert(editor.Offset, newline);
 
                             editor.Document.TrimTrailingWhiteSpace(editor.Line);
 
-                            editor.CaretOffset -= newline.Length;
+                            editor.Offset -= newline.Length;
 
                             editor.IndentLine(editor.Line);
 
@@ -58,6 +58,12 @@ namespace AvalonStudio.Languages.Xaml
                     }
                 }
             }
+
+            return false;
+        }
+
+        public void CaretMovedToEmptyLine(ITextEditor editor)
+        {
         }
     }
 }

@@ -1,0 +1,69 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
+             xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+             xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
+             xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"
+             xmlns:menu="clr-namespace:AvalonStudio.Extensibility.MainMenu.Models;assembly=AvalonStudio.Extensibility"
+             Name="Editor">
+  <UserControl.KeyBindings>
+    <KeyBinding Command="{Binding RenameSymbolCommand}" Gesture="F2" />
+  </UserControl.KeyBindings>
+  <DockPanel LastChildFill="True">
+    <i:Interaction.Behaviors>
+      <beh:PointerWheelValueBehavior Value="{Binding ZoomLevel}" MinValue="20" MaxValue="400" Scale="10" InputModifiers="Control" />
+    </i:Interaction.Behaviors>
+    <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
+      <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
+    </Grid>
+    <Grid>
+      <Grid.ContextMenu>
+        <!--<ContextMenu Items="{Binding ContextMenu}">
+                        <ContextMenu.Styles>
+                            <Style Selector="MenuItem">
+                                <Setter Property="Command" Value="{Binding Command}" />
+                                <Setter Property="Items" Value="{Binding Children}" />
+                                <Setter Property="Background" Value="Red" />
+                            </Style>
+                        </ContextMenu.Styles>
+
+                        <ContextMenu.DataTemplates>
+                            <DataTemplate DataType="menu:MenuItemSeparator">
+                                <Separator />
+                            </DataTemplate>
+                            <DataTemplate DataType="menu:StandardMenuItem">
+                                <TextBlock Text="{Binding Text}" />
+                            </DataTemplate>
+                            <DataTemplate DataType="menu:MenuItemBase">
+                                <TextBlock Text="{Binding Text}" />
+                            </DataTemplate>
+                        </ContextMenu.DataTemplates>
+                    </ContextMenu>-->
+        <ContextMenu>
+          <MenuItem Header="Goto Definition" Command="{Binding GotoDefinitionCommand}" />
+        </ContextMenu>
+      </Grid.ContextMenu>
+
+      <editor:CodeEditor Name="editor"
+                           BorderThickness="0" Margin="0"
+                           VerticalAlignment="Stretch"
+                           FontFamily="{DynamicResource EditorFont}"
+                           FontSize="{Binding VisualFontSize}"
+                           IsDirty="{Binding IsDirty}"
+                           IsReadOnly="{Binding IsReadOnly}"
+                           HighlightSelectedWord="False"
+                           ColorScheme="{Binding ColorScheme}"
+                           EditorCaretOffset="{Binding Offset}"
+                           Line="{Binding Line}"
+                           Column="{Binding Column}"
+                           Selection="{Binding Selection}"
+                           Editor="{Binding }"
+                           RenameText="{Binding RenameText}"
+                           RenameOpen="{Binding InRenameMode}"
+                           DebugHighlight="{Binding DebugHighlight}">
+        <i:Interaction.Behaviors>
+          <beh:BindFocusedBehavior IsFocused="{Binding IsFocused}" />
+        </i:Interaction.Behaviors>
+      </editor:CodeEditor>
+    </Grid>
+  </DockPanel>
+</UserControl>

@@ -1,4 +1,5 @@
 ﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Shell;
 using ReactiveUI;
@@ -16,9 +17,9 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
 
             ClickCommand = ReactiveCommand.Create(() =>
             {
-                var shell = IoC.Get<IShell>();
+                var studio = IoC.Get<IStudio>();
 
-                shell.OpenSolutionAsync(_location);
+                studio.OpenSolutionAsync(_location);
             });
         }
 

@@ -2,7 +2,6 @@ using Avalonia.Threading;
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Rendering;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
 using AvalonStudio.MVVM;
 using AvalonStudio.TextEditor.Rendering;
 using Mono.Debugging.Client;
@@ -14,10 +13,16 @@ using System.IO;
 using System.Reactive.Linq;
 using System.Text;
 using System.Linq;
+using System.Composition;
+using AvalonStudio.Extensibility.Studio;
+using AvalonStudio.Shell;
 
 namespace AvalonStudio.Debugging
 {
-    public class DisassemblyViewModel : ToolViewModel, IExtension
+    [ExportToolControl]
+    [Export(typeof(IExtension))]
+    [Shared]
+    public class DisassemblyViewModel : ToolViewModel, IActivatableExtension
     {
         private IDebugManager2 _debugManager;
 
@@ -119,7 +124,7 @@ namespace AvalonStudio.Debugging
 
         public override Location DefaultLocation
         {
-            get { return Location.RightTop; }
+            get { return Location.Right; }
         }
 
         public void BeforeActivation()
@@ -155,6 +160,8 @@ namespace AvalonStudio.Debugging
             {
                 Document = runModeDocument;
             });
+
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
         }
 
         public void Update()

@@ -24,6 +24,7 @@
 // THE SOFTWARE.
 
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
@@ -85,7 +86,7 @@ namespace AvalonStudio.Debugging.GDB
         /// <summary>
 		/// Raised when the debugging session is paused
 		/// </summary>
-		private event EventHandler<TargetEventArgs> TargetStoppedWhenSuppressed;
+		public event EventHandler<TargetEventArgs> TargetStoppedWhenSuppressed;
 
         public GdbSession(string gdbExecutable, string runCommand = "-exec-run", bool detectAsync = true, bool waitForStopBeforeRunning = false)
         {
@@ -95,7 +96,7 @@ namespace AvalonStudio.Debugging.GDB
             _detectAsync = detectAsync;
             _waitForStopBeforeRunning = waitForStopBeforeRunning;
 
-            logGdb = IoC.Get<IShell>().DebugMode;
+            logGdb = IoC.Get<IStudio>().DebugMode;
         }
 
         protected override void OnRun(DebuggerStartInfo startInfo)
@@ -738,23 +739,29 @@ namespace AvalonStudio.Debugging.GDB
 
             string indexParams = string.Empty;
 
-            for (int i = 0; i < indexes.Count; i++)
+            if (indexes != null)
             {
-                indexParams += indexes.GetValue(i) + " ";
+                for (int i = 0; i < indexes.Count; i++)
+                {
+                    indexParams += indexes.GetValue(i) + " ";
+                }
             }
 
             var values = RunCommand("-data-list-register-values", "x", indexParams);
 
             var regValues = values.GetObject("register-values");
 
-            for (int n = 0; n < regValues.Count; n++)
+            if (regValues != null)
             {
-                var valueObj = regValues.GetObject(n);
+                for (int n = 0; n < regValues.Count; n++)
+                {
+                    var valueObj = regValues.GetObject(n);
 
-                var index = valueObj.GetInt("number");
-                var value = valueObj.GetValue("value");
+                    var index = valueObj.GetInt("number");
+                    var value = valueObj.GetValue("value");
 
-                result.Add(index, value);
+                    result.Add(index, value);
+                }
             }
 
             return result;

@@ -186,7 +186,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
             if (_popup.IsOpen && _popup.ItemsSource != null)
             {
                 _popup.IsMenuOpen = true;
-                _popup.Focus();
             }
             else
             {
@@ -252,7 +251,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
                 offset = line.Offset;
                 var length = line.Length;
 
-                var actions = await provider.GetCodeFixes(_editor.DocumentAccessor, offset, length, cancellationToken).ConfigureAwait(true);
+                var actions = await provider.GetCodeFixes(_editor.Editor, offset, length, cancellationToken).ConfigureAwait(true);
                 allActions.AddRange(actions);
             }
             return allActions;

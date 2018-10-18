@@ -12,7 +12,7 @@ namespace AvalonStudio.Languages
     {   
         ICommand GetActionCommand(object action);
 
-        Task<IEnumerable<CodeFix>> GetCodeFixes(IEditor editor, int offset, int length, CancellationToken cancellationToken);
+        Task<IEnumerable<CodeFix>> GetCodeFixes(ITextEditor editor, int offset, int length, CancellationToken cancellationToken);
     }
 
     public interface ICodeAction

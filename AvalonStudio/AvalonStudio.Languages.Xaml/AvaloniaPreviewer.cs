@@ -1,9 +1,10 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Remote;
 using Avalonia.Controls.Shapes;
 using Avalonia.Data;
+using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Remote.Protocol;
 using Avalonia.Remote.Protocol.Designer;
@@ -12,6 +13,7 @@ using Avalonia.Threading;
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
@@ -48,10 +50,13 @@ namespace AvalonStudio.Languages.Xaml
         private Center _remoteContainer;
         private Process _currentHost;
         private Grid _overlay;
+        private Grid _errorOverlay;
         private TextBlock _statusText;
+        private TextBox _errorText;
         private CompositeDisposable _disposables;
         private IDisposable _listener;
         private VisualBrush _visualBrush;
+        private CheckBox _showErrors;
 
         private static int FreeTcpPort()
         {
@@ -78,7 +83,7 @@ namespace AvalonStudio.Languages.Xaml
             get => GetValue(SourceFileProperty);
             set => SetValue(SourceFileProperty, value);
         }
-
+        
         private void OnSourceFileChanged(ISourceFile file)
         {
             KillHost();
@@ -94,7 +99,7 @@ namespace AvalonStudio.Languages.Xaml
             if (File.Exists(file.Project.Executable))
             {
                 var port = FreeTcpPort();
-                
+
                 _listener = new BsonTcpTransport().Listen(IPAddress.Loopback, port, t =>
                 {
                     Dispatcher.UIThread.InvokeAsync(() =>
@@ -137,11 +142,25 @@ namespace AvalonStudio.Languages.Xaml
                     {
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
+                            if (!_overlay.IsVisible)
+                            {
+                                _statusText.Text = "Your app must target Avalonia version >= '0.6.2-build5810-beta' to be compatible with the previewer.\r\n\r\n";
+                            }
+
                             _statusText.Text += e.Data + "\r\n";
+
                             _overlay.IsVisible = true;
                         });
                     }
                 }, false, executeInShell: false);
+            }
+            else
+            {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    _statusText.Text = "Please build your project to enable previewing and intellisense.";
+                    _overlay.IsVisible = true;
+                });
             }
         }
 
@@ -173,15 +192,37 @@ namespace AvalonStudio.Languages.Xaml
 
         public AvaloniaPreviewer()
         {
+            AddHandler(PointerWheelChangedEvent, (sender, e) =>
+            {
+                if (e.InputModifiers.HasFlag(InputModifiers.Control) && _remote != null)
+                {
+                    var delta = e.Delta.Y / 25;
+
+                    if (e.InputModifiers.HasFlag(InputModifiers.Shift))
+                    {
+                        delta = e.Delta.Y / 100;
+                    }
+
+                    var zoomLevel = _remote.ZoomLevel + delta;
+
+                    if (zoomLevel < 0.25)
+                    {
+                        zoomLevel = 0.25;
+                    }
+
+                    _remote.ZoomLevel = zoomLevel;
+                }
+            }, Avalonia.Interactivity.RoutingStrategies.Tunnel);
+
             _visualBrush = new VisualBrush
             {
-                DestinationRect = new RelativeRect(0,0,20,20, RelativeUnit.Absolute),
+                DestinationRect = new RelativeRect(0, 0, 20, 20, RelativeUnit.Absolute),
                 TileMode = TileMode.Tile,
                 Visual = new Canvas
                 {
-                    Width=20,
-                    Height=20,
-                    Background= ColorScheme.CurrentColorScheme.Background,
+                    Width = 20,
+                    Height = 20,
+                    Background = ColorScheme.CurrentColorScheme.Background,
                     Children =
                     {
                         new Rectangle
@@ -202,11 +243,14 @@ namespace AvalonStudio.Languages.Xaml
                 }
             };
 
-            var shell = IoC.Get<IShell>();
+            var studio = IoC.Get<IStudio>();
 
             _disposables = new CompositeDisposable
             {
-                this.GetObservable(XamlProperty).Subscribe(xaml =>
+                this.GetObservable(XamlProperty)
+                .Throttle(TimeSpan.FromMilliseconds(100))
+                .ObserveOn(AvaloniaScheduler.Instance)
+                .Subscribe(xaml =>
                 {
                     _connection?.Send(new UpdateXamlMessage
                     {
@@ -219,7 +263,7 @@ namespace AvalonStudio.Languages.Xaml
                     OnSourceFileChanged(file);
                 }),
 
-                Observable.FromEventPattern<BuildEventArgs>(shell, nameof(shell.BuildStarting)).Subscribe(o =>
+                Observable.FromEventPattern<BuildEventArgs>(studio, nameof(studio.BuildStarting)).Subscribe(o =>
                 {
                     if (SourceFile.Project.Solution.StartupProject == o.EventArgs.Project && _currentHost != null)
                     {
@@ -227,7 +271,7 @@ namespace AvalonStudio.Languages.Xaml
                     }
                 }),
 
-                Observable.FromEventPattern<BuildEventArgs>(shell, nameof(shell.BuildCompleted)).Subscribe(o =>
+                Observable.FromEventPattern<BuildEventArgs>(studio, nameof(studio.BuildCompleted)).Subscribe(o =>
                 {
                     if (SourceFile != null && SourceFile.Project.Solution.StartupProject == o.EventArgs.Project)
                     {
@@ -252,8 +296,12 @@ namespace AvalonStudio.Languages.Xaml
             _remoteContainer = e.NameScope.Find<Center>("PART_Center");
 
             _overlay = e.NameScope.Find<Grid>("PART_Overlay");
-
             _statusText = e.NameScope.Find<TextBlock>("PART_Status");
+
+            _errorOverlay = e.NameScope.Find<Grid>("PART_ErrorOverlay");
+            _errorText = e.NameScope.Find<TextBox>("PART_Errors");
+
+            _showErrors = e.NameScope.Find<CheckBox>("PART_ShowErrors");
 
             var background = e.NameScope.Find<ScrollViewer>("PART_Remote");
 
@@ -270,15 +318,17 @@ namespace AvalonStudio.Languages.Xaml
                 {
                     if (result.Error != null)
                     {
-                        IoC.Get<IConsole>().WriteLine(result.Error);
+                        _errorText.Text = result.Error;
+                        _showErrors.IsVisible = true;
+
+                        _remote.InError = true;
                     }
-                    //_errorsContainer.IsVisible = result.Error != null;
-                    //_errors.Text = result.Error ?? "";
-                }
-                if (obj is RequestViewportResizeMessage resize)
-                {
-                    _remote.Width = Math.Min(4096, Math.Max(resize.Width, 1));
-                    _remote.Height = Math.Min(4096, Math.Max(resize.Height, 1));
+                    else
+                    {
+                        _remote.InError = false;
+                        _showErrors.IsVisible = false;
+                        _errorText.Text = "";
+                    }
                 }
             });
         }

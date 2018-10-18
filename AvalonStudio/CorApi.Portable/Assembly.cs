@@ -18,7 +18,7 @@ namespace CorApi.Portable
             {
                 unsafe
                 {
-                    int count = 0;
+                    var count = 0u;
                     GetName(0, out count, IntPtr.Zero);
 
                     if (count == 0)
@@ -26,10 +26,10 @@ namespace CorApi.Portable
                         return null;
                     }
 
-                    var temp = stackalloc char[count];
+                    var temp = stackalloc char[(int)count];
                     GetName(count, out count, (IntPtr)temp);
 
-                    return new string(temp, 0, count - 1);
+                    return new string(temp, 0, (int)count - 1);
                 }
             }
         }

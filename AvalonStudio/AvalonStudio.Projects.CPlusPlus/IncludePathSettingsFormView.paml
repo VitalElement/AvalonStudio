@@ -20,7 +20,7 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel>                    
-          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Gap="20">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="20">
             <TextBlock Text="Export" />
             <TextBlock Text="Global" />
           </StackPanel>
@@ -29,11 +29,11 @@
             <ListBox.DataTemplates>
               <DataTemplate DataType="proj:IncludeViewModel">
                 <Grid Margin="5 2">
-                  <StackPanel Orientation="Horizontal" Gap="10">
+                  <StackPanel Orientation="Horizontal" Spacing="10">
                     <TextBlock Text="{Binding Value}" />
                   </StackPanel>
 
-                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Gap="25">
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="25">
                     <CheckBox IsChecked="{Binding Exported}" />
                     <CheckBox IsChecked="{Binding Global}" />
                   </StackPanel>
@@ -61,7 +61,7 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel>          
-          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Gap="20">
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="20">
             <TextBlock Text="Export" />
             <TextBlock Text="Global" />
           </StackPanel>
@@ -72,11 +72,11 @@
             <ListBox.DataTemplates>
               <DataTemplate DataType="proj:DefinitionViewModel">
                 <Grid Margin="5 2">
-                  <StackPanel Orientation="Horizontal" Gap="10">
+                  <StackPanel Orientation="Horizontal" Spacing="10">
                     <TextBlock Text="{Binding Value}" />
                   </StackPanel>
 
-                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Gap="25">
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="25">
                     <CheckBox IsChecked="{Binding Exported}" />
                     <CheckBox IsChecked="{Binding Global}" />
                   </StackPanel>

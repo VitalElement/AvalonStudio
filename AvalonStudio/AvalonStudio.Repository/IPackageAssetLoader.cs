@@ -1,10 +1,10 @@
-﻿using AvalonStudio.Extensibility.Plugin;
+﻿using AvalonStudio.Extensibility;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Packages
 {
-    public interface IPackageAssetLoader : IExtension
+    public interface IPackageAssetLoader : IActivatableExtension
     {
         Task LoadAssetsAsync(string package, string version, IEnumerable<string> files);
     }

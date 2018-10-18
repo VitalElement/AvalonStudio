@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 namespace AvalonStudio.Toolchains.PublishedGCC
 {
     [ExportToolchain]
+    [Shared]
     public class PublishedGCCToolchain : GCCToolchain
     {
         private string _executableExtension;

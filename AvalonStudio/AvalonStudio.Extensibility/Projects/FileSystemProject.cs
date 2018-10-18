@@ -3,6 +3,7 @@
     using Avalonia.Threading;
     using AvalonStudio.Debugging;
     using AvalonStudio.Extensibility;
+    using AvalonStudio.Extensibility.Studio;
     using AvalonStudio.Platforms;
     using AvalonStudio.Shell;
     using AvalonStudio.TestFrameworks;
@@ -346,7 +347,7 @@
             file.Parent?.Items.Remove(file);
             SourceFiles.Remove(file);
 
-            IoC.Get<IShell>().RemoveDocument(file);
+            IoC.Get<IStudio>().RemoveDocument(file);
 
             FileRemoved?.Invoke(this, file);
         }

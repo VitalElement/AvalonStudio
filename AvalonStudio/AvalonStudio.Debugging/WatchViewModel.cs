@@ -239,7 +239,10 @@ namespace AvalonStudio.Debugging
                 }
                 else
                 {
-                    Children.Clear();
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        Children.Clear();
+                    });
                 }
             }
             else if (IsExpanded && !Model.HasChildren)

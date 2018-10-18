@@ -1,13 +1,16 @@
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Plugin;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
+using AvalonStudio.Shell;
 using Mono.Debugging.Client;
+using System.Composition;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging
 {
-    public class LocalsViewModel : WatchListViewModel, IExtension
+    [ExportToolControl, Export(typeof(IExtension)), Shared]
+    public class LocalsViewModel : WatchListViewModel, IActivatableExtension
     {
         public LocalsViewModel()
         {
@@ -18,7 +21,7 @@ namespace AvalonStudio.Debugging
 
         public override Location DefaultLocation
         {
-            get { return Location.RightBottom; }
+            get { return Location.Bottom; }
         }
 
         public override void Activation()
@@ -37,6 +40,8 @@ namespace AvalonStudio.Debugging
                     Clear();
                 };
             }
+
+            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
         }
 
         private void Update (StackFrame stackFrame)

@@ -4,6 +4,7 @@
 // project unless explicitly authorized.
 //
 
+using SharpGen.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,7 +12,7 @@ using System.Text;
 
 namespace CorApi.Portable
 {
-    public partial class Value
+    public partial class Value : ComObject
     {
         public ReferenceValue CastToReferenceValue()
         {

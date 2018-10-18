@@ -37,13 +37,13 @@
     </Panel>
 
     <Panel Grid.Column="1">
-      <StackPanel Gap="4">
+      <StackPanel Spacing="4">
         <Grid>
           <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="100"/>
           </Grid.ColumnDefinitions>
-          <StackPanel Gap="2">
+          <StackPanel Spacing="2">
             <TextBox UseFloatingWatermark="true" Watermark="System Libraries: i.e. stdc, stdc++, usb-1.0, pthread" Text="{Binding SystemLibraryText}" />
             <ListBox Items="{Binding SystemLibraries}" SelectedItem="{Binding SelectedSystemLibrary}" Height="120" />
           </StackPanel>

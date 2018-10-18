@@ -10,8 +10,6 @@ namespace AvalonStudio.TextEditor.Rendering
     {
         private readonly IBrush highlightBrush;
 
-        private string selectedWord;
-
         public SelectedWordBackgroundRenderer()
         {
             highlightBrush = Brush.Parse("#113D6F");
