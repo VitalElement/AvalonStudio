@@ -15,6 +15,7 @@ jobs:
       dotnet tool install -g Cake.Tool --version 0.30.0
       export PATH="$PATH:$HOME/.dotnet/tools"
       dotnet cake build.cake -Configuration="Release"
+      ./packages/package-debian.sh
 - job: macOS
   pool:
     vmImage: 'xcode9-macos10.13'
@@ -31,6 +32,7 @@ jobs:
       dotnet tool install -g Cake.Tool --version 0.30.0
       export PATH="$PATH:$HOME/.dotnet/tools"
       dotnet cake build.cake -Configuration="Release"
+      ./packages/package-osx.sh
 - job: Windows
   pool:
     vmImage: 'vs2017-win2016'
