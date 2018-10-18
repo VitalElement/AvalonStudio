@@ -176,6 +176,7 @@ var avalonBuildRIDs = new List<string>
 
 Task("Clean")
 .Does(()=>{
+    CleanDirectory(zipRootDir);
     CleanDirectory(nugetRoot);
     CleanDirectories(buildDirs);
 });
@@ -303,6 +304,8 @@ Task("Zip-NetCore")
             var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
 
             Zip(outputDir.FullPath, zipRootDir.CombineWithFilePath(project.Name + "-" + runtime + fileZipSuffix));
+
+            DeleteDirectory(outputDir);
         }
     }    
 });
@@ -348,6 +351,7 @@ Task("Publish-AppVeyorNuget")
 });
 
 Task("Default")
+    .IsDependentOn("Clean")
     .IsDependentOn("Run-Net-Core-Unit-Tests")
     .IsDependentOn("Publish-NetCore")
     .IsDependentOn("Copy-Redist-Files-NetCore")

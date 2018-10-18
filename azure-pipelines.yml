@@ -63,4 +63,4 @@ jobs:
       dotnet cake build.cake -Configuration="Release"
   - task: PublishBuildArtifacts@1
     inputs:
-      pathToPublish: zip/
+      pathToPublish: artifacts/zip/
