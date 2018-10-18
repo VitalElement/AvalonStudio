@@ -55,7 +55,7 @@ var isNuGetRelease = isTagged && isReleasable;
 // VERSION
 ///////////////////////////////////////////////////////////////////////////////
 
-var version = "0.4.5";
+var version = "0.5";
 
 if (isRunningOnAppVeyor)
 {
@@ -167,8 +167,7 @@ Information("IsNuGetRelease: " + isNuGetRelease);
 
 var avalonBuildRIDs = new List<string>
 {
-    "win7-x64",
-    "ubuntu.14.04-x64"
+    "win7-x64"
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -350,13 +349,17 @@ Task("Publish-AppVeyorNuget")
 });
 
 Task("Default")
-    .IsDependentOn("Restore-NetCore")
-    .IsDependentOn("Build-NetCore")
     .IsDependentOn("Run-Net-Core-Unit-Tests")
     .IsDependentOn("Publish-NetCore")
     .IsDependentOn("Copy-Redist-Files-NetCore")
     .IsDependentOn("Zip-NetCore")
     .IsDependentOn("Generate-NuGetPackages")
     .IsDependentOn("Publish-AppVeyorNuget");
+
+Task("OSX")
+    .IsDependentOn("Run-Net-Core-Unit-Tests");
+
+Task("Linux")
+    .IsDependentOn("Run-Net-Core-Unit-Tests");
 
 RunTarget(target);

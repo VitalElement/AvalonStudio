@@ -14,13 +14,13 @@ jobs:
       dotnet --info
       dotnet tool install -g Cake.Tool --version 0.30.0
       export PATH="$PATH:$HOME/.dotnet/tools"
-      dotnet cake build.cake -Configuration="Release"
+      dotnet cake build.cake -Configuration="Release" -Task="Linux"
       cd packages
       ./package-debian.sh
       cd ..
   - task: PublishBuildArtifacts@1
     inputs:
-      pathToPublish: packages/deb-build/*.deb
+      pathToPublish: packages/deb-out
      
 - job: macOS
   pool:
@@ -37,14 +37,14 @@ jobs:
       dotnet --info
       dotnet tool install -g Cake.Tool --version 0.30.0
       export PATH="$PATH:$HOME/.dotnet/tools"
-      dotnet cake build.cake -Configuration="Release"
+      dotnet cake build.cake -Configuration="Release" -Task="OSX"
       cd packages
       ./package-osx.sh
       cd ..
   - task: PublishBuildArtifacts@1
     inputs:
       pathToPublish: packages/osx/AvalonStudio.app
-      
+
 - job: Windows
   pool:
     vmImage: 'vs2017-win2016'

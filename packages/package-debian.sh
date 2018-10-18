@@ -24,4 +24,5 @@ chmod +x $TARG_DIR/native/unix/clang-format
 mkdir -p $PACK_DIR/avalon-studio_$BUILD_VERSION/usr/share/pixmaps/
 cp $LOGO_DIR/Assets/logo-256.png $PACK_DIR/avalon-studio_$BUILD_VERSION/usr/share/pixmaps/avalon-studio.png
 dpkg-deb --build $PACK_DIR/avalon-studio_$BUILD_VERSION
-
+mkdir $(pwd)/deb-out
+mv $PACK_DIR/avalon-studio_$BUILD_VERSION.deb ./deb-out
