@@ -13,3 +13,4 @@ echo number = $BUILD_NUMBER
 echo reqfor = $BUILD_REQUESTEDFOR
 echo branchname = $BUILD_SOURCEBRANCHNAME
 echo branch = $BUILD_SOURCEBRANCH
+echo commit = $BUILD_SOURCEVERSION
