@@ -53,3 +53,4 @@ jobs:
       dotnet tool install -g Cake.Tool --version 0.30.0
       set PATH=%PATH%;%USERPROFILE%\.dotnet\tools
       dotnet cake build.cake -Configuration="Release"
+      7z
