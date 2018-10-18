@@ -236,8 +236,6 @@ Task("Run-Net-Core-Unit-Tests")
 
 
 Task("Publish-NetCore")
-    .IsDependentOn("Restore-NetCore")    
-    .WithCriteria(()=>((isMainRepo && isMasterBranch && isRunningOnAppVeyor  && !isPullRequest) || isLocalBuild))
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
