@@ -10,4 +10,6 @@ echo version = $BUILD_DEFINITIONVERSION
 echo name = $BUILD_DEFINITIONNAME
 echo id = $BUILD_ID
 echo number = $BUILD_NUMBER
-echo for = $BUILD_REQUESTEDFOR
+echo reqfor = $BUILD_REQUESTEDFOR
+echo branchname = $BUILD_SOURCEBRANCHNAME
+echo branch = $BUILD_SOURCEBRANCH
