@@ -43,7 +43,7 @@ jobs:
       cd ..
   - task: PublishBuildArtifacts@1
     inputs:
-      pathToPublish: packages/osx/AvalonStudio.app
+      pathToPublish: packages/AvalonStudio.osx-x64.zip
 
 - job: Windows
   pool:
