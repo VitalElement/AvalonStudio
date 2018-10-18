@@ -55,7 +55,7 @@ var isNuGetRelease = isTagged && isReleasable;
 // VERSION
 ///////////////////////////////////////////////////////////////////////////////
 
-var version = "0.5";
+var version = "0.50";
 
 if (isRunningOnAppVeyor)
 {
