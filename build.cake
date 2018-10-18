@@ -307,7 +307,10 @@ Task("Zip-NetCore")
 
             if(DirectoryExists(outputDir))
             {
-                DeleteDirectory(outputDir);
+                DeleteDirectory(outputDir, new DeleteDirectorySettings {
+                    Recursive = true,
+                    Force = true
+                });
             }
         }
     }    
