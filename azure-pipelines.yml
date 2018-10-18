@@ -35,7 +35,7 @@ jobs:
       cd ..
   - task: PublishBuildArtifacts@1
     inputs:
-      pathToPublish: packages/AvalonStudio.osx-x64.zip
+      pathToPublish: packages/AvalonStudio.osx-x64-%BUILD_SOURCEBRANCHNAME%-%BUILD_SOURCEVERSION%.zip
 
 - job: Windows
   pool:
