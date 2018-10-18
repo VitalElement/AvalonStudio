@@ -194,11 +194,11 @@ namespace AvalonStudio.Languages.Xaml
         {
             AddHandler(PointerWheelChangedEvent, (sender, e) =>
             {
-                if (_remote != null)
+                if (e.InputModifiers.HasFlag(InputModifiers.Control) && _remote != null)
                 {
                     var delta = e.Delta.Y / 25;
 
-                    if (e.InputModifiers == InputModifiers.Control)
+                    if (e.InputModifiers.HasFlag(InputModifiers.Shift))
                     {
                         delta = e.Delta.Y / 100;
                     }
