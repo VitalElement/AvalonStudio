@@ -352,9 +352,9 @@ Task("Default")
     .IsDependentOn("Run-Net-Core-Unit-Tests")
     .IsDependentOn("Publish-NetCore")
     .IsDependentOn("Copy-Redist-Files-NetCore")
-    .IsDependentOn("Zip-NetCore")
-    .IsDependentOn("Generate-NuGetPackages")
-    .IsDependentOn("Publish-AppVeyorNuget");
+    .IsDependentOn("Zip-NetCore");
+    //.IsDependentOn("Generate-NuGetPackages")
+    //.IsDependentOn("Publish-AppVeyorNuget");
 
 Task("OSX")
     .IsDependentOn("Run-Net-Core-Unit-Tests");
