@@ -51,7 +51,7 @@ jobs:
   steps:
   - task: DotNetCoreInstaller@0
     inputs:
-      version: '2.1.401'
+      version: '2.1.403'
   - script: |
       set COREHOST_TRACE=0
       set DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
