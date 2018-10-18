@@ -305,7 +305,10 @@ Task("Zip-NetCore")
 
             Zip(outputDir.FullPath, zipRootDir.CombineWithFilePath(project.Name + "-" + runtime + fileZipSuffix));
 
-            DeleteDirectory(outputDir);
+            if(DirectoryExists(outputDir))
+            {
+                DeleteDirectory(outputDir);
+            }
         }
     }    
 });
