@@ -6,7 +6,7 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.2-build5392-beta" />    
+    <PackageReference Include="Avalonia"  />    
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="ReactiveUI" Version="8.0.1" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
