@@ -252,7 +252,7 @@ Task("Publish-NetCore")
                 OutputDirectory = outputDir.FullPath
             });
 
-            if (IsRunningOnWindows() && (runtime == "win7-x86" || runtime == "win7-x64"))
+            /*if (IsRunningOnWindows() && (runtime == "win7-x86" || runtime == "win7-x64"))
             {
                 Information("Patching executable subsystem for: {0}, runtime: {1}", project.Name, runtime);
                 var targetExe = outputDir.CombineWithFilePath(project.Name + ".exe");
@@ -260,7 +260,7 @@ Task("Publish-NetCore")
                     Arguments = "/subsystem:windows " + targetExe.FullPath
                 });
                 Information("The editbin command exit code: {0}", exitCodeWithArgument);
-            }
+            }*/
         }
     }
 });
@@ -275,7 +275,7 @@ Task("Copy-Redist-Files-NetCore")
         foreach(var runtime in project.Runtimes)
         {
             var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
-            if (IsRunningOnWindows() && runtime == "win7-x86")
+            /*if (IsRunningOnWindows() && runtime == "win7-x86")
             {
                 Information("Copying redist files for: {0}, runtime: {1}", project.Name, runtime);
                 CopyFileToDirectory(msvcp140_x86, outputDir);
@@ -286,7 +286,7 @@ Task("Copy-Redist-Files-NetCore")
                 Information("Copying redist files for: {0}, runtime: {1}", project.Name, runtime);
                 CopyFileToDirectory(msvcp140_x64, outputDir);
                 CopyFileToDirectory(vcruntime140_x64, outputDir);
-            }
+            }*/
         }
     }
 });
@@ -330,7 +330,7 @@ Task("Publish-AppVeyorNuget")
     .Does(() =>
 {
     var apiKey = EnvironmentVariable("NUGET_API_KEY");
-    if(string.IsNullOrEmpty(apiKey)) 
+    if(string.IsNullOrEmpty(apiKey)) p
     {
         throw new InvalidOperationException("Could not resolve MyGet API key.");
     }
