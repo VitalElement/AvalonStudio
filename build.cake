@@ -330,7 +330,7 @@ Task("Publish-AppVeyorNuget")
     .Does(() =>
 {
     var apiKey = EnvironmentVariable("NUGET_API_KEY");
-    if(string.IsNullOrEmpty(apiKey)) p
+    if(string.IsNullOrEmpty(apiKey))
     {
         throw new InvalidOperationException("Could not resolve MyGet API key.");
     }
