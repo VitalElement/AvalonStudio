@@ -11,6 +11,7 @@ using System;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility;
 using System.IO;
+using Avalonia.Gtk3;
 
 namespace AvalonStudio
 {
@@ -72,18 +73,27 @@ namespace AvalonStudio
         public static AppBuilder BuildAvaloniaApp()
         {
             var result = AppBuilder.Configure<App>();
-            
-            if(Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
+
+            if (Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
             {
-                result.UseAvaloniaNative(null, opts=>{
-					opts.UseDeferredRendering = true;
-					opts.UseGpu = true;
-					opts.MacOptions.ShowInDock = true;
-				}).UseSkia();
+                result.UseAvaloniaNative(null, opts =>
+                {
+                    opts.UseDeferredRendering = true;
+                    opts.UseGpu = true;
+                    opts.MacOptions.ShowInDock = true;
+                }).UseSkia();
             }
-            else if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+            else if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {
                 result.UseWin32().UseSkia();
+            }
+            else if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix)
+            {
+                result.UseGtk3(new Gtk3PlatformOptions
+                {
+                    UseDeferredRendering = true,
+                    UseGpuAcceleration = true
+                }).UseSkia();
             }
             else
             {
