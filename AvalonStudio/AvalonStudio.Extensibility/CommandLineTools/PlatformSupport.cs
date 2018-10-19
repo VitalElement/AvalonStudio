@@ -179,6 +179,13 @@ namespace AvalonStudio.CommandLineTools
             }
         }
 
+        public static string[] GetSystemPaths ()
+        {
+            var result = ExecuteShellCommand("/bin/bash", "-l -c 'echo $PATH'");
+
+            return result.Output.Split(':');
+        }
+
 
         public static int ExecuteShellCommand(string commandName, string args, Action<object, DataReceivedEventArgs>
             outputReceivedCallback, Action<object, DataReceivedEventArgs> errorReceivedCallback = null, bool resolveExecutable = true,
