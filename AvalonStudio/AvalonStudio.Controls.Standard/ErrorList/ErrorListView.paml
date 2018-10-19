@@ -2,19 +2,19 @@
              xmlns:dg="clr-namespace:Avalonia.Controls;assembly=Avalonia.DataGrid"
              xmlns:vm="clr-namespace:AvalonStudio.Controls.Standard.ErrorList;assembly=AvalonStudio.Controls.Standard"
              Design.Width="800" Design.Height="400">
-<DockPanel LastChildFill="True">
-  <DockPanel.Styles>
+  <DockPanel LastChildFill="True">
+    <DockPanel.Styles>
       <Styles>
-          <Style Selector="dg|DataGridColumnHeader">
-            <Setter Property="Background" Value="{DynamicResource ThemeControlBackgroundBrush}" />
-          </Style>
-          <Style Selector="dg|DataGridRow /template/ Rectangle#BackgroundRectangle">
-            <Setter Property="Fill" Value="{DynamicResource ApplicationAccentBrush}"/>
-          </Style>
+        <Style Selector="dg|DataGridColumnHeader">
+          <Setter Property="Background" Value="{DynamicResource ThemeControlBackgroundBrush}" />
+        </Style>
+        <Style Selector="dg|DataGridRow /template/ Rectangle#BackgroundRectangle">
+          <Setter Property="Fill" Value="{DynamicResource ApplicationAccentBrush}"/>
+        </Style>
       </Styles>
-  </DockPanel.Styles>
+    </DockPanel.Styles>
 
-   <Grid Background="{DynamicResource ThemeControlBackgroundBrush}" DockPanel.Dock="Top">
+    <Grid Background="{DynamicResource ThemeControlBackgroundBrush}" DockPanel.Dock="Top">
       <StackPanel Orientation="Horizontal" Spacing="20" Margin="5" HorizontalAlignment="Left">
         <CheckBox Content="Errors" IsChecked="{Binding ShowErrors, Mode=TwoWay}" />
         <CheckBox Content="Warnings" IsChecked="{Binding ShowWarnings, Mode=TwoWay}" />
@@ -22,40 +22,39 @@
         <CheckBox Content="Intellisense" IsChecked="{Binding FromIntellisense, Mode=TwoWay}" />
         <CheckBox Content="Build" IsChecked="{Binding FromBuild, Mode=TwoWay}" />
       </StackPanel>
-   </Grid>
+    </Grid>
 
-  <dg:DataGrid Items="{Binding FilteredErrors}" SelectedItem="{Binding SelectedError, Mode=TwoWay}"
-        BorderThickness="0"
-        RowBackground="Transparent"
-        CanUserResizeColumns="True"
-        CanUserReorderColumns="True">
-    <dg:DataGrid.Columns>
-      <dg:DataGridTextColumn
-        Header="Level"
-        Binding="{Binding Level}"
-        Width="0.5*" />
-      <dg:DataGridTextColumn
-        Header="Code"
-        Binding="{Binding Code}"
-        Width="0.5*" />
-      <dg:DataGridTextColumn
-        Header="Error"
-        Binding="{Binding Spelling}"
-        Width="10*" />
-      <dg:DataGridTextColumn
-        Header="Project"
-        Binding="{Binding Project}"
-        Width="1.5*" />
-      <dg:DataGridTextColumn
-        Header="File"
-        Binding="{Binding File}"
-        Width="1.5*" />
-      <dg:DataGridTextColumn
-        Header="Line"
-        Binding="{Binding Line}"
-        Width="0.3*"
-        CellStyleClasses="gdp" />
-    </dg:DataGrid.Columns>
-  </dg:DataGrid>
+    <dg:DataGrid Items="{Binding FilteredErrors}" SelectedItem="{Binding SelectedError, Mode=TwoWay}"
+                 BorderThickness="0"
+                 RowBackground="Transparent"
+                 CanUserResizeColumns="True"
+                 CanUserReorderColumns="True">
+      <dg:DataGrid.Columns>
+        <dg:DataGridTemplateColumn Header="Level">
+          <dg:DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Border CornerRadius="4" Background="{Binding LevelBrush}" Padding="4 2" Margin="8 2">
+                <TextBlock Text="{Binding Level}" Foreground="WhiteSmoke" />
+              </Border>
+            </DataTemplate>
+          </dg:DataGridTemplateColumn.CellTemplate>
+        </dg:DataGridTemplateColumn>
+        <dg:DataGridTextColumn Header="Code"
+                               Binding="{Binding Code}" />
+        <dg:DataGridTextColumn Header="Error"
+                               Binding="{Binding Spelling}"
+                               Width="4*" />
+        <dg:DataGridTextColumn Header="Project"
+                               Binding="{Binding Project}"
+                               Width="1.5*" />
+        <dg:DataGridTextColumn Header="File"
+                               Binding="{Binding File}"
+                               Width="1.5*" />
+        <dg:DataGridTextColumn Header="Line"
+                               Binding="{Binding Line}"
+                               Width="0.3*"
+                               CellStyleClasses="gdp" />
+      </dg:DataGrid.Columns>
+    </dg:DataGrid>
   </DockPanel>
 </UserControl>
