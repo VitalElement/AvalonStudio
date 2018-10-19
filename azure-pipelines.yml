@@ -14,7 +14,7 @@ jobs:
       dotnet --info
       dotnet tool install -g Cake.Tool --version 0.30.0
       export PATH="$PATH:$HOME/.dotnet/tools"
-      dotnet cake build.cake -Configuration="Release" -Task="Linux"
+      dotnet cake build.cake -Configuration="Release" -Target="Linux"
       cd packages
       ./package-debian.sh
       cd ..
@@ -37,7 +37,7 @@ jobs:
       dotnet --info
       dotnet tool install -g Cake.Tool --version 0.30.0
       export PATH="$PATH:$HOME/.dotnet/tools"
-      dotnet cake build.cake -Configuration="Release" -Task="OSX"
+      dotnet cake build.cake -Configuration="Release" -Target="OSX"
       cd packages
       ./package-osx.sh
       cd ..
