@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Linq;
 using System.Runtime.InteropServices;
+using AvalonStudio.CommandLineTools;
 
 namespace AvalonStudio.Platforms
 {
@@ -460,6 +461,13 @@ namespace AvalonStudio.Platforms
             if (!Directory.Exists(ExtensionsFolder))
             {
                 Directory.CreateDirectory(ExtensionsFolder);
+            }
+
+            if (Platform.PlatformIdentifier == PlatformID.MacOSX)
+            {
+                var paths = PlatformSupport.GetSystemPaths();
+
+                Environment.SetEnvironmentVariable("PATH", string.Join(":", paths));
             }
         }
 
