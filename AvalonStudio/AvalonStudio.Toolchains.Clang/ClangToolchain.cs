@@ -401,6 +401,7 @@ namespace AvalonStudio.Toolchains.Clang
             {
                 switch (file.Extension)
                 {
+                    case ".cc":
                     case ".c":
                         {
                             superProject.CCompilerArguments.Select(s => result += $" {s}");

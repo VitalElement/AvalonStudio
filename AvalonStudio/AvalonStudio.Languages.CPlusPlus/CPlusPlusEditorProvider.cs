@@ -18,6 +18,7 @@ namespace AvalonStudio.Languages.CPlusPlus
             {
                 case ".h":
                 case ".c":
+                case ".cc":
                 case ".cpp":
                 case ".hpp":
                     return true;
