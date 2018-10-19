@@ -102,7 +102,7 @@ namespace AvalonStudio.Debugging
                 {
                     Children?.Clear();
 
-                    if (Model.HasChildren)
+                    if (Model.HasChildren && !Children.Contains(DummyChild))
                     {
                         Children?.Add(DummyChild);
                     }

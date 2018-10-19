@@ -53,7 +53,7 @@ namespace AvalonStudio.Debugging
 
         private void DebugManager_FrameChanged(object sender, System.EventArgs e)
         {
-            Task.Run(() =>
+            Dispatcher.UIThread.Post(() =>
             {
                 Update(DebugManager.SelectedFrame);
             });
