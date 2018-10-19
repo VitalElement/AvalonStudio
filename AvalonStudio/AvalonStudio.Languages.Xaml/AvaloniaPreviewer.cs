@@ -211,6 +211,8 @@ namespace AvalonStudio.Languages.Xaml
                     }
 
                     _remote.ZoomLevel = zoomLevel;
+
+                    e.Handled = true;
                 }
             }, Avalonia.Interactivity.RoutingStrategies.Tunnel);
 
