@@ -16,11 +16,36 @@ namespace AvalonStudio.Debugging
     using System.Text;
     using System.Threading.Tasks;
 
-    public class ObjectValueViewModel2
+    public class ObjectValueViewModel2 : ViewModel
     {
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public string Value { get; set; }
+        private string _name;
+
+        public string Name
+        {
+            get { return _name; }
+            set { this.RaiseAndSetIfChanged(ref _name, value); }
+        }
+
+        private string _value;
+
+        public string Value
+        {
+            get { return _value; }
+            set { this.RaiseAndSetIfChanged(ref _value, value); }
+        }
+
+        private string _type;
+
+        public string Type
+        {
+            get { return _type; }
+            set { this.RaiseAndSetIfChanged(ref _type, value); }
+        }
+
+
+
+        public string Path { get; set; }
+        public string Selector { get; set; }
         public ObjectValue Object { get; set; }
         public bool CanEditName { get; set; }
         public bool CanEditValue { get; set; }
@@ -49,6 +74,7 @@ namespace AvalonStudio.Debugging
         private readonly Dictionary<ObjectValue, ObjectValueViewModel2> _nodes = new Dictionary<ObjectValue, ObjectValueViewModel2>();
         private readonly List<ObjectValue> _values = new List<ObjectValue>();
         private readonly Dictionary<string, string> _oldValues = new Dictionary<string, string>();
+        private readonly ObjectValueViewModel2 _dummyNode = new ObjectValueViewModel2 { Name = "Loading..." };
 
         public ObservableCollection<ObjectValueViewModel2> Children { get; } = new ObservableCollection<ObjectValueViewModel2>();
 
@@ -67,7 +93,7 @@ namespace AvalonStudio.Debugging
 
             _nodes.Clear();
 
-            foreach(var val in _values)
+            foreach (var val in _values)
             {
                 AppendValue(null, null, val);
 
@@ -80,26 +106,48 @@ namespace AvalonStudio.Debugging
 
         void AppendValue(ObjectValueViewModel2 parent, string name, ObjectValue val)
         {
-            var iter = new ObjectValueViewModel2();
+            ObjectValueViewModel2 iter = null;
+
+            string valPath;
 
             if (parent == null)
             {
-                Children.Add(iter);
+                valPath = "/" + name;
             }
             else
             {
-                parent.Children.Add(iter);
+                valPath = GetIterPath(parent) + "/" + name;
             }
 
-            SetValues(parent, iter, name, val);
+            IList<ObjectValueViewModel2> list;
+
+            if (parent == null)
+            {
+                list = Children;
+            }
+            else
+            {
+                list = parent.Children;
+            }
+            
+            iter = list.FirstOrDefault(x => x.Selector == val.ChildSelector);
+
+            if (iter == null)
+            {
+                iter = new ObjectValueViewModel2();
+                list.Add(iter);
+            }
+
+            SetValues(parent, iter, name, valPath, val);
             RegisterValue(val, iter);
         }
 
         void RegisterValue(ObjectValue val, ObjectValueViewModel2 iter)
         {
+            _nodes[val] = iter;
+
             if (val.IsEvaluating)
             {
-                _nodes[val] = iter;
                 val.ValueChanged += OnValueUpdated;
             }
         }
@@ -138,7 +186,7 @@ namespace AvalonStudio.Debugging
             return "md-" + access + global + source;
         }
 
-        public void SetValues(ObjectValueViewModel2 parent, ObjectValueViewModel2 it, string name, ObjectValue val, bool updateJustValue = false)
+        public void SetValues(ObjectValueViewModel2 parent, ObjectValueViewModel2 it, string name, string valuePath, ObjectValue val, bool updateJustValue = false)
         {
             string strval;
             bool canEdit;
@@ -150,19 +198,8 @@ namespace AvalonStudio.Debugging
             name = name ?? val.Name;
 
             bool showViewerButton = false;
-
-            string valPath;
-
-            if (parent == null)
-            {
-                valPath = "/" + name;
-            }
-            else
-            {
-                valPath = GetIterPath(parent) + "/" + name;
-            }
-
-            _oldValues.TryGetValue(valPath, out string oldValue);
+            
+            _oldValues.TryGetValue(valuePath, out string oldValue);
 
             if (val.IsUnknown)
             {
@@ -265,6 +302,8 @@ namespace AvalonStudio.Debugging
             bool hasChildren = val.HasChildren;
             string icon = GetIcon(val.Flags);
             it.Name = name;
+            it.Path = valuePath;
+            it.Selector = val.ChildSelector;
             it.Type = val.TypeName;
             it.Object = val;
             it.CanEditName = parent == null && AllowAdding;
@@ -295,13 +334,17 @@ namespace AvalonStudio.Debugging
             if (hasChildren)
             {
                 // Add dummy node
-                it.Children.Add(new ObjectValueViewModel2 { Name = "Loading..." });
+                if (!(it.Children.Count == 1 && it.Children.First() == _dummyNode))
+                {
+                    it.Children.Add(_dummyNode);
+                }
+
                 if (!showExpanders)
                     showExpanders = true;
-                valPath += "/";
+                valuePath += "/";
                 foreach (var oldPath in _oldValues.Keys)
                 {
-                    if (oldPath.StartsWith(valPath, StringComparison.Ordinal))
+                    if (oldPath.StartsWith(valuePath, StringComparison.Ordinal))
                     {
                         Console.WriteLine("TODO here we expand or collapse watchlistvm.cs");
                         //ExpandRow(store.GetPath(it), false);
@@ -471,6 +514,42 @@ namespace AvalonStudio.Debugging
 
             Refresh(false);
         }
+
+        internal void UpdateValues(ObjectValue[] values)
+        {
+            var updated = new List<ObjectValue>();
+            var removed = new List<ObjectValue>();
+            var allValues = values.ToList();
+
+            for (var i = 0; i < _values.Count; i++)
+            {
+                var watch = _values[i];
+                
+                var currentVar = values.FirstOrDefault(v => v.ChildSelector == watch.ChildSelector);
+
+                if (currentVar == null)
+                {
+                    removed.Add(watch);
+                }
+                else
+                {
+                    updated.Add(watch);
+                    allValues.Remove(watch);
+                }
+            }
+
+            foreach(var remove in removed)
+            {
+                var node = _nodes[remove];
+                Children.Remove(node);
+                _values.Remove(remove);
+            }
+
+            foreach(var toAdd in allValues)
+            {
+                _values.Add(toAdd);
+            }
+        }
     }
 
     [ExportToolControl]
@@ -481,17 +560,18 @@ namespace AvalonStudio.Debugging
     {
         public override void OnUpdateList()
         {
-            base.OnUpdateList();
-
             var frame = DebugManager.SelectedFrame;
+
+            var values = frame.GetAllLocals().Where(l => !string.IsNullOrWhiteSpace(l.Name) && l.Name != "?").ToArray();
+
+            Tree.UpdateValues(values);
+
+            base.OnUpdateList();
 
             if(frame == null)
             {
                 return;
             }
-
-            Tree.ClearValues();
-            Tree.AddValues(frame.GetAllLocals().Where(l => !string.IsNullOrWhiteSpace(l.Name) && l.Name != "?").ToArray());
         }
     }
 
@@ -520,7 +600,8 @@ namespace AvalonStudio.Debugging
 
             if (DebugManager != null)
             {
-                DebugManager.FrameChanged += DebugManager_FrameChanged; ;
+                DebugManager.FrameChanged += DebugManager_FrameChanged;
+                DebugManager.TargetStarted += DebugManager_TargetStarted;
                 DebugManager.DebugSessionStarted += (sender, e) => { IsVisible = true; };
 
                 DebugManager.DebugSessionEnded += (sender, e) =>
@@ -531,6 +612,14 @@ namespace AvalonStudio.Debugging
             }
 
             IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
+        }
+
+        private void DebugManager_TargetStarted(object sender, EventArgs e)
+        {
+            //if (!initialResume)
+            //  tree.ChangeCheckpoint();
+            
+            //initialResume = false;
         }
 
         private void DebugManager_FrameChanged(object sender, System.EventArgs e)
