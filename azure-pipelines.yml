@@ -3,9 +3,6 @@ jobs:
   pool:
     vmImage: 'ubuntu-16.04'
   steps:
-  - task: DotNetCoreInstaller@0
-    inputs:
-      version: '2.1.403'
   - script: |
       export COREHOST_TRACE=0
       export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
@@ -26,9 +23,6 @@ jobs:
   pool:
     vmImage: 'xcode9-macos10.13'
   steps:
-  - task: DotNetCoreInstaller@0
-    inputs:
-      version: '2.1.403'
   - script: |
       export COREHOST_TRACE=0
       export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
@@ -49,9 +43,6 @@ jobs:
   pool:
     vmImage: 'vs2017-win2016'
   steps:
-  - task: DotNetCoreInstaller@0
-    inputs:
-      version: '2.1.403'
   - script: |
       set COREHOST_TRACE=0
       set DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
