@@ -10,7 +10,6 @@ TARG_DIR=$PACK_DIR/avalon-studio_$BUILD_VERSION/opt/vitalelement/avalonstudio/bi
 rm -rf $TARG_DIR
 rm -rf $BUILD_DIR/bin/Release/netcoreapp2.1/linux-x64/publish
 pushd $BUILD_DIR
-dotnet restore 
 dotnet publish -c Release -r linux-x64 -f netcoreapp2.1
 popd
 mkdir -p $TARG_DIR
