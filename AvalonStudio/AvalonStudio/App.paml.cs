@@ -74,20 +74,7 @@ namespace AvalonStudio
         {
             var result = AppBuilder.Configure<App>();
 
-            if (Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
-            {
-                result.UseAvaloniaNative(null, opts =>
-                {
-                    opts.UseDeferredRendering = true;
-                    opts.UseGpu = true;
-                    opts.MacOptions.ShowInDock = true;
-                }).UseSkia();
-            }
-            else if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
-            {
-                result.UseWin32().UseSkia();
-            }
-            else if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix)
+            if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix)
             {
                 result.UseGtk3(new Gtk3PlatformOptions
                 {
