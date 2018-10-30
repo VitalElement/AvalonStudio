@@ -34,7 +34,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             if (TextView.VisualLinesValid)
             {
                 context.FillRectangle(ColorTheme.CurrentTheme.EditorBackground, Bounds);
-                context.DrawLine(new Pen(ColorTheme.CurrentTheme.ControlDark, 0.5), Bounds.TopRight, Bounds.BottomRight);
+                context.DrawLine(new Pen(ColorTheme.CurrentTheme.ControlHigh, 0.5), Bounds.TopRight, Bounds.BottomRight);
 
                 if (TextView.VisualLines.Count > 0)
                 {
