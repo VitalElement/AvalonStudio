@@ -42,6 +42,9 @@ namespace AvalonStudio.Languages.Xaml
 
                 case CompletionKind.Namespace:
                     return CodeCompletionKind.NamespacePublic;
+
+                case CompletionKind.MarkupExtension:
+                    return CodeCompletionKind.MethodPublic;
             }
 
             return result;
