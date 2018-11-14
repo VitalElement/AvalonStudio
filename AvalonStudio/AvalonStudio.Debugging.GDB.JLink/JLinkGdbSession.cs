@@ -66,7 +66,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
             var result = true;
             var settings = _project.GetDebuggerSettings<JLinkSettings>();
 
-            //console.Clear();
+            console.Clear();
             console.WriteLine("[JLink] - Starting GDB Server...");
 
             string processName = "JLinkGDBServer";
