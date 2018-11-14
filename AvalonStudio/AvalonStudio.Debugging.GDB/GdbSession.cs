@@ -323,7 +323,7 @@ namespace AvalonStudio.Debugging.GDB
             lock (gdbLock)
             {
                 InternalStop();
-                sin.WriteLine("-gdb-exit");
+                sin?.WriteLine("-gdb-exit");
                 closeTokenSource?.Cancel();
                 TargetEventArgs args = new TargetEventArgs(TargetEventType.TargetExited);
                 OnTargetEvent(args);

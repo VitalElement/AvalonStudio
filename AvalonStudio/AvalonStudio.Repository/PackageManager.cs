@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Platforms;
+﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
 using AvalonStudio.Utils;
 using NuGet.Common;
@@ -41,7 +42,7 @@ namespace AvalonStudio.Packages
 
             if (logger == null)
             {
-                _logger = new ConsoleNuGetLogger();
+                _logger = new ConsoleNuGetLogger(IoC.Get<IConsole>());
             }
         }
 
@@ -195,7 +196,7 @@ namespace AvalonStudio.Packages
         {
             if (logger == null)
             {
-                logger = new ConsoleNuGetLogger();
+                logger = new ConsoleNuGetLogger(IoC.Get<IConsole>());
             }
 
             PackageIdentity identity = new PackageIdentity(packageId, new NuGet.Versioning.NuGetVersion(version));
@@ -255,7 +256,7 @@ namespace AvalonStudio.Packages
         {
             if (logger == null)
             {
-                logger = new ConsoleNuGetLogger();
+                logger = new ConsoleNuGetLogger(IoC.Get<IConsole>());
             }
 
             PackageIdentity identity = new PackageIdentity(packageId, new NuGet.Versioning.NuGetVersion(version));
@@ -297,7 +298,7 @@ namespace AvalonStudio.Packages
             var feed = await prov.TryCreate(defaultRepo, CancellationToken.None);
             var lister = (V2FeedListResource)feed.Item2;
 
-            var results = await lister.ListAsync(string.Empty, true, false, false, new ConsoleNuGetLogger(), CancellationToken.None);
+            var results = await lister.ListAsync(string.Empty, true, false, false, new ConsoleNuGetLogger(IoC.Get<IConsole>()), CancellationToken.None);
 
             var enumerator = results.GetEnumeratorAsync();
 
@@ -324,7 +325,7 @@ namespace AvalonStudio.Packages
         {
             if (logger == null)
             {
-                logger = new ConsoleNuGetLogger();
+                logger = new ConsoleNuGetLogger(IoC.Get<IConsole>());
             }
 
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();

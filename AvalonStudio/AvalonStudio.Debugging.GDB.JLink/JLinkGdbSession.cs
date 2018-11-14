@@ -66,7 +66,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
             var result = true;
             var settings = _project.GetDebuggerSettings<JLinkSettings>();
 
-            console.Clear();
+            //console.Clear();
             console.WriteLine("[JLink] - Starting GDB Server...");
 
             string processName = "JLinkGDBServer";
@@ -108,58 +108,68 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 process.Kill();
             }
 
-            Task.Run(() =>
+            if (File.Exists(jlinkStartInfo.FileName))
             {
-                using (var process = Process.Start(jlinkStartInfo))
+                Task.Run(() =>
                 {
-                    jlinkProcess = process;
-
-                    process.OutputDataReceived += (sender, e) =>
+                    using (var process = Process.Start(jlinkStartInfo))
                     {
-                        if (DebugMode && !string.IsNullOrEmpty(e.Data))
+                        jlinkProcess = process;
+
+                        process.OutputDataReceived += (sender, e) =>
                         {
-                            console.WriteLine("[JLink] - " + e.Data);
-                        }
-                    };
+                            if (DebugMode && !string.IsNullOrEmpty(e.Data))
+                            {
+                                console.WriteLine("[JLink] - " + e.Data);
+                            }
+                        };
 
-                    process.ErrorDataReceived += (sender, e) =>
-                    {
-                        if (!string.IsNullOrEmpty(e.Data))
+                        process.ErrorDataReceived += (sender, e) =>
                         {
-                            console.WriteLine("[JLink] - " + e.Data);
-                        }
-                    };
+                            if (!string.IsNullOrEmpty(e.Data))
+                            {
+                                console.WriteLine("[JLink] - " + e.Data);
+                            }
+                        };
 
-                    process.BeginOutputReadLine();
-                    process.BeginErrorReadLine();
+                        process.BeginOutputReadLine();
+                        process.BeginErrorReadLine();
 
-                    process.WaitForExit();
+                        process.WaitForExit();
 
-                    Dispose();
+                        Dispose();
 
-                    console.WriteLine("[JLink] - GDB Server Closed.");
+                        console.WriteLine("[JLink] - GDB Server Closed.");
 
-                    jlinkProcess = null;
+                        jlinkProcess = null;
 
-                    result = false;
+                        result = false;
+
+                        base.OnExit();
+                    }
+                });
+
+                while (jlinkProcess == null)
+                {
+                    Thread.Sleep(10);
                 }
-            });
 
-            while (jlinkProcess == null)
-            {
-                Thread.Sleep(10);
+                TargetExited += (sender, e) =>
+                {
+                    jlinkProcess?.Kill();
+                    jlinkProcess = null;
+                };
+
+                if (result)
+                {
+                    base.OnRun(startInfo);
+                    console.WriteLine("[JLink] - Connecting...");
+                }
             }
-
-            TargetExited += (sender, e) =>
+            else
             {
-                jlinkProcess?.Kill();
-                jlinkProcess = null;
-            };
-
-            if (result)
-            {
-                base.OnRun(startInfo);
-                console.WriteLine("[JLink] - Connecting...");
+                console.WriteLine("[JLink] - Unable to start GDBServer.");
+                base.OnExit();
             }
         }
     }
