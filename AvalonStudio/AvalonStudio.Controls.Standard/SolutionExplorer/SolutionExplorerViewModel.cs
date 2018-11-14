@@ -47,9 +47,19 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             Title = "Solution Explorer";
 
             this.WhenAnyValue(x => x.SelectedItem).OfType<SourceFileViewModel>().Subscribe(async item =>
-              {
-                  await IoC.Get<IStudio>().OpenDocumentAsync((ISourceFile)item.Model, 1);
-              });
+            {
+                await IoC.Get<IStudio>().OpenDocumentAsync((ISourceFile)item.Model, 1);
+            });
+
+            this.WhenAnyValue(x => x.SelectedItem).OfType<ProjectViewModel>().Subscribe(async item =>
+            {
+                if (item.Model is IProject p)
+                {
+                    var sourceFile = FileSystemFile.FromPath(p, null, p.Location);
+
+                    await IoC.Get<IStudio>().OpenDocumentAsync(sourceFile, 1);
+                }
+            });
         }
 
         public new ISolution Model
