@@ -139,7 +139,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                 if (newInclude == string.Empty)
                 {
-                    newInclude = "\\";
+                    newInclude = $"./";
                 }
 
                 IncludePaths.Add(new IncludeViewModel(Model, new Include { Value = newInclude }));
