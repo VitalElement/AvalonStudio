@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Threading;
@@ -175,7 +176,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 });
             }
 
-            var result = await dlg.ShowAsync();
+            var result = await dlg.ShowAsync(Application.Current.MainWindow);
 
             if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
             {

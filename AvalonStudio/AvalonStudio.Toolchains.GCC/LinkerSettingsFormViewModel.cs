@@ -1,5 +1,6 @@
 namespace AvalonStudio.Toolchains.GCC
 {
+    using Avalonia;
     using Avalonia.Controls;
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;
@@ -463,7 +464,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             ofd.InitialDirectory = Model.CurrentDirectory;
 
-            var result = await ofd.ShowAsync();
+            var result = await ofd.ShowAsync(Application.Current.MainWindow);
 
             if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
             {
@@ -481,7 +482,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             ofd.InitialDirectory = Model.LocationDirectory;
 
-            var result = await ofd.ShowAsync();
+            var result = await ofd.ShowAsync(Application.Current.MainWindow);
 
             if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
             {
