@@ -84,7 +84,7 @@ namespace AvalonStudio
             }
             else
             {
-                result.UsePlatformDetect();
+                result.UseWin32().UseDirect2D1();
             }
 
             return result;

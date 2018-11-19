@@ -117,7 +117,7 @@ namespace AvalonStudio.Studio
                             {
                                 if (range.matched)
                                 {
-                                    var span = new FormattedTextStyleSpan(index + tp.Item4.Project.Name.Length + 1, range.text.Length, ColorTheme.CurrentTheme.Accent);
+                                    var span = new FormattedTextStyleSpan(index + tp.Item4.Project.Name.Length + 1, range.text.Length, ColorTheme.CurrentTheme.AccentLow);
                                     spans.Add(span);
                                 }
 

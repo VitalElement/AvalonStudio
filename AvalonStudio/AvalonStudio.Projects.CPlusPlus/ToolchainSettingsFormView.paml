@@ -59,10 +59,10 @@
                     <Setter Property="Foreground" Value="{DynamicResource ThemeForegroundBrush}" />
                   </Style>
                   <Style Selector="TabStripItem:pointerover">
-                    <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrushMid}" />
                   </Style>
                   <Style Selector="TabStripItem:selected">
-                    <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentBrushLow}" />
                   </Style>
                 </TabStrip.Styles>
 

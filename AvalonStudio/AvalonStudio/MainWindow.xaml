@@ -28,14 +28,14 @@
         </Style>
 
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
         </Style>
 
         <Style Selector="DropDownItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
         </Style>
         <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
         </Style>
 
         <Style Selector="DropDownItem:selected">
