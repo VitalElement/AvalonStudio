@@ -78,6 +78,8 @@ namespace AvalonStudio.Languages.Xaml
                             RecommendImmediateSuggestions = completion.InsertText.Contains("=") || completion.InsertText.EndsWith('.')
                         });
                     }
+
+                    results.StartOffset = completionSet.StartPosition;
                 }
 
                 results.Contexts = CompletionContext.AnyType;
