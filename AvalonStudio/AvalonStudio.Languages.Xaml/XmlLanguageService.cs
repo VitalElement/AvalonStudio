@@ -39,7 +39,7 @@ namespace AvalonStudio.Languages.Xaml
 
         public IEnumerable<char> IntellisenseCompleteCharacters { get; } = new[]
         {
-            ',', '.', ':', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
+            ',', '.', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
         };
 
         public virtual bool CanTriggerIntellisense(char currentChar, char previousChar)
