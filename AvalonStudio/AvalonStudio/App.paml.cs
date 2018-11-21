@@ -82,6 +82,12 @@ namespace AvalonStudio
                     UseGpuAcceleration = true
                 }).UseSkia();
             }
+            else if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+            {
+                result
+                    .UseWin32()
+                    .UseDirect2D1();
+            }
             else
             {
                 result.UsePlatformDetect();
