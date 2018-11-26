@@ -34,12 +34,12 @@ namespace AvalonStudio.Languages.Xaml
 
         public IEnumerable<char> IntellisenseSearchCharacters { get; } = new[]
         {
-            '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#', ',',' '
+            '(', ')', '.', ':', '-', '<', '>', '[', ']', ';', '"', '#', ',',' ','/'
         };
 
         public IEnumerable<char> IntellisenseCompleteCharacters { get; } = new[]
         {
-            ',', '.', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '/', '%', '|', '&', '!', '^'
+            ',', '.', ';', '-', ' ', '(', ')', '[', ']', '<', '>', '=', '+', '*', '%', '|', '&', '!', '^', '/'
         };
 
         public virtual bool CanTriggerIntellisense(char currentChar, char previousChar)

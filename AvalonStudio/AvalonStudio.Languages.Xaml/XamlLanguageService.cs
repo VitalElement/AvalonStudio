@@ -1,6 +1,6 @@
 using Avalonia.Ide.CompletionEngine;
 using Avalonia.Ide.CompletionEngine.AssemblyMetadata;
-using Avalonia.Ide.CompletionEngine.SrmMetadataProvider;
+using Avalonia.Ide.CompletionEngine.DnlibMetadataProvider;
 using Avalonia.Threading;
 using AvalonStudio.Documents;
 using System.Collections.Generic;
@@ -95,7 +95,7 @@ namespace AvalonStudio.Languages.Xaml
         {
             if (metaData == null && File.Exists(executable))
             {
-                metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(executable);
+                metaData = new MetadataReader(new DnlibMetadataProvider()).GetForTargetAssembly(executable);
             }
         }
 
