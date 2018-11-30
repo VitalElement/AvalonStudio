@@ -6,6 +6,7 @@ namespace AvalonStudio.Debugging
     using AvalonStudio.Extensibility.Studio;
     using AvalonStudio.MVVM;
     using AvalonStudio.Shell;
+    using AvalonStudio.Utils;
     using Mono.Debugging.Client;
     using ReactiveUI;
     using System;
@@ -13,11 +14,25 @@ namespace AvalonStudio.Debugging
     using System.Collections.ObjectModel;
     using System.Composition;
     using System.Linq;
+    using System.Reactive.Linq;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public class ObjectValueViewModel2 : ViewModel
     {
+        private WatchListTreeViewModel _tree;
+
+        public ObjectValueViewModel2(WatchListTreeViewModel tree)
+        {
+            _tree = tree;
+
+            this.WhenAnyValue(x => x.IsExpanded).Where(x => x).Subscribe(x =>
+            {
+                _tree.OnRowExpanded(this);
+            });
+        }
+
         private string _name;
 
         public string Name
@@ -42,7 +57,13 @@ namespace AvalonStudio.Debugging
             set { this.RaiseAndSetIfChanged(ref _type, value); }
         }
 
+        private bool _isExpanded;
 
+        public bool IsExpanded
+        {
+            get { return _isExpanded; }
+            set { this.RaiseAndSetIfChanged(ref _isExpanded, value); }
+        }
 
         public string Path { get; set; }
         public string Selector { get; set; }
@@ -74,9 +95,46 @@ namespace AvalonStudio.Debugging
         private readonly Dictionary<ObjectValue, ObjectValueViewModel2> _nodes = new Dictionary<ObjectValue, ObjectValueViewModel2>();
         private readonly List<ObjectValue> _values = new List<ObjectValue>();
         private readonly Dictionary<string, string> _oldValues = new Dictionary<string, string>();
-        private readonly ObjectValueViewModel2 _dummyNode = new ObjectValueViewModel2 { Name = "Loading..." };
+        private readonly Dictionary<ObjectValue, Task> expandTasks = new Dictionary<ObjectValue, Task>();
+        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        
+
+        private ObjectValueViewModel2 CreateDummyNode ()
+        {
+            return new ObjectValueViewModel2(this) { Name = "Loading..." };
+        }
 
         public ObservableCollection<ObjectValueViewModel2> Children { get; } = new ObservableCollection<ObjectValueViewModel2>();
+
+        internal void OnRowExpanded (ObjectValueViewModel2 row)
+        {
+            if(row.Children.FirstOrDefault() != null && row.Children.FirstOrDefault().Object == null)
+            {
+                var value = row.Object;
+
+                if(value.HasFlag(ObjectValueFlags.IEnumerable))
+                {
+                    // load enumerable
+                }
+                else
+                {
+                    AddChildrenAsync(value, row);
+                }
+            }
+            else
+            {
+                var value = row.Object;
+
+                if(value.HasFlag(ObjectValueFlags.IEnumerable))
+                {
+
+                }
+                else
+                {
+                    
+                }
+            }
+        }
 
         private void Update ()
         {
@@ -108,17 +166,6 @@ namespace AvalonStudio.Debugging
         {
             ObjectValueViewModel2 iter = null;
 
-            string valPath;
-
-            if (parent == null)
-            {
-                valPath = "/" + name;
-            }
-            else
-            {
-                valPath = GetIterPath(parent) + "/" + name;
-            }
-
             IList<ObjectValueViewModel2> list;
 
             if (parent == null)
@@ -134,11 +181,11 @@ namespace AvalonStudio.Debugging
 
             if (iter == null)
             {
-                iter = new ObjectValueViewModel2();
+                iter = new ObjectValueViewModel2(this);
                 list.Add(iter);
             }
 
-            SetValues(parent, iter, name, valPath, val);
+            SetValues(parent, iter, name, val);
             RegisterValue(val, iter);
         }
 
@@ -186,7 +233,7 @@ namespace AvalonStudio.Debugging
             return "md-" + access + global + source;
         }
 
-        public void SetValues(ObjectValueViewModel2 parent, ObjectValueViewModel2 it, string name, string valuePath, ObjectValue val, bool updateJustValue = false)
+        public void SetValues(ObjectValueViewModel2 parent, ObjectValueViewModel2 it, string name, ObjectValue val, bool updateJustValue = false)
         {
             string strval;
             bool canEdit;
@@ -198,8 +245,19 @@ namespace AvalonStudio.Debugging
             name = name ?? val.Name;
 
             bool showViewerButton = false;
-            
-            _oldValues.TryGetValue(valuePath, out string oldValue);
+
+            string valPath;
+
+            if (parent == null)
+            {
+                valPath = "/" + name;
+            }
+            else
+            {
+                valPath = GetIterPath(parent) + "/" + name;
+            }
+
+            _oldValues.TryGetValue(valPath, out string oldValue);
 
             if (val.IsUnknown)
             {
@@ -302,7 +360,7 @@ namespace AvalonStudio.Debugging
             bool hasChildren = val.HasChildren;
             string icon = GetIcon(val.Flags);
             it.Name = name;
-            it.Path = valuePath;
+            it.Path = valPath;
             it.Selector = val.ChildSelector;
             it.Type = val.TypeName;
             it.Object = val;
@@ -334,20 +392,21 @@ namespace AvalonStudio.Debugging
             if (hasChildren)
             {
                 // Add dummy node
-                if (!(it.Children.Count == 1 && it.Children.First() == _dummyNode))
+                if (it.Children.Count == 0)
                 {
-                    it.Children.Add(_dummyNode);
+                    it.Children.Add(CreateDummyNode());
                 }
 
                 if (!showExpanders)
                     showExpanders = true;
-                valuePath += "/";
+                valPath += "/";
                 foreach (var oldPath in _oldValues.Keys)
                 {
-                    if (oldPath.StartsWith(valuePath, StringComparison.Ordinal))
+                    if (oldPath.StartsWith(valPath, StringComparison.Ordinal))
                     {
                         Console.WriteLine("TODO here we expand or collapse watchlistvm.cs");
                         //ExpandRow(store.GetPath(it), false);
+                        OnRowExpanded(it);
                         break;
                     }
                 }
@@ -501,6 +560,8 @@ namespace AvalonStudio.Debugging
 
         public void ClearValues()
         {
+            Children.Clear();
+            _nodes.Clear();
             _values.Clear();
             Refresh(true);
         }
@@ -515,11 +576,64 @@ namespace AvalonStudio.Debugging
             Refresh(false);
         }
 
+        static Task<ObjectValue[]> GetChildrenAsync(ObjectValue value, CancellationToken cancellationToken)
+        {
+            return Task.Factory.StartNew<ObjectValue[]>(delegate (object arg) {
+                try
+                {
+                    return ((ObjectValue)arg).GetAllChildren();
+                }
+                catch (Exception ex)
+                {
+                    // Note: this should only happen if someone breaks ObjectValue.GetAllChildren()
+                    //LoggingService.LogError("Failed to get ObjectValue children.", ex);
+                    IoC.Get<IConsole>("Failed to get ObjectValue children.");
+                    return new ObjectValue[0];
+                }
+            }, value, cancellationToken);
+        }
+
+        async void AddChildrenAsync(ObjectValue value, ObjectValueViewModel2 row)
+        {
+            if (expandTasks.TryGetValue(value, out Task task))
+                return;
+
+            var newTask = GetChildrenAsync(value, cancellationTokenSource.Token);
+
+            expandTasks.Add(value, newTask);
+
+            var children = await newTask;
+
+            if (_disposed)
+                return;
+
+            if (row.Children.FirstOrDefault() != null && row.Children.FirstOrDefault().Object == null)
+            {
+                foreach (var child in children)
+                {
+                    var it = new ObjectValueViewModel2(this);
+                    row.Children.Add(it);
+
+                    SetValues(row, it, null, child);
+                    RegisterValue(child, it);
+                }
+
+                row.Children.Remove(row.Children.FirstOrDefault());
+
+                //if (compact)
+                //  RecalculateWidth();
+            }
+
+            expandTasks.Remove(value);
+            //row.Dispose();
+        }
+
         internal void UpdateValues(ObjectValue[] values)
         {
             var updated = new List<ObjectValue>();
             var removed = new List<ObjectValue>();
             var allValues = values.ToList();
+            var noChange = allValues.ToList();
 
             for (var i = 0; i < _values.Count; i++)
             {
@@ -534,7 +648,7 @@ namespace AvalonStudio.Debugging
                 else
                 {
                     updated.Add(watch);
-                    allValues.Remove(watch);
+                    noChange.Remove(watch);
                 }
             }
 
@@ -545,9 +659,32 @@ namespace AvalonStudio.Debugging
                 _values.Remove(remove);
             }
 
-            foreach(var toAdd in allValues)
+            foreach(var toAdd in noChange)
             {
                 _values.Add(toAdd);
+            }
+        }
+
+        internal void ChangeCheckpoint()
+        {
+            _oldValues.Clear();
+
+            ChangeCheckpoint(Children, "/");
+
+        }
+
+        void ChangeCheckpoint(IEnumerable<ObjectValueViewModel2> values, string path)
+        {
+            foreach (var it in values)
+            {
+                string name = it.Name;
+                string val = it.Value;
+                _oldValues[path + name] = val;
+                
+                if (it.IsExpanded && it.Children.Count > 0)
+                {
+                    ChangeCheckpoint(it.Children, path + name + "/");
+                }
             }
         }
     }
@@ -579,6 +716,7 @@ namespace AvalonStudio.Debugging
     public class WatchListViewModel2 : ToolViewModel, IActivatableExtension, IWatchList
     {
         private bool _needsUpdate;
+        private bool _initialResume;
         private StackFrame _lastFrame;
 
         public override Location DefaultLocation => Location.Bottom;
@@ -606,6 +744,7 @@ namespace AvalonStudio.Debugging
 
                 DebugManager.DebugSessionEnded += (sender, e) =>
                 {
+                    Tree.ClearValues();
                     //IsVisible = false;
                     //Clear();
                 };
@@ -616,10 +755,12 @@ namespace AvalonStudio.Debugging
 
         private void DebugManager_TargetStarted(object sender, EventArgs e)
         {
-            //if (!initialResume)
-            //  tree.ChangeCheckpoint();
+            if (!_initialResume)
+            {
+                Tree.ChangeCheckpoint();
+            }
             
-            //initialResume = false;
+            _initialResume = false;
         }
 
         private void DebugManager_FrameChanged(object sender, System.EventArgs e)

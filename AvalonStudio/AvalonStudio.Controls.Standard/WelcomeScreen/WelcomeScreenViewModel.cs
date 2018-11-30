@@ -116,38 +116,45 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             // RSS Releated
             var rssurl = @"http://go.microsoft.com/fwlink/?linkid=84795&clcid=409";
 
-            using (var reader = XmlReader.Create(rssurl))
+            try
             {
-                var feedReader = new RssFeedReader(reader);
-
-                while (await feedReader.Read())
+                using (var reader = XmlReader.Create(rssurl))
                 {
-                    switch (feedReader.ElementType)
+                    var feedReader = new RssFeedReader(reader);
+
+                    while (await feedReader.Read())
                     {
-                        case SyndicationElementType.Item:
-                            var syndicationItem = await feedReader.ReadItem();
+                        switch (feedReader.ElementType)
+                        {
+                            case SyndicationElementType.Item:
+                                var syndicationItem = await feedReader.ReadItem();
 
-                            var content = syndicationItem.Description;
+                                var content = syndicationItem.Description;
 
-                            int maxCharCount = 150;
+                                int maxCharCount = 150;
 
-                            if (content.Length >= maxCharCount)
-                            {
-                                content = content.StripHTML().Truncate(maxCharCount, "...");
-                            }
+                                if (content.Length >= maxCharCount)
+                                {
+                                    content = content.StripHTML().Truncate(maxCharCount, "...");
+                                }
 
-                            var link = syndicationItem.Links.LastOrDefault();
-                            var url = "";
+                                var link = syndicationItem.Links.LastOrDefault();
+                                var url = "";
 
-                            if (link != null)
-                            {
-                                url = link.Uri.AbsoluteUri;
-                            }
+                                if (link != null)
+                                {
+                                    url = link.Uri.AbsoluteUri;
+                                }
 
-                            _newsFeed.Add(new NewsFeedViewModel(url, content, syndicationItem.Categories.FirstOrDefault()?.Name, syndicationItem.Contributors.FirstOrDefault()?.Name, syndicationItem.Title));
-                            break;
+                                _newsFeed.Add(new NewsFeedViewModel(url, content, syndicationItem.Categories.FirstOrDefault()?.Name, syndicationItem.Contributors.FirstOrDefault()?.Name, syndicationItem.Title));
+                                break;
+                        }
                     }
                 }
+            }
+            catch (Exception)
+            {
+
             }
         }
 

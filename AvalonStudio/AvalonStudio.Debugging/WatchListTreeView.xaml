@@ -28,7 +28,8 @@
             <StackPanel Orientation="Horizontal" Spacing="4">
               <TextBlock Text="{Binding Name}"/>
               <TextBlock Margin="10 0 0 0" Grid.Column="1" Text="{Binding Value}"/>
-              <TextBlock Margin="10 0 0 0" Grid.Column="2" Text="{Binding Type}"/>  
+              <TextBlock Margin="10 0 0 0" Grid.Column="2" Text="{Binding Type}"/>
+              
             </StackPanel>
           </Grid>
         </TreeDataTemplate>
