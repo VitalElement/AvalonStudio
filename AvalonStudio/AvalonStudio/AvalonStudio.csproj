@@ -18,9 +18,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Desktop" />
-    <PackageReference Include="Avalonia.Native" Version="0.7.0-build4201810173" />
     <PackageReference Include="Avalonia.ReactiveUI" />
     <PackageReference Include="Avalonia.Skia.Linux.Natives" Version="1.60.0.1" />    
     <PackageReference Include="GitInfo" Version="2.0.10" />

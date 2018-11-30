@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Platforms;
+﻿using AvalonStudio.Extensibility;
+using AvalonStudio.Platforms;
 using AvalonStudio.Repositories;
 using AvalonStudio.Utils;
 using NuGet.Common;
@@ -41,16 +42,14 @@ namespace AvalonStudio.Packages
 
             if (logger == null)
             {
-                _logger = new ConsoleNuGetLogger();
+                _logger = new ConsoleNuGetLogger(IoC.Get<IConsole>());
             }
         }
 
         private static List<Lazy<INuGetResourceProvider>> s_providers = new List<Lazy<INuGetResourceProvider>>(Repository.Provider.GetCoreV3());
 
         private static readonly IEnumerable<SourceRepository> s_sourceRepositories = new List<SourceRepository> {
-                    new SourceRepository(new PackageSource("https://nuget.vitalelement.co.uk/repository/AvalonStudio/"), s_providers),
-                    //new SourceRepository(new PackageSource("http://nuget1.vitalelement.co.uk/repository/AvalonStudio/"), s_providers),
-                    new SourceRepository(new PackageSource("http://nuget2.vitalelement.co.uk/repository/AvalonStudio/"), s_providers)
+                    new SourceRepository(new PackageSource("https://nuget.vitalelement.co.uk/repository/AvalonStudio/"), s_providers)
             };
 
         public static NuGetFramework GetFramework()
@@ -197,7 +196,7 @@ namespace AvalonStudio.Packages
         {
             if (logger == null)
             {
-                logger = new ConsoleNuGetLogger();
+                logger = new ConsoleNuGetLogger(IoC.Get<IConsole>());
             }
 
             PackageIdentity identity = new PackageIdentity(packageId, new NuGet.Versioning.NuGetVersion(version));
@@ -257,7 +256,7 @@ namespace AvalonStudio.Packages
         {
             if (logger == null)
             {
-                logger = new ConsoleNuGetLogger();
+                logger = new ConsoleNuGetLogger(IoC.Get<IConsole>());
             }
 
             PackageIdentity identity = new PackageIdentity(packageId, new NuGet.Versioning.NuGetVersion(version));
@@ -299,7 +298,7 @@ namespace AvalonStudio.Packages
             var feed = await prov.TryCreate(defaultRepo, CancellationToken.None);
             var lister = (V2FeedListResource)feed.Item2;
 
-            var results = await lister.ListAsync(string.Empty, true, false, false, new ConsoleNuGetLogger(), CancellationToken.None);
+            var results = await lister.ListAsync(string.Empty, true, false, false, new ConsoleNuGetLogger(IoC.Get<IConsole>()), CancellationToken.None);
 
             var enumerator = results.GetEnumeratorAsync();
 
@@ -326,7 +325,7 @@ namespace AvalonStudio.Packages
         {
             if (logger == null)
             {
-                logger = new ConsoleNuGetLogger();
+                logger = new ConsoleNuGetLogger(IoC.Get<IConsole>());
             }
 
             List<Lazy<INuGetResourceProvider>> providers = new List<Lazy<INuGetResourceProvider>>();

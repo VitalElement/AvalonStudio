@@ -1,6 +1,7 @@
 ﻿using NuGet.Common;
 using NuGet.Packaging;
 using NuGet.ProjectManagement;
+using System;
 using System.Xml.Linq;
 
 namespace AvalonStudio.Packages
@@ -35,6 +36,7 @@ namespace AvalonStudio.Packages
         }
 
         public NuGetActionType ActionType { get; set; }
-        public TelemetryServiceHelper TelemetryService { get; set; }
+        
+        public Guid OperationId { get; set; }
     }
 }

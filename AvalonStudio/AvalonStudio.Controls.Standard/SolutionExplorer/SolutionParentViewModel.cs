@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
+    using Avalonia;
     using Avalonia.Controls;
     using AvalonStudio.Extensibility;
     using AvalonStudio.Extensibility.Studio;
@@ -59,7 +60,7 @@
 
                 dlg.AllowMultiple = false;
 
-                var result = await dlg.ShowAsync();
+                var result = await dlg.ShowAsync(Application.Current.MainWindow);
 
                 if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {

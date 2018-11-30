@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
@@ -38,7 +39,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
                 ofd.AllowMultiple = false;
                 ofd.Title = "Open OpenOCD Interface Config File";
 
-                var result = await ofd.ShowAsync();
+                var result = await ofd.ShowAsync(Application.Current.MainWindow);
 
                 if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {
@@ -54,7 +55,7 @@ namespace AvalonStudio.Debugging.GDB.OpenOCD
                 ofd.AllowMultiple = false;
                 ofd.Title = "Open OpenOCD Target Config File";
 
-                var result = await ofd.ShowAsync();
+                var result = await ofd.ShowAsync(Application.Current.MainWindow);
 
                 if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {

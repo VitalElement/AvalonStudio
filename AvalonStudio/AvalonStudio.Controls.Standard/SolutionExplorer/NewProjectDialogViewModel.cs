@@ -7,6 +7,7 @@ using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
+using Avalonia;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -84,7 +85,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                     InitialDirectory = location
                 };
 
-                var result = await ofd.ShowAsync();
+                var result = await ofd.ShowAsync(Application.Current.MainWindow);
 
                 if (!string.IsNullOrEmpty(result))
                 {

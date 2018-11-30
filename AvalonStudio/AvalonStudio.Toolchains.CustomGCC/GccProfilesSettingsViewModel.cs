@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Settings;
 using ReactiveUI;
@@ -37,7 +38,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
             {
                 var fbd = new OpenFolderDialog();
 
-                var result = await fbd.ShowAsync();
+                var result = await fbd.ShowAsync(Application.Current.MainWindow);
 
                 if (!string.IsNullOrEmpty(result))
                 {

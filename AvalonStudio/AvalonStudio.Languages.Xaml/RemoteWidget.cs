@@ -290,9 +290,9 @@ namespace AvalonStudio.Languages.Xaml
             if (_lastFrame != null)
             {
                 var fmt = (PixelFormat)_lastFrame.Format;
-                if (_bitmap == null || _bitmap.PixelWidth != _lastFrame.Width ||
-                    _bitmap.PixelHeight != _lastFrame.Height)
-                    _bitmap = new WriteableBitmap(_lastFrame.Width, _lastFrame.Height, fmt);
+                if (_bitmap == null || _bitmap.Size.Width != _lastFrame.Width ||
+                    _bitmap.Size.Height != _lastFrame.Height)
+                    _bitmap = new WriteableBitmap(new PixelSize(_lastFrame.Width, _lastFrame.Height), new Vector(96,96), fmt);
                 using (var l = _bitmap.Lock())
                 {
                     var lineLen = (fmt == PixelFormat.Rgb565 ? 2 : 4) * _lastFrame.Width;
@@ -300,7 +300,7 @@ namespace AvalonStudio.Languages.Xaml
                         Marshal.Copy(_lastFrame.Data, y * _lastFrame.Stride,
                             new IntPtr(l.Address.ToInt64() + l.RowBytes * y), lineLen);
                 }
-                context.DrawImage(_bitmap, 1, new Rect(0, 0, _bitmap.PixelWidth, _bitmap.PixelHeight),
+                context.DrawImage(_bitmap, 1, new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height),
                     new Rect(Bounds.Size));
             }
             base.Render(context);

@@ -9,7 +9,7 @@
                       Icon="resm:AvalonStudio.Shell.Assets.logo-256.png?assembly=AvalonStudio.Shell"
                       Title="AvalonStudio" MinWidth="400" MinHeight="200"
                       BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}"
-                      FontFamily="{DynamicResource UiFont}" FontSize="14"
+                      FontFamily="{DynamicResource UiFont}" FontSize="14" FontWeight="Light"
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized" RenderOptions.BitmapInterpolationMode="HighQuality" UseLayoutRounding="True">
     <cont:MetroWindow.TitleBarContent>
     </cont:MetroWindow.TitleBarContent>
@@ -28,14 +28,14 @@
         </Style>
 
         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
         </Style>
 
         <Style Selector="DropDownItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
         </Style>
         <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
         </Style>
 
         <Style Selector="DropDownItem:selected">

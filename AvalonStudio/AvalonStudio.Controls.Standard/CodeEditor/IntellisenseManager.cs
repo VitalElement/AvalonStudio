@@ -40,6 +40,7 @@
 
         private readonly List<CompletionDataViewModel> unfilteredCompletions = new List<CompletionDataViewModel>();
         private CompletionDataViewModel recommendedCompletion;
+        private int? _recommendedInsertionOffset;
         private Key capturedOnKeyDown;
         private readonly JobRunner intellisenseJobRunner;
         private readonly JobRunner intellisenseQueryRunner;
@@ -116,6 +117,15 @@
             if (_studio.DebugMode)
             {
                 _console.WriteLine(completionData.Contexts.ToString());
+            }
+
+            if (completionData.StartOffset.HasValue)
+            {
+                _recommendedInsertionOffset = completionData.StartOffset;
+            }
+            else
+            {
+                _recommendedInsertionOffset = null;
             }
 
             if (!completionData.Contexts.HasFlag(CompletionContext.NaturalLanguage) && (completionData.Contexts != CompletionContext.Unexposed || completionData.Contexts == CompletionContext.Unknown))
@@ -315,7 +325,7 @@
 
                 using (editor.Document.RunUpdate())
                 {
-                    int wordStart = editor.Document.GetIntellisenseStartPosition(caretIndex + caretOffset, languageService.IsValidIdentifierCharacter);
+                    int wordStart = _recommendedInsertionOffset.HasValue ? _recommendedInsertionOffset.Value : editor.Document.GetIntellisenseStartPosition(caretIndex + caretOffset, languageService.IsValidIdentifierCharacter);
 
                     if (caretIndex - wordStart >= 0 && intellisenseControl.SelectedCompletion != null)
                     {

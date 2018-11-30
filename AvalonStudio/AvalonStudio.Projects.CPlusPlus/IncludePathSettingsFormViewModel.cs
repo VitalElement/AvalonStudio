@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using AvalonStudio.Extensibility;
 using AvalonStudio.MVVM;
@@ -131,7 +132,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             fbd.InitialDirectory = Model.CurrentDirectory;
 
-            var result = await fbd.ShowAsync();
+            var result = await fbd.ShowAsync(Application.Current.MainWindow);
 
             if (!string.IsNullOrEmpty(result))
             {
@@ -139,7 +140,7 @@ namespace AvalonStudio.Projects.CPlusPlus
 
                 if (newInclude == string.Empty)
                 {
-                    newInclude = "\\";
+                    newInclude = $"./";
                 }
 
                 IncludePaths.Add(new IncludeViewModel(Model, new Include { Value = newInclude }));

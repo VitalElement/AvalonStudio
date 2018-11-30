@@ -5,6 +5,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
+using Avalonia;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
@@ -411,7 +412,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             fbd.InitialDirectory = Model.CurrentDirectory;
 
-            var result = await fbd.ShowAsync();
+            var result = await fbd.ShowAsync(Application.Current.MainWindow);
 
             if (!string.IsNullOrEmpty(result))
             {
