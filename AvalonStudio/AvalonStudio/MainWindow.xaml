@@ -13,7 +13,7 @@
                       FontFamily="{DynamicResource UiFont}" FontSize="12"
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized" RenderOptions.BitmapInterpolationMode="HighQuality" UseLayoutRounding="True">
     <cont:MetroWindow.TitleBarContent>
-        <menu:MainMenuView DataContext="{Binding Shell.MainMenu}" Margin="10 11 0 0"  Foreground="{DynamicResource ThemeForegroundBrush}" />
+        <menu:MainMenuView DataContext="{Binding Shell.MainMenu}" Margin="8 6 0 6"  Foreground="{DynamicResource ThemeForegroundBrush}" VerticalAlignment="Stretch" />
     </cont:MetroWindow.TitleBarContent>
 
     <cont:MetroWindow.Resources>
