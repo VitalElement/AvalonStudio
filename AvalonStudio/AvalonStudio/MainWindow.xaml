@@ -4,14 +4,16 @@
                       xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
                       xmlns:id="clr-namespace:Dock.Avalonia;assembly=Dock.Avalonia"
                       xmlns:shell="clr-namespace:AvalonStudio.Shell;assembly=AvalonStudio.Shell"
+                      xmlns:menu="clr-namespace:AvalonStudio.Shell.Extensibility.MainMenu.Views;assembly=AvalonStudio.Shell.Extensibility"
                       xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       Icon="resm:AvalonStudio.Shell.Assets.logo-256.png?assembly=AvalonStudio.Shell"
                       Title="AvalonStudio" MinWidth="400" MinHeight="200"
-                      BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}"
-                      FontFamily="{DynamicResource UiFont}" FontSize="14" FontWeight="Light"
+                      BorderThickness="0"
+                      FontFamily="{DynamicResource UiFont}" FontSize="12"
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized" RenderOptions.BitmapInterpolationMode="HighQuality" UseLayoutRounding="True">
     <cont:MetroWindow.TitleBarContent>
+        <menu:MainMenuView DataContext="{Binding Shell.MainMenu}" Margin="10 11 0 0"  Foreground="{DynamicResource ThemeForegroundBrush}" />
     </cont:MetroWindow.TitleBarContent>
 
     <cont:MetroWindow.Resources>
