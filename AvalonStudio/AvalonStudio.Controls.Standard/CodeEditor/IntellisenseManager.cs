@@ -1,5 +1,6 @@
 ﻿namespace AvalonStudio.Controls
 {
+    using Avalonia;
     using Avalonia.Input;
     using Avalonia.Threading;
     using AvalonStudio.Controls.Standard.CodeEditor;
@@ -44,6 +45,16 @@
         private Key capturedOnKeyDown;
         private readonly JobRunner intellisenseJobRunner;
         private readonly JobRunner intellisenseQueryRunner;
+        
+        public IntellisenseManager()
+        {
+            Application.Current.OnExit += Current_OnExit;
+        }
+
+        private void Current_OnExit(object sender, EventArgs e)
+        {
+            _cancelRunners?.Cancel();
+        }
 
         private bool IsTriggerChar(char currentChar, char previousChar, bool isVisible)
         {
@@ -103,6 +114,8 @@
         public void Dispose()
         {
             editor = null;
+
+            Application.Current.OnExit -= Current_OnExit;
 
             _cancelRunners.Cancel();
         }

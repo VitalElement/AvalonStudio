@@ -690,7 +690,6 @@ namespace AvalonStudio.Debugging
     }
 
     [ExportToolControl]
-    [Export(typeof(IWatchList))]
     [Export(typeof(IExtension))]
     [Shared]
     public class LocalsViewModel2 : WatchListViewModel2
@@ -712,7 +711,10 @@ namespace AvalonStudio.Debugging
         }
     }
 
-
+    [ExportToolControl]
+    [Export(typeof(IWatchList))]
+    [Export(typeof(IExtension))]
+    [Shared]
     public class WatchListViewModel2 : ToolViewModel, IActivatableExtension, IWatchList
     {
         private bool _needsUpdate;
