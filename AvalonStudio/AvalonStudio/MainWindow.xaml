@@ -13,7 +13,7 @@
                       FontFamily="{DynamicResource UiFont}" FontSize="12"
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized" RenderOptions.BitmapInterpolationMode="HighQuality" UseLayoutRounding="True">
     <cont:MetroWindow.TitleBarContent>
-        <menu:MainMenuView DataContext="{Binding Shell.MainMenu}" Margin="8 6 0 6"  Foreground="{DynamicResource ThemeForegroundBrush}" VerticalAlignment="Stretch" />
+        <menu:MainMenuView DataContext="{Binding Shell.MainMenu}" Margin="4 0 0 0"  Foreground="{DynamicResource ThemeForegroundBrush}" VerticalAlignment="Stretch" />
     </cont:MetroWindow.TitleBarContent>
 
     <cont:MetroWindow.Resources>
@@ -25,47 +25,12 @@
     </i:Interaction.Behaviors>
 
     <cont:MetroWindow.Styles>
-        <Style Selector="ListBoxItem:selected">
-            <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+        <Style Selector="MenuItem:selected /template/ Border#root">
+            <Setter Property="Background" Value="{DynamicResource ThemeControlMidBrush}"/>
         </Style>
 
-        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
-        </Style>
-
-        <Style Selector="DropDownItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
-        </Style>
-        <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
-        </Style>
-
-        <Style Selector="DropDownItem:selected">
-            <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
-        </Style>
-        <Style Selector="DropDownItem:pointerover">
-            <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
-        </Style>
-
-        <!-- GridSplitter.vertical -->
-        <Style Selector="GridSplitter:vertical">
-            <Setter Property="Width" Value="6" />
-            <Setter Property="Background" Value="#00FFFFFF" />
-            <Setter Property="Template">
-                <ControlTemplate>
-                    <Border Background="{TemplateBinding Background}" />
-                </ControlTemplate>
-            </Setter>
-        </Style>
-        <!-- GridSplitter.horizontal -->
-        <Style Selector="GridSplitter:horizontal">
-            <Setter Property="Height" Value="6" />
-            <Setter Property="Background" Value="#00FFFFFF" />
-            <Setter Property="Template">
-                <ControlTemplate>
-                    <Border Background="{TemplateBinding Background}" BorderThickness="1" />
-                </ControlTemplate>
-            </Setter>
+        <Style Selector="MenuItem">
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
     </cont:MetroWindow.Styles>
 

@@ -1,9 +1,9 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:lang="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility"
              xmlns:proj="clr-namespace:AvalonStudio.Projects;assembly=AvalonStudio.Extensibility"
-             Background="{DynamicResource ThemeBackgroundBrush}" MinWidth="800" MinHeight="600">
+             MinWidth="800" MinHeight="600">
   <DockPanel>
-    <Grid DockPanel.Dock ="Top" Background="WhiteSmoke">
+    <Grid DockPanel.Dock ="Top">
       <StackPanel Orientation="Horizontal" Spacing="12">
         <Image Source="resm:AvalonStudio.Controls.Standard.AboutScreen.Assets.logo-65.png?assembly=AvalonStudio.Controls.Standard" Stretch="None" Width="65" Height="65" Margin="20" />
         <TextBlock Text="AvalonStudio" FontSize="50" VerticalAlignment="Center" />
@@ -15,10 +15,10 @@
           <TextBlock Text="Version:" />
           <TextBlock Text="{Binding Version}" />
         </StackPanel>
-	<StackPanel Orientation="Horizontal" Spacing="4">
-	  <TextBlock Text="Descriptive Version:" />
-	  <TextBox BorderThickness="0" Text="{Binding DescriptiveVersion, Mode=OneWay}" IsReadOnly="True" Padding="0" />
-	</StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="4">
+          <TextBlock Text="Descriptive Version:" />
+          <TextBox BorderThickness="0" Text="{Binding DescriptiveVersion, Mode=OneWay}" IsReadOnly="True" Padding="0" />
+        </StackPanel>
         <StackPanel Orientation="Horizontal" Spacing="4">
           <TextBlock Text="Platform:" />
           <TextBlock Text="{Binding PlatformString}" />
