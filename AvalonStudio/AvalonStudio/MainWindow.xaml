@@ -25,13 +25,14 @@
     </i:Interaction.Behaviors>
 
     <cont:MetroWindow.Styles>
-        <Style Selector="MenuItem:selected /template/ Border#root">
+        <Style Selector="Menu > MenuItem:selected /template/ Border#root">
             <Setter Property="Background" Value="{DynamicResource ThemeControlMidBrush}"/>
         </Style>
 
         <Style Selector="MenuItem">
             <Setter Property="BorderThickness" Value="0"/>
         </Style>
+
     </cont:MetroWindow.Styles>
 
     <cont:MetroWindow.KeyBindings>
