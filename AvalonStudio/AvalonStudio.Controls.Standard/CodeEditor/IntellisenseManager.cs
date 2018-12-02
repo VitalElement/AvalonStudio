@@ -588,7 +588,7 @@
 
                                 _requestingData = false;
 
-                                if (unfilteredCompletions.Count > 0)
+                                if (unfilteredCompletions.Count > 0 && _justOpened)
                                 {
                                     if (editor != null)
                                     {

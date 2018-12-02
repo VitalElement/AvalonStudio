@@ -45,6 +45,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
         private readonly CodeEditor _editor;
         private readonly TextMarkerService _textMarkerService;
 
+        private bool _popupOpened;
         private ContextActionsBulbPopup _popup;
         private CancellationTokenSource _cancellationTokenSource;
         private IEnumerable<object> _actions;
@@ -117,10 +118,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
         {
             _popup.ItemsSource = _actions;
             _popup.OpenAtLine(_editor, Line);
+
+            _popupOpened = true;
         }
 
         protected override void OnClosePopup()
         {
+            _popupOpened = false;
             ClosePopup();
         }
 
@@ -259,7 +263,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor.ContextActions
 
         private void ClosePopup()
         {
-            if (_cancellationTokenSource != null)
+            if (_popupOpened && _cancellationTokenSource != null)
             {
                 _cancellationTokenSource.Cancel();
                 _cancellationTokenSource = null;

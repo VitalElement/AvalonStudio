@@ -4,14 +4,16 @@
                       xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
                       xmlns:id="clr-namespace:Dock.Avalonia;assembly=Dock.Avalonia"
                       xmlns:shell="clr-namespace:AvalonStudio.Shell;assembly=AvalonStudio.Shell"
+                      xmlns:menu="clr-namespace:AvalonStudio.Shell.Extensibility.MainMenu.Views;assembly=AvalonStudio.Shell.Extensibility"
                       xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       Icon="resm:AvalonStudio.Shell.Assets.logo-256.png?assembly=AvalonStudio.Shell"
                       Title="AvalonStudio" MinWidth="400" MinHeight="200"
-                      BorderThickness="1" BorderBrush="{DynamicResource AvalonBorderBrush}"
-                      FontFamily="{DynamicResource UiFont}" FontSize="14" FontWeight="Light"
+                      BorderThickness="0"
+                      FontFamily="{DynamicResource UiFont}" FontSize="12"
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized" RenderOptions.BitmapInterpolationMode="HighQuality" UseLayoutRounding="True">
     <cont:MetroWindow.TitleBarContent>
+        <menu:MainMenuView DataContext="{Binding Shell.MainMenu}" Margin="4 0 0 0"  Foreground="{DynamicResource ThemeForegroundBrush}" VerticalAlignment="Stretch" />
     </cont:MetroWindow.TitleBarContent>
 
     <cont:MetroWindow.Resources>
@@ -23,48 +25,14 @@
     </i:Interaction.Behaviors>
 
     <cont:MetroWindow.Styles>
-        <Style Selector="ListBoxItem:selected">
-            <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+        <Style Selector="Menu > MenuItem:selected /template/ Border#root">
+            <Setter Property="Background" Value="{DynamicResource ThemeControlMidBrush}"/>
         </Style>
 
-        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
+        <Style Selector="MenuItem">
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
 
-        <Style Selector="DropDownItem:selected /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
-        </Style>
-        <Style Selector="DropDownItem:pointerover /template/ ContentPresenter">
-            <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
-        </Style>
-
-        <Style Selector="DropDownItem:selected">
-            <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
-        </Style>
-        <Style Selector="DropDownItem:pointerover">
-            <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
-        </Style>
-
-        <!-- GridSplitter.vertical -->
-        <Style Selector="GridSplitter:vertical">
-            <Setter Property="Width" Value="6" />
-            <Setter Property="Background" Value="#00FFFFFF" />
-            <Setter Property="Template">
-                <ControlTemplate>
-                    <Border Background="{TemplateBinding Background}" />
-                </ControlTemplate>
-            </Setter>
-        </Style>
-        <!-- GridSplitter.horizontal -->
-        <Style Selector="GridSplitter:horizontal">
-            <Setter Property="Height" Value="6" />
-            <Setter Property="Background" Value="#00FFFFFF" />
-            <Setter Property="Template">
-                <ControlTemplate>
-                    <Border Background="{TemplateBinding Background}" BorderThickness="1" />
-                </ControlTemplate>
-            </Setter>
-        </Style>
     </cont:MetroWindow.Styles>
 
     <cont:MetroWindow.KeyBindings>
