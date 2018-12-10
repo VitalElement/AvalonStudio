@@ -13,7 +13,7 @@
                       FontFamily="{DynamicResource UiFont}" FontSize="12"
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized" RenderOptions.BitmapInterpolationMode="HighQuality" UseLayoutRounding="True">
     <cont:MetroWindow.TitleBarContent>
-        <menu:MainMenuView DataContext="{Binding Shell.MainMenu}" Margin="4 0 0 0"  Foreground="{DynamicResource ThemeForegroundBrush}" VerticalAlignment="Stretch" />
+        <menu:MainMenuView DataContext="{Binding Shell.MainMenu}" Margin="4 0 0 0"  Foreground="{DynamicResource ThemeForegroundBrush}" VerticalAlignment="Stretch" FontSize="13" />
     </cont:MetroWindow.TitleBarContent>
 
     <cont:MetroWindow.Resources>
@@ -27,6 +27,10 @@
     <cont:MetroWindow.Styles>
         <Style Selector="Menu > MenuItem:selected /template/ Border#root">
             <Setter Property="Background" Value="{DynamicResource ThemeControlMidBrush}"/>
+        </Style>
+
+        <Style Selector="Menu > MenuItem">
+            <Setter Property="Padding" Value="7 0"/>
         </Style>
 
         <Style Selector="MenuItem">
