@@ -333,9 +333,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 {
                     _lastLine = TextArea.Caret.Line;
 
-                    EditorCaretOffset = TextArea.Caret.Offset;
                     Line = TextArea.Caret.Line;
                     Column = TextArea.Caret.Column;
+                    EditorCaretOffset = TextArea.Caret.Offset;
 
                     var location = new TextViewPosition(Document.GetLocation(CaretOffset));
 
