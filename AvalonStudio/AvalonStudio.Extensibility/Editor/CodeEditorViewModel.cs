@@ -235,7 +235,7 @@ namespace AvalonStudio.Extensibility.Editor
 
                 var quickinfo = await LanguageService.QuickInfo(unsavedFiles, offset);
 
-                if (quickinfo != null)
+                if (quickinfo != null && !string.IsNullOrWhiteSpace(quickinfo.Text.Text))
                 {
                     return new QuickInfoViewModel(quickinfo);
                 }
