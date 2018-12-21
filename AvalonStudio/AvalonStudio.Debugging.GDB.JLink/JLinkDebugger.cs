@@ -19,7 +19,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
         {
             get
             {
-                if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix)
+                if (Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
                 {
                     return string.Empty;
                 }
@@ -78,7 +78,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
         public async Task<bool> InstallAsync(IConsole console, IProject project)
         {
-            if (Platform.PlatformIdentifier != Platforms.PlatformID.Unix)
+            if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {
                 switch(await PackageManager.EnsurePackage("AvalonStudio.Debuggers.JLink", console))
                 {

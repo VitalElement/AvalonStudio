@@ -108,7 +108,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 process.Kill();
             }
 
-            if (File.Exists(jlinkStartInfo.FileName))
+            if (!Path.IsPathRooted(jlinkStartInfo.FileName) || File.Exists(jlinkStartInfo.FileName))
             {
                 Task.Run(() =>
                 {
