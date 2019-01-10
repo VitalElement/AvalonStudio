@@ -48,6 +48,8 @@
                            VerticalAlignment="Stretch"
                            FontFamily="{DynamicResource EditorFont}"
                            FontSize="{Binding VisualFontSize}"
+                           HorizontalScrollBarVisibility="Auto"
+                           VerticalScrollBarVisibility="Visible"
                            IsDirty="{Binding IsDirty}"
                            IsReadOnly="{Binding IsReadOnly}"
                            HighlightSelectedWord="False"
