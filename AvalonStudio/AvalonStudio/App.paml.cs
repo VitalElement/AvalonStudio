@@ -76,11 +76,7 @@ namespace AvalonStudio
 
             if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix)
             {
-                result.UseGtk3(new Gtk3PlatformOptions
-                {
-                    UseDeferredRendering = true,
-                    UseGpuAcceleration = true
-                }).UseSkia();
+                result.UseX11().UseSkia();
             }
             else if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {

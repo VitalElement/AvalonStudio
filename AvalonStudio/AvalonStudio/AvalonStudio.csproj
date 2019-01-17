@@ -18,6 +18,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="Avalonia.X11" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.ReactiveUI" />
     <PackageReference Include="GitInfo" Version="2.0.10" />
