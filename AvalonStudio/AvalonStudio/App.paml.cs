@@ -11,7 +11,6 @@ using System;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility;
 using System.IO;
-using Avalonia.Gtk3;
 
 namespace AvalonStudio
 {
@@ -74,11 +73,7 @@ namespace AvalonStudio
         {
             var result = AppBuilder.Configure<App>();
 
-            if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix)
-            {
-                result.UseX11().UseSkia();
-            }
-            else if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+            if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {
                 result
                     .UseWin32()
