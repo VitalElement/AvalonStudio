@@ -7,7 +7,6 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public class Intellisense : TemplatedControl
     {
-        private readonly CompositeDisposable disposables;
         private Popup _popup;
         private Popup _assistantPopup;
         private Control _intellisense;
@@ -30,7 +29,11 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 
         public Intellisense()
         {
-            disposables = new CompositeDisposable();
+        }
+
+        static Intellisense()
+        {
+            RequestBringIntoViewEvent.AddClassHandler<Intellisense>(i => i.OnRequesteBringIntoView);
         }
 
         public void SetLocation(Point p, bool force = false)
@@ -67,18 +70,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             _assistantPopup.HorizontalOffset = 2;
         }
 
-        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            disposables.Add(RequestBringIntoViewEvent.AddClassHandler<Intellisense>(i => OnRequesteBringIntoView));
-
-            base.OnAttachedToVisualTree(e);
-        }
-
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
             _popup.Close();
-
-            disposables.Dispose();
 
             _signatureHelper = null;
 

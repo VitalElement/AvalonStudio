@@ -8,16 +8,15 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
 {
     public class RenameControl : TemplatedControl
     {
-        private readonly CompositeDisposable disposables;
         private Popup _popup;
         private TextBox _textBox;
 
         public Control PlacementTarget { get; set; }
         private CodeEditor _editor;
 
-        public RenameControl()
+        static RenameControl()
         {
-            disposables = new CompositeDisposable();
+            RequestBringIntoViewEvent.AddClassHandler<RenameControl>(i => i.OnRequesteBringIntoView);
         }
 
         public void Open(CodeEditor editor, string text)
@@ -84,18 +83,9 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             };
         }
 
-        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-        {
-            disposables.Add(RequestBringIntoViewEvent.AddClassHandler<Intellisense>(i => OnRequesteBringIntoView));
-
-            base.OnAttachedToVisualTree(e);
-        }
-
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
         {
             _popup.Close();
-
-            disposables.Dispose();
 
             base.OnDetachedFromVisualTree(e);
         }
