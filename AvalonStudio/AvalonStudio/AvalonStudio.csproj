@@ -18,6 +18,8 @@
   </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+    <PackageReference Include="Mono.Cecil" Version="0.10.3" />
     <PackageReference Include="Avalonia.X11" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.ReactiveUI" />
@@ -57,4 +59,9 @@
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj" />
   </ItemGroup>
 
+<Target Name="GatherReferences" AfterTargets="CoreCompile">
+    <WriteLinesToFile File="$(TargetPath).refs"
+                      Lines="@(ReferencePathWithRefAssemblies)"
+                      Overwrite="true" />
+  </Target>
 </Project>

@@ -274,7 +274,7 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
                 }
             }),
 
-            this.GetObservable(CaretOffsetProperty).Subscribe(s =>
+            this.GetObservable(EditorCaretOffsetProperty).Subscribe(s =>
             {
                 if (Document?.TextLength > s)
                 {
@@ -819,13 +819,13 @@ namespace AvalonStudio.Controls.Standard.CodeEditor
             set => this.SetValue(ContextActionsIconProperty, value);
         }
 
-        public static readonly StyledProperty<int> CaretOffsetProperty =
+        public static readonly StyledProperty<int> EditorCaretOffsetProperty =
             AvaloniaProperty.Register<CodeEditor, int>(nameof(EditorCaretOffset), defaultBindingMode: BindingMode.TwoWay);
 
         public int EditorCaretOffset
         {
-            get { return GetValue(CaretOffsetProperty); }
-            set { SetValue(CaretOffsetProperty, value); }
+            get { return GetValue(EditorCaretOffsetProperty); }
+            set { SetValue(EditorCaretOffsetProperty, value); }
         }
 
         public static readonly StyledProperty<bool> ShowBreakpointsProperty =
