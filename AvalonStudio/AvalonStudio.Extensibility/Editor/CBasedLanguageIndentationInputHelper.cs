@@ -6,9 +6,9 @@ namespace AvalonStudio.Editor
     {
         private (ISegment whitespace, int offset, char character) GetPreviousBracketInfo(ITextEditor editor, int offset)
         {
-            if(offset == editor.Document.TextLength)
+            if(offset >= editor.Document.TextLength)
             {
-                offset--;
+                offset = editor.Document.TextLength - 1;
             }
 
             if (offset >= 0)
