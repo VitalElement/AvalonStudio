@@ -39,7 +39,7 @@ namespace AvalonStudio.Extensibility.Editor
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
-            if (markers == null)
+            if (markers == null || markers.Count == 0)
             {
                 return;
             }
