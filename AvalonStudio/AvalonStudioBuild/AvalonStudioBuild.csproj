@@ -23,8 +23,10 @@
     <ProjectReference Include="..\AvalonStudio.Studio\AvalonStudio.Studio.csproj" />
     <ProjectReference Include="..\AvalonStudio.TestFrameworks.Catch\AvalonStudio.TestFrameworks.Catch.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Toolchains.CustomGCC\AvalonStudio.Toolchains.CustomGCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.GCC\AvalonStudio.Toolchains.GCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Toolchains.PublishedGCC\AvalonStudio.Toolchains.PublishedGCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj" />
   </ItemGroup>

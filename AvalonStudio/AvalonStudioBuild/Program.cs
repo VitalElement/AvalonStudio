@@ -1,5 +1,7 @@
+using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Studio;
+using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
@@ -172,6 +174,9 @@ namespace AvalonStudio
         {
             var result = 1;
             var solution = LoadSolution(options);
+
+            solution.LoadSolutionAsync().Wait();
+            solution.LoadProjectsAsync().Wait();
 
             IProject project = null;
 
@@ -409,6 +414,8 @@ namespace AvalonStudio
 
             PackageSources.InitialisePackageSources();
 
+            PackageSources.InitialisePackageSources();
+
             var extensionManager = new ExtensionManager();
             var container = CompositionRoot.CreateContainer(extensionManager);
 
@@ -418,6 +425,10 @@ namespace AvalonStudio
             IoC.Initialise(container);
 
             ShellViewModel.Instance = IoC.Get<ShellViewModel>();
+
+            ShellViewModel.Instance.Initialise();
+
+            PackageManager.LoadAssetsAsync().Wait();
 
             var studio = container.GetExport<IStudio>();
 
