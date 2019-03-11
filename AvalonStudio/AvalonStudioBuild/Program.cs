@@ -107,6 +107,9 @@ namespace AvalonStudio
             var result = 1;
             var solution = LoadSolution(options);
 
+            solution.LoadSolutionAsync().Wait();
+            solution.LoadProjectsAsync().Wait();
+
             var tests = new List<Test>();
 
             foreach (var project in solution.Projects)
