@@ -219,6 +219,9 @@ namespace AvalonStudio
         {
             var solution = LoadSolution(options);
 
+            solution.LoadSolutionAsync().Wait();
+            solution.LoadProjectsAsync().Wait();
+
             var console = new ProgramConsole();
 
             IProject project = null;
