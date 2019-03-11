@@ -1,3 +1,4 @@
+using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -401,13 +402,24 @@ namespace AvalonStudio
                 args = args.ToList().Skip(1).ToArray();
             }
 
+            AvalonStudio.Shell.Extensibility.Platforms.Platform.AppName = "AvalonStudio";
+            AvalonStudio.Shell.Extensibility.Platforms.Platform.Initialise();
+
             Platform.Initialise();
 
             PackageSources.InitialisePackageSources();
 
-            var container = CompositionRoot.CreateContainer();
+            var extensionManager = new ExtensionManager();
+            var container = CompositionRoot.CreateContainer(extensionManager);
 
-            var studio = container.GetExport<IStudio>();            
+            var shell = container.GetExport<IShell>();
+            
+
+            IoC.Initialise(container);
+
+            ShellViewModel.Instance = IoC.Get<ShellViewModel>();
+
+            var studio = container.GetExport<IStudio>();
 
             Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier);
 
