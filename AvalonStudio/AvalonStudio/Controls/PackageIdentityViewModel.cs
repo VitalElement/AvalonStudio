@@ -1,14 +1,13 @@
 ﻿using AvalonStudio.MVVM;
-using NuGet.Packaging.Core;
 
 namespace AvalonStudio.Controls
 {
-    public class PackageIdentityViewModel : ViewModel<PackageIdentity>
+    public class PackageIdentityViewModel : ViewModel
     {
-        public PackageIdentityViewModel(PackageIdentity model) : base(model)
+        public PackageIdentityViewModel()
         {
         }
 
-        public string Title => Model.Id;
+        public string Title => "";
     }
 }
