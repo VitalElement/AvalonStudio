@@ -371,10 +371,15 @@ namespace AvalonStudio.Packaging
         {
             Version ver = string.IsNullOrWhiteSpace(version) ? null : Version.Parse(version);
 
-            if(!Directory.Exists(Path.Combine(Platform.PackageDirectory, packageName, ver.ToString())))
-            {
-                var packages = await ListToolchainPackages(packageName);
+            var packages = await ListToolchainPackages(packageName);
 
+            if(ver == null)
+            {
+                ver = packages.OrderBy(p => p.Version).FirstOrDefault().Version;
+            }
+
+            if (!Directory.Exists(Path.Combine(Platform.PackageDirectory, packageName, ver.ToString())))
+            {
                 if(packages == null)
                 {
                     console.WriteLine($"Package {packageName} v{ver} was not found.");
@@ -382,15 +387,11 @@ namespace AvalonStudio.Packaging
                     return PackageEnsureStatus.NotFound;
                 }
 
-                if(ver != null && !packages.Any(p=>p.Version == ver))
+                if(!packages.Any(p=>p.Version == ver))
                 {
                     console.WriteLine($"Package {packageName} was found but version v{ver} not recognised. Lastest is: v{packages.First().Version}");
 
                     return PackageEnsureStatus.NotFound;
-                }
-                else
-                {
-                    ver = packages.OrderBy(p => p.Version).FirstOrDefault().Version;
                 }
 
                 console.WriteLine($"Downloading Package: {packageName} v{ver}.");
