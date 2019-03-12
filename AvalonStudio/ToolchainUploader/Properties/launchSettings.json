@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ToolchainUploader": {
+      "commandName": "Project",
+      "commandLineArgs": "c:\\users\\dan\\desktop\\AvalonStudio.Toolchains.Rpi.win-x64.7.3.6.7z AvalonStudio.Toolchains.Rpi win-x64 7.3.6.0 DefaultEndpointsProtocol=https;AccountName=avalonstudiotoolchains;AccountKey=E32GekiuBAcxgmV7vDEQmPlu/5PVLyHDFi5DACapwLUjwCVwnxT7VbiTMpba8tsq1uRoTMCyi3oWG1ljJ1asYw==;EndpointSuffix=core.windows.net"
+    }
+  }
+}

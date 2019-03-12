@@ -1,5 +1,6 @@
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Packages;
+using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;

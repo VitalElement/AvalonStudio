@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Composition;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Packaging;
 
 namespace AvalonStudio.Toolchains.CustomGCC
 {

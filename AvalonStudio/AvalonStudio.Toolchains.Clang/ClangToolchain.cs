@@ -1,5 +1,6 @@
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Packages;
+using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
@@ -34,7 +35,7 @@ namespace AvalonStudio.Toolchains.Clang
             {
                 if (_contentDirectory == null)
                 {
-                    _contentDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang"), "content");
+                    _contentDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang"));
                 }
 
                 return _contentDirectory;

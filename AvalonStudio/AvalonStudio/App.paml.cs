@@ -11,6 +11,8 @@ using System;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility;
 using System.IO;
+using AvalonStudio.Utils;
+using AvalonStudio.Packaging;
 
 namespace AvalonStudio
 {
@@ -53,6 +55,7 @@ namespace AvalonStudio
                 Dispatcher.UIThread.Post(async () =>
                    {
                        await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
+                       
                    });
             })
             .StartShellApp<AppBuilder, MainWindow>("AvalonStudio", null, () => new MainWindowViewModel());

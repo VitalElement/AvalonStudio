@@ -57,11 +57,10 @@
     <ProjectReference Include="..\AvalonStudio.Toolchains.PublishedGCC\AvalonStudio.Toolchains.PublishedGCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.CustomGCC\AvalonStudio.Toolchains.CustomGCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj" />
+    <ProjectReference Include="..\PackageManager\PackageManager.csproj" />
   </ItemGroup>
 
 <Target Name="GatherReferences" AfterTargets="CoreCompile">
-    <WriteLinesToFile File="$(TargetPath).refs"
-                      Lines="@(ReferencePathWithRefAssemblies)"
-                      Overwrite="true" />
+    <WriteLinesToFile File="$(TargetPath).refs" Lines="@(ReferencePathWithRefAssemblies)" Overwrite="true" />
   </Target>
 </Project>

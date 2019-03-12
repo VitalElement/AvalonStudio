@@ -1,4 +1,5 @@
 ﻿using AvalonStudio.Packages;
+using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Toolchains.GCC;

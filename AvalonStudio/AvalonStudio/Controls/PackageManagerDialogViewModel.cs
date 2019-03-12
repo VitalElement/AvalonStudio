@@ -4,14 +4,11 @@ using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Packages;
-using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
-
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
@@ -30,7 +27,7 @@ namespace AvalonStudio.Controls
 
         private void InvalidateInstalledPackages()
         {
-            InstalledPackages = new ObservableCollection<PackageIdentityViewModel>(PackageManager.ListInstalledPackages().Select(pr => new PackageIdentityViewModel(pr)));
+            //InstalledPackages = new ObservableCollection<PackageIdentityViewModel>(AvalonStudio.Packages.PackageManager.ListInstalledPackages().Select(pr => new PackageIdentityViewModel(pr)));
         }
 
         public PackageManagerDialogViewModel()
@@ -54,7 +51,7 @@ namespace AvalonStudio.Controls
 
             InstallCommand = ReactiveCommand.Create(async () =>
             {
-                await PackageManager.InstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToFullString());
+                //await AvalonStudio.Packages.PackageManager.InstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToFullString());
 
                 InvalidateInstalledPackages();
             });
@@ -63,7 +60,7 @@ namespace AvalonStudio.Controls
             {
                 if (SelectedInstalledPackage != null)
                 {
-                    await PackageManager.UninstallPackage(SelectedInstalledPackage.Model.Id, SelectedInstalledPackage.Model.Version.ToNormalizedString());
+                   // await AvalonStudio.Packages.PackageManager.UninstallPackage(SelectedInstalledPackage.Model.Id, SelectedInstalledPackage.Model.Version.ToNormalizedString());
 
                     InvalidateInstalledPackages();
                 }
@@ -212,12 +209,12 @@ namespace AvalonStudio.Controls
 
         private async Task DownloadCatalog()
         {
-            var packages = await PackageManager.ListPackagesAsync(100);
+           // var packages = await AvalonStudio.Packages.PackageManager.ListPackagesAsync(100);
 
-            foreach (var package in packages.Where(p => p.Title.EndsWith(Platform.AvalonRID) || p.Tags.Contains("gccdescription")))
-            {
-                availablePackages.Add(package);
-            }
+            //foreach (var package in packages.Where(p => p.Title.EndsWith(Platform.AvalonRID) || p.Tags.Contains("gccdescription")))
+            //{
+              //  availablePackages.Add(package);
+            //}
         }
 
         public void LogDebug(string data)

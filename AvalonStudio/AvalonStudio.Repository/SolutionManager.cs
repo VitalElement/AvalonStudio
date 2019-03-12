@@ -66,13 +66,13 @@ namespace AvalonStudio.Packages
             throw new NotImplementedException();
         }
 
-        public IEnumerable<NuGetProject> GetNuGetProjects()
-        {
-            using (var installedPackageCache = PackageManager.GetCache())
-            {
-                yield return new AvalonStudioExtensionsFolderProject(PackageManager.GetFramework(), installedPackageCache, Platform.ReposDirectory);
-            }
-        }
+        //public IEnumerable<NuGetProject> GetNuGetProjects()
+        //{
+        //    using (var installedPackageCache = PackageManager.GetCache())
+        //    {
+        //        yield return new AvalonStudioExtensionsFolderProject(PackageManager.GetFramework(), installedPackageCache, Platform.ReposDirectory);
+        //    }
+        //}
 
         public string GetNuGetProjectSafeName(NuGetProject nuGetProject)
         {

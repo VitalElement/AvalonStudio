@@ -1,5 +1,5 @@
 ﻿using AvalonStudio.Extensibility;
-using AvalonStudio.Packages;
+using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using System;
@@ -61,31 +61,24 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public static void Register(GccConfiguration configuration)
         {
-            if (!s_registeredConfigurations.ContainsKey(configuration.Id))
+            if (!s_registeredConfigurations.ContainsKey(configuration.Id.ToLower()))
             {
-                s_registeredConfigurations.Add(configuration.Id, new List<GccConfiguration>());
+                s_registeredConfigurations.Add(configuration.Id.ToLower(), new List<GccConfiguration>());
             }
 
-            if (!s_registeredConfigurations[configuration.Id].Contains(configuration))
+            if (!s_registeredConfigurations[configuration.Id.ToLower()].Contains(configuration))
             {
-                s_registeredConfigurations[configuration.Id].InsertSorted(configuration);
+                s_registeredConfigurations[configuration.Id.ToLower()].InsertSorted(configuration);
             }
-        }
-
-        public static async Task<IEnumerable<PackageMetaData>> GetRemotePackagesAsync()
-        {
-            var packages = (await PackageManager.ListPackagesAsync(100)).Where(p=>p.Tags.Contains("gccdescription"));
-            
-            return packages;
         }
 
         public static IEnumerable<string> Packages => s_registeredConfigurations.Keys;
 
         public static IEnumerable<GccConfiguration> GetConfigurations(string id)
         {
-            if (s_registeredConfigurations.ContainsKey(id))
+            if (s_registeredConfigurations.ContainsKey(id.ToLower()))
             {
-                return s_registeredConfigurations[id];
+                return s_registeredConfigurations[id.ToLower()];
             }
             else
             {
@@ -102,7 +95,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
                 parsedVersion = new Version(parsedVersion.Major, parsedVersion.Minor, parsedVersion.Build, 0);
             }
 
-            if (s_registeredConfigurations.ContainsKey(id))
+            if (s_registeredConfigurations.ContainsKey(id.ToLower()))
             {
                 return s_registeredConfigurations[id].FirstOrDefault(c=>c.Version == parsedVersion.ToString(4));
             }

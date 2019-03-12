@@ -112,7 +112,14 @@ namespace AvalonStudio.Controls.Standard.Console
 
         public void OverWrite(string data)
         {
-            WriteLine(data);
+            if (data != null)
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    var line = Document.Lines[Document.LineCount - 1];
+                    Document.Replace(line, data);
+                });
+            }
         }
 
         public void BeforeActivation()

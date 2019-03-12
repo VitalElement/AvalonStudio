@@ -1,6 +1,7 @@
 ﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Packages;
+using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
@@ -417,7 +418,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
             if (_settings.Toolchain != null)
             {
-                await PackageManager.EnsurePackage(_settings.Toolchain, _settings.Version, IoC.Get<IConsole>(), ignoreRid: true);
+                await PackageManager.EnsurePackage(_settings.Toolchain, _settings.Version, IoC.Get<IConsole>());
 
                 _gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
 

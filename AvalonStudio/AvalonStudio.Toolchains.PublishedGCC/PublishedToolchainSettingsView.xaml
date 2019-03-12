@@ -24,7 +24,13 @@
 
             <StackPanel Orientation="Horizontal" Spacing="2">
                 <TextBlock Text="Version:" />
-                <DropDown Items="{Binding Versions}" SelectedItem="{Binding SelectedVersion}" />
+                <DropDown Items="{Binding Versions}" SelectedItem="{Binding SelectedVersion}">
+                    <DropDown.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Version}" />
+                        </DataTemplate>
+                    </DropDown.ItemTemplate>
+                </DropDown>
             </StackPanel>
         </StackPanel>
     </StackPanel>
