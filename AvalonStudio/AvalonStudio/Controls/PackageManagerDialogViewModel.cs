@@ -15,11 +15,11 @@ namespace AvalonStudio.Controls
 {
     public class PackageManagerDialogViewModel : ModalDialogViewModelBase, IConsole
     {
-        private ObservableCollection<PackageMetaData> availablePackages;
+        //private ObservableCollection<PackageMetaData> availablePackages;
 
         private bool enableInterface = true;
 
-        private PackageMetaData selectedPackage;
+        //private PackageMetaData selectedPackage;
 
         private string selectedVersion;
 
@@ -33,7 +33,7 @@ namespace AvalonStudio.Controls
         public PackageManagerDialogViewModel()
             : base("Packages")
         {
-            AvailablePackages = new ObservableCollection<PackageMetaData>();
+            //AvailablePackages = new ObservableCollection<PackageMetaData>();
 
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
@@ -80,7 +80,7 @@ namespace AvalonStudio.Controls
         {
             get
             {
-                if (selectedPackage != null)
+               // if (selectedPackage != null)
                 {
                     //if (selectedPackage.IsInstalled)
                     //{
@@ -113,7 +113,7 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref status, value); }
         }
 
-        public PackageMetaData SelectedPackage
+        /*public PackageMetaData SelectedPackage
         {
             get
             {
@@ -129,7 +129,7 @@ namespace AvalonStudio.Controls
                 this.RaiseAndSetIfChanged(ref selectedPackage, value);
                 this.RaisePropertyChanged(() => ButtonText);
             }
-        }
+        }*/
 
         private IEnumerable<string> _versions;
 
@@ -151,11 +151,11 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public ObservableCollection<PackageMetaData> AvailablePackages
+        /*public ObservableCollection<PackageMetaData> AvailablePackages
         {
             get { return availablePackages; }
             set { this.RaiseAndSetIfChanged(ref availablePackages, value); }
-        }
+        }*/
 
         private ObservableCollection<PackageIdentityViewModel> installedPackages;
 

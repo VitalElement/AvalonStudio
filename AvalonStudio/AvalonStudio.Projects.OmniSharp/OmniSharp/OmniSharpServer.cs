@@ -1,9 +1,7 @@
 ﻿namespace AvalonStudio.Languages.CSharp.OmniSharp
 {
     using AvalonStudio.Extensibility;
-    using AvalonStudio.Packages;
     using AvalonStudio.Platforms;
-    using AvalonStudio.Repositories;
     using AvalonStudio.Utils;
     using Extensibility.Languages.CompletionAssistance;
     using RestSharp;

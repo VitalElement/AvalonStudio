@@ -4,7 +4,6 @@ using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
-using AvalonStudio.Repositories;
 using AvalonStudio.Shell;
 using Serilog;
 using System;
@@ -49,8 +48,6 @@ namespace AvalonStudio
                 InitializeLogging();
 
                 Platform.Initialise();
-
-                PackageSources.InitialisePackageSources();
 
                 Dispatcher.UIThread.Post(async () =>
                    {
