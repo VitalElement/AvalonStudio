@@ -422,7 +422,10 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
                 _gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
 
-                result = await _gccConfig.ResolveAsync();
+                if (_gccConfig != null)
+                {
+                    result = await _gccConfig.ResolveAsync();
+                }
             }
 
             if (result)

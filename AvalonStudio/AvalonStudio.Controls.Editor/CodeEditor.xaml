@@ -1,0 +1,46 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:local="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor"
+        xmlns:AvalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        xmlns:codeFixes="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility"
+        xmlns:Editing="clr-namespace:AvaloniaEdit.Editing;assembly=AvaloniaEdit">
+  <StyleInclude Source="resm:AvalonStudio.Controls.Editor.RenameControl.xaml?assembly=AvalonStudio.Controls.Editor" />
+  <StyleInclude Source="resm:AvalonStudio.Controls.Editor.Intellisense.xaml?assembly=AvalonStudio.Controls.Editor" />
+  <StyleInclude Source="resm:AvalonStudio.Controls.Editor.CompletionAssistantView.xaml?assembly=AvalonStudio.Controls.Editor" />
+  <StyleInclude Source="resm:AvalonStudio.Controls.Editor.CodeEditorToolTip.xaml?assembly=AvalonStudio.Controls.Editor" />
+
+  <Style Selector="local|CodeEditor">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Panel>
+          <local:CodeEditorToolTip Name="PART_Tooltip" />
+          <local:CompletionAssistantView Name="PART_CompletionAssistant" />
+          <local:Intellisense Name="PART_Intellisense" />
+          <local:RenameControl Name="PART_RenameControl" />
+
+          <Border BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}">
+            <Border.DataTemplates>
+              <TreeDataTemplate DataType="codeFixes:CodeFix" ItemsSource="{Binding Action, Mode=OneTime}">
+                <ContentPresenter Content="{Binding Action, Mode=OneTime}" />
+              </TreeDataTemplate>
+
+              <DataTemplate DataType="codeFixes:ICodeAction">
+                <TextBlock Text="{Binding Title, Mode=OneTime}"/>
+              </DataTemplate>
+
+            </Border.DataTemplates>
+
+            <ScrollViewer Focusable="False"
+                          Name="PART_ScrollViewer"
+                          VerticalScrollBarVisibility="{TemplateBinding VerticalScrollBarVisibility}"
+                          HorizontalScrollBarVisibility="{TemplateBinding HorizontalScrollBarVisibility}"
+                          VerticalContentAlignment="Top"
+                          HorizontalContentAlignment="Left"
+                          Padding="{TemplateBinding Padding}">
+            </ScrollViewer>
+          </Border>
+        </Panel>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

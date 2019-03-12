@@ -1,0 +1,15 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor">
+  <Style Selector="local|RenameControl">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Grid>
+          <Popup IsOpen="{Binding IsOpen, Mode=TwoWay}" Name="PART_Popup">
+            <TextBox Name="PART_TextBox" Text="Rename Input Box" />
+          </Popup>
+        </Grid>
+      </ControlTemplate>
+    </Setter>
+  </Style>
+</Styles>

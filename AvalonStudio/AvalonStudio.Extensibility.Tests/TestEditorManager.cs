@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Controls.Standard.CodeEditor;
+﻿using AvalonStudio.Controls.Editor;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Editor;

@@ -1,5 +1,5 @@
 ﻿using Avalonia.Threading;
-using AvalonStudio.Controls.Standard.CodeEditor;
+using AvalonStudio.Controls.Editor;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;

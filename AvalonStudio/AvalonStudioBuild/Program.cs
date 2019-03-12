@@ -375,7 +375,6 @@ namespace AvalonStudio
 
             var shell = container.GetExport<IShell>();
             
-
             IoC.Initialise(container);
 
             ShellViewModel.Instance = IoC.Get<ShellViewModel>();
@@ -383,8 +382,6 @@ namespace AvalonStudio
             ShellViewModel.Instance.Initialise();
 
             PackageManager.LoadAssetsAsync().Wait();
-
-            var studio = container.GetExport<IStudio>();
 
             Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier);
 

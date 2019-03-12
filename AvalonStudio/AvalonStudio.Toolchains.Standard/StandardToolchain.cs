@@ -110,7 +110,7 @@ namespace AvalonStudio.Toolchains.Standard
             }
 
             console.Clear();
-            IoC.Get<IErrorList>().Remove(this);
+            IoC.Get<IErrorList>()?.Remove(this);
 
             console.WriteLine("Starting Build...");
             console.WriteLine();

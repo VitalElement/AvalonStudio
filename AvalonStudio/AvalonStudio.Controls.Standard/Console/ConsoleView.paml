@@ -1,5 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard">
+             xmlns:editor="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor">
   <editor:CodeEditor Grid.Row="1" BorderThickness="0" Background="{DynamicResource ThemeControlBackgroundBrush}"
                      TextBlock.FontFamily="{DynamicResource EditorFont}" TextBlock.FontSize="13"
                      Document="{Binding Document}" EditorCaretOffset="{Binding CaretIndex, Mode=TwoWay}"

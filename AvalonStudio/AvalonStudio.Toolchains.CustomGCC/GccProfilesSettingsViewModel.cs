@@ -51,7 +51,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public void Activation()
         {
-            IoC.Get<ISettingsManager>().RegisterSettingsDialog("Toolchains", this);
+            IoC.Get<ISettingsManager>()?.RegisterSettingsDialog("Toolchains", this);
         }
 
         public void BeforeActivation()
