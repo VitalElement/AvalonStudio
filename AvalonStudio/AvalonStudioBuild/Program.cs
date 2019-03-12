@@ -2,10 +2,10 @@ using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Packages;
+using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
-using AvalonStudio.Repositories;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains.Standard;
@@ -52,54 +52,6 @@ namespace AvalonStudio
                 console.WriteLine(e.Message);
                 return null;
             }
-        }
-
-        private static int RunInstallPackage(PackageOptions options)
-        {
-            console.Write("Downloading catalogs...");
-
-            var availablePackages = new List<PackageReference>();
-
-            foreach (var packageSource in PackageSources.Instance.Sources)
-            {
-                RepositoryOld repo = null;
-
-                var awaiter = packageSource.DownloadCatalog();
-
-                awaiter.Wait();
-
-                repo = awaiter.Result;
-
-                console.WriteLine("Done");
-
-                console.WriteLine("Enumerating Packages...");
-
-                if (repo != null)
-                {
-                    foreach (var packageReference in repo.Packages)
-                    {
-                        availablePackages.Add(packageReference);
-                        console.WriteLine(packageReference.Name);
-                    }
-                }
-            }
-
-            var package = availablePackages.FirstOrDefault(p => p.Name == options.Package);
-
-            if (package != null)
-            {
-                var task = package.DownloadInfoAsync();
-                task.Wait();
-
-                var repo = task.Result;
-
-                var downloadTask = repo.Synchronize(options.Tag, console);
-                downloadTask.Wait();
-
-                return 1;
-            }
-            console.WriteLine("Unable to find package " + options.Package);
-            return -1;
         }
 
         private static int RunTest(TestOptions options)
@@ -418,10 +370,6 @@ namespace AvalonStudio
 
             Platform.Initialise();
 
-            PackageSources.InitialisePackageSources();
-
-            PackageSources.InitialisePackageSources();
-
             var extensionManager = new ExtensionManager();
             var container = CompositionRoot.CreateContainer(extensionManager);
 
@@ -444,7 +392,6 @@ namespace AvalonStudio
                 .MapResult((BuildOptions opts) => RunBuild(opts),
                         (AddOptions opts) => RunAdd(opts),
                         (AddReferenceOptions opts) => RunAddReference(opts),
-                        (PackageOptions opts) => RunInstallPackage(opts),
                         (CleanOptions opts) => RunClean(opts),
                         (CreateOptions opts) => RunCreate(opts),
                         (RemoveOptions opts) => RunRemove(opts),
