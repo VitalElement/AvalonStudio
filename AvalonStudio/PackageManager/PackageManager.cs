@@ -399,6 +399,8 @@ namespace AvalonStudio.Packaging
             {
                 var archivePath = Path.Combine(Platform.PackageDirectory, package.Name, package.Version.ToString());
                 UnpackArchive(Path.Combine(archivePath, package.BlobIdentity), archivePath, progress);
+
+                File.Delete(Path.Combine(archivePath, package.BlobIdentity));
             });
         }
 
