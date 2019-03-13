@@ -46,39 +46,39 @@ namespace AvalonStudio.Toolchains.CustomGCC
                 {
                     if (_description.Properties.TryGetValue("Gcc.CC", out var cc))
                     {
-                        CC = await _description.ResolvePackagePath(cc as string, console: console);
+                        CC = await _description.ResolvePackagePathAsync(cc as string, console: console);
                     }
 
                     if (_description.Properties.TryGetValue("Gcc.CXX", out var cxx))
                     {
-                        Cpp = await _description.ResolvePackagePath(cxx as string, console: console);
+                        Cpp = await _description.ResolvePackagePathAsync(cxx as string, console: console);
                     }
 
                     if (_description.Properties.TryGetValue("Gcc.AR", out var ar))
                     {
-                        AR = await _description.ResolvePackagePath(ar as string, console: console);
+                        AR = await _description.ResolvePackagePathAsync(ar as string, console: console);
                     }
 
                     if (_description.Properties.TryGetValue("Gcc.LD", out var ld))
                     {
-                        LD = await _description.ResolvePackagePath(ld as string, console: console);
+                        LD = await _description.ResolvePackagePathAsync(ld as string, console: console);
                     }
 
                     if (_description.Properties.TryGetValue("Gcc.SIZE", out var size))
                     {
-                        Size = await _description.ResolvePackagePath(size as string, console: console);
+                        Size = await _description.ResolvePackagePathAsync(size as string, console: console);
                     }
 
                     if (_description.Properties.TryGetValue("Gcc.GDB", out var gdb))
                     {
-                        Gdb = await _description.ResolvePackagePath(gdb as string, console: console);
+                        Gdb = await _description.ResolvePackagePathAsync(gdb as string, console: console);
                     }
 
                     if(_description.Properties.TryGetValue("Gcc.SystemIncludePaths", out var systemIncludePaths))
                     { 
                         foreach (var unresolvedPath in (systemIncludePaths as JArray).ToList().Select(x=>x.ToString()))
                         {
-                            _systemIncludePaths.Add(await _description.ResolvePackagePath(unresolvedPath, false, console: console));
+                            _systemIncludePaths.Add(await _description.ResolvePackagePathAsync(unresolvedPath, false, console: console));
                         }
                     }
 
@@ -86,7 +86,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
                     {
                         foreach (var unresolvedPath in (systemLibraryPaths as JArray).ToList().Select(x => x.ToString()))
                         {
-                            _systemLibraryPaths.Add(await _description.ResolvePackagePath(unresolvedPath, false, console: console));
+                            _systemLibraryPaths.Add(await _description.ResolvePackagePathAsync(unresolvedPath, false, console: console));
                         }
                     }
                 }

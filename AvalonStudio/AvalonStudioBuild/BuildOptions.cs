@@ -47,4 +47,14 @@ namespace AvalonStudio
         [Value(1, MetaName = "Version", HelpText = "the version of the package to install.", Required = true)]
         public string Version { get; set; }
     }
+
+    [Verb("print-env", HelpText = "Prints the environment provided by a package.")]
+    internal class PrintEnvironmentOptions
+    {
+        [Value(0, MetaName = "Package", HelpText = "the name of the package environment to print.", Required = true)]
+        public string PackageName { get; set; }
+
+        [Value(1, MetaName = "Version", HelpText = "the version of the package environment to print.", Required = false)]
+        public string Version { get; set; }
+    }
 }

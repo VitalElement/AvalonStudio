@@ -8,6 +8,7 @@ using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains.Standard;
 using CommandLine;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -191,6 +192,88 @@ namespace AvalonStudio
         {
             PackageManager.UnintallPackage(options.PackageName, options.Version, console);
 
+            return 1;
+        }
+
+        private static int RunPrintEnv(PrintEnvironmentOptions options)
+        {
+            var manifest = PackageManager.GetPackageManifest(options.PackageName, options.Version);
+
+            if (manifest != null)
+            {
+                if (manifest.Properties.TryGetValue("Paths", out var paths))
+                {
+                    var concatenatedPath = "";
+                    foreach (var path in paths as JArray)
+                    {
+                        concatenatedPath += manifest.ResolvePackagePath(path.ToString(), false) + ";";
+                    }
+                    console.WriteLine("Path: " + concatenatedPath);
+                }
+
+                if (manifest.Properties.TryGetValue("EnvironmentVariables", out var variables))
+                {
+                    console.WriteLine("Environment Variables:");
+
+                    foreach(var variable in (variables as JObject))
+                    {
+                        console.WriteLine($"{variable.Key}={variable.Value}");
+                    }
+
+                    if (manifest.Properties.TryGetValue("Gcc.CC", out var cc))
+                    {
+                        console.WriteLine($"CC={manifest.ResolvePackagePath(cc.ToString())}");
+                    }
+
+                    if (manifest.Properties.TryGetValue("Gcc.CXX", out var cxx))
+                    {
+                        console.WriteLine($"CXX={manifest.ResolvePackagePath(cxx.ToString())}");
+                    }
+
+                    if (manifest.Properties.TryGetValue("Gcc.AR", out var ar))
+                    {
+                        console.WriteLine($"AR={manifest.ResolvePackagePath(ar.ToString())}");
+                    }
+
+                    if (manifest.Properties.TryGetValue("Gcc.LD", out var ld))
+                    {
+                        console.WriteLine($"LD={manifest.ResolvePackagePath(ld.ToString())}");
+                    }
+
+                    if (manifest.Properties.TryGetValue("Gcc.SIZE", out var size))
+                    {
+                        console.WriteLine($"SIZE={manifest.ResolvePackagePath(size.ToString())}");
+                    }
+
+                    if (manifest.Properties.TryGetValue("Gcc.GDB", out var gdb))
+                    {
+                        console.WriteLine($"GDB={manifest.ResolvePackagePath(gdb.ToString())}");
+                    }
+                }
+
+                if (manifest.Properties.TryGetValue("Gcc.SystemIncludePaths", out var systemIncludePaths))
+                {
+                    string includeFlags = "";
+                    foreach (var unresolvedPath in (systemIncludePaths as JArray).ToList().Select(x => x.ToString()))
+                    {
+                        includeFlags += " -Isystem " + manifest.ResolvePackagePath(unresolvedPath, false);
+                    }
+
+                    console.WriteLine("CCFLAGS=" + includeFlags);
+                    console.WriteLine("CXXFLAGS=" + includeFlags);
+                }
+
+                if (manifest.Properties.TryGetValue("Gcc.SystemLibraryPaths", out var systemLibraryPaths))
+                {
+                    string includeFlags = "";
+                    foreach (var unresolvedPath in (systemLibraryPaths as JArray).ToList().Select(x => x.ToString()))
+                    {
+                        includeFlags += " -L " + manifest.ResolvePackagePath(unresolvedPath, false);
+                    }
+
+                    console.WriteLine("LDFLAGS=" + includeFlags);
+                }
+            }
             return 1;
         }
 
@@ -504,7 +587,8 @@ namespace AvalonStudio
                 TestOptions, 
                 ListOptions,
                 InstallOptions,
-                UninstallOptions>(args)
+                UninstallOptions,
+                PrintEnvironmentOptions>(args)
                 .MapResult((BuildOptions opts) => RunBuild(opts),
                         (AddOptions opts) => RunAdd(opts),
                         (AddReferenceOptions opts) => RunAddReference(opts),
@@ -515,6 +599,7 @@ namespace AvalonStudio
                         (ListOptions opts) => RunList(opts),
                         (InstallOptions opts)=> RunInstall(opts),
                         (UninstallOptions opts)=> RunUninstall(opts),
+                        (PrintEnvironmentOptions opts)=>RunPrintEnv(opts),
                         errs => 1);
 
             return result - 1;

@@ -39,7 +39,24 @@ namespace AvalonStudio.Packaging
             SerializedObject.Serialize(path, this);
         }
 
-        public async Task<string> ResolvePackagePath(string url, bool appendExecutableExtension = true, IConsole console = null)
+        public string ResolvePackagePath(string url, bool appendExecutableExtension = true)
+        {
+            string result = "";
+
+            var packageInfo = ParseUrl(url);
+
+            var fullPackageId = (packageInfo.package + packageInfo.version).ToLower();
+
+            var packageLocation = "";
+
+            packageLocation = PackageManager.GetPackageDirectory(packageInfo.package, packageInfo.version).ToPlatformPath();
+
+            result = (Path.Combine(packageLocation, packageInfo.location) + (appendExecutableExtension ? Platform.ExecutableExtension : "")).ToPlatformPath();
+
+            return result;
+        }
+
+        public async Task<string> ResolvePackagePathAsync(string url, bool appendExecutableExtension = true, IConsole console = null)
         {
             string result = "";
 
