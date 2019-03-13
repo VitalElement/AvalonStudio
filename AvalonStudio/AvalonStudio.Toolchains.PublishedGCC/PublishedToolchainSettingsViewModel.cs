@@ -91,11 +91,14 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
         private void Save()
         {
-            _settings.Toolchain = SelectedPackage;
-            _settings.Version = SelectedVersion.Version.ToString();
+            if (SelectedPackage != null && SelectedVersion != null)
+            {
+                _settings.Toolchain = SelectedPackage;
+                _settings.Version = SelectedVersion.Version.ToString();
 
-            Model.SetToolchainSettings(_settings);
-            Model.Save();
+                Model.SetToolchainSettings(_settings);
+                Model.Save();
+            }
         }
 
         private async Task LoadVersions()

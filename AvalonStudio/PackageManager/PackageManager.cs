@@ -81,7 +81,7 @@ namespace AvalonStudio.Packaging
 
         public static async Task<IList<string>> ListToolchains()
         {
-            return await ListPackages("toolchainconfig");
+            return await ListPackages("toolchain");
         }
 
         public static async Task<IList<string>> ListPackages(string type = "")

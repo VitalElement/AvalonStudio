@@ -21,22 +21,22 @@ namespace ConsoleApp1
                 return;
             }
 
-            var toolchains = await PackageManager.ListToolchains();
+            //var toolchains = await PackageManager.ListToolchains();
 
-            foreach(var tc in toolchains)
-            {
-                Console.WriteLine(tc);
+            //foreach(var tc in toolchains)
+            //{
+            //    Console.WriteLine(tc);
 
-                var packages =  await PackageManager.ListToolchainPackages(tc, true);
+            //    var packages =  await PackageManager.ListToolchainPackages(tc, true);
 
-                if (packages != null)
-                {
-                    foreach (var package in packages)
-                    {
-                        Console.WriteLine($"   {package.Name} - {package.Platform} - {package.Version} - {package.Published} - {package.Size / 1024}");
-                    }
-                }
-            }
+            //    if (packages != null)
+            //    {
+            //        foreach (var package in packages)
+            //        {
+            //            Console.WriteLine($"   {package.Name} - {package.Platform} - {package.Version} - {package.Published} - {package.Size / 1024}");
+            //        }
+            //    }
+            //}
 
             var fileName = args[0];
             var toolchainName = args[1];
@@ -62,10 +62,12 @@ namespace ConsoleApp1
 
 
                     var cloudBlobContainer = cloudBlobClient.GetContainerReference(toolchainName.Replace(".", "-").ToLower());
-                    cloudBlobContainer.Metadata["type"] = type;
                     
-
-                    await cloudBlobContainer.CreateIfNotExistsAsync(BlobContainerPublicAccessType.Blob, default(BlobRequestOptions), default(OperationContext));
+                    if(await cloudBlobContainer.CreateIfNotExistsAsync(BlobContainerPublicAccessType.Blob, default(BlobRequestOptions), default(OperationContext)))
+                    {
+                        cloudBlobContainer.Metadata["type"] = type;
+                        await cloudBlobContainer.SetMetadataAsync();
+                    }            
 
 
                     // Get a reference to the blob address, then upload the file to the blob.
