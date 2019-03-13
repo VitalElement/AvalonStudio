@@ -1,4 +1,5 @@
-﻿using AvalonStudio.Packages;
+﻿using AvalonStudio.Extensibility.Utils;
+using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using ManagedLzma.SevenZip;
@@ -101,7 +102,32 @@ namespace AvalonStudio.Packaging
             return result;
         }
 
-        public static async Task<IList<Package>> ListToolchainPackages(string toolchainName)
+        private static bool PlatformMatches(PackagePlatform platform)
+        {
+            return GetSystemPackagePlatform() == platform;
+        }
+
+        private static PackagePlatform GetSystemPackagePlatform()
+        {
+            var currentPlatform = Platform.AvalonRID;
+
+            switch (currentPlatform)
+            {
+                case "win-x64":
+                    return PackagePlatform.WinX64;
+
+                case "osx-x64":
+                    return PackagePlatform.Osx;
+
+                case "linux-x64":
+                    return PackagePlatform.LinuxX64;
+
+                default:
+                    return PackagePlatform.Unknown;
+            }
+        }
+
+        public static async Task<IList<Package>> ListToolchainPackages(string toolchainName, bool includeAllPlatforms = false)
         {
             List<Package> result = null;
 
@@ -123,24 +149,29 @@ namespace AvalonStudio.Packaging
 
                     foreach (var blob in blobs.Results.OfType<CloudBlockBlob>())
                     {
-                        var package = new Package();
-
                         await blob.FetchAttributesAsync();
-                        package.Name = cloudBlobContainer.Name.Replace("-", ".");
-                        package.BlobIdentity = blob.Name;
 
-                        package.Platform = Package.GetPackagePlatformFromString(blob.Metadata["platform"]);
-                        package.Version = Version.Parse(blob.Metadata["version"]);
-                        package.Uri = blob.Uri;
-                        package.Published = blob.Properties.Created.Value.UtcDateTime;
-                        package.Size = blob.Properties.Length;
+                        var platform = Package.GetPackagePlatformFromString(blob.Metadata["platform"]);
 
-                        if(result == null)
+                        if (includeAllPlatforms || PlatformMatches(platform))
                         {
-                            result = new List<Package>();
-                        }
+                            var package = new Package();
+                            package.Name = cloudBlobContainer.Name.Replace("-", ".");
+                            package.BlobIdentity = blob.Name;
 
-                        result.Add(package);
+                            package.Platform = platform;
+                            package.Version = Version.Parse(blob.Metadata["version"]);
+                            package.Uri = blob.Uri;
+                            package.Published = blob.Properties.Created.Value.UtcDateTime;
+                            package.Size = blob.Properties.Length;
+
+                            if (result == null)
+                            {
+                                result = new List<Package>();
+                            }
+
+                            result.Add(package);
+                        }
                     }
                 }
                 catch { }
@@ -215,7 +246,7 @@ namespace AvalonStudio.Packaging
                         default(OperationContext), 
                         new Progress<StorageProgress>(p =>
                         {
-                            if (p.BytesTransferred > lastDownloadSize + 1024000)
+                            if (p.BytesTransferred > lastDownloadSize + 256000)
                             {
                                 progress(p.BytesTransferred);
 
@@ -255,6 +286,7 @@ namespace AvalonStudio.Packaging
                 //Parallel.For(0, archiveMetadata.DecoderSections.Length, sectionIndex =>
                 {
                     var sectionReader = new ManagedLzma.SevenZip.Reader.DecodedSectionReader(archiveStream, archiveMetadata, sectionIndex, password);
+
                     var sectionFiles = archiveFileModel.GetFilesInSection(sectionIndex);
 
                     // The section reader is constructed from metadata, if the counts do not match there must be a bug somewhere.
@@ -371,25 +403,65 @@ namespace AvalonStudio.Packaging
         {
             Version ver = string.IsNullOrWhiteSpace(version) ? null : Version.Parse(version);
 
-            var packages = await ListToolchainPackages(packageName);
+            var packageDirectory = Path.Combine(Platform.PackageDirectory, packageName);
 
-            if(ver == null)
+            if (ver == null && Directory.Exists(packageDirectory))
             {
-                ver = packages.OrderBy(p => p.Version).FirstOrDefault().Version;
+                var versions = Directory.EnumerateDirectories(packageDirectory);
+
+                if (versions.Count() != 0)
+                {
+                    ver = Version.Parse(Path.GetFileName(versions.FirstOrDefault()));
+
+                    packageDirectory = Path.Combine(Platform.PackageDirectory, packageName, ver.ToString());
+                }
+            }
+            else
+            {
+                packageDirectory = Path.Combine(Platform.PackageDirectory, packageName, ver.ToString());
             }
 
-            if (!Directory.Exists(Path.Combine(Platform.PackageDirectory, packageName, ver.ToString())))
+            if (!Directory.Exists(packageDirectory))
             {
-                if(packages == null)
+                var packages = await ListToolchainPackages(packageName, true);
+
+                if (packages == null)
                 {
                     console.WriteLine($"Package {packageName} v{ver} was not found.");
 
                     return PackageEnsureStatus.NotFound;
                 }
 
-                if(!packages.Any(p=>p.Version == ver))
+                if (ver == null)
+                {
+                    ver = packages.OrderBy(p => p.Version).FirstOrDefault().Version;
+                }
+
+                if (!packages.Any(p=>p.Version == ver))
                 {
                     console.WriteLine($"Package {packageName} was found but version v{ver} not recognised. Lastest is: v{packages.First().Version}");
+
+                    return PackageEnsureStatus.NotFound;
+                }
+
+                var systemPlatform = GetSystemPackagePlatform();
+
+                if(!packages.Any(p=>p.Platform == systemPlatform))
+                {
+                    console.WriteLine($"Package {packageName} v{ver} was found but is not supported on platform {Platform.AvalonRID}");
+
+                    var supportedPlatforms = packages.GroupBy(p => p.Platform);
+
+                    if (supportedPlatforms.Any())
+                    {
+                        console.WriteLine("Package {packageName} v{ver} supports:");
+                        foreach (var platformPkg in supportedPlatforms)
+                        {
+                            console.Write($"{platformPkg.Key} ");
+                        }
+
+                        console.WriteLine();
+                    }
 
                     return PackageEnsureStatus.NotFound;
                 }
@@ -400,7 +472,7 @@ namespace AvalonStudio.Packaging
 
                 await DownloadPackage(package, p=>
                 {
-                    console.OverWrite($"Downloaded: [{(p/package.Size)*100.0f}] {p}/{package.Size}");
+                    console.OverWrite($"Downloaded: [{(((float)p/package.Size)*100.0f).ToString("0.00")}%] {ByteSizeHelper.ToString(p)}/{ByteSizeHelper.ToString(package.Size)}");
                 });
 
                 console.OverWrite($"Downloaded Package: {packageName} v{ver}.");

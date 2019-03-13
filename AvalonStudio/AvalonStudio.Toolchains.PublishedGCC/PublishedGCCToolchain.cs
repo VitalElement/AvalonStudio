@@ -418,13 +418,22 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
             if (_settings.Toolchain != null)
             {
-                await PackageManager.EnsurePackage(_settings.Toolchain, _settings.Version, IoC.Get<IConsole>());
+                var packageStatus = await PackageManager.EnsurePackage(_settings.Toolchain, _settings.Version, IoC.Get<IConsole>());
 
-                _gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
+                result = packageStatus == PackageEnsureStatus.Found || packageStatus == PackageEnsureStatus.Installed;
 
-                if (_gccConfig != null)
+                if (result)
                 {
-                    result = await _gccConfig.ResolveAsync();
+                    _gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
+
+                    if (_gccConfig != null)
+                    {
+                        result = await _gccConfig.ResolveAsync();
+                    }
+                    else
+                    {
+                        result = false;
+                    }
                 }
             }
 
