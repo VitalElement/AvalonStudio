@@ -8,6 +8,9 @@ using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains.Standard;
 using CommandLine;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.Storage.Core.Util;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -288,6 +291,123 @@ namespace AvalonStudio
                 }
             }
             return 1;
+        }
+
+        private static int RunCreatePackage(CreatePackageOptions options)
+        {
+            if (CloudStorageAccount.TryParse(options.ConnectionString, out var storageAccount))
+            {
+                try
+                {
+                    CloudBlobClient cloudBlobClient = storageAccount.CreateCloudBlobClient();
+
+                    var cloudBlobContainer = cloudBlobClient.GetContainerReference(options.PackageName.Replace(".", "-").ToLower());
+
+                    if (cloudBlobContainer.ExistsAsync().GetAwaiter().GetResult())
+                    {
+                        console.WriteLine($"Package: {options.PackageName} is already taken.");
+
+                        return 2;
+                    }
+                    else
+                    {
+                        if (cloudBlobContainer.CreateIfNotExistsAsync(BlobContainerPublicAccessType.Blob, default(BlobRequestOptions), default(OperationContext)).GetAwaiter().GetResult())
+                        {
+                            cloudBlobContainer.Metadata["type"] = options.Type;
+                            cloudBlobContainer.SetMetadataAsync().Wait();
+
+                            console.WriteLine($"Package: {options.PackageName} created.");
+                            return 1;
+                        }
+
+                        console.WriteLine($"Package: {options.PackageName} is already taken.");
+                        return 2;
+                    }
+                }
+                catch (Exception e)
+                {
+                    console.WriteLine("Package could not be created. " + e.Message);
+
+                    return 2;
+                }
+            }
+            else
+            {
+                console.WriteLine("Invalid connection string");
+
+                return 2;
+            }
+        }
+
+        private static int RunPushPackage(PushPackageOptions options)
+        {
+            if (CloudStorageAccount.TryParse(options.ConnectionString, out var storageAccount))
+            {
+                try
+                {
+                    // Create the CloudBlobClient that represents the Blob storage endpoint for the storage account.
+                    CloudBlobClient cloudBlobClient = storageAccount.CreateCloudBlobClient();
+
+                    var cloudBlobContainer = cloudBlobClient.GetContainerReference(options.PackageName.Replace(".", "-").ToLower());
+
+                    if(!cloudBlobContainer.ExistsAsync().GetAwaiter().GetResult())
+                    {
+                        console.WriteLine($"Package: {options.PackageName} does not exist.");
+                        return 2;
+                    }
+
+                    if(!File.Exists(options.File))
+                    {
+                        console.WriteLine($"File not found: {options.File}");
+                        return 2;
+                    }
+
+                    switch(options.Platform)
+                    {
+                        case "any":
+                        case "win-x64":
+                        case "osx-x64":
+                        case "linux-x64":
+                            break;
+
+                        default:
+                            console.WriteLine($"Platform {options.Platform} is not valid.");
+                            return 2;
+                    }
+
+                    var ver = Version.Parse(options.Version);
+
+                    // Get a reference to the blob address, then upload the file to the blob.
+                    // Use the value of localFileName for the blob name.
+                    CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(Path.GetFileName(options.File));
+                    var fileInfo = new FileInfo(options.File);
+
+                    var progress = new Progress<StorageProgress>(p =>
+                    {
+                        console.WriteLine($"Uploaded: {p.BytesTransferred} / {fileInfo.Length}");
+                    });
+
+                    cloudBlockBlob.Metadata["platform"] = options.Platform;
+                    cloudBlockBlob.Metadata["version"] = ver.ToString();
+
+                    cloudBlockBlob.UploadFromFileAsync(options.File, default(AccessCondition), default(BlobRequestOptions), default(OperationContext), progress, new System.Threading.CancellationToken());
+
+                    console.WriteLine($"Package uploaded: {cloudBlockBlob.Uri}");
+
+                    return 1;
+                }
+                catch (Exception e)
+                {
+                    console.WriteLine("Error: " + e.Message);
+                    return 2;
+                }
+            }
+            else
+            {
+                console.WriteLine("Invalid connection string");
+
+                return 2;
+            }
         }
 
         private static int RunBuild(BuildOptions options)
@@ -601,7 +721,9 @@ namespace AvalonStudio
                 ListOptions,
                 InstallOptions,
                 UninstallOptions,
-                PrintEnvironmentOptions>(args)
+                PrintEnvironmentOptions,
+                CreatePackageOptions,
+                PushPackageOptions>(args)
                 .MapResult((BuildOptions opts) => RunBuild(opts),
                         (AddOptions opts) => RunAdd(opts),
                         (AddReferenceOptions opts) => RunAddReference(opts),
@@ -613,6 +735,8 @@ namespace AvalonStudio
                         (InstallOptions opts)=> RunInstall(opts),
                         (UninstallOptions opts)=> RunUninstall(opts),
                         (PrintEnvironmentOptions opts)=>RunPrintEnv(opts),
+                        (CreatePackageOptions opts)=>RunCreatePackage(opts),
+                        (PushPackageOptions opts)=>RunPushPackage(opts),
                         errs => 1);
 
             return result - 1;
