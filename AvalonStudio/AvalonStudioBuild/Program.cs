@@ -201,6 +201,8 @@ namespace AvalonStudio
 
             if (manifest != null)
             {
+                console.WriteLine();
+
                 if (manifest.Properties.TryGetValue("Paths", out var paths))
                 {
                     var concatenatedPath = "";
@@ -209,6 +211,8 @@ namespace AvalonStudio
                         concatenatedPath += manifest.ResolvePackagePath(path.ToString(), false) + ";";
                     }
                     console.WriteLine("Path: " + concatenatedPath);
+
+                    console.WriteLine();
                 }
 
                 if (manifest.Properties.TryGetValue("EnvironmentVariables", out var variables))
@@ -249,6 +253,8 @@ namespace AvalonStudio
                     {
                         console.WriteLine($"GDB={manifest.ResolvePackagePath(gdb.ToString())}");
                     }
+
+                    console.WriteLine();
                 }
 
                 if (manifest.Properties.TryGetValue("Gcc.SystemIncludePaths", out var systemIncludePaths))
@@ -260,7 +266,12 @@ namespace AvalonStudio
                     }
 
                     console.WriteLine("CCFLAGS=" + includeFlags);
+
+                    console.WriteLine();
+
                     console.WriteLine("CXXFLAGS=" + includeFlags);
+
+                    console.WriteLine();
                 }
 
                 if (manifest.Properties.TryGetValue("Gcc.SystemLibraryPaths", out var systemLibraryPaths))
@@ -272,6 +283,8 @@ namespace AvalonStudio
                     }
 
                     console.WriteLine("LDFLAGS=" + includeFlags);
+
+                    console.WriteLine();
                 }
             }
             return 1;
