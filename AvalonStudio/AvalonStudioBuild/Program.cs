@@ -384,7 +384,7 @@ namespace AvalonStudio
 
                     var progress = new Progress<StorageProgress>(p =>
                     {
-                        console.WriteLine($"Uploaded: {p.BytesTransferred} / {fileInfo.Length}");
+                        console?.OverWrite($"Uploaded: [{(((float)p.BytesTransferred / fileInfo.Length) * 100.0f).ToString("0.00")}%] {ByteSizeHelper.ToString(p.BytesTransferred)}/{ByteSizeHelper.ToString(fileInfo.Length)}     ");                        
                     });
 
                     cloudBlockBlob.Metadata["platform"] = options.Platform;
