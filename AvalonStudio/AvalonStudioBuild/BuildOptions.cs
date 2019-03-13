@@ -16,4 +16,35 @@ namespace AvalonStudio
         [Option('j', "jobs", Required = false, Default = 4, HelpText = "Number of jobs for compiling.")]
         public int Jobs { get; set; }
     }
+
+    [Verb("list", HelpText = "Lists available packages.")]
+    internal class ListOptions
+    {
+        [Value(0, MetaName = "List Command", HelpText = "Command (packages,....)", Required = true)]
+        public string Command { get; set; }
+
+
+        [Value(0, MetaName = "List Parameter", HelpText = "Command (packages,....)", Required = false)]
+        public string Parameter { get; set; }
+    }
+
+    [Verb("install", HelpText = "Installs a package.")]
+    internal class InstallOptions
+    {
+        [Value(0, MetaName = "Package", HelpText = "the name of the package to install.", Required = true)]
+        public string PackageName { get; set; }
+
+        [Value(1, MetaName = "Version", HelpText = "the version of the package to install.", Required = false)]
+        public string Version { get; set; }
+    }
+
+    [Verb("uninstall", HelpText = "Uninstalls a package.")]
+    internal class UninstallOptions
+    {
+        [Value(0, MetaName = "Package", HelpText = "the name of the package to install.", Required = true)]
+        public string PackageName { get; set; }
+
+        [Value(1, MetaName = "Version", HelpText = "the version of the package to install.", Required = true)]
+        public string Version { get; set; }
+    }
 }

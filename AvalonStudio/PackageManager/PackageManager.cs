@@ -80,6 +80,11 @@ namespace AvalonStudio.Packaging
 
         public static async Task<IList<string>> ListToolchains()
         {
+            return await ListPackages("toolchainconfig");
+        }
+
+        public static async Task<IList<string>> ListPackages(string type = "")
+        {
             var result = new List<string>();
 
             if (CloudStorageAccount.TryParse(sharedAccessString, out var storageAccount))
@@ -95,7 +100,7 @@ namespace AvalonStudio.Packaging
                     {
                         await container.FetchAttributesAsync();
 
-                        if (container.Metadata["type"] == "toolchainconfig")
+                        if (type == "" || container.Metadata["type"] == type)
                         {
                             result.Add(container.Name.Replace("-", "."));
                         }
@@ -392,6 +397,21 @@ namespace AvalonStudio.Packaging
             }
         }
 
+        public static void UnintallPackage (string package, string version, IConsole console = null)
+        {
+            var directory = PackageManager.GetPackageDirectory(package, version);
+
+            if (!string.IsNullOrEmpty(directory) && Directory.Exists(directory))
+            {   
+                Directory.Delete(directory, true);
+
+                console?.WriteLine($"Package {package} v{version} was uninstalled.");
+            }
+            else
+            {
+                console?.WriteLine($"Package {package} v{version} is not currently installed.");
+            }
+        }
 
         public static async Task InstallPackage(Package package, Action<string> progress)
         {

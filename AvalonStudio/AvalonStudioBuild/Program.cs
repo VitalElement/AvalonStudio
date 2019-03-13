@@ -1,7 +1,5 @@
-using Avalonia.Threading;
 using AvalonStudio.Extensibility;
-using AvalonStudio.Extensibility.Studio;
-using AvalonStudio.Packages;
+using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
@@ -9,7 +7,6 @@ using AvalonStudio.Projects.CPlusPlus;
 using AvalonStudio.Shell;
 using AvalonStudio.TestFrameworks;
 using AvalonStudio.Toolchains.Standard;
-using AvalonStudio.Utils;
 using CommandLine;
 using System;
 using System.Collections.Generic;
@@ -22,8 +19,8 @@ namespace AvalonStudio
 {
     internal class Program
     {
-        private const string version = "1.2.0.0";
-        private const string releaseName = "Gravity Waves";
+        private const string version = "2.0.0.0";
+        private const string releaseName = "Apollo";
 
         private static readonly ProgramConsole console = new ProgramConsole();
 
@@ -52,6 +49,57 @@ namespace AvalonStudio
                 console.WriteLine(e.Message);
                 return null;
             }
+        }
+
+        private static int RunList(ListOptions options)
+        {
+            switch(options.Command)
+            {
+                case "packages":
+                    var packages = PackageManager.ListPackages().GetAwaiter().GetResult();
+
+                    foreach(var package in packages)
+                    {
+                        console.WriteLine(package);
+                    }
+                    break;
+
+                case "package-info":
+                    if (!string.IsNullOrEmpty(options.Parameter))
+                    {
+                        var packageVersions = PackageManager.ListToolchainPackages(options.Parameter).GetAwaiter().GetResult();
+
+                        foreach(var version in packageVersions)
+                        {
+                            console.WriteLine($"{version.Name}, {version.Version}, {ByteSizeHelper.ToString(version.Size)}, {version.Published.ToUniversalTime()}");
+                        }
+
+                        return 1;
+                    }
+                    else
+                    {
+                        console.WriteLine("package name needs to be provided.");
+                    }
+                    break;
+
+                case "toolchains":
+                    packages = PackageManager.ListToolchains().GetAwaiter().GetResult();
+
+                    foreach (var package in packages)
+                    {
+                        var packageVersions = PackageManager.ListToolchainPackages(package).GetAwaiter().GetResult();
+
+                        if (packageVersions.Any())
+                        {
+                            var version = packageVersions.First();
+                            console.WriteLine($"{version.Name}, {version.Version}, {ByteSizeHelper.ToString(version.Size)}, {version.Published.ToUniversalTime()}");
+                        }
+                    }
+
+                    return 1;
+            }
+
+            return 2;
         }
 
         private static int RunTest(TestOptions options)
@@ -123,6 +171,27 @@ namespace AvalonStudio
             }
 
             return result;
+        }
+
+        private static int RunInstall (InstallOptions options)
+        {
+            var result = PackageManager.EnsurePackage(options.PackageName, options.Version, console).GetAwaiter().GetResult();
+
+            switch (result)
+            {
+                case PackageEnsureStatus.Found:
+                case PackageEnsureStatus.Installed:
+                    return 1;
+
+                default: return 2;
+            }
+        }
+
+        private static int RunUninstall(UninstallOptions options)
+        {
+            PackageManager.UnintallPackage(options.PackageName, options.Version, console);
+
+            return 1;
         }
 
         private static int RunBuild(BuildOptions options)
@@ -385,7 +454,18 @@ namespace AvalonStudio
 
             Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier);
 
-            var result = Parser.Default.ParseArguments<AddOptions, RemoveOptions, AddReferenceOptions, BuildOptions, CleanOptions, CreateOptions, PackageOptions, TestOptions>(args)
+            var result = Parser.Default.ParseArguments<
+                AddOptions, 
+                RemoveOptions, 
+                AddReferenceOptions, 
+                BuildOptions, 
+                CleanOptions, 
+                CreateOptions, 
+                PackageOptions, 
+                TestOptions, 
+                ListOptions,
+                InstallOptions,
+                UninstallOptions>(args)
                 .MapResult((BuildOptions opts) => RunBuild(opts),
                         (AddOptions opts) => RunAdd(opts),
                         (AddReferenceOptions opts) => RunAddReference(opts),
@@ -393,6 +473,9 @@ namespace AvalonStudio
                         (CreateOptions opts) => RunCreate(opts),
                         (RemoveOptions opts) => RunRemove(opts),
                         (TestOptions opts) => RunTest(opts),
+                        (ListOptions opts) => RunList(opts),
+                        (InstallOptions opts)=> RunInstall(opts),
+                        (UninstallOptions opts)=> RunUninstall(opts),
                         errs => 1);
 
             return result - 1;
