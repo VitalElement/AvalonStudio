@@ -390,7 +390,9 @@ namespace AvalonStudio
                     cloudBlockBlob.Metadata["platform"] = options.Platform;
                     cloudBlockBlob.Metadata["version"] = ver.ToString();
 
-                    cloudBlockBlob.UploadFromFileAsync(options.File, default(AccessCondition), default(BlobRequestOptions), default(OperationContext), progress, new System.Threading.CancellationToken());
+                    console.WriteLine("Uploading...");
+
+                    cloudBlockBlob.UploadFromFileAsync(options.File, default(AccessCondition), default(BlobRequestOptions), default(OperationContext), progress, new System.Threading.CancellationToken()).Wait();
 
                     console.WriteLine($"Package uploaded: {cloudBlockBlob.Uri}");
 
