@@ -420,6 +420,45 @@ namespace AvalonStudio
 
         private static int Main(string[] args)
         {
+            var manifest = new PackageManifest();
+
+            manifest.Properties["Dependencies"] = new List<string> {
+                "Rpi.Gcc&Version=5.6.7.1",
+                "Jlink&Version=4.5.1.2"
+            };
+
+            manifest.Properties["Gcc.CC"] = "bin/arm-linux-gnueabihf-gcc";
+            manifest.Properties["Gcc.CXX"] = "bin/arm-linux-gnueabihf-g++";
+            manifest.Properties["Gcc.AR"]= "bin/arm-linux-gnueabihf-ar";
+            manifest.Properties["Gcc.LD"]= "bin/arm-linux-gnueabihf-gcc";
+            manifest.Properties["Gcc.SIZE"]= "bin/arm-linux-gnueabihf-size";
+            manifest.Properties["Gcc.GDB"]= "bin/arm-linux-gnueabihf-gdb";
+
+            manifest.Properties["Paths"] = new List<string> { "bin/" };
+
+            manifest.Properties["EnvironmentVariables"] = new Dictionary<string, string>
+            {
+                { "SYSROOT", "sysroot/include" }
+            };
+
+            manifest.Properties["Gcc.SystemIncludePaths"] = new List<string>
+            {
+                "arm-linux-gnueabihf/include/c++/7.3.0",
+                "arm-linux-gnueabihf/include/c++/7.3.0/arm-linux-gnueabihf",
+                "arm-linux-gnueabihf/include/c++/7.3.0/backward",
+                "lib/gcc/arm-linux-gnueabihf/7.3.0/include",
+                "lib/gcc/arm-linux-gnueabihf/7.3.0/include-fixed",
+                "arm-linux-gnueabihf/include",
+                "arm-linux-gnueabihf/usr/include",
+                "usr/include"
+            };
+
+            manifest.Properties["Gcc.SystemLibraryPaths"] = new List<string>{
+                "lib/arm-linux-gnueabihf"
+            };
+
+            manifest.Save("package.manifest");
+
             if(args.Length >= 1 && args[0] == "debug")
             {
                 Console.WriteLine("Waiting for debugger to attach.");

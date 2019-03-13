@@ -6,6 +6,7 @@ using ManagedLzma.SevenZip;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Core.Util;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -193,6 +194,17 @@ namespace AvalonStudio.Packaging
             return result;
         }
 
+        public static PackageManifest GetPackageManifest(string package, string version = null)
+        {
+            var directory = GetPackageDirectory(package, version);
+
+            if(!string.IsNullOrWhiteSpace(directory) && File.Exists(Path.Combine(directory, "package.manifest")))
+            {
+                return PackageManifest.Load(Path.Combine(directory, "package.manifest"), package);
+            }
+
+            return null;
+        }
         
         public static string GetPackageDirectory(string package, string version = null)
         {
@@ -461,7 +473,7 @@ namespace AvalonStudio.Packaging
 
                 if (packages == null)
                 {
-                    console.WriteLine($"Package {packageName} v{ver} was not found.");
+                    console?.WriteLine($"Package {packageName} v{ver} was not found.");
 
                     return PackageEnsureStatus.NotFound;
                 }
@@ -473,7 +485,7 @@ namespace AvalonStudio.Packaging
 
                 if (!packages.Any(p=>p.Version == ver))
                 {
-                    console.WriteLine($"Package {packageName} was found but version v{ver} not recognised. Lastest is: v{packages.First().Version}");
+                    console?.WriteLine($"Package {packageName} was found but version v{ver} not recognised. Lastest is: v{packages.First().Version}");
 
                     return PackageEnsureStatus.NotFound;
                 }
@@ -482,50 +494,71 @@ namespace AvalonStudio.Packaging
 
                 if(!packages.Any(p=>p.Platform == systemPlatform || p.Platform == PackagePlatform.Any))
                 {
-                    console.WriteLine($"Package {packageName} v{ver} was found but is not supported on platform {Platform.AvalonRID}");
+                    console?.WriteLine($"Package {packageName} v{ver} was found but is not supported on platform {Platform.AvalonRID}");
 
                     var supportedPlatforms = packages.GroupBy(p => p.Platform);
 
                     if (supportedPlatforms.Any())
                     {
-                        console.WriteLine("Package {packageName} v{ver} supports:");
+                        console?.WriteLine("Package {packageName} v{ver} supports:");
                         foreach (var platformPkg in supportedPlatforms)
                         {
-                            console.Write($"{platformPkg.Key} ");
+                            console?.Write($"{platformPkg.Key} ");
                         }
 
-                        console.WriteLine();
+                        console?.WriteLine();
                     }
 
                     return PackageEnsureStatus.NotFound;
                 }
 
-                console.WriteLine($"Downloading Package: {packageName} v{ver}.");
+                console?.WriteLine($"Downloading Package: {packageName} v{ver}.");
 
                 var package = packages.FirstOrDefault(p => p.Version == ver);
 
                 await DownloadPackage(package, p =>
                 {
-                    console.OverWrite($"Downloaded: [{(((float)p/package.Size)*100.0f).ToString("0.00")}%] {ByteSizeHelper.ToString(p)}/{ByteSizeHelper.ToString(package.Size)}     ");
+                    console?.OverWrite($"Downloaded: [{(((float)p/package.Size)*100.0f).ToString("0.00")}%] {ByteSizeHelper.ToString(p)}/{ByteSizeHelper.ToString(package.Size)}     ");
                 });
 
-                console.OverWrite($"Downloaded Package: {packageName} v{ver}.");
+                console?.OverWrite($"Downloaded Package: {packageName} v{ver}.");
 
-                console.WriteLine($"Extracting Package: {packageName} v{ver}.");
+                console?.WriteLine($"Extracting Package: {packageName} v{ver}.");
 
                 await InstallPackage(package, file => console.OverWrite($"Extracting: {file}"));
 
                 await LoadAssetsAsync(Path.Combine(Platform.PackageDirectory, package.Name, package.Version.ToString()));
 
-                console.OverWrite($"Package Installed: {packageName} v{ver}.");
+                await ResolveDependencies(packageName, ver.ToString(), console);
+
+                console?.OverWrite($"Package Installed: {packageName} v{ver}.");
 
                 return PackageEnsureStatus.Installed;
             }
             else
             {
-                console.WriteLine($"Package: {packageName} v{ver.ToString()} is already installed.");
+                console?.WriteLine($"Package: {packageName} v{ver.ToString()} is already installed.");
+
+                await ResolveDependencies(packageName, ver.ToString(), console);
 
                 return PackageEnsureStatus.Found;
+            }
+        }
+
+        public static async Task ResolveDependencies (string package, string packageVersion = null, IConsole console = null)
+        {
+            var manifest = GetPackageManifest(package, packageVersion);
+
+            if(manifest != null && manifest.Properties.TryGetValue("Dependencies", out var dependencies))
+            {
+                console?.WriteLine($"Resolving Dependencies for {package} v{packageVersion}");
+
+                foreach(var dependency in dependencies as JArray)
+                {
+                    var dep = manifest.ParseUrl(dependency.ToString());
+
+                    await EnsurePackage(dep.package, dep.version, console);
+                }
             }
         }
 

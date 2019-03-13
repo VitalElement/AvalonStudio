@@ -326,9 +326,15 @@ namespace AvalonStudio.Toolchains.PublishedGCC
             {
                 _settings = file.Project.Solution.StartupProject.GetToolchainSettings<PublishedGCCToolchainSettings>();
 
-                _gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
+                var manifest = PackageManager.GetPackageManifest(_settings.Toolchain, _settings.Version);
 
-                _gccConfig?.ResolveAsync().GetAwaiter().GetResult();
+                _gccConfig = GccConfiguration.FromManifest(manifest);
+
+                _gccConfig.ResolveAsync().GetAwaiter().GetResult();
+
+                //_gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
+
+                //_gccConfig?.ResolveAsync().GetAwaiter().GetResult();
             }
 
             var result = base.GetToolchainIncludes(file);
@@ -424,15 +430,17 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
                 if (result)
                 {
-                    _gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
+                    var manifest = PackageManager.GetPackageManifest(_settings.Toolchain, _settings.Version);
 
-                    if (_gccConfig != null)
+                    if (manifest != null)
                     {
+                        _gccConfig = GccConfiguration.FromManifest(manifest);
+
                         result = await _gccConfig.ResolveAsync();
                     }
                     else
                     {
-                        console.WriteLine($"Toolchain: {_settings.Toolchain} v{_settings.Version} does not include a gcc configuration file.");
+                        console.WriteLine($"Toolchain: {_settings.Toolchain} v{_settings.Version} does not include a manifest with a valid gcc configuration.");
                         result = false;
                     }
                 }

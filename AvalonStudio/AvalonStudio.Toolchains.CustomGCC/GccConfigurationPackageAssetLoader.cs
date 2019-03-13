@@ -25,11 +25,11 @@ namespace AvalonStudio.Toolchains.CustomGCC
         {
             foreach(var file in files.Where(f=> Path.GetExtension(f) == ".gccdescription"))
             {
-                var description = GccToolchainDescription.Load(file);
+               // var description = GccToolchainDescription.Load(file);
 
-                var config = await description.ToConfigAsync(false);
+                ////var config = await description.ToConfigAsync(false);
 
-                GccConfigurationsManager.Register(config);
+                //GccConfigurationsManager.Register(config);
             }
         }
     }
