@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "AvalonStudioBuild": {
-      "commandName": "Project",
-      "commandLineArgs": "build ILMDHost.sln ILMD.Linux.ARM",
-      "workingDirectory": "C:\\dev\\repos\\ILMD\\Host"
-    }
-  }
-}

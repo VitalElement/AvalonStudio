@@ -237,3 +237,7 @@ $RECYCLE.BIN/
 /AvalonStudio/AvalonStudio.Languages.CPlusPlus/NativeBinaries
 /SampleLLilumProject/temp.ZeligImage
 /SampleLLilumProject/LLilum/temp.ZeligImage
+
+AvalonStudio/AvalonStudioBuild/Properties/launchSettings\.json
+
+AvalonStudio/ToolchainUploader/Properties/launchSettings\.json
