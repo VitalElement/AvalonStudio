@@ -74,6 +74,11 @@ namespace AvalonStudio.Toolchains.CustomGCC
                         Gdb = await _description.ResolvePackagePathAsync(gdb as string, console: console);
                     }
 
+                    if(_description.Properties.TryGetValue("Gcc.LibraryQueryCommand", out var libQuery))
+                    {
+                        LibraryQuery = await _description.ResolvePackagePathAsync(libQuery as string, console: console);
+                    }
+
                     if(_description.Properties.TryGetValue("Gcc.SystemIncludePaths", out var systemIncludePaths))
                     { 
                         foreach (var unresolvedPath in (systemIncludePaths as JArray).ToList().Select(x=>x.ToString()))
@@ -126,5 +131,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
         public string Gdb { get; set; }
 
         public string Size { get; set; }
+
+        public string LibraryQuery { get; set; }
     }
 }

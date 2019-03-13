@@ -51,6 +51,19 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
         public override string GDBExecutable => _gccConfig?.Gdb;
 
+        public override string LibraryQueryCommand{
+            get
+            {
+                if(_gccConfig != null && !string.IsNullOrWhiteSpace(_gccConfig.LibraryQuery))
+                {
+                    return _gccConfig.LibraryQuery;
+                }
+                else
+                {
+                    return base.LibraryQueryCommand;
+                }
+            }
+        }
         //public override string LibraryQueryCommand => Path.Combine(BinDirectory, _settings.LibraryQueryCommand + Platform.ExecutableExtension);
 
         [ImportingConstructor]
