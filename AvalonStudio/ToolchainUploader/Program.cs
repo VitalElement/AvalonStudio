@@ -12,11 +12,13 @@ namespace ConsoleApp1
     {
         static async Task Main(string[] args)
         {
-            if (args.Length != 5)
+            if (args.Length != 6)
             {
-                Console.WriteLine("Usage: filename - toolchain name - platform - version - access token");
-                Console.WriteLine("i.e. : clang8.7z - clang8 - win-x64 - 8.0.0 - connectionString");
-                Console.WriteLine("i.e. : arm-none-eabi - armgcc - linux-x64 - 7.2.0 - connectionString");
+                Console.WriteLine("Usage: filename - toolchain name - platform - version - type - access token");
+                Console.WriteLine("i.e. : clang8.7z - clang8 -win-x64 - 8.0.0 - package - connectionString");
+                Console.WriteLine("i.e. : arm-none-eabi - armgcc - linux-x64 - 7.2.0 - toolchainconfig - connectionString");
+                Console.WriteLine("i.e. : arm-none-eabi.config.7z - any - 7.2.0 - toolchainconfig - connectionString");
+                return;
             }
 
             var toolchains = await PackageManager.ListToolchains();
@@ -25,11 +27,14 @@ namespace ConsoleApp1
             {
                 Console.WriteLine(tc);
 
-                var packages =  await PackageManager.ListToolchainPackages(tc);
+                var packages =  await PackageManager.ListToolchainPackages(tc, true, true);
 
-                foreach(var package in packages)
+                if (packages != null)
                 {
-                    Console.WriteLine($"   {package.Name} - {package.Platform} - {package.Version} - {package.Published} - {package.Size / 1024}");
+                    foreach (var package in packages)
+                    {
+                        Console.WriteLine($"   {package.Name} - {package.Platform} - {package.Version} - {package.Published} - {package.Size / 1024}");
+                    }
                 }
             }
 
@@ -37,7 +42,8 @@ namespace ConsoleApp1
             var toolchainName = args[1];
             var platform = args[2];
             var version = args[3];
-            var storageConnectionString = args[4];
+            var type = args[4];
+            var storageConnectionString = args[5];
 
             // Check whether the connection string can be parsed.
             if (CloudStorageAccount.TryParse(storageConnectionString, out var storageAccount))
@@ -56,6 +62,8 @@ namespace ConsoleApp1
 
 
                     var cloudBlobContainer = cloudBlobClient.GetContainerReference(toolchainName.Replace(".", "-").ToLower());
+                    cloudBlobContainer.Metadata["type"] = type;
+                    
 
                     await cloudBlobContainer.CreateIfNotExistsAsync(BlobContainerPublicAccessType.Blob, default(BlobRequestOptions), default(OperationContext));
 

@@ -20,7 +20,8 @@ namespace AvalonStudio.Packaging
         Unknown,
         WinX64,
         Osx,
-        LinuxX64
+        LinuxX64,
+        Any
     }
 
     public enum PackageEnsureStatus
@@ -40,6 +41,7 @@ namespace AvalonStudio.Packaging
                 case PackagePlatform.WinX64: return "win-x64";
                 case PackagePlatform.Osx: return "osx-x64";
                 case PackagePlatform.LinuxX64: return "linux-x64";
+                case PackagePlatform.Any: return "any";
                 default: return "";
             }
         }
@@ -51,6 +53,7 @@ namespace AvalonStudio.Packaging
                 case "win-x64": return PackagePlatform.WinX64;
                 case "linux-x64": return PackagePlatform.LinuxX64;
                 case "osx-x64": return PackagePlatform.Osx;
+                case "any": return PackagePlatform.Any;
 
                 default:return PackagePlatform.Unknown;
             }
@@ -90,7 +93,12 @@ namespace AvalonStudio.Packaging
 
                     foreach (var container in containers.Results)
                     {
-                        result.Add(container.Name.Replace("-","."));
+                        await container.FetchAttributesAsync();
+
+                        if (container.Metadata["type"] == "toolchainconfig")
+                        {
+                            result.Add(container.Name.Replace("-", "."));
+                        }
                     }
                 }
                 catch
@@ -104,7 +112,7 @@ namespace AvalonStudio.Packaging
 
         private static bool PlatformMatches(PackagePlatform platform)
         {
-            return GetSystemPackagePlatform() == platform;
+            return platform == PackagePlatform.Any || GetSystemPackagePlatform() == platform;
         }
 
         private static PackagePlatform GetSystemPackagePlatform()
@@ -127,6 +135,41 @@ namespace AvalonStudio.Packaging
             }
         }
 
+        public static async Task<IList<string>> ListToolchainVariants (string toolchainName)
+        {
+            var result = new List<string>();
+
+            if (CloudStorageAccount.TryParse(sharedAccessString, out var storageAccount))
+            {
+                try
+                {
+                    // Create the CloudBlobClient that represents the Blob storage endpoint for the storage account.
+                    var cloudBlobClient = storageAccount.CreateCloudBlobClient();
+
+                    var cloudBlobContainer = cloudBlobClient.GetContainerReference(toolchainName.Replace(".", "-").ToLower());
+
+                    if (!await cloudBlobContainer.ExistsAsync())
+                    {
+                        return null;
+                    }
+
+                    var blobs = await cloudBlobContainer.ListBlobsSegmentedAsync(new BlobContinuationToken());
+
+                    foreach (var blob in blobs.Results.OfType<CloudBlockBlob>())
+                    {
+                        await blob.FetchAttributesAsync();
+
+                        var name = cloudBlobContainer.Name.Replace("-", ".");
+
+                        result.Add(name);
+                    }
+                }
+                catch { }
+            }
+
+            return result;
+        }
+
         public static async Task<IList<Package>> ListToolchainPackages(string toolchainName, bool includeAllPlatforms = false)
         {
             List<Package> result = null;
@@ -140,7 +183,7 @@ namespace AvalonStudio.Packaging
 
                     var cloudBlobContainer = cloudBlobClient.GetContainerReference(toolchainName.Replace(".", "-").ToLower());
 
-                    if(!await cloudBlobContainer.ExistsAsync())
+                    if (!await cloudBlobContainer.ExistsAsync())
                     {
                         return null;
                     }
@@ -446,7 +489,7 @@ namespace AvalonStudio.Packaging
 
                 var systemPlatform = GetSystemPackagePlatform();
 
-                if(!packages.Any(p=>p.Platform == systemPlatform))
+                if(!packages.Any(p=>p.Platform == systemPlatform || p.Platform == PackagePlatform.Any))
                 {
                     console.WriteLine($"Package {packageName} v{ver} was found but is not supported on platform {Platform.AvalonRID}");
 
@@ -470,9 +513,9 @@ namespace AvalonStudio.Packaging
 
                 var package = packages.FirstOrDefault(p => p.Version == ver);
 
-                await DownloadPackage(package, p=>
+                await DownloadPackage(package, p =>
                 {
-                    console.OverWrite($"Downloaded: [{(((float)p/package.Size)*100.0f).ToString("0.00")}%] {ByteSizeHelper.ToString(p)}/{ByteSizeHelper.ToString(package.Size)}");
+                    console.OverWrite($"Downloaded: [{(((float)p/package.Size)*100.0f).ToString("0.00")}%] {ByteSizeHelper.ToString(p)}/{ByteSizeHelper.ToString(package.Size)}     ");
                 });
 
                 console.OverWrite($"Downloaded Package: {packageName} v{ver}.");
@@ -480,6 +523,8 @@ namespace AvalonStudio.Packaging
                 console.WriteLine($"Extracting Package: {packageName} v{ver}.");
 
                 await InstallPackage(package, file => console.OverWrite($"Extracting: {file}"));
+
+                await LoadAssetsAsync(Path.Combine(Platform.PackageDirectory, package.Name, package.Version.ToString()));
 
                 console.OverWrite($"Package Installed: {packageName} v{ver}.");
 
@@ -497,18 +542,21 @@ namespace AvalonStudio.Packaging
         {
             foreach (var package in Directory.EnumerateDirectories(Platform.PackageDirectory))
             {
-                foreach (var packageVersion in Directory.EnumerateDirectories(package))
+                foreach (var packageVariant in Directory.EnumerateDirectories(package))
                 {
-                    var location = GetPackageDirectory(Path.GetFileName(package), Path.GetFileName(packageVersion));
-
-                    if (!string.IsNullOrEmpty(location))
+                    foreach (var packageVersion in Directory.EnumerateDirectories(packageVariant))
                     {
-                        var files = Directory.EnumerateFiles(location, "*.*", SearchOption.TopDirectoryOnly);
-
-                        await LoadAssetsFromFilesAsync(Path.GetFileName(package), Path.GetFileName(packageVersion), files);
+                        await LoadAssetsAsync(packageVersion);
                     }
                 }
             }
+        }
+
+        private static async Task LoadAssetsAsync(string location)
+        {
+            var files = Directory.EnumerateFiles(location, "*.*", SearchOption.TopDirectoryOnly);
+
+            await LoadAssetsFromFilesAsync(files);
         }
 
         private static List<IPackageAssetLoader> _assetLoaders = new List<IPackageAssetLoader>();
@@ -521,11 +569,11 @@ namespace AvalonStudio.Packaging
             }
         }
 
-        private static async Task LoadAssetsFromFilesAsync(string package, string version, IEnumerable<string> files)
+        private static async Task LoadAssetsFromFilesAsync(IEnumerable<string> files)
         {
             foreach (var assetLoader in _assetLoaders)
             {
-                await assetLoader.LoadAssetsAsync(package, version, files);
+                await assetLoader.LoadAssetsAsync(files);
             }
         }
     }

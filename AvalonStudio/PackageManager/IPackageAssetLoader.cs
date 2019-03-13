@@ -6,6 +6,6 @@ namespace AvalonStudio.Packages
 {
     public interface IPackageAssetLoader : IActivatableExtension
     {
-        Task LoadAssetsAsync(string package, string version, IEnumerable<string> files);
+        Task LoadAssetsAsync(IEnumerable<string> files);
     }
 }

@@ -97,7 +97,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
             if (s_registeredConfigurations.ContainsKey(id.ToLower()))
             {
-                return s_registeredConfigurations[id].FirstOrDefault(c=>c.Version == parsedVersion.ToString(4));
+                return s_registeredConfigurations[id.ToLower()].FirstOrDefault(c=>c.Version == parsedVersion.ToString(4));
             }
             else
             {

@@ -21,7 +21,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
         {
         }
 
-        public async Task LoadAssetsAsync(string package, string version, IEnumerable<string> files)
+        public async Task LoadAssetsAsync(IEnumerable<string> files)
         {
             foreach(var file in files.Where(f=> Path.GetExtension(f) == ".gccdescription"))
             {

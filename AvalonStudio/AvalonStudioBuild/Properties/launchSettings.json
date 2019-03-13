@@ -3,7 +3,7 @@
     "AvalonStudioBuild": {
       "commandName": "Project",
       "commandLineArgs": "build ILMDHost.sln ILMD.Linux.ARM",
-      "workingDirectory": "C:\\Users\\dan\\repos\\ILMD\\Host"
+      "workingDirectory": "C:\\dev\\repos\\ILMD\\Host"
     }
   }
 }

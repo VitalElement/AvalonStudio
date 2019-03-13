@@ -432,6 +432,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
                     }
                     else
                     {
+                        console.WriteLine($"Toolchain: {_settings.Toolchain} v{_settings.Version} does not include a gcc configuration file.");
                         result = false;
                     }
                 }

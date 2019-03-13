@@ -9,4 +9,8 @@
     <PackageReference Include="WindowsAzure.Storage" Version="9.3.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PackageManager\PackageManager.csproj" />
+  </ItemGroup>
+
 </Project>
