@@ -26,7 +26,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 }
                 else
                 {
-                    return Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Debuggers.JLink"), "content").ToPlatformPath();
+                    return PackageManager.GetPackageDirectory("AvalonStudio.Debuggers.JLink").ToPlatformPath();
                 }
             }
         }

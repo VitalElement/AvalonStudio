@@ -27,7 +27,7 @@ namespace ConsoleApp1
             {
                 Console.WriteLine(tc);
 
-                var packages =  await PackageManager.ListToolchainPackages(tc, true, true);
+                var packages =  await PackageManager.ListToolchainPackages(tc, true);
 
                 if (packages != null)
                 {

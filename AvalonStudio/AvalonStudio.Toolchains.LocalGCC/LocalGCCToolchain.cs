@@ -33,7 +33,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
                 {
                     if (_contentDirectory == null)
                     {
-                        _contentDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.GCC"), "content");
+                        _contentDirectory = PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.GCC").ToPlatformPath();
                     }
 
                     return _contentDirectory;
@@ -386,10 +386,18 @@ namespace AvalonStudio.Toolchains.LocalGCC
         {
             if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {
-                if (await PackageManager.EnsurePackage("AvalonStudio.Toolchains.GCC", (project as CPlusPlusProject).ToolchainVersion, console) == PackageEnsureStatus.Installed)
+                var status = await PackageManager.EnsurePackage("AvalonStudio.Toolchains.GCC", (project as CPlusPlusProject).ToolchainVersion, console);
+                
+                switch(status)
                 {
-                    // this ensures content directory is re-evaluated if we just installed the toolchain.
-                    _contentDirectory = null;
+                    case PackageEnsureStatus.Installed:
+                        // this ensures content directory is re-evaluated if we just installed the toolchain.
+                        _contentDirectory = null;
+                        break;
+
+                    case PackageEnsureStatus.NotFound:
+                    case PackageEnsureStatus.Unknown:
+                        return false;
                 }
             }
 

@@ -135,41 +135,6 @@ namespace AvalonStudio.Packaging
             }
         }
 
-        public static async Task<IList<string>> ListToolchainVariants (string toolchainName)
-        {
-            var result = new List<string>();
-
-            if (CloudStorageAccount.TryParse(sharedAccessString, out var storageAccount))
-            {
-                try
-                {
-                    // Create the CloudBlobClient that represents the Blob storage endpoint for the storage account.
-                    var cloudBlobClient = storageAccount.CreateCloudBlobClient();
-
-                    var cloudBlobContainer = cloudBlobClient.GetContainerReference(toolchainName.Replace(".", "-").ToLower());
-
-                    if (!await cloudBlobContainer.ExistsAsync())
-                    {
-                        return null;
-                    }
-
-                    var blobs = await cloudBlobContainer.ListBlobsSegmentedAsync(new BlobContinuationToken());
-
-                    foreach (var blob in blobs.Results.OfType<CloudBlockBlob>())
-                    {
-                        await blob.FetchAttributesAsync();
-
-                        var name = cloudBlobContainer.Name.Replace("-", ".");
-
-                        result.Add(name);
-                    }
-                }
-                catch { }
-            }
-
-            return result;
-        }
-
         public static async Task<IList<Package>> ListToolchainPackages(string toolchainName, bool includeAllPlatforms = false)
         {
             List<Package> result = null;
@@ -459,6 +424,10 @@ namespace AvalonStudio.Packaging
                     packageDirectory = Path.Combine(Platform.PackageDirectory, packageName, ver.ToString());
                 }
             }
+            else if(ver == null)
+            { 
+                packageDirectory = Path.Combine(Platform.PackageDirectory, packageName, "0000");
+            }
             else
             {
                 packageDirectory = Path.Combine(Platform.PackageDirectory, packageName, ver.ToString());
@@ -542,12 +511,9 @@ namespace AvalonStudio.Packaging
         {
             foreach (var package in Directory.EnumerateDirectories(Platform.PackageDirectory))
             {
-                foreach (var packageVariant in Directory.EnumerateDirectories(package))
+                foreach (var packageVersion in Directory.EnumerateDirectories(package))
                 {
-                    foreach (var packageVersion in Directory.EnumerateDirectories(packageVariant))
-                    {
-                        await LoadAssetsAsync(packageVersion);
-                    }
+                    await LoadAssetsAsync(packageVersion);
                 }
             }
         }

@@ -27,7 +27,7 @@ namespace AvalonStudio.Toolchains.STM32
             {
                 if (_contentDirectory == null)
                 {
-                    _contentDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang"), "content");
+                    _contentDirectory = PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang").ToPlatformPath();
                 }
 
                 return _contentDirectory;

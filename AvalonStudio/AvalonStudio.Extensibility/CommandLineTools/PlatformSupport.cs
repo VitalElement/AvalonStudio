@@ -140,10 +140,14 @@ namespace AvalonStudio.CommandLineTools
             shellProc.EnableRaisingEvents = true;
             new ProcessManager(shellProc);
 
-            shellProc.Start();
+            try
+            {
+                shellProc.Start();
 
-            shellProc.BeginOutputReadLine();
-            shellProc.BeginErrorReadLine();                       
+                shellProc.BeginOutputReadLine();
+                shellProc.BeginErrorReadLine();
+            }
+            catch { }
 
             return shellProc;
         }
@@ -166,9 +170,16 @@ namespace AvalonStudio.CommandLineTools
 
             private void Current_OnExit(object sender, EventArgs e)
             {
-                if (!_process.HasExited)
+                try
                 {
-                    _process.Kill();
+                    if (!_process.HasExited)
+                    {
+                        _process.Kill();
+                    }
+                }
+                catch
+                {
+
                 }
             }
 

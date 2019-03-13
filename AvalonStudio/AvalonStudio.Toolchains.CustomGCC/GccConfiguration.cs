@@ -46,7 +46,13 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public static GccToolchainDescription Load(string file)
         {
-            return SerializedObject.Deserialize<GccToolchainDescription>(file);
+            var result = SerializedObject.Deserialize<GccToolchainDescription>(file);
+
+            var versionString = Path.GetFileName(Path.GetDirectoryName(file));
+
+            result.Version = Version.Parse(versionString);
+
+            return result;
         }
 
         public void Save (string path)
@@ -191,7 +197,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
                     throw new Exception("Package not found.");
                 }
                 
-                packageLocation = PackageManager.GetPackageDirectory(packageInfo.package, packageInfo.version);
+                packageLocation = PackageManager.GetPackageDirectory(packageInfo.package, packageInfo.version).ToPlatformPath();
 
                 _resolvedPackages.Add(fullPackageId, packageLocation);
             }
