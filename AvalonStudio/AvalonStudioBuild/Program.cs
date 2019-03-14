@@ -436,7 +436,7 @@ namespace AvalonStudio
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
 
-                if (project.ToolChain is StandardToolchain)
+                if (project.ToolChain is StandardToolchain && options.Jobs != 0)
                 {
                     (project.ToolChain as StandardToolchain).Jobs = options.Jobs;
                 }

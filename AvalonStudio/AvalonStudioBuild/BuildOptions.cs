@@ -13,7 +13,7 @@ namespace AvalonStudio
         [Option('D', "define", Required = false, Separator = ':')]
         public IEnumerable<string> Defines { get; set; }
 
-        [Option('j', "jobs", Required = false, Default = 4, HelpText = "Number of jobs for compiling.")]
+        [Option('j', "jobs", Required = false, Default = 0, HelpText = "Number of jobs for compiling.")]
         public int Jobs { get; set; }
     }
 
