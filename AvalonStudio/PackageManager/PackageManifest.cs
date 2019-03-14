@@ -1,5 +1,4 @@
-﻿using AvalonStudio.Extensibility;
-using AvalonStudio.Platforms;
+﻿using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using Newtonsoft.Json;
 using System;
