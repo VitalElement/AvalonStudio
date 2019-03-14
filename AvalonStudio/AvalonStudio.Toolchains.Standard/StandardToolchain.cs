@@ -112,7 +112,7 @@ namespace AvalonStudio.Toolchains.Standard
             console.Clear();
             IoC.Get<IErrorList>()?.Remove(this);
 
-            console.WriteLine("Starting Build...");
+            console.WriteLine($"Starting Build with {Jobs} jobs...");
             console.WriteLine();
 
             if (!ValidateToolchainExecutables(console))
