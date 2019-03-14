@@ -287,12 +287,12 @@ namespace AvalonStudio.Packaging
             }
         }
 
-        private static void UnpackArchive(string archiveFileName, string targetDirectory, Action<string> progress, string password = null)
+        private static void UnpackArchive(string archiveFileName, string targetDirectory, Action<int, int> progress, string password = null)
         {
             UnpackArchive(archiveFileName, targetDirectory, password != null ? ManagedLzma.PasswordStorage.Create(password) : null, progress);
         }
 
-        private static void UnpackArchive(string archiveFileName, string targetDirectory, ManagedLzma.PasswordStorage password, Action<string> progress)
+        private static void UnpackArchive(string archiveFileName, string targetDirectory, ManagedLzma.PasswordStorage password, Action<int, int> progress)
         {
             if (!File.Exists(archiveFileName))
                 throw new FileNotFoundException("Archive not found.", archiveFileName);
@@ -306,9 +306,17 @@ namespace AvalonStudio.Packaging
                 var archiveFileModel = archiveMetadataReader.ReadMetadata(archiveStream, password);
                 var archiveMetadata = archiveFileModel.Metadata;
 
+                var totalFiles = 0;
+                var extracted = 0;
 
                 for (int sectionIndex = 0; sectionIndex < archiveMetadata.DecoderSections.Length; sectionIndex++)
-                //Parallel.For(0, archiveMetadata.DecoderSections.Length, sectionIndex =>
+                {
+                    var sectionFiles = archiveFileModel.GetFilesInSection(sectionIndex);
+
+                    totalFiles += sectionFiles.Count;
+                }
+
+                for (int sectionIndex = 0; sectionIndex < archiveMetadata.DecoderSections.Length; sectionIndex++)
                 {
                     var sectionReader = new ManagedLzma.SevenZip.Reader.DecodedSectionReader(archiveStream, archiveMetadata, sectionIndex, password);
 
@@ -336,7 +344,7 @@ namespace AvalonStudio.Packaging
 
                         // Ensure that the target directory is created.
                         var filename = Path.Combine(targetDirectory, fileMetadata.FullName);
-                        progress(filename);
+                        progress(extracted++, totalFiles);
 
                         Directory.CreateDirectory(Path.GetDirectoryName(filename));
 
@@ -348,7 +356,7 @@ namespace AvalonStudio.Packaging
 
                         SetFileAttributes(filename, fileMetadata);
                     }
-                }//);
+                }
 
                 // Create empty files and empty directories.
                 UnpackArchiveStructure(archiveFileModel.RootFolder, targetDirectory);
@@ -425,7 +433,7 @@ namespace AvalonStudio.Packaging
             }
         }
 
-        public static async Task InstallPackage(Package package, Action<string> progress)
+        public static async Task InstallPackage(Package package, Action<int, int> progress)
         {
             await Task.Run(() =>
             {
@@ -456,6 +464,10 @@ namespace AvalonStudio.Packaging
                     ver = Version.Parse(Path.GetFileName(versions.FirstOrDefault()));
 
                     packageDirectory = Path.Combine(Platform.PackageDirectory, packageName, ver.ToString());
+                }
+                else
+                {
+                    packageDirectory = Path.Combine(Platform.PackageDirectory, packageName, "0000");
                 }
             }
             else if(ver == null)
@@ -512,34 +524,35 @@ namespace AvalonStudio.Packaging
                     return PackageEnsureStatus.NotFound;
                 }
 
-                console?.WriteLine($"Downloading Package: {packageName} v{ver}.");
+                console?.WriteLine($"Package: {packageName} v{ver} will be downloaded and installed.");
 
                 var package = packages.FirstOrDefault(p => p.Version == ver);
 
                 await DownloadPackage(package, p =>
                 {
-                    console?.OverWrite($"Downloaded: [{(((float)p/package.Size)*100.0f).ToString("0.00")}%] {ByteSizeHelper.ToString(p)}/{ByteSizeHelper.ToString(package.Size)}     ");
+                    console?.OverWrite($"Downloading: [{(((float)p/package.Size)*100.0f).ToString("0.00")}%] {ByteSizeHelper.ToString(p)}/{ByteSizeHelper.ToString(package.Size)}     ");
                 });
 
                 console?.OverWrite($"Downloaded Package: {packageName} v{ver}.");
-
+                console?.WriteLine();
                 console?.WriteLine($"Extracting Package: {packageName} v{ver}.");
 
-                await InstallPackage(package, file => console.OverWrite($"Extracting: {file}"));
+                await InstallPackage(package, (offset, length) => console.OverWrite($"Extracting: [{(((float)offset / length) * 100.0f).ToString("0.00")}%]"));
 
                 await LoadAssetsAsync(Path.Combine(Platform.PackageDirectory, package.Name, package.Version.ToString()));
 
-                await ResolveDependencies(packageName, ver.ToString(), console);
+                await ResolveDependencies(packageName, ver?.ToString(), console);
 
                 console?.OverWrite($"Package Installed: {packageName} v{ver}.");
+                console?.WriteLine();
 
                 return PackageEnsureStatus.Installed;
             }
             else
             {
-                console?.WriteLine($"Package: {packageName} v{ver.ToString()} is already installed.");
+                console?.WriteLine($"Package: {packageName} v{ver?.ToString()} is already installed.");
 
-                await ResolveDependencies(packageName, ver.ToString(), console);
+                await ResolveDependencies(packageName, ver?.ToString(), console);
 
                 return PackageEnsureStatus.Found;
             }
