@@ -4,11 +4,13 @@ using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Packages;
+using AvalonStudio.Packaging;
 using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
@@ -27,6 +29,7 @@ namespace AvalonStudio.Controls
 
         private void InvalidateInstalledPackages()
         {
+            InstalledPackages = new ObservableCollection<PackageIdentityViewModel>(PackageManager.ListInstalledPackages().Select(x => new PackageIdentityViewModel(x)));
             //InstalledPackages = new ObservableCollection<PackageIdentityViewModel>(AvalonStudio.Packages.PackageManager.ListInstalledPackages().Select(pr => new PackageIdentityViewModel(pr)));
         }
 

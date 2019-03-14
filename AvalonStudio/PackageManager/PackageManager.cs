@@ -33,6 +33,11 @@ namespace AvalonStudio.Packaging
         Installed
     }
 
+    public class PackageIdentifier
+    {
+        public string Name { get; set; }
+        public Version Version { get; set; }
+    }
     public class Package
     {
         public static string PackagePlatformName(PackagePlatform platform)
@@ -78,6 +83,17 @@ namespace AvalonStudio.Packaging
     public class PackageManager
     {
         private const string sharedAccessString = "BlobEndpoint=https://avalonstudiotoolchains.blob.core.windows.net/;QueueEndpoint=https://avalonstudiotoolchains.queue.core.windows.net/;FileEndpoint=https://avalonstudiotoolchains.file.core.windows.net/;TableEndpoint=https://avalonstudiotoolchains.table.core.windows.net/;SharedAccessSignature=sv=2018-03-28&ss=b&srt=sco&sp=rl&se=2030-03-14T21:53:38Z&st=2019-03-14T13:53:38Z&spr=https&sig=looyudbytezOmD2iqCLiZ7xt%2F%2FajvQOF6PR8BULGmpI%3D";
+
+        public static IEnumerable<PackageIdentifier> ListInstalledPackages()
+        {
+            foreach(var packageDir in Directory.EnumerateDirectories(Platform.PackageDirectory))
+            {
+                foreach(var packageVer in Directory.EnumerateDirectories(packageDir))
+                {
+                    yield return new PackageIdentifier { Name = Path.GetFileName(packageDir), Version = Version.Parse(Path.GetFileName(packageVer)) };
+                }
+            }
+        }
 
         public static async Task<IList<string>> ListToolchains()
         {
