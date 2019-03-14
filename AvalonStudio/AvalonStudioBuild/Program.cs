@@ -489,122 +489,6 @@ namespace AvalonStudio
             return 1;
         }
 
-        private static int RunRemove(RemoveOptions options)
-        {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), options.File);
-
-            if (System.IO.File.Exists(file))
-            {
-                var solution = LoadSolution(options);
-                var project = FindProject(solution, options.Project);
-
-                if (project != null)
-                {
-                    // todo normalize paths.
-                    var currentFile =
-                        project.Items.OfType<ISourceFile>().Where(s => s.FilePath.Normalize() == options.File.Normalize()).FirstOrDefault();
-
-                    if (currentFile != null)
-                    {
-                        project.Items.RemoveAt(project.Items.IndexOf(currentFile));
-                        project.Save();
-
-                        Console.WriteLine("File removed.");
-
-                        return 1;
-                    }
-                    Console.WriteLine("File not found in project.");
-                    return -1;
-                }
-                Console.WriteLine("Project not found.");
-                return -1;
-            }
-            Console.WriteLine("File not found.");
-            return -1;
-        }
-
-        private static int RunAdd(AddOptions options)
-        {
-            var file = Path.Combine(Directory.GetCurrentDirectory(), options.File);
-
-            if (System.IO.File.Exists(file))
-            {
-                var solution = LoadSolution(options);
-                var project = FindProject(solution, options.Project) as CPlusPlusProject;
-
-                if (project != null)
-                {
-                    throw new NotImplementedException();
-
-                    /*var sourceFile = SourceFile.FromPath(project, project, options.File);
-                    project.Items.Add(sourceFile);
-                    project.SourceFiles.InsertSorted(sourceFile);
-                    project.Save();
-                    Console.WriteLine("File added.");
-                    return 1;*/
-                }
-                Console.WriteLine("Project not found.");
-                return -1;
-            }
-            Console.WriteLine("File not found.");
-            return -1;
-        }
-
-        private static int RunAddReference(AddReferenceOptions options)
-        {
-            var solution = LoadSolution(options);
-            var project = FindProject(solution, options.Project) as CPlusPlusProject;
-
-            if (project != null)
-            {
-                var currentReference = project.References.Where(r => r.Name == options.Name).FirstOrDefault();
-
-                if (currentReference != null)
-                {
-                    project.UnloadedReferences[project.References.IndexOf(currentReference)] = new Reference
-                    {
-                        Name = options.Name,
-                        GitUrl = options.GitUrl,
-                        Revision = options.Revision
-                    };
-                    Console.WriteLine("Reference successfully updated.");
-                }
-                else
-                {
-                    var add = true;
-
-                    if (string.IsNullOrEmpty(options.GitUrl))
-                    {
-                        var reference = FindProject(solution, options.Name);
-
-                        if (reference == null)
-                        {
-                            add = false;
-                        }
-                    }
-
-                    if (add)
-                    {
-                        project.UnloadedReferences.Add(new Reference
-                        {
-                            Name = options.Name,
-                            GitUrl = options.GitUrl,
-                            Revision = options.Revision
-                        });
-                        Console.WriteLine("Reference added successfully.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Local reference does not exist, try creating the project first.");
-                    }
-                }
-
-                project.Save();
-            }
-
-            return 1;
-        }
-
         private static int RunCreate(CreateOptions options)
         {
             var projectPath = string.Empty;
@@ -638,45 +522,6 @@ namespace AvalonStudio
 
         private static int Main(string[] args)
         {
-            var manifest = new PackageManifest();
-
-            manifest.Properties["Dependencies"] = new List<string> {
-                "Rpi.Gcc&Version=5.6.7.1",
-                "Jlink&Version=4.5.1.2"
-            };
-
-            manifest.Properties["Gcc.CC"] = "bin/arm-linux-gnueabihf-gcc";
-            manifest.Properties["Gcc.CXX"] = "bin/arm-linux-gnueabihf-g++";
-            manifest.Properties["Gcc.AR"]= "bin/arm-linux-gnueabihf-ar";
-            manifest.Properties["Gcc.LD"]= "bin/arm-linux-gnueabihf-gcc";
-            manifest.Properties["Gcc.SIZE"]= "bin/arm-linux-gnueabihf-size";
-            manifest.Properties["Gcc.GDB"]= "bin/arm-linux-gnueabihf-gdb";
-
-            manifest.Properties["Paths"] = new List<string> { "bin/" };
-
-            manifest.Properties["EnvironmentVariables"] = new Dictionary<string, string>
-            {
-                { "SYSROOT", "sysroot/include" }
-            };
-
-            manifest.Properties["Gcc.SystemIncludePaths"] = new List<string>
-            {
-                "arm-linux-gnueabihf/include/c++/7.3.0",
-                "arm-linux-gnueabihf/include/c++/7.3.0/arm-linux-gnueabihf",
-                "arm-linux-gnueabihf/include/c++/7.3.0/backward",
-                "lib/gcc/arm-linux-gnueabihf/7.3.0/include",
-                "lib/gcc/arm-linux-gnueabihf/7.3.0/include-fixed",
-                "arm-linux-gnueabihf/include",
-                "arm-linux-gnueabihf/usr/include",
-                "usr/include"
-            };
-
-            manifest.Properties["Gcc.SystemLibraryPaths"] = new List<string>{
-                "lib/arm-linux-gnueabihf"
-            };
-
-            manifest.Save("package.manifest");
-
             if(args.Length >= 1 && args[0] == "debug")
             {
                 Console.WriteLine("Waiting for debugger to attach.");
@@ -712,13 +557,9 @@ namespace AvalonStudio
             Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier);
 
             var result = Parser.Default.ParseArguments<
-                AddOptions, 
-                RemoveOptions, 
-                AddReferenceOptions, 
                 BuildOptions, 
                 CleanOptions, 
-                CreateOptions, 
-                PackageOptions, 
+                CreateOptions,
                 TestOptions, 
                 ListOptions,
                 InstallOptions,
@@ -727,11 +568,8 @@ namespace AvalonStudio
                 CreatePackageOptions,
                 PushPackageOptions>(args)
                 .MapResult((BuildOptions opts) => RunBuild(opts),
-                        (AddOptions opts) => RunAdd(opts),
-                        (AddReferenceOptions opts) => RunAddReference(opts),
                         (CleanOptions opts) => RunClean(opts),
                         (CreateOptions opts) => RunCreate(opts),
-                        (RemoveOptions opts) => RunRemove(opts),
                         (TestOptions opts) => RunTest(opts),
                         (ListOptions opts) => RunList(opts),
                         (InstallOptions opts)=> RunInstall(opts),

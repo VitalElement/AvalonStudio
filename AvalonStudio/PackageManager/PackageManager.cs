@@ -77,7 +77,7 @@ namespace AvalonStudio.Packaging
 
     public class PackageManager
     {
-        private const string sharedAccessString = "BlobEndpoint=https://avalonstudiotoolchains.blob.core.windows.net/;QueueEndpoint=https://avalonstudiotoolchains.queue.core.windows.net/;FileEndpoint=https://avalonstudiotoolchains.file.core.windows.net/;TableEndpoint=https://avalonstudiotoolchains.table.core.windows.net/;SharedAccessSignature=sv=2018-03-28&ss=b&srt=sco&sp=rl&se=2024-04-03T23:04:09Z&st=2019-03-12T16:04:09Z&spr=https&sig=bl3JVY%2FpMBwTgyTqXp6oozaIm9IALwr1r2zdY63%2F%2BJQ%3D";
+        private const string sharedAccessString = "BlobEndpoint=https://avalonstudiotoolchains.blob.core.windows.net/;QueueEndpoint=https://avalonstudiotoolchains.queue.core.windows.net/;FileEndpoint=https://avalonstudiotoolchains.file.core.windows.net/;TableEndpoint=https://avalonstudiotoolchains.table.core.windows.net/;SharedAccessSignature=sv=2018-03-28&ss=b&srt=sco&sp=rl&se=2030-03-14T21:53:38Z&st=2019-03-14T13:53:38Z&spr=https&sig=looyudbytezOmD2iqCLiZ7xt%2F%2FajvQOF6PR8BULGmpI%3D";
 
         public static async Task<IList<string>> ListToolchains()
         {
