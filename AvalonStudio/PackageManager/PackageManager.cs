@@ -550,8 +550,6 @@ namespace AvalonStudio.Packaging
             }
             else
             {
-                console?.WriteLine($"Package: {packageName} v{ver?.ToString()} is already installed.");
-
                 await ResolveDependencies(packageName, ver?.ToString(), console);
 
                 return PackageEnsureStatus.Found;
