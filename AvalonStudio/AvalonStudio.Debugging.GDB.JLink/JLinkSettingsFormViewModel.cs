@@ -1,5 +1,6 @@
 using Avalonia.Threading;
 using AvalonStudio.MVVM;
+using AvalonStudio.Packaging;
 using AvalonStudio.Projects;
 using ReactiveUI;
 using System;
@@ -13,9 +14,11 @@ namespace AvalonStudio.Debugging.GDB.JLink
 {
     public class JLinkSettingsFormViewModel : ViewModel<IProject>
     {
+        private List<string> _versions;
         private int interfaceSelectedIndex;
         private int speedSelectedIndex;
         private string filter = string.Empty;
+        private string _selectedVersion;
         private bool _download;
         private bool _postDownloadReset;
         private bool _useRemote;
@@ -38,12 +41,13 @@ namespace AvalonStudio.Debugging.GDB.JLink
             _ipAddress = settings.RemoteIPAddress;
             _postDownloadReset = settings.PostDownloadReset;
             _run = settings.Run;
+            _selectedVersion = settings.Version;
 
             speedSelectedIndex = SpeedOptions.IndexOf(settings.SpeedkHz.ToString());
 
             speed = settings.SpeedkHz.ToString();
 
-            string devPath = Path.Combine(JLinkDebugger.BaseDirectory, "devices.csv");
+            string devPath = Path.Combine(JLinkDebugger.GetBaseDirectory(settings.Version), "devices.csv");
 
             deviceList = new ObservableCollection<JLinkTargetDeviceViewModel>();
 
@@ -55,6 +59,10 @@ namespace AvalonStudio.Debugging.GDB.JLink
         private async void LoadDeviceList(string deviceFile)
         {
             var list = new ObservableCollection<JLinkTargetDeviceViewModel>();
+
+            var versions = await PackageManager.ListToolchainPackages("AvalonStudio.Debuggers.JLink");
+
+            Versions = new List<string>(versions.Select(v => v.Version.ToString()));
 
             if(File.Exists(deviceFile))
             {
@@ -212,6 +220,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 settings.UseRemote = _useRemote;
                 settings.RemoteIPAddress = _ipAddress;
                 settings.Run = _run;
+                settings.Version = _selectedVersion;
 
                 if (!string.IsNullOrEmpty(speed))
                 {
@@ -234,6 +243,23 @@ namespace AvalonStudio.Debugging.GDB.JLink
         {
             get { return deviceList; }
             set { this.RaiseAndSetIfChanged(ref deviceList, value); }
+        }
+
+        public List<string> Versions
+        {
+            get { return _versions; }
+            set { this.RaiseAndSetIfChanged(ref _versions, value); }
+        }
+
+        public string SelectedVersion
+        {
+            get => _selectedVersion;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedVersion, value);
+
+                Save();
+            }
         }
 
         private JLinkTargetDeviceViewModel selectedDevice;

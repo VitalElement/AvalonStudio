@@ -35,7 +35,7 @@ namespace AvalonStudio.Toolchains.Clang
             {
                 if (_contentDirectory == null)
                 {
-                    _contentDirectory = PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang").ToPlatformPath();
+                    _contentDirectory = PackageManager.GetPackageDirectory("Clang").ToPlatformPath();
                 }
 
                 return _contentDirectory;

@@ -2,6 +2,11 @@
     <StackPanel Spacing="10"  HorizontalAlignment="Left" Margin="10">
         <StackPanel Orientation="Horizontal" Spacing="5">
             <StackPanel Orientation="Horizontal" Spacing="5">
+                <TextBlock Text="Version" />
+                <DropDown Items="{Binding Versions}" SelectedItem="{Binding SelectedVersion}" />
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal" Spacing="5">
                 <TextBlock Text="Interface" />
                 <DropDown Items="{Binding InterfaceOptions}" SelectedIndex="{Binding InterfaceSelectedIndex, Mode=TwoWay}" />
             </StackPanel>

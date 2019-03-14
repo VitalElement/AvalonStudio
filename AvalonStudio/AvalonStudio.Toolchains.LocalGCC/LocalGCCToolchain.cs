@@ -33,7 +33,7 @@ namespace AvalonStudio.Toolchains.LocalGCC
                 {
                     if (_contentDirectory == null)
                     {
-                        _contentDirectory = PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.GCC").ToPlatformPath();
+                        _contentDirectory = PackageManager.GetPackageDirectory("Gcc").ToPlatformPath();
                     }
 
                     return _contentDirectory;
