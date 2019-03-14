@@ -379,7 +379,7 @@ namespace AvalonStudio
 
                     // Get a reference to the blob address, then upload the file to the blob.
                     // Use the value of localFileName for the blob name.
-                    CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference(Path.GetFileName(options.File));
+                    CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference($"{options.PackageName}.{options.Platform}.{options.Version}.7z");
                     var fileInfo = new FileInfo(options.File);
 
                     var progress = new Progress<StorageProgress>(p =>
