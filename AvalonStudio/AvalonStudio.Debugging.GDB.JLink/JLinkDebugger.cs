@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Packages;
+﻿using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Toolchains.GCC;
@@ -15,20 +15,21 @@ namespace AvalonStudio.Debugging.GDB.JLink
     [ExportDebugger]
     internal class JLinkDebugger : IDebugger2
     {
-        public static string BaseDirectory
+        public static string GetBaseDirectory(string version)
         {
-            get
-            {
-                if (Platform.PlatformIdentifier != Platforms.PlatformID.Win32NT)
-                {
-                    return string.Empty;
-                }
-                else
-                {
-                    return Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Debuggers.JLink"), "content").ToPlatformPath();
-                }
-            }
+            return PackageManager.GetPackageDirectory("JLink", version).ToPlatformPath();
         }
+
+        public static string GetBaseDirectory(IProject project)
+        {
+            var settings = project.GetDebuggerSettings<JLinkSettings>();
+
+            return GetBaseDirectory(settings.Version);
+        }
+
+        private string _baseDirectory = "";
+
+        public string BaseDirectory => _baseDirectory;
 
         public string BinDirectory => BaseDirectory;
         
@@ -80,12 +81,16 @@ namespace AvalonStudio.Debugging.GDB.JLink
         {
             if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
             {
-                switch(await PackageManager.EnsurePackage("AvalonStudio.Debuggers.JLink", console))
+                var settings = project.GetDebuggerSettings<JLinkSettings>();
+
+                switch (await PackageManager.EnsurePackage("JLink", settings.Version, console))
                 {
                     case PackageEnsureStatus.NotFound:
                     case PackageEnsureStatus.Unknown:
                         return false;
                 }
+
+                _baseDirectory = GetBaseDirectory(settings.Version);
             }
 
             return true;

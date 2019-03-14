@@ -16,6 +16,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
         {
         }
 
+        public string Version { get; set; }
         public JlinkInterfaceType Interface { get; set; }
         public string TargetDevice { get; set; }
         public string DeviceKey { get; set; }

@@ -1,4 +1,4 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility" xmlns:editor="clr-namespace:AvalonStudio.Controls.Standard.CodeEditor;assembly=AvalonStudio.Controls.Standard"             >
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility" xmlns:editor="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor"             >
   <DockPanel>
     <StackPanel Margin="5 0 0 0" Orientation="Horizontal" Spacing="4" DockPanel.Dock="Top">
       <TextBlock Text="Mixed Mode" />

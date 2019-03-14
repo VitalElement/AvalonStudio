@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Controls.Standard.CodeEditor.ContextActions;
+﻿using AvalonStudio.Controls.Editor.ContextActions;
 using AvalonStudio.Documents;
 using AvalonStudio.Projects.OmniSharp.Roslyn;
 using Microsoft.CodeAnalysis.CodeRefactorings;

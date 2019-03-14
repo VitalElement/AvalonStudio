@@ -36,7 +36,8 @@
     <ProjectReference Include="..\..\AvalonStudio.Shell\src\AvalonStudio.Shell\AvalonStudio.Shell.csproj" />
     <ProjectReference Include="..\..\DataGrid\src\Avalonia.DataGrid.Themes.Default\Avalonia.DataGrid.Themes.Default.csproj" />
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />   
-    <ProjectReference Include="..\Avalonia.Ide\src\Avalonia.Ide.LanguageServer.MSBuild\Avalonia.Ide.LanguageServer.MSBuild.csproj" />
+    <ProjectReference Include="..\Avalonia.Ide\src\Avalonia.Ide.LanguageServer.MSBuild\Avalonia.Ide.LanguageServer.MSBuild.csproj" />   
+    <ProjectReference Include="..\AvalonStudio.Controls.Editor\AvalonStudio.Controls.Editor.csproj" />
     <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.JLink\AvalonStudio.Debugging.GDB.JLink.csproj" />
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB.Local\AvalonStudio.Debugging.GDB.Local.csproj" />
@@ -50,18 +51,16 @@
     <ProjectReference Include="..\AvalonStudio.LanguageSupport.TypeScript\AvalonStudio.LanguageSupport.TypeScript.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.OmniSharp\AvalonStudio.Projects.OmniSharp.csproj" />
-    <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
     <ProjectReference Include="..\AvalonStudio.Studio\AvalonStudio.Studio.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.Clang\AvalonStudio.Toolchains.Clang.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.LocalGCC\AvalonStudio.Toolchains.LocalGCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.PublishedGCC\AvalonStudio.Toolchains.PublishedGCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.CustomGCC\AvalonStudio.Toolchains.CustomGCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.STM32\AvalonStudio.Toolchains.STM32.csproj" />
+    <ProjectReference Include="..\PackageManager\PackageManager.csproj" />
   </ItemGroup>
 
 <Target Name="GatherReferences" AfterTargets="CoreCompile">
-    <WriteLinesToFile File="$(TargetPath).refs"
-                      Lines="@(ReferencePathWithRefAssemblies)"
-                      Overwrite="true" />
+    <WriteLinesToFile File="$(TargetPath).refs" Lines="@(ReferencePathWithRefAssemblies)" Overwrite="true" />
   </Target>
 </Project>

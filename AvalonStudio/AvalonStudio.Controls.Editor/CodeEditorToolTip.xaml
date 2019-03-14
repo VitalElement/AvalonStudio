@@ -1,0 +1,21 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:local="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor"
+        xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility"
+        xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio.Shell.Extensibility"
+        xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>
+    <Style Selector="local|CodeEditorToolTip">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Popup StaysOpen="False" Name="PART_Popup" DataContext="">
+                    <Border BorderBrush="{DynamicResource EditorBorderBrush}" 
+                            BorderThickness="1" Name="PART_Presenter" 
+                            Background="{DynamicResource EditorBackgroundAccentBrush}">
+                        <Grid Margin="4" TextBlock.Foreground="{DynamicResource EditorForegroundBrush}" TextBlock.FontFamily="{DynamicResource UiFont}" TextBlock.FontSize="14">
+                            <cont:ViewModelViewHost Name="PART_ViewHost" />
+                        </Grid>
+                    </Border>
+                </Popup>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

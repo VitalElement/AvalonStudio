@@ -22,6 +22,13 @@ namespace AvalonStudio.Projects.CPlusPlus
         {
             toolchains = new List<IToolchain>(IoC.GetInstances<IToolchain>());
             selectedToolchain = project.ToolChain;
+
+            if(selectedToolchain != null)
+            {
+                ConfigPages = selectedToolchain.GetConfigurationPages(Model);
+                SelectedConfigPage = null;
+                SelectedConfigPage = ConfigPages?.FirstOrDefault();
+            }
         }
 
         public IList<object> ConfigPages

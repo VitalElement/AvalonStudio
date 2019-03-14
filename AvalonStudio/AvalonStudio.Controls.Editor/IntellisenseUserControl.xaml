@@ -1,0 +1,31 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+              xmlns:local="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor"
+              xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility">
+    <Grid TextBlock.FontFamily="{DynamicResource UiFont}" TextBlock.FontSize="14">
+        <Grid.Styles>
+            <Style Selector="ListBoxItem:selected">
+                <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
+            </Style>
+
+            <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
+            </Style>
+        </Grid.Styles>
+        <ListBox Items="{Binding CompletionData}"
+                 Background="{DynamicResource ThemeControlBackgroundBrush}"
+                 BorderBrush="{DynamicResource ThemeBorderDarkBrush}" SelectedItem="{Binding SelectedCompletion, Mode=TwoWay}" MaxHeight="180"
+                 BorderThickness="1" Width="240" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <DrawingPresenter Width="16" Height="16" Drawing="{Binding Icon}" />
+                            <TextBlock Text="{Binding Title}" />
+                        </StackPanel>
+                    </Grid>
+                </DataTemplate>
+
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

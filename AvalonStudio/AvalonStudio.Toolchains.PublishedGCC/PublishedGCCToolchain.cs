@@ -1,6 +1,7 @@
 ﻿using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Packages;
+using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
@@ -50,6 +51,19 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
         public override string GDBExecutable => _gccConfig?.Gdb;
 
+        public override string LibraryQueryCommand{
+            get
+            {
+                if(_gccConfig != null && !string.IsNullOrWhiteSpace(_gccConfig.LibraryQuery))
+                {
+                    return _gccConfig.LibraryQuery;
+                }
+                else
+                {
+                    return base.LibraryQueryCommand;
+                }
+            }
+        }
         //public override string LibraryQueryCommand => Path.Combine(BinDirectory, _settings.LibraryQueryCommand + Platform.ExecutableExtension);
 
         [ImportingConstructor]
@@ -325,9 +339,15 @@ namespace AvalonStudio.Toolchains.PublishedGCC
             {
                 _settings = file.Project.Solution.StartupProject.GetToolchainSettings<PublishedGCCToolchainSettings>();
 
-                _gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
+                var manifest = PackageManager.GetPackageManifest(_settings.Toolchain, _settings.Version);
 
-                _gccConfig?.ResolveAsync().GetAwaiter().GetResult();
+                _gccConfig = GccConfiguration.FromManifest(manifest);
+
+                _gccConfig.ResolveAsync().GetAwaiter().GetResult();
+
+                //_gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
+
+                //_gccConfig?.ResolveAsync().GetAwaiter().GetResult();
             }
 
             var result = base.GetToolchainIncludes(file);
@@ -417,11 +437,26 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
             if (_settings.Toolchain != null)
             {
-                await PackageManager.EnsurePackage(_settings.Toolchain, _settings.Version, IoC.Get<IConsole>(), ignoreRid: true);
+                var packageStatus = await PackageManager.EnsurePackage(_settings.Toolchain, _settings.Version, IoC.Get<IConsole>());
 
-                _gccConfig = GccConfigurationsManager.GetConfiguration(_settings.Toolchain, _settings.Version);
+                result = packageStatus == PackageEnsureStatus.Found || packageStatus == PackageEnsureStatus.Installed;
 
-                result = await _gccConfig.ResolveAsync();
+                if (result)
+                {
+                    var manifest = PackageManager.GetPackageManifest(_settings.Toolchain, _settings.Version);
+
+                    if (manifest != null)
+                    {
+                        _gccConfig = GccConfiguration.FromManifest(manifest);
+
+                        result = await _gccConfig.ResolveAsync();
+                    }
+                    else
+                    {
+                        console.WriteLine($"Toolchain: {_settings.Toolchain} v{_settings.Version} does not include a manifest with a valid gcc configuration.");
+                        result = false;
+                    }
+                }
             }
 
             if (result)

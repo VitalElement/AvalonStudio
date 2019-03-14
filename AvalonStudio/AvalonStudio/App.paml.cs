@@ -4,13 +4,14 @@ using Avalonia.Logging.Serilog;
 using Avalonia.Markup.Xaml;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
-using AvalonStudio.Repositories;
 using AvalonStudio.Shell;
 using Serilog;
 using System;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility;
 using System.IO;
+using AvalonStudio.Utils;
+using AvalonStudio.Packaging;
 
 namespace AvalonStudio
 {
@@ -48,11 +49,10 @@ namespace AvalonStudio
 
                 Platform.Initialise();
 
-                PackageSources.InitialisePackageSources();
-
                 Dispatcher.UIThread.Post(async () =>
                    {
                        await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
+                       
                    });
             })
             .StartShellApp<AppBuilder, MainWindow>("AvalonStudio", null, () => new MainWindowViewModel());

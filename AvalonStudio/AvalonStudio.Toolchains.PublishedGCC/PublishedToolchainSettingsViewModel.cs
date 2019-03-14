@@ -1,10 +1,9 @@
 using Avalonia.Threading;
 using AvalonStudio.MVVM;
-using AvalonStudio.Packages;
+using AvalonStudio.Packaging;
 using AvalonStudio.Projects;
-using AvalonStudio.Toolchains.CustomGCC;
 using ReactiveUI;
-using System.Collections.Generic;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,12 +13,12 @@ namespace AvalonStudio.Toolchains.PublishedGCC
     public class PublishedToolchainSettingsViewModel : HeaderedViewModel<IProject>
     {
         private string _version;
-        private PackageMetaData _selectedPackage;
+        private string _selectedPackage;
 
-        private ObservableCollection<PackageMetaData> _availableToolchains;
+        private ObservableCollection<string> _availableToolchains;
         private PublishedGCCToolchainSettings _settings;
-        private ObservableCollection<string> _versions;
-        private string _selectedVersion;
+        private ObservableCollection<Package> _versions;
+        private Package _selectedVersion;
         private bool _initialised;
 
         public PublishedToolchainSettingsViewModel(IProject model) : base("Platform", model)
@@ -30,24 +29,24 @@ namespace AvalonStudio.Toolchains.PublishedGCC
             {
                 try
                 {
-                    var packages = await GccConfigurationsManager.GetRemotePackagesAsync();
+                    var packages = await PackageManager.ListToolchains();
 
-                    AvailableToolchains = new ObservableCollection<PackageMetaData>(packages);
+                    AvailableToolchains = new ObservableCollection<string>(packages);
                 }
                 catch(System.Exception)
                 {
-                    AvailableToolchains = new ObservableCollection<PackageMetaData>();
+                    AvailableToolchains = new ObservableCollection<string>();
                 }
 
                 if (!string.IsNullOrEmpty(_settings.Toolchain))
                 {
-                    SelectedPackage = AvailableToolchains.FirstOrDefault(tc => tc.Title == _settings.Toolchain);
+                    SelectedPackage = AvailableToolchains.FirstOrDefault();//(tc => tc == _settings.Toolchain);
 
                     await LoadVersions();
 
                     if (!string.IsNullOrEmpty(_settings.Version))
                     {
-                        SelectedVersion = Versions.FirstOrDefault(v => v == _settings.Version);
+                        SelectedVersion = Versions.FirstOrDefault(v => v.Version == Version.Parse(_settings.Version));
 
                         if(SelectedVersion == null)
                         {
@@ -64,26 +63,26 @@ namespace AvalonStudio.Toolchains.PublishedGCC
             });
         }
 
-        public ObservableCollection<PackageMetaData> AvailableToolchains
+        public ObservableCollection<string> AvailableToolchains
         {
             get { return _availableToolchains; }
             set { this.RaiseAndSetIfChanged(ref _availableToolchains, value); }
         }
 
-        public ObservableCollection<string> Versions
+        public ObservableCollection<Package> Versions
         {
             get { return _versions; }
             set { this.RaiseAndSetIfChanged(ref _versions, value); }
         }
 
-        public string SelectedVersion
+        public Package SelectedVersion
         {
             get { return _selectedVersion; }
             set
             {
                 this.RaiseAndSetIfChanged(ref _selectedVersion, value);
 
-                if (_initialised)
+                if (_initialised && _selectedVersion != null)
                 {
                     Save();
                 }
@@ -92,21 +91,24 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
         private void Save()
         {
-            _settings.Toolchain = SelectedPackage?.Title;
-            _settings.Version = SelectedVersion;
+            if (SelectedPackage != null && SelectedVersion != null)
+            {
+                _settings.Toolchain = SelectedPackage;
+                _settings.Version = SelectedVersion.Version.ToString();
 
-            Model.SetToolchainSettings(_settings);
-            Model.Save();
+                Model.SetToolchainSettings(_settings);
+                Model.Save();
+            }
         }
 
         private async Task LoadVersions()
         {
-            var packages = await PackageManager.FindPackages(SelectedPackage.Title);
+            Versions = new ObservableCollection<Package>(await PackageManager.ListToolchainPackages(SelectedPackage));
 
-            Versions = new ObservableCollection<string>((await packages.FirstOrDefault().GetAllVersionsAsync()).Select(v=>v.Version.ToNormalizedString()));
+            //Versions = new ObservableCollection<string>((await packages.FirstOrDefault().GetAllVersionsAsync()).Select(v=>v.Version.ToNormalizedString()));
         }
 
-        public PackageMetaData SelectedPackage
+        public string SelectedPackage
         {
             get { return _selectedPackage; }
             set

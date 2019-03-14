@@ -398,6 +398,8 @@ namespace AvalonStudio.Platforms
 
         public static string ProjectDirectory => Path.Combine(BaseDirectory, "Projects");
 
+        public static string PackageDirectory => Path.Combine(BaseDirectory, "Packages");
+
         public static string SettingsDirectory => Path.Combine(BaseDirectory, "Settings");
 
         public static string TemplatesFolder => Path.Combine(ExecutionPath, "Templates");
@@ -421,6 +423,11 @@ namespace AvalonStudio.Platforms
             if (!Directory.Exists(BaseDirectory))
             {
                 Directory.CreateDirectory(BaseDirectory);
+            }
+
+            if (!Directory.Exists(PackageDirectory))
+            {
+                Directory.CreateDirectory(PackageDirectory);
             }
 
             if (!Directory.Exists(SettingsDirectory))

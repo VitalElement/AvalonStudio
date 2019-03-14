@@ -110,9 +110,9 @@ namespace AvalonStudio.Toolchains.Standard
             }
 
             console.Clear();
-            IoC.Get<IErrorList>().Remove(this);
+            IoC.Get<IErrorList>()?.Remove(this);
 
-            console.WriteLine("Starting Build...");
+            console.WriteLine($"Starting Build with {Jobs} jobs...");
             console.WriteLine();
 
             if (!ValidateToolchainExecutables(console))
@@ -251,13 +251,13 @@ namespace AvalonStudio.Toolchains.Standard
         {
             await Task.Factory.StartNew(async () =>
             {
-                console.WriteLine("Starting Clean...");
+                console?.WriteLine("Starting Clean...");
 
-                IoC.Get<IErrorList>().Remove(this);
+                IoC.Get<IErrorList>()?.Remove(this);
 
                 await CleanAll(console, project as IStandardProject, project as IStandardProject);
 
-                console.WriteLine("Clean Completed.");
+                console?.WriteLine("Clean Completed.");
             });
         }
 
@@ -671,7 +671,7 @@ namespace AvalonStudio.Toolchains.Standard
 
             if (hasCleaned)
             {
-                console.WriteLine(string.Format("[BB] - Cleaning Project - {0}", project.Name));
+                console?.WriteLine(string.Format("[BB] - Cleaning Project - {0}", project.Name));
             }
         }
 

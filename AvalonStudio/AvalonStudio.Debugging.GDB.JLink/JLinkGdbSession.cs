@@ -87,7 +87,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
                 jlinkStartInfo.Arguments = string.Format($"-select USB -device {settings.TargetDevice} -if {Enum.GetName(typeof(JlinkInterfaceType), settings.Interface)} -speed {settings.SpeedkHz}");
             }
 
-            jlinkStartInfo.FileName = Path.Combine(JLinkDebugger.BaseDirectory, processName + Platform.ExecutableExtension);
+            jlinkStartInfo.FileName = Path.Combine(JLinkDebugger.GetBaseDirectory(_project), processName + Platform.ExecutableExtension);
 
             if (Path.IsPathRooted(jlinkStartInfo.FileName) && !System.IO.File.Exists(jlinkStartInfo.FileName))
             {

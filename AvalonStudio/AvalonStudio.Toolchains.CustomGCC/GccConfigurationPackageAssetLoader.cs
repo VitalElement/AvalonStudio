@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Composition;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Packaging;
 
 namespace AvalonStudio.Toolchains.CustomGCC
 {
@@ -20,15 +21,15 @@ namespace AvalonStudio.Toolchains.CustomGCC
         {
         }
 
-        public async Task LoadAssetsAsync(string package, string version, IEnumerable<string> files)
+        public async Task LoadAssetsAsync(IEnumerable<string> files)
         {
             foreach(var file in files.Where(f=> Path.GetExtension(f) == ".gccdescription"))
             {
-                var description = GccToolchainDescription.Load(file);
+               // var description = GccToolchainDescription.Load(file);
 
-                var config = await description.ToConfigAsync(false);
+                ////var config = await description.ToConfigAsync(false);
 
-                GccConfigurationsManager.Register(config);
+                //GccConfigurationsManager.Register(config);
             }
         }
     }

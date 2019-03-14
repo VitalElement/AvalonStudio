@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
+             xmlns:vm="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor"
+             FontFamily="{DynamicResource UiFont}" FontSize="14">
+    <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
+        <Grid Background="{DynamicResource ThemeControlBackgroundBrush}" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}">
+            <Grid Margin="2">
+                <Grid>
+                    <StackPanel Margin="4">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                            <TextBlock Text="{Binding ScopeDescription}" />
+                            <TextBlock Text="{Binding BuiltInTypeDescription}" Foreground="#FF569CD6" />
+                            <TextBlock Text="{Binding EnumTypeDescription}" Foreground="#FFCEE4AE" />
+                            <TextBlock Text="{Binding TypeDescription}" Foreground="#FF4ec9b0" />
+                            <TextBlock Text="{Binding ClassDescription}" Foreground="#FF4ec9b0" />
+                            <TextBlock Text="{Binding Spelling}" />
+                            <TextBlock Text="{Binding EnumValue}" Foreground="#FFCEE4AE" />
+                            <TextBlock Text="(" IsVisible="{Binding ArgumentsVisibility}" />
+                            <ListBox Items="{Binding Arguments}" BorderThickness="0" Margin="-2 -4 -2 0" VirtualizationMode="None" Background="{DynamicResource ThemeControlBackgroundBrush}" IsEnabled="false">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" Margin="0" Spacing="4" />
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.DataTemplates>
+                                    <DataTemplate DataType="vm:ParameterSymbolViewModel">
+                                        <StackPanel Orientation="Horizontal" TextBlock.FontWeight="{Binding FontWeight}" Spacing="2">
+                                            <TextBlock Margin="0" Text="{Binding BuiltInTypeDescription}"
+                                                   Foreground="#FF569CD6" />
+                                            <TextBlock Margin="0" Text="{Binding TypeDescription}" Foreground="#FF4ec9b0" />
+                                            <TextBlock Margin="0" Text="{Binding DisplayName}"  />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.DataTemplates>
+                            </ListBox>
+                            <TextBlock Text=")" IsVisible="{Binding ArgumentsVisibility}" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding Description}" IsVisible="{Binding DescriptionVisibility}" MaxWidth="500"
+                               TextWrapping="Wrap" TextAlignment="Left" HorizontalAlignment="Left" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

@@ -15,7 +15,7 @@
     <StyleInclude Source="resm:AvalonStudio.Shell.Extensibility.Controls.ControlTheme.paml?assembly=AvalonStudio.Shell.Extensibility" />
     <StyleInclude Source="resm:AvalonStudio.Shell.Styles.GlobalStyles.xaml?assembly=AvalonStudio.Shell" />
     <StyleInclude Source="resm:AvaloniaEdit.AvaloniaEdit.xaml?assembly=AvaloniaEdit" />
-    <StyleInclude Source="resm:AvalonStudio.Controls.Standard.CodeEditor.CodeEditor.xaml?assembly=AvalonStudio.Controls.Standard" />
+    <StyleInclude Source="resm:AvalonStudio.Controls.Editor.CodeEditor.xaml?assembly=AvalonStudio.Controls.Editor" />
     <StyleInclude Source="resm:AvalonStudio.Debugging.Icons.Icons.xaml?assembly=AvalonStudio.Debugging" />
     <StyleInclude Source="resm:AvalonStudio.Controls.Standard.SolutionExplorer.Icons.Icons.xaml?assembly=AvalonStudio.Controls.Standard" />
     <StyleInclude Source="resm:AvalonStudio.Languages.Xaml.AvaloniaPreviewer.xaml?assembly=AvalonStudio.Languages.Xaml" />
