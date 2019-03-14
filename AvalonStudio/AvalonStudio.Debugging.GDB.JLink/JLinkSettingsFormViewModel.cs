@@ -60,7 +60,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
         {
             var list = new ObservableCollection<JLinkTargetDeviceViewModel>();
 
-            var versions = await PackageManager.ListToolchainPackages("AvalonStudio.Debuggers.JLink");
+            var versions = await PackageManager.ListToolchainPackages("JLink");
 
             Versions = new List<string>(versions.Select(v => v.Version.ToString()));
 

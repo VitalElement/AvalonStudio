@@ -1,5 +1,4 @@
-﻿using AvalonStudio.Packages;
-using AvalonStudio.Packaging;
+﻿using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Toolchains.GCC;
@@ -18,7 +17,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
     {
         public static string GetBaseDirectory(string version)
         {
-            return PackageManager.GetPackageDirectory("AvalonStudio.Debuggers.JLink", version).ToPlatformPath();
+            return PackageManager.GetPackageDirectory("JLink", version).ToPlatformPath();
         }
 
         public static string GetBaseDirectory(IProject project)
@@ -84,7 +83,7 @@ namespace AvalonStudio.Debugging.GDB.JLink
             {
                 var settings = project.GetDebuggerSettings<JLinkSettings>();
 
-                switch (await PackageManager.EnsurePackage("AvalonStudio.Debuggers.JLink", settings.Version, console))
+                switch (await PackageManager.EnsurePackage("JLink", settings.Version, console))
                 {
                     case PackageEnsureStatus.NotFound:
                     case PackageEnsureStatus.Unknown:
