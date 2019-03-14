@@ -146,14 +146,18 @@ namespace AvalonStudio.Toolchains.Standard
 
             if (defines != null)
             {
-                console.WriteLine("Build Specific Defines:");
-                foreach (var define in defines)
+                if (defines.Any())
                 {
-                    var injectableDefinition = new Definition() { Global = true, Value = define };
-                    (project as IStandardProject).Defines.Add(injectableDefinition);
-                    injectedDefines.Add(injectableDefinition);
+                    console.WriteLine("Build Specific Defines:");
 
-                    console.WriteLine(injectableDefinition.Value);
+                    foreach (var define in defines)
+                    {
+                        var injectableDefinition = new Definition() { Global = true, Value = define };
+                        (project as IStandardProject).Defines.Add(injectableDefinition);
+                        injectedDefines.Add(injectableDefinition);
+
+                        console.WriteLine(injectableDefinition.Value);
+                    }
                 }
             }
 
