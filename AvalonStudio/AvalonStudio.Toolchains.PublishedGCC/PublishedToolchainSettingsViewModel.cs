@@ -40,7 +40,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
                 if (!string.IsNullOrEmpty(_settings.Toolchain))
                 {
-                    SelectedPackage = AvailableToolchains.FirstOrDefault();//(tc => tc == _settings.Toolchain);
+                    SelectedPackage = AvailableToolchains.FirstOrDefault((tc => tc == _settings.Toolchain));
 
                     await LoadVersions();
 
