@@ -542,7 +542,7 @@ namespace AvalonStudio
 
             process.WaitForExit();
 
-            process = Process.Start("7z", "a package.7z -mx9 -mmt -md29 -ms=on -myx=9 mfb=273 package.tar");
+            process = Process.Start("7z", "a package.7z -mx9 -mmt -md29 -ms=on -myx=9 -mfb=273 package.tar");
 
             process.WaitForExit();
 
