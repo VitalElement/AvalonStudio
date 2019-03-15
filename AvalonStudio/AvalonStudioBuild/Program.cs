@@ -379,7 +379,7 @@ namespace AvalonStudio
 
                     // Get a reference to the blob address, then upload the file to the blob.
                     // Use the value of localFileName for the blob name.
-                    CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference($"{options.PackageName}.{options.Platform}.{options.Version}.7z");
+                    CloudBlockBlob cloudBlockBlob = cloudBlobContainer.GetBlockBlobReference($"{options.PackageName}.{options.Platform}.{options.Version}.avpkg");
                     var fileInfo = new FileInfo(options.File);
 
                     var progress = new Progress<StorageProgress>(p =>
@@ -518,6 +518,41 @@ namespace AvalonStudio
             return -1;
         }
 
+        private static int RunPackage (PackageOptions options)
+        {
+            var arguments = $"a package.tar {options.SourceDirectory}";
+
+            if (!File.Exists(Path.Combine(options.SourceDirectory, "package.manifest")))
+            {
+                console.WriteLine("File: package.manifest was not found.");
+                return 2;
+            }
+
+            try
+            {
+                var manifest = PackageManifest.Load(Path.Combine(options.SourceDirectory, "package.manifest"), "test");
+            }
+            catch (Exception)
+            {
+                console.WriteLine("Manifest was not valid.");
+                return 2;
+            }
+
+            var process = Process.Start("7z", arguments);
+
+            process.WaitForExit();
+
+            process = Process.Start("7z", "a package.7z -mx9 -mmt -md29 -ms=on -myx=9 mfb=273 package.tar");
+
+            process.WaitForExit();
+
+            File.Delete(Path.Combine(options.SourceDirectory, "package.tar"));
+
+            File.Move(Path.Combine(options.SourceDirectory, "package.7z"), Path.Combine(options.SourceDirectory, "package.avpkg"));
+
+            return 1;
+        }
+
         private static int Main(string[] args)
         {
             if(args.Length >= 1 && args[0] == "debug")
@@ -564,7 +599,8 @@ namespace AvalonStudio
                 UninstallOptions,
                 PrintEnvironmentOptions,
                 CreatePackageOptions,
-                PushPackageOptions>(args)
+                PushPackageOptions,
+                PackageOptions>(args)
                 .MapResult((BuildOptions opts) => RunBuild(opts),
                         (CleanOptions opts) => RunClean(opts),
                         (CreateOptions opts) => RunCreate(opts),
@@ -575,6 +611,7 @@ namespace AvalonStudio
                         (PrintEnvironmentOptions opts)=>RunPrintEnv(opts),
                         (CreatePackageOptions opts)=>RunCreatePackage(opts),
                         (PushPackageOptions opts)=>RunPushPackage(opts),
+                        (PackageOptions opts)=>RunPackage(opts),
                         errs => 1);
 
             return result - 1;

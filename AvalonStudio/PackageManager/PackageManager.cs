@@ -2,6 +2,7 @@
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
+using ICSharpCode.SharpZipLib.Tar;
 using ManagedLzma.SevenZip;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -303,12 +304,12 @@ namespace AvalonStudio.Packaging
             }
         }
 
-        private static void UnpackArchive(string archiveFileName, string targetDirectory, Action<int, int> progress, string password = null)
+        private static void UnpackArchive(string archiveFileName, string targetDirectory, Action<long, long> progress, string password = null)
         {
             UnpackArchive(archiveFileName, targetDirectory, password != null ? ManagedLzma.PasswordStorage.Create(password) : null, progress);
         }
 
-        private static void UnpackArchive(string archiveFileName, string targetDirectory, ManagedLzma.PasswordStorage password, Action<int, int> progress)
+        private static void UnpackArchive(string archiveFileName, string targetDirectory, ManagedLzma.PasswordStorage password, Action<long, long> progress)
         {
             if (!File.Exists(archiveFileName))
                 throw new FileNotFoundException("Archive not found.", archiveFileName);
@@ -321,16 +322,6 @@ namespace AvalonStudio.Packaging
                 var archiveMetadataReader = new ManagedLzma.SevenZip.FileModel.ArchiveFileModelMetadataReader();
                 var archiveFileModel = archiveMetadataReader.ReadMetadata(archiveStream, password);
                 var archiveMetadata = archiveFileModel.Metadata;
-
-                var totalFiles = 0;
-                var extracted = 0;
-
-                for (int sectionIndex = 0; sectionIndex < archiveMetadata.DecoderSections.Length; sectionIndex++)
-                {
-                    var sectionFiles = archiveFileModel.GetFilesInSection(sectionIndex);
-
-                    totalFiles += sectionFiles.Count;
-                }
 
                 for (int sectionIndex = 0; sectionIndex < archiveMetadata.DecoderSections.Length; sectionIndex++)
                 {
@@ -360,17 +351,20 @@ namespace AvalonStudio.Packaging
 
                         // Ensure that the target directory is created.
                         var filename = Path.Combine(targetDirectory, fileMetadata.FullName);
-                        progress(extracted++, totalFiles);
 
                         Directory.CreateDirectory(Path.GetDirectoryName(filename));
 
                         // NOTE: you can have two using-statements here if you want to be explicit about it, but disposing the
                         //       stream provided by the section reader is not mandatory, it is owned by the the section reader
                         //       and will be auto-closed when moving to the next stream or when disposing the section reader.
-                        using (var stream = new FileStream(filename, FileMode.Create, FileAccess.Write, FileShare.Delete))
-                            sectionReader.OpenStream().CopyTo(stream);
+                        
+                            var sourceStream = sectionReader.OpenStream();
 
-                        SetFileAttributes(filename, fileMetadata);
+                            ExtractTarByEntry(sourceStream, targetDirectory, true, progress);
+
+                           
+
+                        //SetFileAttributes(filename, fileMetadata);
                     }
                 }
 
@@ -449,7 +443,90 @@ namespace AvalonStudio.Packaging
             }
         }
 
-        public static async Task InstallPackage(Package package, Action<int, int> progress)
+        private static void ExtractTarByEntry(Stream inputStream, string targetDir, bool asciiTranslate, Action<long, long> progress)
+        {
+            TarInputStream tarIn = new TarInputStream(inputStream);
+            TarEntry tarEntry;
+            while ((tarEntry = tarIn.GetNextEntry()) != null)
+            {
+                if (tarEntry.IsDirectory)
+                    continue;
+
+                progress(tarIn.Position, tarIn.Length);
+
+                // Converts the unix forward slashes in the filenames to windows backslashes
+                string name = tarEntry.Name.Replace('/', Path.DirectorySeparatorChar);
+
+                // Remove any root e.g. '\' because a PathRooted filename defeats Path.Combine
+                if (Path.IsPathRooted(name))
+                    name = name.Substring(Path.GetPathRoot(name).Length);
+
+                // Apply further name transformations here as necessary
+                string outName = Path.Combine(targetDir, name);
+
+                string directoryName = Path.GetDirectoryName(outName);
+
+                // Does nothing if directory exists
+                Directory.CreateDirectory(directoryName);
+
+                FileStream outStr = new FileStream(outName, FileMode.Create);
+
+                if (asciiTranslate)
+                    CopyWithAsciiTranslate(tarIn, outStr);
+                else
+                    tarIn.CopyEntryContents(outStr);
+
+                outStr.Close();
+
+                // Set the modification date/time. This approach seems to solve timezone issues.
+                DateTime myDt = DateTime.SpecifyKind(tarEntry.ModTime, DateTimeKind.Utc);
+                File.SetLastWriteTime(outName, myDt);
+            }
+
+            tarIn.Close();
+        }
+
+        private static void CopyWithAsciiTranslate(TarInputStream tarIn, Stream outStream)
+        {
+            byte[] buffer = new byte[4096];
+            bool isAscii = true;
+            bool cr = false;
+
+            int numRead = tarIn.Read(buffer, 0, buffer.Length);
+            int maxCheck = Math.Min(200, numRead);
+            for (int i = 0; i < maxCheck; i++)
+            {
+                byte b = buffer[i];
+                if (b < 8 || (b > 13 && b < 32) || b == 255)
+                {
+                    isAscii = false;
+                    break;
+                }
+            }
+
+            while (numRead > 0)
+            {
+                if (isAscii)
+                {
+                    // Convert LF without CR to CRLF. Handle CRLF split over buffers.
+                    for (int i = 0; i < numRead; i++)
+                    {
+                        byte b = buffer[i];     // assuming plain Ascii and not UTF-16
+                        if (b == 10 && !cr)     // LF without CR
+                            outStream.WriteByte(13);
+                        cr = (b == 13);
+
+                        outStream.WriteByte(b);
+                    }
+                }
+                else
+                    outStream.Write(buffer, 0, numRead);
+
+                numRead = tarIn.Read(buffer, 0, buffer.Length);
+            }
+        }
+
+        public static async Task InstallPackage(Package package, Action<long, long> progress)
         {
             await Task.Run(() =>
             {

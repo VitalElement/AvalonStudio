@@ -90,4 +90,11 @@ namespace AvalonStudio
         [Value(1, MetaName = "ConnectionString", HelpText = "the connection string.", Required = true)]
         public string ConnectionString { get; set; }
     }
+
+    [Verb("package", HelpText = "Compresses a directory into a valid package. Requires 7z to be available.")]
+    internal class PackageOptions
+    {
+        [Value(0, MetaName = "Source", HelpText = "Directory containing files and manifest.", Required = true)]
+        public string SourceDirectory { get; set; }
+    }
 }
