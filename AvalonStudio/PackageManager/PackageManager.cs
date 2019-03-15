@@ -208,7 +208,7 @@ namespace AvalonStudio.Packaging
                 catch { }
             }
 
-            return result;
+            return result.OrderByDescending(x=>x.Version).ToList();
         }
 
         public static PackageManifest GetPackageManifest(string package, string version = null)
@@ -554,7 +554,7 @@ namespace AvalonStudio.Packaging
 
                 if (versions.Count() != 0)
                 {
-                    ver = Version.Parse(Path.GetFileName(versions.FirstOrDefault()));
+                    ver = versions.Select(x => Version.Parse(Path.GetFileName(x))).OrderByDescending(x => x).FirstOrDefault();
 
                     packageDirectory = Path.Combine(Platform.PackageDirectory, packageName, ver.ToString());
                 }
@@ -585,7 +585,7 @@ namespace AvalonStudio.Packaging
 
                 if (ver == null)
                 {
-                    ver = packages.OrderBy(p => p.Version).FirstOrDefault().Version;
+                    ver = packages.OrderByDescending(p => p.Version).FirstOrDefault().Version;
                 }
 
                 if (!packages.Any(p=>p.Version == ver))
