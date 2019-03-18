@@ -55,14 +55,14 @@ namespace AvalonStudio.Packaging
 
         public static PackagePlatform GetPackagePlatformFromString(string platform)
         {
-            switch(platform)
+            switch (platform)
             {
                 case "win-x64": return PackagePlatform.WinX64;
                 case "linux-x64": return PackagePlatform.LinuxX64;
                 case "osx-x64": return PackagePlatform.Osx;
                 case "any": return PackagePlatform.Any;
 
-                default:return PackagePlatform.Unknown;
+                default: return PackagePlatform.Unknown;
             }
         }
 
@@ -87,9 +87,9 @@ namespace AvalonStudio.Packaging
 
         public static IEnumerable<PackageIdentifier> ListInstalledPackages()
         {
-            foreach(var packageDir in Directory.EnumerateDirectories(Platform.PackageDirectory))
+            foreach (var packageDir in Directory.EnumerateDirectories(Platform.PackageDirectory))
             {
-                foreach(var packageVer in Directory.EnumerateDirectories(packageDir))
+                foreach (var packageVer in Directory.EnumerateDirectories(packageDir))
                 {
                     yield return new PackageIdentifier { Name = Path.GetFileName(packageDir), Version = Version.Parse(Path.GetFileName(packageVer)) };
                 }
@@ -208,26 +208,26 @@ namespace AvalonStudio.Packaging
                 catch { }
             }
 
-            return result.OrderByDescending(x=>x.Version).ToList();
+            return result.OrderByDescending(x => x.Version).ToList();
         }
 
         public static PackageManifest GetPackageManifest(string package, string version = null)
         {
             var directory = GetPackageDirectory(package, version);
 
-            if(!string.IsNullOrWhiteSpace(directory) && File.Exists(Path.Combine(directory, "package.manifest")))
+            if (!string.IsNullOrWhiteSpace(directory) && File.Exists(Path.Combine(directory, "package.manifest")))
             {
                 return PackageManifest.Load(Path.Combine(directory, "package.manifest"), package);
             }
 
             return null;
         }
-        
+
         public static string GetPackageDirectory(string package, string version = null)
         {
             var destinationPath = Path.Combine(Platform.PackageDirectory, package);
 
-            if(Directory.Exists(destinationPath))
+            if (Directory.Exists(destinationPath))
             {
                 if (string.IsNullOrWhiteSpace(version))
                 {
@@ -242,7 +242,7 @@ namespace AvalonStudio.Packaging
                 }
                 else
                 {
-                    if(Directory.Exists(Path.Combine(destinationPath, version)))
+                    if (Directory.Exists(Path.Combine(destinationPath, version)))
                     {
                         return Path.Combine(destinationPath, version);
                     }
@@ -273,19 +273,19 @@ namespace AvalonStudio.Packaging
 
                     var destinationPath = Path.Combine(Platform.PackageDirectory, package.Name, package.Version.ToString());
 
-                    if(!Directory.Exists(destinationPath))
+                    if (!Directory.Exists(destinationPath))
                     {
                         Directory.CreateDirectory(destinationPath);
                     }
 
                     long lastDownloadSize = 0;
-                    
+
                     await blob.DownloadToFileAsync(
-                        Path.Combine(destinationPath, package.BlobIdentity), 
-                        FileMode.Create, 
-                        default(AccessCondition), 
-                        default(BlobRequestOptions), 
-                        default(OperationContext), 
+                        Path.Combine(destinationPath, package.BlobIdentity),
+                        FileMode.Create,
+                        default(AccessCondition),
+                        default(BlobRequestOptions),
+                        default(OperationContext),
                         new Progress<StorageProgress>(p =>
                         {
                             if (p.BytesTransferred > lastDownloadSize + 256000)
@@ -357,12 +357,12 @@ namespace AvalonStudio.Packaging
                         // NOTE: you can have two using-statements here if you want to be explicit about it, but disposing the
                         //       stream provided by the section reader is not mandatory, it is owned by the the section reader
                         //       and will be auto-closed when moving to the next stream or when disposing the section reader.
-                        
-                            var sourceStream = sectionReader.OpenStream();
 
-                            ExtractTarByEntry(sourceStream, targetDirectory, true, progress);
+                        var sourceStream = sectionReader.OpenStream();
 
-                           
+                        ExtractTarByEntry(sourceStream, targetDirectory, true, progress);
+
+
 
                         //SetFileAttributes(filename, fileMetadata);
                     }
@@ -404,7 +404,7 @@ namespace AvalonStudio.Packaging
                                 SetFileAttributes(filename, file);
                             }
                             catch { }
-                    }
+                        }
                     }
 
                     var subfolder = item as ManagedLzma.SevenZip.FileModel.ArchivedFolder;
@@ -427,12 +427,12 @@ namespace AvalonStudio.Packaging
             }
         }
 
-        public static void UnintallPackage (string package, string version, IConsole console = null)
+        public static void UnintallPackage(string package, string version, IConsole console = null)
         {
             var directory = PackageManager.GetPackageDirectory(package, version);
 
             if (!string.IsNullOrEmpty(directory) && Directory.Exists(directory))
-            {   
+            {
                 Directory.Delete(directory, true);
 
                 console?.WriteLine($"Package {package} v{version} was uninstalled.");
@@ -544,6 +544,11 @@ namespace AvalonStudio.Packaging
 
         public static async Task<PackageEnsureStatus> EnsurePackage(string packageName, string version, IConsole console)
         {
+            if (string.IsNullOrWhiteSpace(packageName))
+            {
+                console.WriteLine("Package with no name. Check definition in manifest file.");
+                return PackageEnsureStatus.NotFound;
+            }
             Version ver = string.IsNullOrWhiteSpace(version) ? null : Version.Parse(version);
 
             var packageDirectory = Path.Combine(Platform.PackageDirectory, packageName);
@@ -563,8 +568,8 @@ namespace AvalonStudio.Packaging
                     packageDirectory = Path.Combine(Platform.PackageDirectory, packageName, "0000");
                 }
             }
-            else if(ver == null)
-            { 
+            else if (ver == null)
+            {
                 packageDirectory = Path.Combine(Platform.PackageDirectory, packageName, "0000");
             }
             else
@@ -588,7 +593,7 @@ namespace AvalonStudio.Packaging
                     ver = packages.OrderByDescending(p => p.Version).FirstOrDefault().Version;
                 }
 
-                if (!packages.Any(p=>p.Version == ver))
+                if (!packages.Any(p => p.Version == ver))
                 {
                     console?.WriteLine($"Package {packageName} was found but version v{ver} not recognised. Lastest is: v{packages.First().Version}");
 
@@ -597,7 +602,7 @@ namespace AvalonStudio.Packaging
 
                 var systemPlatform = GetSystemPackagePlatform();
 
-                if(!packages.Any(p=>p.Platform == systemPlatform || p.Platform == PackagePlatform.Any))
+                if (!packages.Any(p => p.Platform == systemPlatform || p.Platform == PackagePlatform.Any))
                 {
                     console?.WriteLine($"Package {packageName} v{ver} was found but is not supported on platform {Platform.AvalonRID}");
 
@@ -623,7 +628,7 @@ namespace AvalonStudio.Packaging
 
                 await DownloadPackage(package, p =>
                 {
-                    console?.OverWrite($"Downloading: [{(((float)p/package.Size)*100.0f).ToString("0.00")}%] {ByteSizeHelper.ToString(p)}/{ByteSizeHelper.ToString(package.Size)}     ");
+                    console?.OverWrite($"Downloading: [{(((float)p / package.Size) * 100.0f).ToString("0.00")}%] {ByteSizeHelper.ToString(p)}/{ByteSizeHelper.ToString(package.Size)}     ");
                 });
 
                 console?.OverWrite($"Downloaded Package: {packageName} v{ver}.");
@@ -643,27 +648,32 @@ namespace AvalonStudio.Packaging
             }
             else
             {
-                await ResolveDependencies(packageName, ver?.ToString(), console);
-
-                return PackageEnsureStatus.Found;
+                return await ResolveDependencies(packageName, ver?.ToString(), console);
             }
         }
 
-        public static async Task ResolveDependencies (string package, string packageVersion = null, IConsole console = null)
+        public static async Task<PackageEnsureStatus> ResolveDependencies(string package, string packageVersion = null, IConsole console = null)
         {
             var manifest = GetPackageManifest(package, packageVersion);
 
-            if(manifest != null && manifest.Properties.TryGetValue("Dependencies", out var dependencies))
+            if (manifest != null && manifest.Properties.TryGetValue("Dependencies", out var dependencies))
             {
                 console?.WriteLine($"Resolving Dependencies for {package} v{packageVersion}");
 
-                foreach(var dependency in dependencies as JArray)
+                foreach (var dependency in dependencies as JArray)
                 {
                     var dep = manifest.ParseUrl(dependency.ToString());
 
-                    await EnsurePackage(dep.package, dep.version, console);
+                    var result = await EnsurePackage(dep.package, dep.version, console);
+
+                    if(result == PackageEnsureStatus.NotFound || result == PackageEnsureStatus.Unknown)
+                    {
+                        return PackageEnsureStatus.NotFound;
+                    }
                 }
             }
+
+            return PackageEnsureStatus.Found;
         }
 
         public static async Task LoadAssetsAsync()

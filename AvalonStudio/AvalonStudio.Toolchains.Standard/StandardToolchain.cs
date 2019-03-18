@@ -107,6 +107,8 @@ namespace AvalonStudio.Toolchains.Standard
 
                 console.WriteLine(e.Message);
                 console.WriteLine(e.StackTrace);
+
+                return false;
             }
 
             console.Clear();
