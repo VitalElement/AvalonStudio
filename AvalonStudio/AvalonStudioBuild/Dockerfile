@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM vitalelement/toolchainbuildenvironment:166
 
 ADD / /opt/AvalonBuild
 
@@ -16,6 +16,10 @@ RUN echo "deb http://download.mono-project.com/repo/debian wheezy main" > /etc/a
 
 # Install Git    
 RUN apt-get update && apt-get install -y git libcurl3 lib32z1 lib32ncurses5 libunwind8 libunwind8-dev gettext libicu-dev liblttng-ust-dev libcurl4-openssl-dev libssl-dev uuid-dev unzip
+
+RUN wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && apt-get update
+
+RUN add-apt-repository universe && apt-get install -y apt-transport-https && apt-get update && apt-get install dotnet-sdk-2.2
 
 # Install avalon command
 RUN ln -s /opt/AvalonBuild/avalon /usr/bin/
