@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y git lib32z1 lib32ncurses5 libunwind8 li
 
 RUN wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && apt-get update
 
-RUN apt-get install -y apt-transport-https && apt-get update && apt-get install dotnet-sdk-2.2
+RUN apt-get install -y apt-transport-https && apt-get update && apt-get install -y dotnet-sdk-2.2
 
 # Install avalon command
 RUN ln -s /opt/AvalonBuild/avalon /usr/bin/
