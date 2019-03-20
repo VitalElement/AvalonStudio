@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Fragment>
-    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
-      <!-- <Component Id="ProductComponent"> -->
-      <!-- TODO: Insert files, registry keys, and other resources here. -->
-      <!-- </Component> -->
+    <ComponentGroup Id="ProductComponents">
+
+      <ComponentRef Id="TestFile" />
+      
     </ComponentGroup>
+
+    <DirectoryRef Id="INSTALLFOLDER" FileSource="..\AvalonStudio\bin\Release\netcoreapp2.2\win7-x64\publish\">
+      <Component Id="TestFile" Guid="{52CCFB0B-489A-4A7D-9BD3-E8704792C8FF}">
+        <File Id="FileTestFile" Name="api-ms-win-core-console-l1-1-0.dll" KeyPath="yes" />
+
+        <RemoveFolder Id="RemoveStartMenu" Directory="InstallProgramMenuFolder" On="uninstall" />
+      </Component>
+    </DirectoryRef>
+    
   </Fragment>
 </Wix>

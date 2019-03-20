@@ -6,7 +6,7 @@
     <ProductVersion>3.10</ProductVersion>
     <ProjectGuid>0ecb963d-916c-442e-80fb-4a066c9558de</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>SetupProject1</OutputName>
+    <OutputName>AvalonStudio</OutputName>
     <OutputType>Package</OutputType>
     <Name>AvalonStudio.Installer</Name>
   </PropertyGroup>
@@ -28,6 +28,12 @@
     <EmbeddedResource Include="Common.wxl" />
   </ItemGroup>
   <ItemGroup>
+    <WixExtension Include="WixUIExtension">
+      <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
+      <Name>WixUIExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\AvalonStudio\AvalonStudio.csproj">
       <Name>AvalonStudio</Name>
       <Project>{8e501956-b9a6-430e-86ac-350ed94b44e4}</Project>
@@ -38,22 +44,42 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <WixExtension Include="WixUIExtension">
-      <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
-      <Name>WixUIExtension</Name>
-    </WixExtension>
+    <Folder Include="Assets" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\License.rtf" />
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
   <Target Name="EnsureWixToolsetInstalled" Condition=" '$(WixTargetsImported)' != 'true' ">
     <Error Text="The WiX Toolset v3.11 (or newer) build tools must be installed to build this project. To download the WiX Toolset, see http://wixtoolset.org/releases/" />
   </Target>
-  <!--
-	To modify your build process, add your task inside one of the targets below and uncomment it.
-	Other similar extension points exist, see Wix.targets.
 	<Target Name="BeforeBuild">
+    <Exec Command="rd /s /q ..\AvalonStudio\bin\$(Configuration)\netcoreapp2.2\win7-x64" />
+    <Exec Command="dotnet publish ..\AvalonStudio\AvalonStudio.csproj -c $(Configuration) -f netcoreapp2.2 -r win7-x64" />
+    <GetAssemblyIdentity AssemblyFiles="..\AvalonStudio\bin\$(Configuration)\netcoreapp2.2\win7-x64\AvalonStudio.dll">
+      <Output TaskParameter="Assemblies" ItemName="AssemblyVersion" />
+    </GetAssemblyIdentity>
+
+
+    <PropertyGroup>
+      <DefineConstants>BuildVersion=%(AssemblyVersion.Version)</DefineConstants>
+    </PropertyGroup>
+
+    <HeatDirectory
+       OutputFile="ComponentsGenerated.wxs"
+       DirectoryRefId="INSTALLFOLDER"
+       ComponentGroupName="PublishedComponents"
+       SuppressCom="True"
+       Directory="..\AvalonStudio\bin\$(Configuration)\netcoreapp2.2\win7-x64\publish"
+       SuppressFragments="True"
+       SuppressRegistry="True"
+       SuppressRootDirectory="True"
+       AutoGenerateGuids="False"
+       GenerateGuidsNow="true"
+       ToolPath="$(WixToolPath)"/>
 	</Target>
 	<Target Name="AfterBuild">
 	</Target>
-	-->
+	
 </Project>

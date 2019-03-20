@@ -4,7 +4,7 @@
   <?define UpgradeCode = "{03E9955F-4EA1-40AF-A7E2-16994046922C}"?>
 	<Product Id="{90701A97-B91F-4BBA-AA1E-EC9AD158E981}" 
            Name="!(loc.ProductName)" Language="1033" 
-           Version="1.0.0.0" 
+           Version="$(var.BuildVersion)" 
            Manufacturer="VitalElement" 
            UpgradeCode="b9bca33e-4d27-49a0-b633-ed6a628a6615">
 		<Package InstallerVersion="200" 
@@ -16,10 +16,12 @@
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 		<MediaTemplate EmbedCab="yes" />
 
-    <Icon Id="app.icon" SourceFile="$(var.AvalonStudio.ProjectDir)\Assets\icon.ico" />
+    <!--<Icon Id="app.icon" SourceFile="$(var.AvalonStudio.ProjectDir)\Assets\icon.ico" />-->
 
-    <Property Id="APPPRODUCTICON">app.icon</Property>
-    <Property Id="APPURLINFOABOUT">http://github.com/VitalElement/AvalonStudio</Property>
+    <Property Id="ARPPRODUCTICON">app.icon</Property>
+    <Property Id="ARPURLINFOABOUT">http://github.com/VitalElement/AvalonStudio</Property>
+
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)\Assets\License.rtf" />
 
     <UIRef Id="WixUI_Minimal" />
 
