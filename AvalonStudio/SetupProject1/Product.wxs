@@ -16,7 +16,7 @@
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 		<MediaTemplate EmbedCab="yes" />
 
-    <!--<Icon Id="app.icon" SourceFile="$(var.AvalonStudio.ProjectDir)\Assets\icon.ico" />-->
+    <Icon Id="app.icon" SourceFile="$(var.AvalonStudio.ProjectDir)\Assets\icon.ico" />
 
     <Property Id="ARPPRODUCTICON">app.icon</Property>
     <Property Id="ARPURLINFOABOUT">http://github.com/VitalElement/AvalonStudio</Property>
@@ -27,6 +27,7 @@
 
 		<Feature Id="ProductFeature" Title="AvalonStudio" Level="1">
 			<ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="PublishedComponents" />
 		</Feature>
 	</Product>
 
