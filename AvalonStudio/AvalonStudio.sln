@@ -132,6 +132,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackageManager", "PackageMa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Controls.Editor", "AvalonStudio.Controls.Editor\AvalonStudio.Controls.Editor.csproj", "{9B27D7BA-7C52-412B-A2FB-492964551B5F}"
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "AvalonStudio.Installer", "SetupProject1\AvalonStudio.Installer.wixproj", "{0ECB963D-916C-442E-80FB-4A066C9558DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -1024,6 +1026,16 @@ Global
 		{9B27D7BA-7C52-412B-A2FB-492964551B5F}.Release|x64.Build.0 = Release|Any CPU
 		{9B27D7BA-7C52-412B-A2FB-492964551B5F}.Release|x86.ActiveCfg = Release|Any CPU
 		{9B27D7BA-7C52-412B-A2FB-492964551B5F}.Release|x86.Build.0 = Release|Any CPU
+		{0ECB963D-916C-442E-80FB-4A066C9558DE}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{0ECB963D-916C-442E-80FB-4A066C9558DE}.Debug|ARM.ActiveCfg = Debug|x86
+		{0ECB963D-916C-442E-80FB-4A066C9558DE}.Debug|x64.ActiveCfg = Debug|x86
+		{0ECB963D-916C-442E-80FB-4A066C9558DE}.Debug|x86.ActiveCfg = Debug|x86
+		{0ECB963D-916C-442E-80FB-4A066C9558DE}.Debug|x86.Build.0 = Debug|x86
+		{0ECB963D-916C-442E-80FB-4A066C9558DE}.Release|Any CPU.ActiveCfg = Release|x86
+		{0ECB963D-916C-442E-80FB-4A066C9558DE}.Release|ARM.ActiveCfg = Release|x86
+		{0ECB963D-916C-442E-80FB-4A066C9558DE}.Release|x64.ActiveCfg = Release|x86
+		{0ECB963D-916C-442E-80FB-4A066C9558DE}.Release|x86.ActiveCfg = Release|x86
+		{0ECB963D-916C-442E-80FB-4A066C9558DE}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
