@@ -2,6 +2,7 @@ using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.Studio;
+using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -46,7 +47,7 @@ namespace AvalonStudio.Toolchains.Standard
 
         public abstract bool ValidateToolchainExecutables(IConsole console);
 
-        private bool ExecuteCommands(IConsole console, IProject project, IList<string> commands)
+        private async Task<bool> ExecuteCommands(IConsole console, IProject project, IList<string> commands)
         {
             bool result = true;
 
@@ -57,7 +58,7 @@ namespace AvalonStudio.Toolchains.Standard
                 var cmd = commandParts[0];
                 var args = command.Remove(0, cmd.Length).Trim();
 
-                if (ExecuteCommand(console, project, cmd.ToPlatformPath(), args.ToPlatformPath()) != 0)
+                if (await ExecuteCommand(console, project, cmd.ToPlatformPath(), args.ToPlatformPath()) != 0)
                 {
                     result = false;
                     break;
@@ -67,10 +68,28 @@ namespace AvalonStudio.Toolchains.Standard
             return result;
         }
 
-        private int ExecuteCommand(IConsole console, IProject project, string command, string args)
+        private async Task<int> ExecuteCommand(IConsole console, IProject project, string command, string args)
         {
             var environment = project.GetEnvironmentVariables().AppendRange(Platform.EnvironmentVariables);
 
+            if(command.Contains('{') && command.Contains('}') && command.Contains('?'))
+            {
+                var index = command.IndexOf("{?")+1;
+                var indexEnd = command.IndexOf('}');
+
+                var packageInfo = PackageManager.ParseUrl(command.Substring(index, indexEnd - index));
+
+                await PackageManager.EnsurePackage(packageInfo.package, packageInfo.version, console);
+
+                var directory = PackageManager.GetPackageDirectory(packageInfo.package, packageInfo.version);
+
+                command = command.Remove(index-1, indexEnd - index + 2);
+
+                command = command.Insert(index-1, directory);
+            }
+
+
+           // PackageManager.GetPackageDirectory();
             command = command.ExpandVariables(environment);
             args = args.ExpandVariables(environment);
 
@@ -134,7 +153,7 @@ namespace AvalonStudio.Toolchains.Standard
             {
                 console.WriteLine("Pre-Build Commands:");
 
-                result = ExecuteCommands(console, project, preBuildCommands);
+                result = await ExecuteCommands(console, project, preBuildCommands);
             }
 
             terminateBuild = !result;
@@ -205,7 +224,7 @@ namespace AvalonStudio.Toolchains.Standard
                                 if (postBuildCommands.Count > 0)
                                 {
                                     console.WriteLine("Post-Build Commands:");
-                                    bool succeess = ExecuteCommands(console, project, postBuildCommands);
+                                    bool succeess = await ExecuteCommands(console, project, postBuildCommands);
 
                                     if (!succeess)
                                     {

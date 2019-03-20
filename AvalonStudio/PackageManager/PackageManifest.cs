@@ -80,49 +80,15 @@ namespace AvalonStudio.Packaging
 
         public (string package, string version, string location) ParseUrl(string url)
         {
-            string location = "";
-            string package = "";
-            string version = "";
+            var result = PackageManager.ParseUrl(url);
 
-            if (url.Contains("?") || url.Contains("="))
+            if (result.package == null && result.version == null && result.location == null)
             {
-                var urlQueryOperatorIndex = url.IndexOf('?');
-
-                if(urlQueryOperatorIndex == -1)
-                {
-                    urlQueryOperatorIndex = 0;
-                }
-
-                location = url.Substring(0, urlQueryOperatorIndex);
-
-                var parameters = url.Substring(urlQueryOperatorIndex == 0 ? 0 : urlQueryOperatorIndex + 1, url.Length - (urlQueryOperatorIndex == 0 ? 0 : urlQueryOperatorIndex + 1));
-
-                var parameterParts = parameters.Split('&');
-
-                foreach (var param in parameterParts)
-                {
-                    var valueKey = param.Split('=');
-
-                    if (valueKey.Length == 2)
-                    {
-                        switch (valueKey[0])
-                        {
-                            case "Package":
-                                package = valueKey[1];
-                                break;
-
-                            case "Version":
-                                version = valueKey[1];
-                                break;
-                        }
-                    }
-                }
-
-                return (package, version, location);
+                return (Name, Version, url);
             }
             else
             {
-                return (Name, Version, url);
+                return result;
             }
         }
     }

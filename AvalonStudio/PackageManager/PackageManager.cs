@@ -652,7 +652,53 @@ namespace AvalonStudio.Packaging
             }
         }
 
-        public static async Task<PackageEnsureStatus> ResolveDependencies(string package, string packageVersion = null, IConsole console = null)
+        public static (string package, string version, string location) ParseUrl(string url)
+        {
+            string location = "";
+            string package = "";
+            string version = "";
+
+            if (url.Contains("?") || url.Contains("="))
+            {
+                var urlQueryOperatorIndex = url.IndexOf('?');
+
+                if (urlQueryOperatorIndex == -1)
+                {
+                    urlQueryOperatorIndex = 0;
+                }
+
+                location = url.Substring(0, urlQueryOperatorIndex);
+
+                var parameters = url.Substring(urlQueryOperatorIndex == 0 ? 0 : urlQueryOperatorIndex + 1, url.Length - (urlQueryOperatorIndex == 0 ? 0 : urlQueryOperatorIndex + 1)).Replace("?","");
+
+                var parameterParts = parameters.Split('&');
+
+                foreach (var param in parameterParts)
+                {
+                    var valueKey = param.Split('=');
+
+                    if (valueKey.Length == 2)
+                    {
+                        switch (valueKey[0])
+                        {
+                            case "Package":
+                                package = valueKey[1];
+                                break;
+
+                            case "Version":
+                                version = valueKey[1];
+                                break;
+                        }
+                    }
+                }
+
+                return (package, version, location);
+            }
+
+            return (null, null, null);
+        }
+
+            public static async Task<PackageEnsureStatus> ResolveDependencies(string package, string packageVersion = null, IConsole console = null)
         {
             var manifest = GetPackageManifest(package, packageVersion);
 
