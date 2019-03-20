@@ -287,7 +287,7 @@ namespace AvalonStudio.Languages.Xaml
 
         public override void Render(DrawingContext context)
         {
-            if (_lastFrame != null)
+            if (_lastFrame != null && !(_lastFrame.Width == 0 || _lastFrame.Width == 0))
             {
                 var fmt = (PixelFormat)_lastFrame.Format;
                 if (_bitmap == null || _bitmap.Size.Width != _lastFrame.Width ||
