@@ -1,4 +1,4 @@
-FROM vitalelement/toolchainbuildenvironment:166
+FROM vitalelement/toolchainbuildenvironment:255
 
 ADD / /opt/AvalonBuild
 
@@ -23,7 +23,5 @@ RUN apt-get install -y apt-transport-https && apt-get update && apt-get install 
 
 # Install avalon command
 RUN ln -s /opt/AvalonBuild/avalon /usr/bin/
-
-RUN avalon
 
 

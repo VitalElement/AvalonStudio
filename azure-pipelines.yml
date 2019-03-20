@@ -19,9 +19,6 @@ jobs:
   - script: |
       cd AvalonStudio/AvalonStudioBuild
       dotnet publish -c Release -f netcoreapp2.2 -r linux-x64
-      cd bin/Release/netcoreapp2.2/linux-x64/publish
-      cp ../../../../../Dockerfile ./
-      docker build -t vitalelement/avalonbuildenvironment .
       
   - task: PublishBuildArtifacts@1
     inputs:
