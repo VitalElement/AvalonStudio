@@ -18,7 +18,6 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         private PackageManifest _description;
 
-        private bool _isResolved;
         private Dictionary<string, string> _resolvedPackages = new Dictionary<string, string>();
 
         internal GccConfiguration(PackageManifest description)
@@ -33,72 +32,68 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public async Task<bool> ResolveAsync()
         {
-            if (!_isResolved)
+            var _isResolved = true;
+            _systemIncludePaths = new List<string>();
+            _systemLibraryPaths = new List<string>();
+
+            var console = IoC.Get<IConsole>();
+
+            try
             {
-                _isResolved = true;
-
-                _systemIncludePaths = new List<string>();
-                _systemLibraryPaths = new List<string>();
-
-                var console = IoC.Get<IConsole>();
-
-                try
+                if (_description.Properties.TryGetValue("Gcc.CC", out var cc))
                 {
-                    if (_description.Properties.TryGetValue("Gcc.CC", out var cc))
-                    {
-                        CC = await _description.ResolvePackagePathAsync(cc as string, console: console);
-                    }
+                    CC = await _description.ResolvePackagePathAsync(cc as string, console: console);
+                }
 
-                    if (_description.Properties.TryGetValue("Gcc.CXX", out var cxx))
-                    {
-                        Cpp = await _description.ResolvePackagePathAsync(cxx as string, console: console);
-                    }
+                if (_description.Properties.TryGetValue("Gcc.CXX", out var cxx))
+                {
+                    Cpp = await _description.ResolvePackagePathAsync(cxx as string, console: console);
+                }
 
-                    if (_description.Properties.TryGetValue("Gcc.AR", out var ar))
-                    {
-                        AR = await _description.ResolvePackagePathAsync(ar as string, console: console);
-                    }
+                if (_description.Properties.TryGetValue("Gcc.AR", out var ar))
+                {
+                    AR = await _description.ResolvePackagePathAsync(ar as string, console: console);
+                }
 
-                    if (_description.Properties.TryGetValue("Gcc.LD", out var ld))
-                    {
-                        LD = await _description.ResolvePackagePathAsync(ld as string, console: console);
-                    }
+                if (_description.Properties.TryGetValue("Gcc.LD", out var ld))
+                {
+                    LD = await _description.ResolvePackagePathAsync(ld as string, console: console);
+                }
 
-                    if (_description.Properties.TryGetValue("Gcc.SIZE", out var size))
-                    {
-                        Size = await _description.ResolvePackagePathAsync(size as string, console: console);
-                    }
+                if (_description.Properties.TryGetValue("Gcc.SIZE", out var size))
+                {
+                    Size = await _description.ResolvePackagePathAsync(size as string, console: console);
+                }
 
-                    if (_description.Properties.TryGetValue("Gcc.GDB", out var gdb))
-                    {
-                        Gdb = await _description.ResolvePackagePathAsync(gdb as string, console: console);
-                    }
+                if (_description.Properties.TryGetValue("Gcc.GDB", out var gdb))
+                {
+                    Gdb = await _description.ResolvePackagePathAsync(gdb as string, console: console);
+                }
 
-                    if(_description.Properties.TryGetValue("Gcc.LibraryQueryCommand", out var libQuery))
-                    {
-                        LibraryQuery = await _description.ResolvePackagePathAsync(libQuery as string, console: console);
-                    }
+                if (_description.Properties.TryGetValue("Gcc.LibraryQueryCommand", out var libQuery))
+                {
+                    LibraryQuery = await _description.ResolvePackagePathAsync(libQuery as string, console: console);
+                }
 
-                    if(_description.Properties.TryGetValue("Gcc.SystemIncludePaths", out var systemIncludePaths))
-                    { 
-                        foreach (var unresolvedPath in (systemIncludePaths as JArray).ToList().Select(x=>x.ToString()))
-                        {
-                            _systemIncludePaths.Add(await _description.ResolvePackagePathAsync(unresolvedPath, false, console: console));
-                        }
-                    }
-
-                    if (_description.Properties.TryGetValue("Gcc.SystemLibraryPaths", out var systemLibraryPaths))
+                if (_description.Properties.TryGetValue("Gcc.SystemIncludePaths", out var systemIncludePaths))
+                {
+                    foreach (var unresolvedPath in (systemIncludePaths as JArray).ToList().Select(x => x.ToString()))
                     {
-                        foreach (var unresolvedPath in (systemLibraryPaths as JArray).ToList().Select(x => x.ToString()))
-                        {
-                            _systemLibraryPaths.Add(await _description.ResolvePackagePathAsync(unresolvedPath, false, console: console));
-                        }
+                        _systemIncludePaths.Add(await _description.ResolvePackagePathAsync(unresolvedPath, false, console: console));
                     }
                 }
-                catch (Exception)
+
+                if (_description.Properties.TryGetValue("Gcc.SystemLibraryPaths", out var systemLibraryPaths))
                 {
-                    _isResolved = false;
+                    foreach (var unresolvedPath in (systemLibraryPaths as JArray).ToList().Select(x => x.ToString()))
+                    {
+                        _systemLibraryPaths.Add(await _description.ResolvePackagePathAsync(unresolvedPath, false, console: console));
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                _isResolved = false;
             }
 
             return _isResolved;
