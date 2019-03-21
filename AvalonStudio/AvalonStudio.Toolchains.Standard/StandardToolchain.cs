@@ -88,8 +88,6 @@ namespace AvalonStudio.Toolchains.Standard
                 command = command.Insert(index-1, directory);
             }
 
-
-           // PackageManager.GetPackageDirectory();
             command = command.ExpandVariables(environment);
             args = args.ExpandVariables(environment);
 
