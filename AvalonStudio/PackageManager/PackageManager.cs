@@ -7,6 +7,7 @@ using ManagedLzma.SevenZip;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Core.Util;
+using Mono.Unix;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -478,6 +479,13 @@ namespace AvalonStudio.Packaging
                     tarIn.CopyEntryContents(outStr);
 
                 outStr.Close();
+
+                if(Platform.PlatformIdentifier == Platforms.PlatformID.Unix || Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
+                {
+                    var unixFileInfo = new UnixFileInfo(outName);
+
+                    unixFileInfo.FileAccessPermissions = (FileAccessPermissions)tarEntry.TarHeader.Mode;
+                }
 
                 // Set the modification date/time. This approach seems to solve timezone issues.
                 DateTime myDt = DateTime.SpecifyKind(tarEntry.ModTime, DateTimeKind.Utc);
