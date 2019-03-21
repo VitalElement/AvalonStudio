@@ -200,6 +200,24 @@ namespace AvalonStudio.Toolchains.Standard
 
                     if (result)
                     {
+                        bool objectsCompiled = false;
+
+                        foreach (var compiledProject in compiledProjects)
+                        {
+                            if(compiledProject.NumberOfObjectsCompiled > 0)
+                            {
+                                objectsCompiled = true;
+                                break;
+                            }
+                        }
+
+                        if (objectsCompiled)
+                        {
+                            console.WriteLine();
+                            console.WriteLine();
+                            console.WriteLine();
+                        }
+
                         var linkedReferences = new CompileResult
                         {
                             Project = project as IStandardProject
@@ -275,11 +293,13 @@ namespace AvalonStudio.Toolchains.Standard
             await Task.Factory.StartNew(async () =>
             {
                 console?.WriteLine("Starting Clean...");
+                console?.WriteLine();
 
                 IoC.Get<IErrorList>()?.Remove(this);
 
                 await CleanAll(console, project as IStandardProject, project as IStandardProject);
 
+                console?.WriteLine();
                 console?.WriteLine("Clean Completed.");
             });
         }
@@ -454,7 +474,15 @@ namespace AvalonStudio.Toolchains.Standard
                 {
                     superProject.Executable = superProject.Location.MakeRelativePath(linkResult.Executable).ToAvalonPath();
                     superProject.Save();
+
+                    if (compileResult.NumberOfObjectsCompiled > 0)
+                    {
+                        console.WriteLine();
+                        console.WriteLine();
+                    }
+
                     console.WriteLine();
+
                     Size(console, compileResult.Project, linkResult);
                     linkResults.ExecutableLocations.Add(executable);
                 }
@@ -621,7 +649,9 @@ namespace AvalonStudio.Toolchains.Standard
 
                                         if (!string.IsNullOrEmpty(output))
                                         {
+                                            console.WriteLine();
                                             console.WriteLine(output);
+                                            console.WriteLine();
                                         }
 
                                         var errorList = IoC.Get<IErrorList>();

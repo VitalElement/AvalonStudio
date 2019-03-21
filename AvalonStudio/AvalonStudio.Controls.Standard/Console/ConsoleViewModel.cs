@@ -28,9 +28,9 @@ namespace AvalonStudio.Controls.Standard.Console
         {
             Title = "Console";
             document = new TextDocument();
+            document.Insert(Document.TextLength, Environment.NewLine);
+            document.Insert(Document.TextLength, Environment.NewLine + "     ");
             backgroundRenderers = new ObservableCollection<IBackgroundRenderer>();
-
-            
         }
 
         private TextDocument document;
@@ -62,17 +62,32 @@ namespace AvalonStudio.Controls.Standard.Console
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                Document = new TextDocument();
+                document.Text = "";
+                document.Insert(Document.TextLength, Environment.NewLine);
+                document.Insert(Document.TextLength, Environment.NewLine + "     " + Environment.NewLine);
 
                 IsSelected = true;
             });
+        }
+
+        private void Insert(string data)
+        {
+            Document.Insert(Document.Lines[Document.LineCount - 2].Offset, data);
+        }
+
+        private void Overwrite(string data)
+        {
+            //Document.Insert(Document.Lines[Document.LineCount - 2].Offset, data);
+
+            var line = Document.Lines[Document.LineCount - 3];
+            Document.Replace(line, data);
         }
 
         public void Write(char data)
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                Document.Insert(Document.TextLength, data.ToString());
+                Insert(data.ToString());
                 ScrollToEnd();
             });
         }
@@ -83,7 +98,7 @@ namespace AvalonStudio.Controls.Standard.Console
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    Document.Insert(Document.TextLength, data.Replace("\t", "    "));
+                    Insert(data.Replace("\t", "    "));
                     ScrollToEnd();
                 });
             }
@@ -93,7 +108,7 @@ namespace AvalonStudio.Controls.Standard.Console
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                Document.Insert(Document.TextLength, Environment.NewLine);
+                Insert(Environment.NewLine);
                 ScrollToEnd();
             });
         }
@@ -104,7 +119,7 @@ namespace AvalonStudio.Controls.Standard.Console
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    Document.Insert(Document.TextLength, data.Replace("\t", "    ") + Environment.NewLine);
+                    Insert(data.Replace("\t", "    ") + Environment.NewLine);
                     ScrollToEnd();
                 });
             }
@@ -116,8 +131,7 @@ namespace AvalonStudio.Controls.Standard.Console
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    var line = Document.Lines[Document.LineCount - 1];
-                    Document.Replace(line, data);
+                    Overwrite(data);
                 });
             }
         }
@@ -136,7 +150,7 @@ namespace AvalonStudio.Controls.Standard.Console
 
         private void ScrollToEnd()
         {
-            CaretIndex = Document.TextLength;            
+            CaretIndex = Document.TextLength - 1;            
         }
     }
 }
