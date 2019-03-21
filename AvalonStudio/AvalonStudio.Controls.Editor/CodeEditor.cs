@@ -276,7 +276,7 @@ namespace AvalonStudio.Controls.Editor
 
             this.GetObservable(EditorCaretOffsetProperty).Subscribe(s =>
             {
-                if (Document?.TextLength > s)
+                if (Document?.TextLength >= s)
                 {
                     CaretOffset = s;
                     TextArea.Caret.BringCaretToView();

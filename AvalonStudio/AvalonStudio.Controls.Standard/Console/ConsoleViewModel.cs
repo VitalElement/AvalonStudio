@@ -136,7 +136,7 @@ namespace AvalonStudio.Controls.Standard.Console
 
         private void ScrollToEnd()
         {
-            CaretIndex = Document.TextLength;
+            CaretIndex = Document.TextLength;            
         }
     }
 }
