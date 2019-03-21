@@ -21,6 +21,8 @@ RUN wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsof
 
 RUN apt-get install -y apt-transport-https && apt-get update && apt-get install -y dotnet-sdk-2.2
 
+RUN apt-get update && apt-get upgrade -y
+
 # Install avalon command
 RUN ln -s /opt/AvalonBuild/avalon /usr/bin/
 
