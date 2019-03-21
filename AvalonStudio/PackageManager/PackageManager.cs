@@ -304,12 +304,12 @@ namespace AvalonStudio.Packaging
             }
         }
 
-        private static void UnpackArchive(string archiveFileName, string targetDirectory, Action<long, long> progress, string password = null)
+        public static void UnpackArchive(string archiveFileName, string targetDirectory, Action<long, long> progress, bool posixCompatibleExtraction, string password = null)
         {
-            UnpackArchive(archiveFileName, targetDirectory, password != null ? ManagedLzma.PasswordStorage.Create(password) : null, progress);
+            UnpackArchive(archiveFileName, targetDirectory, password != null ? ManagedLzma.PasswordStorage.Create(password) : null, progress, posixCompatibleExtraction);
         }
 
-        private static void UnpackArchive(string archiveFileName, string targetDirectory, ManagedLzma.PasswordStorage password, Action<long, long> progress)
+        private static void UnpackArchive(string archiveFileName, string targetDirectory, ManagedLzma.PasswordStorage password, Action<long, long> progress, bool posixCompatibleExtraction)
         {
             if (!File.Exists(archiveFileName))
                 throw new FileNotFoundException("Archive not found.", archiveFileName);
@@ -320,6 +320,7 @@ namespace AvalonStudio.Packaging
             using (var archiveStream = new FileStream(archiveFileName, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete))
             {
                 var archiveMetadataReader = new ManagedLzma.SevenZip.FileModel.ArchiveFileModelMetadataReader();
+                archiveMetadataReader.EnablePosixFileAttributeExtension = posixCompatibleExtraction;
                 var archiveFileModel = archiveMetadataReader.ReadMetadata(archiveStream, password);
                 var archiveMetadata = archiveFileModel.Metadata;
 
@@ -531,7 +532,8 @@ namespace AvalonStudio.Packaging
             await Task.Run(() =>
             {
                 var archivePath = Path.Combine(Platform.PackageDirectory, package.Name, package.Version.ToString());
-                UnpackArchive(Path.Combine(archivePath, package.BlobIdentity), archivePath, progress);
+                
+                UnpackArchive(Path.Combine(archivePath, package.BlobIdentity), archivePath, progress, package.Platform != PackagePlatform.WinX64);
 
                 File.Delete(Path.Combine(archivePath, package.BlobIdentity));
             });
