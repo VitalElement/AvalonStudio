@@ -135,11 +135,11 @@ namespace AvalonStudio.Platforms
 
         private static string numberPattern = " ({0})";
 
-        public static string NextAvailableDirectoryName (string path)
+        public static string NextAvailableDirectoryName(string path)
         {
             // Short-cut if already available
             if (!Directory.Exists(path))
-                return path;            
+                return path;
 
             // Otherwise just append the pattern to the path and return next filename
             return GetNextDirectoryName(path + numberPattern);
@@ -327,6 +327,26 @@ namespace AvalonStudio.Platforms
 
         public static Architecture OSArchitecture => RuntimeInformation.OSArchitecture;
         public static string OSDescription => RuntimeInformation.OSDescription;
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+
+        internal static extern byte CreateSymbolicLinkW(string lpSymlinkFileName, string lpTargetFileName, uint dwFlags);
+
+        internal const uint SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE = 2;
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+
+        internal static extern byte CreateHardLinkW(string lpFileName, string lpExistingFileName, IntPtr lpSecurityAttributes);
+
+        public static bool CreateSymbolicLinkWin32(string linkName, string target, bool isFile)
+        {
+            return CreateSymbolicLinkW(linkName, target, SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE) != 0;
+        }
+
+        public static bool CreateHardLinkWin32(string linkName, string target, bool isFile)
+        {
+            return CreateHardLinkW(linkName, target, IntPtr.Zero) != 0;
+        }
 
         public static PlatformID PlatformIdentifier
         {

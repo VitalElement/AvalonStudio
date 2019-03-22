@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -471,18 +472,36 @@ namespace AvalonStudio.Packaging
                 // Does nothing if directory exists
                 Directory.CreateDirectory(directoryName);
 
-                if ((Platform.PlatformIdentifier == Platforms.PlatformID.Unix || Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX) && tarEntry.TarHeader.TypeFlag != '0')
+                if (tarEntry.TarHeader.TypeFlag != '0')
                 {
                     switch ((char)tarEntry.TarHeader.TypeFlag)
                     {
                         case '1':
-                            Console.WriteLine($"Hard links not supported in .avpkg: {outName}");
+                            if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+                            {
+                                bool ok = Platform.CreateHardLinkWin32(outName.NormalizePath(), Path.Combine(targetDir, tarEntry.TarHeader.LinkName).NormalizePath(), !tarEntry.IsDirectory);
+
+                                var err = Marshal.GetLastWin32Error();
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Hard links not supported  on linux.: {outName}");
+                            }
                             break;
 
                         case '2':
-                            var symLinkInfo = new UnixSymbolicLinkInfo(outName);
+                            if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+                            {
+                                bool ok = Platform.CreateSymbolicLinkWin32(outName.NormalizePath(), Path.Combine(targetDir, tarEntry.TarHeader.LinkName).NormalizePath(), !tarEntry.IsDirectory);
 
-                            symLinkInfo.CreateSymbolicLinkTo(tarEntry.TarHeader.LinkName);
+                                var err = Marshal.GetLastWin32Error();
+                            }
+                            else
+                            {
+                                var symLinkInfo = new UnixSymbolicLinkInfo(outName);
+
+                                symLinkInfo.CreateSymbolicLinkTo(tarEntry.TarHeader.LinkName);
+                            }
                             break;
                     }
                 }
@@ -559,7 +578,7 @@ namespace AvalonStudio.Packaging
             {
                 var archivePath = Path.Combine(Platform.PackageDirectory, package.Name, package.Version.ToString());
                 
-                UnpackArchive(Path.Combine(archivePath, package.BlobIdentity), archivePath, progress, package.Platform != PackagePlatform.WinX64);
+                UnpackArchive(Path.Combine(archivePath, package.BlobIdentity), archivePath, progress, true);
 
                 File.Delete(Path.Combine(archivePath, package.BlobIdentity));
             });
@@ -652,7 +671,7 @@ namespace AvalonStudio.Packaging
 
                 console?.WriteLine($"Package: {packageName} v{ver} will be downloaded and installed.");
 
-                var package = packages.FirstOrDefault(p => p.Version == ver);
+                var package = packages.FirstOrDefault(p => p.Version == ver && p.Platform == systemPlatform);
 
                 await DownloadPackage(package, p =>
                 {
