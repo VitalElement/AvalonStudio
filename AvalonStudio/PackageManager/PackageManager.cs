@@ -471,25 +471,43 @@ namespace AvalonStudio.Packaging
                 // Does nothing if directory exists
                 Directory.CreateDirectory(directoryName);
 
-                FileStream outStr = new FileStream(outName, FileMode.Create);
-
-                if (asciiTranslate)
-                    CopyWithAsciiTranslate(tarIn, outStr);
-                else
-                    tarIn.CopyEntryContents(outStr);
-
-                outStr.Close();
-
-                if(Platform.PlatformIdentifier == Platforms.PlatformID.Unix || Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
+                if ((Platform.PlatformIdentifier == Platforms.PlatformID.Unix || Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX) && tarEntry.TarHeader.TypeFlag != '0')
                 {
-                    var unixFileInfo = new UnixFileInfo(outName);
+                    switch ((char)tarEntry.TarHeader.TypeFlag)
+                    {
+                        case '1':
+                            Console.WriteLine($"Hard links not supported in .avpkg: {outName}");
+                            break;
 
-                    unixFileInfo.FileAccessPermissions = (FileAccessPermissions)tarEntry.TarHeader.Mode;
+                        case '2':
+                            var symLinkInfo = new UnixSymbolicLinkInfo(outName);
+
+                            symLinkInfo.CreateSymbolicLinkTo(tarEntry.TarHeader.LinkName);
+                            break;
+                    }
                 }
+                else
+                {
+                    FileStream outStr = new FileStream(outName, FileMode.Create);
 
-                // Set the modification date/time. This approach seems to solve timezone issues.
-                DateTime myDt = DateTime.SpecifyKind(tarEntry.ModTime, DateTimeKind.Utc);
-                File.SetLastWriteTime(outName, myDt);
+                    if (asciiTranslate)
+                        CopyWithAsciiTranslate(tarIn, outStr);
+                    else
+                        tarIn.CopyEntryContents(outStr);
+
+                    outStr.Close();
+
+                    if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix || Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
+                    {
+                        var unixFileInfo = new UnixFileInfo(outName);
+
+                        unixFileInfo.FileAccessPermissions = (FileAccessPermissions)tarEntry.TarHeader.Mode;
+                    }
+
+                    // Set the modification date/time. This approach seems to solve timezone issues.
+                    DateTime myDt = DateTime.SpecifyKind(tarEntry.ModTime, DateTimeKind.Utc);
+                    File.SetLastWriteTime(outName, myDt);
+                }
             }
 
             tarIn.Close();
