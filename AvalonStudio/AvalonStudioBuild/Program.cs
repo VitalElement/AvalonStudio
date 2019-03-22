@@ -520,7 +520,12 @@ namespace AvalonStudio
 
         private static int RunPackage (PackageOptions options)
         {
-            var arguments = $"a package.tar {options.SourceDirectory}";
+            var arguments = $"cvf package.tar {options.SourceDirectory}";
+
+            if(options.SourceDirectory == ".")
+            {
+                arguments += " --exclude=package.tar";
+            }
 
             if (!File.Exists(Path.Combine(options.SourceDirectory, "package.manifest")))
             {
@@ -538,7 +543,7 @@ namespace AvalonStudio
                 return 2;
             }
 
-            var process = Process.Start("7z", arguments);
+            var process = Process.Start("tar", arguments);
 
             process.WaitForExit();
 
