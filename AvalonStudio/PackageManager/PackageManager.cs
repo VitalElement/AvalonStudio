@@ -1,4 +1,4 @@
-﻿using AvalonStudio.Extensibility.Utils;
+using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Packages;
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
@@ -362,7 +362,7 @@ namespace AvalonStudio.Packaging
 
                         var sourceStream = sectionReader.OpenStream();
 
-                        ExtractTarByEntry(sourceStream, targetDirectory, true, progress);
+                        ExtractTarByEntry(sourceStream, targetDirectory, false, progress);
 
 
 
