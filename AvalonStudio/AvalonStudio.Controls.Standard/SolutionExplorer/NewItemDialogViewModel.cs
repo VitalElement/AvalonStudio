@@ -10,6 +10,7 @@ using AvalonStudio.Extensibility.Templating;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using AvalonStudio.Utils;
+using System.Reactive;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -35,7 +36,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             this.folder = folder;
 
-            OKCommand = ReactiveCommand.Create(async () =>
+            OKCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 string subNameSpaces = "." + folder.Project.CurrentDirectory.MakeRelativePath(folder.LocationDirectory);
 
@@ -84,8 +85,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             set { this.RaiseAndSetIfChanged(ref folder, value); }
         }
 
-        public override ReactiveCommand OKCommand { get; protected set; }
+        public override ReactiveCommand<Unit, Unit> OKCommand { get; protected set; }
 
-        public ReactiveCommand UpdateTemplatesCommand { get; }
+        public ReactiveCommand<Unit, Unit> UpdateTemplatesCommand { get; }
     }
 }

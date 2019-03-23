@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
@@ -86,7 +87,7 @@ namespace AvalonStudio.Studio
         public DockBase DebugLayout { get; set; }
         public DockBase MainLayout { get; set; }
 
-        public ReactiveCommand EnableDebugModeCommand { get; }
+        public ReactiveCommand<Unit, Unit> EnableDebugModeCommand { get; }
 
         public IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> SolutionTypes { get; }
 

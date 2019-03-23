@@ -4,6 +4,7 @@
     using AvalonStudio.MVVM;
     using ReactiveUI;
     using System;
+    using System.Reactive;
 
     public class VideoFeedViewModel : ViewModel
     {
@@ -35,6 +36,6 @@
             set { this.RaiseAndSetIfChanged(ref _image, value); }
         }
 
-        public ReactiveCommand ClickCommand { get; }
+        public ReactiveCommand<Unit, Unit> ClickCommand { get; }
     }
 }

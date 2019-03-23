@@ -3,6 +3,7 @@ using AvalonStudio.Platforms;
 using ReactiveUI;
 using System;
 using System.Diagnostics;
+using System.Reactive;
 using System.Reflection;
 
 namespace AvalonStudio.Controls.Standard.AboutScreen
@@ -16,7 +17,7 @@ namespace AvalonStudio.Controls.Standard.AboutScreen
             PlatformString = Platform.OSDescription + " " + Platform.AvalonRID;
         }
 
-        public override ReactiveCommand OKCommand { get; protected set; }
+        public override ReactiveCommand<Unit, Unit> OKCommand { get; protected set; }
 
         public string Version => FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).FileVersion;
 	public string DescriptiveVersion => ThisAssembly.Git.Tag + (ThisAssembly.Git.IsDirty ? "-dirty": "");

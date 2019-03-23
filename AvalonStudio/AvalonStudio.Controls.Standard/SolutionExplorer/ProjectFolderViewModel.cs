@@ -13,6 +13,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     using System.Collections.Generic;
     using System.IO;
     using AvalonStudio.Platforms;
+    using System.Reactive;
 
     internal class ProjectFolderViewModel : ProjectItemViewModel<IProjectFolder>
     {
@@ -36,7 +37,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 _shell.ModalDialog.ShowDialogAsync();
             });
 
-            NewFileCommand = ReactiveCommand.Create(async () =>
+            NewFileCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var observable = Items.ObserveNewItems().OfType<SourceFileViewModel>().FirstOrDefaultAsync();
 
@@ -51,7 +52,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 }
             });
 
-            NewFolderCommand = ReactiveCommand.Create(async () =>
+            NewFolderCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var observable = Items.ObserveNewItems().OfType<ProjectFolderViewModel>().FirstOrDefaultAsync();
 
@@ -74,10 +75,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         public ObservableCollection<ProjectItemViewModel> Items { get; }
 
-        public ReactiveCommand NewFileCommand { get; }
-        public ReactiveCommand NewFolderCommand { get; }
-        public ReactiveCommand NewItemCommand { get; }
-        public ReactiveCommand RemoveCommand { get; }
+        public ReactiveCommand<Unit, Unit> NewFileCommand { get; }
+        public ReactiveCommand<Unit, Unit> NewFolderCommand { get; }
+        public ReactiveCommand<Unit, Unit> NewItemCommand { get; }
+        public ReactiveCommand<Unit, Unit> RemoveCommand { get; }
 
         public override bool IsExpanded
         {

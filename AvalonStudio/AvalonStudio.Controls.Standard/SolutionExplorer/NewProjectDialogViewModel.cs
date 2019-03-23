@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Reactive;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -78,7 +79,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             SelectedLanguage = Languages.FirstOrDefault();
             SelectedTemplate = ProjectTemplates.FirstOrDefault();
 
-            BrowseLocationCommand = ReactiveCommand.Create(async () =>
+            BrowseLocationCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var ofd = new OpenFolderDialog
                 {
@@ -93,7 +94,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 }
             });
 
-            OKCommand = ReactiveCommand.Create(async () =>
+            OKCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 Close();
 
@@ -175,7 +176,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             },
             this.WhenAny(x => x.Location, x => x.SolutionName, (location, solution) => solution.Value != null && !Directory.Exists(Path.Combine(location.Value, solution.Value))));
 
-            UpdateTemplatesCommand = ReactiveCommand.Create(async () =>
+            UpdateTemplatesCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var templateManager = IoC.Get<TemplateManager>();
 
@@ -268,8 +269,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        public ReactiveCommand BrowseLocationCommand { get; }
-        public override ReactiveCommand OKCommand { get; protected set; }
-        public ReactiveCommand UpdateTemplatesCommand { get; }
+        public ReactiveCommand<Unit, Unit> BrowseLocationCommand { get; }
+        public override ReactiveCommand<Unit, Unit> OKCommand { get; protected set; }
+        public ReactiveCommand<Unit, Unit> UpdateTemplatesCommand { get; }
     }
 }

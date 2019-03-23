@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
@@ -176,9 +177,9 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref selectedInstalledPackage, value); }
         }
 
-        public ReactiveCommand InstallCommand { get; }
-        public ReactiveCommand UninstallCommand { get; }
-        public override ReactiveCommand OKCommand { get; protected set; }
+        public ReactiveCommand<Unit, Unit> InstallCommand { get; }
+        public ReactiveCommand<Unit, Unit> UninstallCommand { get; }
+        public override ReactiveCommand<Unit, Unit> OKCommand { get; protected set; }
 
         public void WriteLine(string data)
         {

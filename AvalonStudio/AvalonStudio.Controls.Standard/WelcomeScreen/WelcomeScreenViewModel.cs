@@ -19,6 +19,7 @@ using System.Xml;
 using Microsoft.SyndicationFeed.Rss;
 using System.Linq;
 using System.Net;
+using System.Reactive;
 
 namespace AvalonStudio.Controls.Standard.WelcomeScreen
 {
@@ -255,7 +256,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             set { this.RaiseAndSetIfChanged(ref _videoFeed, value); }
         }
 
-        public ReactiveCommand NewSolution { get; }
-        public ReactiveCommand OpenSolution { get; }
+        public ReactiveCommand<Unit, Unit> NewSolution { get; }
+        public ReactiveCommand<Unit, Unit> OpenSolution { get; }
     }
 }

@@ -3,6 +3,7 @@ using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System.IO;
+using System.Reactive;
 
 namespace AvalonStudio.Controls.Standard.FindInFiles
 {
@@ -28,6 +29,6 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
 
         public string LineText => Model.LineText;
 
-        public ReactiveCommand OpenCommand { get; }
+        public ReactiveCommand<Unit, Unit> OpenCommand { get; }
     }
 }

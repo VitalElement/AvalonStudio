@@ -5,6 +5,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
 using System.Linq;
+using System.Reactive;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -36,11 +37,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             IsExpanded = true;
         }
 
-        public ReactiveCommand CleanSolutionCommand { get; }
-        public ReactiveCommand BuildSolutionCommand { get; }
-        public ReactiveCommand RebuildSolutionCommand { get; }
-        public ReactiveCommand RunAllTestsCommand { get; }
-        public ReactiveCommand OpenInExplorerCommand { get; }
+        public ReactiveCommand<Unit, Unit> CleanSolutionCommand { get; }
+        public ReactiveCommand<Unit, Unit> BuildSolutionCommand { get; }
+        public ReactiveCommand<Unit, Unit> RebuildSolutionCommand { get; }
+        public ReactiveCommand<Unit, Unit> RunAllTestsCommand { get; }
+        public ReactiveCommand<Unit, Unit> OpenInExplorerCommand { get; }
 
         private void CleanSolution()
         {

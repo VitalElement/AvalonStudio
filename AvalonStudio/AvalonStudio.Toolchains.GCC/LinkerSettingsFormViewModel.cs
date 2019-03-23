@@ -14,6 +14,7 @@ namespace AvalonStudio.Toolchains.GCC
     using System.Windows.Input;
     using Utils;
     using AvalonStudio.Extensibility;
+    using System.Reactive;
 
     public class LinkerSettingsFormViewModel : HeaderedViewModel<IProject>
     {
@@ -110,12 +111,12 @@ namespace AvalonStudio.Toolchains.GCC
             UpdateLinkerString();
         }
 
-        public ReactiveCommand AddLinkerScriptCommand { get; private set; }
-        public ReactiveCommand RemoveLinkerScriptCommand { get; private set; }
-        public ReactiveCommand AddLinkedLibraryCommand { get; private set; }
-        public ReactiveCommand RemoveLinkedLibraryCommand { get; private set; }
-        public ReactiveCommand AddSystemLibraryCommand { get; }
-        public ReactiveCommand RemoveSystemLibraryCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddLinkerScriptCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> RemoveLinkerScriptCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> AddLinkedLibraryCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> RemoveLinkedLibraryCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> AddSystemLibraryCommand { get; }
+        public ReactiveCommand<Unit, Unit> RemoveSystemLibraryCommand { get; }
 
         public ICommand BrowseScatterFileCommand { get; private set; }
         public ICommand EditScatterFileCommand { get; private set; }

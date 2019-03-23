@@ -5,6 +5,7 @@ using AvalonStudio.Shell;
 using ReactiveUI;
 using System;
 using System.IO;
+using System.Reactive;
 
 namespace AvalonStudio.Controls.Standard.WelcomeScreen
 {
@@ -39,6 +40,6 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
             set { this.RaiseAndSetIfChanged(ref _location, value); }
         }
 
-        public ReactiveCommand ClickCommand { get; }
+        public ReactiveCommand<Unit, Unit> ClickCommand { get; }
     }
 }
