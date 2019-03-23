@@ -27,7 +27,10 @@
     <PackageReference Include="Avalonia.X11" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.ReactiveUI" />
-    <PackageReference Include="GitInfo" Version="2.0.10" />
+    <PackageReference Include="GitInfo" Version="2.0.20">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="ReactiveUI" Version="8.0.1" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.0-preview1-26216-02" />
