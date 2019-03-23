@@ -23,7 +23,6 @@ namespace AvalonStudio
 {
     internal class Program
     {
-        private const string version = "2.0.0.0";
         private const string releaseName = "Apollo";
 
         private static readonly ProgramConsole console = new ProgramConsole();
@@ -592,7 +591,7 @@ namespace AvalonStudio
 
             PackageManager.LoadAssetsAsync().Wait();
 
-            Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, version, Platform.PlatformIdentifier);
+            Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, ThisAssembly.Git.BaseVersion.Major + "." + ThisAssembly.Git.BaseVersion.Minor + "." + ThisAssembly.Git.BaseVersion.Patch, Platform.PlatformIdentifier);
 
             var result = Parser.Default.ParseArguments<
                 BuildOptions, 
