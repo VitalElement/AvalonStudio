@@ -32,13 +32,13 @@ namespace AvalonStudio.Debugging.GDB
 {
     public class GdbSessionFactory
     {
-        private struct FileData
-        {
-            public DateTime LastCheck;
-            public bool IsExe;
-        }
+        //private struct FileData
+        //{
+        //    public DateTime LastCheck { get; set; }
+        //    public bool IsExe {get; set;}
+        //}
 
-        private Dictionary<string, FileData> fileCheckCache = new Dictionary<string, FileData>();
+        //private Dictionary<string, FileData> fileCheckCache = new Dictionary<string, FileData>();
 
         /*public bool CanDebugCommand (ExecutionCommand command)
 		{
