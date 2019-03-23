@@ -69,9 +69,9 @@ namespace AvalonStudio.Controls.Editor
                 GetValue(TemplatedControl.ForegroundProperty)
             );
 
-            RightMarginSize = textRight.Measure().Width;
+            RightMarginSize = textRight.Bounds.Width;
 
-            return new Size(text.Measure().Width + RightMarginSize, 0);
+            return new Size(text.Bounds.Width + RightMarginSize, 0);
         }
 
         /// <inheritdoc/>
@@ -105,7 +105,7 @@ namespace AvalonStudio.Controls.Editor
                         );
 
                         var y = line.GetTextLineVisualYPosition(line.TextLines[0], VisualYPosition.TextTop);
-                        drawingContext.DrawText(foreground, new Point((renderSize.Width - RightMarginSize) - text.Measure().Width, y - textView.VerticalOffset),
+                        drawingContext.DrawText(foreground, new Point((renderSize.Width - RightMarginSize) - text.Bounds.Width, y - textView.VerticalOffset),
                             text);
                     }
                 }
