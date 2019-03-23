@@ -6,10 +6,10 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Avalonia"  />    
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="ReactiveUI" Version="8.0.1" />
-    <PackageReference Include="System.Composition" Version="1.1.0" />
+    <PackageReference Include="Avalonia" />    
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="ReactiveUI" />
+    <PackageReference Include="System.Composition" Version="1.2.0" />
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" /> 
   </ItemGroup>

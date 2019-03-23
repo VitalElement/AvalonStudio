@@ -950,7 +950,6 @@ namespace ManagedLzma.SevenZip.Reader
 
             var mainByte = ReadByte();
 
-#warning ??? why did we check this in the old decoder ???
             if ((mainByte & 0x80) != 0)
                 throw new NotImplementedException();
 

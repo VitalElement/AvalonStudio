@@ -41,7 +41,7 @@ namespace AvalonStudio.Shell.Behaviors
             base.OnDetaching();
         }
 
-        public override async Task<bool> OnBeforePopupOpen()
+        public override Task<bool> OnBeforePopupOpen()
         {
             var result = false;
 
@@ -50,7 +50,7 @@ namespace AvalonStudio.Shell.Behaviors
                /* result = await editorVm.UpdateToolTipAsync(editor.TextArea.TextView.GetOffsetFromPoint(MouseDevice.Instance.GetPosition(editor.TextView.TextSurface)));*/
             }
 
-            return result;
+            return Task.FromResult(result);
         }
     }
 }

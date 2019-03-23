@@ -2,6 +2,7 @@ using Avalonia.Media;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System;
+using System.Reactive;
 
 namespace AvalonStudio.Debugging
 {
@@ -24,7 +25,7 @@ namespace AvalonStudio.Debugging
             ShowInMemoryCommand = ReactiveCommand.Create(() => { }); //WorkspaceViewModel.Instance.DebugManager.MemoryView.Address = Value;
         }
 
-        public ReactiveCommand ShowInMemoryCommand { get; }
+        public ReactiveCommand<Unit, Unit> ShowInMemoryCommand { get; }
 
         public IBrush Background
         {

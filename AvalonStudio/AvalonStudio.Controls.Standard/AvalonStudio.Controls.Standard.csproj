@@ -38,8 +38,11 @@
     <EmbeddedResource Include="AboutScreen\Assets\logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia"  />
-    <PackageReference Include="GitInfo" Version="2.0.10" />
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="GitInfo" Version="2.0.20">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.SyndicationFeed.ReaderWriter" Version="1.0.2" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
   </ItemGroup>

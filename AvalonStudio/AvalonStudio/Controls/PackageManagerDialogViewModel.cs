@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
@@ -52,14 +53,14 @@ namespace AvalonStudio.Controls
                 }
             });
 
-            InstallCommand = ReactiveCommand.Create(async () =>
+            InstallCommand = ReactiveCommand.Create(() =>
             {
                 //await AvalonStudio.Packages.PackageManager.InstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToFullString());
 
                 InvalidateInstalledPackages();
             });
 
-            UninstallCommand = ReactiveCommand.Create(async () =>
+            UninstallCommand = ReactiveCommand.Create(() =>
             {
                 if (SelectedInstalledPackage != null)
                 {
@@ -176,9 +177,9 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref selectedInstalledPackage, value); }
         }
 
-        public ReactiveCommand InstallCommand { get; }
-        public ReactiveCommand UninstallCommand { get; }
-        public override ReactiveCommand OKCommand { get; protected set; }
+        public ReactiveCommand<Unit, Unit> InstallCommand { get; }
+        public ReactiveCommand<Unit, Unit> UninstallCommand { get; }
+        public override ReactiveCommand<Unit, Unit> OKCommand { get; protected set; }
 
         public void WriteLine(string data)
         {
@@ -210,14 +211,16 @@ namespace AvalonStudio.Controls
             throw new NotImplementedException();
         }
 
-        private async Task DownloadCatalog()
+        private Task DownloadCatalog()
         {
-           // var packages = await AvalonStudio.Packages.PackageManager.ListPackagesAsync(100);
+            // var packages = await AvalonStudio.Packages.PackageManager.ListPackagesAsync(100);
 
             //foreach (var package in packages.Where(p => p.Title.EndsWith(Platform.AvalonRID) || p.Tags.Contains("gccdescription")))
             //{
-              //  availablePackages.Add(package);
+            //  availablePackages.Add(package);
             //}
+
+            return Task.CompletedTask;
         }
 
         public void LogDebug(string data)

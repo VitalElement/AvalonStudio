@@ -4,6 +4,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     using AvalonStudio.MVVM;
     using AvalonStudio.Projects;
     using ReactiveUI;
+    using System.Reactive;
 
     public abstract class ProjectItemViewModel : ViewModel
     {
@@ -29,7 +30,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             set { this.RaiseAndSetIfChanged(ref _isInEditMode, value); }
         }
 
-        public ReactiveCommand RenameCommand { get; }
+        public ReactiveCommand<Unit, Unit> RenameCommand { get; }
 
         public static ProjectItemViewModel Create(IProjectItem item)
         {

@@ -32,7 +32,7 @@ namespace AvalonStudio.Controls.Editor.Snippets
                     }
                     catch (Exception e)
                     {
-                        IoC.Get<IConsole>().WriteLine($"Error parsing snippet: {file}");
+                        IoC.Get<IConsole>().WriteLine($"Error parsing snippet: {file}, {e.Message}");
                     }
                 }
             }
@@ -72,7 +72,7 @@ namespace AvalonStudio.Controls.Editor.Snippets
                             }
                             catch (Exception e)
                             {
-                                IoC.Get<IConsole>().WriteLine($"Error parsing snippet: {file}");
+                                IoC.Get<IConsole>().WriteLine($"Error parsing snippet: {file}, {e.Message}");
                             }
                         }
                     }
@@ -103,7 +103,7 @@ namespace AvalonStudio.Controls.Editor.Snippets
                             }
                             catch (Exception e)
                             {
-                                IoC.Get<IConsole>().WriteLine($"Error parsing snippet: {file}");
+                                IoC.Get<IConsole>().WriteLine($"Error parsing snippet: {file}, {e.Message}");
                             }
                         }
                     }

@@ -4,5 +4,5 @@ mkdir ./osx/AvalonStudio.app/Contents/MacOS
 cp -R ../AvalonStudio/AvalonStudio/bin/Release/netcoreapp2.2/osx-x64/publish/ ./osx/AvalonStudio.app/Contents/MacOS/
 mkdir artifacts
 cd osx
-zip -r -X ../artifacts/AvalonStudio.osx-x64-$BUILD_SOURCEBRANCHNAME-$BUILD_SOURCEVERSION.zip *
+zip -r -X ../artifacts/AvalonStudio.osx-x64.zip *
 cd ..

@@ -12,7 +12,6 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 {
     public class PublishedToolchainSettingsViewModel : HeaderedViewModel<IProject>
     {
-        private string _version;
         private string _selectedPackage;
 
         private ObservableCollection<string> _availableToolchains;

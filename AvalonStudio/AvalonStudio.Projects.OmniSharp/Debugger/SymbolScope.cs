@@ -20,6 +20,7 @@
             _startOffset = startOffset;
             _endOffset = endOffset;
             _parent = parent;
+            _method = method;
         }
 
         internal void AddChild(ISymbolScope childScope)

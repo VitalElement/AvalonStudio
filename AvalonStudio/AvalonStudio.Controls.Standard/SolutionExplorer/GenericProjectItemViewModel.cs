@@ -5,6 +5,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
     using ReactiveUI;
     using System;
     using System.IO;
+    using System.Reactive;
 
     public abstract class ProjectItemViewModel<T> : ProjectItemViewModel where T : IProjectItem
     {
@@ -56,8 +57,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             get { return Path.GetFileNameWithoutExtension(Title); }
         }
 
-        public ReactiveCommand RemoveItemCommand { get; }
-        public ReactiveCommand OpenInExplorerCommand { get; protected set; }
-        public ReactiveCommand DeleteCommand { get; protected set; }
+        public ReactiveCommand<Unit, Unit> RemoveItemCommand { get; }
+        public ReactiveCommand<Unit, Unit> OpenInExplorerCommand { get; protected set; }
+        public ReactiveCommand<Unit, Unit> DeleteCommand { get; protected set; }
     }
 }

@@ -12,6 +12,7 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Reactive;
     using System.Reactive.Linq;
 
     public abstract class SolutionParentViewModel<T> : SolutionItemViewModel<T>, ISolutionParentViewModel
@@ -40,7 +41,7 @@
                 }                
             });
 
-            AddExistingProjectCommand = ReactiveCommand.Create(async () =>
+            AddExistingProjectCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var dlg = new OpenFileDialog();
                 dlg.Title = "Open Project";
@@ -97,7 +98,7 @@
                 }
             });
 
-            AddNewProjectCommand = ReactiveCommand.Create(async () =>
+            AddNewProjectCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var shell = IoC.Get<IShell>();
 
@@ -166,9 +167,9 @@
             }
         }
 
-        public ReactiveCommand AddNewFolderCommand { get; private set; }
-        public ReactiveCommand AddNewProjectCommand { get; private set; }
-        public ReactiveCommand AddExistingProjectCommand { get; private set; }
-        public ReactiveCommand RemoveCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> AddNewFolderCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> AddNewProjectCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> AddExistingProjectCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> RemoveCommand { get; private set; }
     }
 }

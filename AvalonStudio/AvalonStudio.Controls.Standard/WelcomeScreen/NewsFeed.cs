@@ -3,6 +3,7 @@
     using AvalonStudio.MVVM;
     using ReactiveUI;
     using System;
+    using System.Reactive;
 
     public class NewsFeedViewModel : ViewModel
     {
@@ -50,6 +51,6 @@
             set { this.RaiseAndSetIfChanged(ref _content, value); }
         }
 
-        public ReactiveCommand ClickCommand { get; }
+        public ReactiveCommand<Unit, Unit> ClickCommand { get; }
     }
 }

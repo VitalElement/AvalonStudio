@@ -1,14 +1,13 @@
-﻿using AvaloniaEdit.Rendering;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Media;
+using AvaloniaEdit.Document;
+using AvaloniaEdit.Rendering;
+using AvaloniaEdit.Utils;
+using AvalonStudio.Extensibility.Languages;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Avalonia.Media;
-using AvalonStudio.Extensibility.Languages;
-using AvaloniaEdit.Utils;
-using Avalonia;
-using AvaloniaEdit.Document;
 using System.Linq;
-using Avalonia.Controls;
 
 namespace AvalonStudio.Controls.Editor
 {
@@ -44,7 +43,7 @@ namespace AvalonStudio.Controls.Editor
 
             if (index != null)
             {
-                markers.AddRange(index.Select(s=>new TextSegment { StartOffset = s.StartOffset, EndOffset = s.EndOffset }));
+                markers.AddRange(index.Select(s => new TextSegment { StartOffset = s.StartOffset, EndOffset = s.EndOffset }));
             }
         }
 
@@ -61,7 +60,7 @@ namespace AvalonStudio.Controls.Editor
                 Brushes.Black
             );
 
-            var charSize = formattedText.Measure();
+            var charSize = formattedText.Bounds;
             var pixelSize = PixelSnapHelpers.GetPixelSize(textView);
 
             foreach (var entry in markers.Where(e => e.Length > 0))

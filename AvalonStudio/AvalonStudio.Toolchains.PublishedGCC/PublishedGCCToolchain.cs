@@ -22,22 +22,18 @@ namespace AvalonStudio.Toolchains.PublishedGCC
     [Shared]
     public class PublishedGCCToolchain : GCCToolchain
     {
-        private string _executableExtension;
-        private string _staticLibraryExtension;
-        private string _binDirectory;
-
         private PublishedGCCToolchainSettings _settings;
         private GccConfiguration _gccConfig;
 
-        public override string ExecutableExtension => _executableExtension;
+        public override string ExecutableExtension => "";
 
-        public override string StaticLibraryExtension => _staticLibraryExtension;
+        public override string StaticLibraryExtension => ".a";
 
         public override Version Version => new Version();
 
         public override string Description => "Allows developer to specify any GCC compatible toolchain to use.";
 
-        public override string BinDirectory => _binDirectory;
+        public override string BinDirectory => "";
 
         public override string CCExecutable => _gccConfig?.CC;
 

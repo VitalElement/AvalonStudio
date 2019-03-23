@@ -1,12 +1,12 @@
 <Project>
 
   <PropertyGroup>
-    <AvaloniaVersion>0.7.1-cibuild0001610-beta</AvaloniaVersion>
+    <AvaloniaVersion>0.7.1-cibuild0001689-beta</AvaloniaVersion>
     <AvaloniaBehaviorsVersion>0.7.0</AvaloniaBehaviorsVersion>
     <GitInfoVersion>2.0.11</GitInfoVersion>
     <MicrosoftExtensionsDependencyModelVersion>2.0.4</MicrosoftExtensionsDependencyModelVersion>
-    <NewtonsoftJsonVersion>10.0.3</NewtonsoftJsonVersion>
-    <ReactiveUIVersion>9.0.1</ReactiveUIVersion>
+    <NewtonsoftJsonVersion>12.0.1</NewtonsoftJsonVersion>
+    <ReactiveUIVersion>9.12.1</ReactiveUIVersion>
     <RoslynVersion>2.8.2</RoslynVersion>
     <SystemCompositionVersion>1.2.0</SystemCompositionVersion>
     <SystemDiagnosticsProcessVersion>4.3.0</SystemDiagnosticsProcessVersion>

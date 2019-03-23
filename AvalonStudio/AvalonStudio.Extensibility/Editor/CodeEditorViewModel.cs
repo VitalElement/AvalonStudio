@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -56,7 +57,7 @@ namespace AvalonStudio.Extensibility.Editor
                 InRenameMode = true;
             });
 
-            GotoDefinitionCommand = ReactiveCommand.Create(async () =>
+            GotoDefinitionCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var definition = await LanguageService?.GotoDefinition(Offset);
 
@@ -134,9 +135,9 @@ namespace AvalonStudio.Extensibility.Editor
             set { this.RaiseAndSetIfChanged(ref _renameText, value); }
         }
 
-        public ReactiveCommand RenameSymbolCommand { get; }
+        public ReactiveCommand<Unit, Unit> RenameSymbolCommand { get; }
 
-        public ReactiveCommand GotoDefinitionCommand { get; }
+        public ReactiveCommand<Unit, Unit> GotoDefinitionCommand { get; }
 
         public override bool OnClose()
         {

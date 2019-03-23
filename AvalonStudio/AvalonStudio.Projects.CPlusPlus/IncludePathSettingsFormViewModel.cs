@@ -8,6 +8,7 @@ using AvalonStudio.Utils;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.Reactive;
 
 namespace AvalonStudio.Projects.CPlusPlus
 {
@@ -48,10 +49,10 @@ namespace AvalonStudio.Projects.CPlusPlus
             RemoveIncludePathCommand = ReactiveCommand.Create(RemoveIncludePath);
         }
 
-        public ReactiveCommand AddIncludePathCommand { get; }
-        public ReactiveCommand RemoveIncludePathCommand { get; }
-        public ReactiveCommand AddDefineCommand { get; }
-        public ReactiveCommand RemoveDefineCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddIncludePathCommand { get; }
+        public ReactiveCommand<Unit, Unit> RemoveIncludePathCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddDefineCommand { get; }
+        public ReactiveCommand<Unit, Unit> RemoveDefineCommand { get; }
 
         public string DefineText
         {

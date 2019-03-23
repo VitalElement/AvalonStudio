@@ -533,7 +533,7 @@
 
                 if (canUpdateSignature)
                 {
-                    UpdateActiveParameterAndVisibility();
+                    UpdateActiveParameterAndVisibility().GetAwaiter();
                 }
 
                 if (!intellisenseControl.IsVisible)
