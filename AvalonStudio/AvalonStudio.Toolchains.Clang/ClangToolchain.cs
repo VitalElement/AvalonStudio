@@ -1,5 +1,6 @@
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Packages;
+using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.CPlusPlus;
@@ -34,7 +35,7 @@ namespace AvalonStudio.Toolchains.Clang
             {
                 if (_contentDirectory == null)
                 {
-                    _contentDirectory = Path.Combine(PackageManager.GetPackageDirectory("AvalonStudio.Toolchains.Clang"), "content");
+                    _contentDirectory = PackageManager.GetPackageDirectory("Clang").ToPlatformPath();
                 }
 
                 return _contentDirectory;
@@ -401,6 +402,7 @@ namespace AvalonStudio.Toolchains.Clang
             {
                 switch (file.Extension)
                 {
+                    case ".cc":
                     case ".c":
                         {
                             superProject.CCompilerArguments.Select(s => result += $" {s}");

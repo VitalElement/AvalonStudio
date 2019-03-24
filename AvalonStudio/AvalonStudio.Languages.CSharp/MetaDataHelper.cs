@@ -252,7 +252,7 @@ namespace AvalonStudio.Languages.CSharp
             {
                 result = Assembly.Load(name);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -279,7 +279,7 @@ namespace AvalonStudio.Languages.CSharp
 
                 return assemblies;
             }
-            catch (Exception ex)
+            catch
             {
                 return Array.Empty<Assembly>();
             }
@@ -295,7 +295,7 @@ namespace AvalonStudio.Languages.CSharp
             {
                 assembly = Assembly.LoadFrom(assemblyPath);
             }
-            catch (Exception ex)
+            catch
             {
             }
 

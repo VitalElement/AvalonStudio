@@ -2,6 +2,7 @@ using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.Studio;
+using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -46,7 +47,7 @@ namespace AvalonStudio.Toolchains.Standard
 
         public abstract bool ValidateToolchainExecutables(IConsole console);
 
-        private bool ExecuteCommands(IConsole console, IProject project, IList<string> commands)
+        private async Task<bool> ExecuteCommands(IConsole console, IProject project, IList<string> commands)
         {
             bool result = true;
 
@@ -57,7 +58,7 @@ namespace AvalonStudio.Toolchains.Standard
                 var cmd = commandParts[0];
                 var args = command.Remove(0, cmd.Length).Trim();
 
-                if (ExecuteCommand(console, project, cmd.ToPlatformPath(), args.ToPlatformPath()) != 0)
+                if (await ExecuteCommand(console, project, cmd.ToPlatformPath(), args.ToPlatformPath()) != 0)
                 {
                     result = false;
                     break;
@@ -67,9 +68,25 @@ namespace AvalonStudio.Toolchains.Standard
             return result;
         }
 
-        private int ExecuteCommand(IConsole console, IProject project, string command, string args)
+        private async Task<int> ExecuteCommand(IConsole console, IProject project, string command, string args)
         {
             var environment = project.GetEnvironmentVariables().AppendRange(Platform.EnvironmentVariables);
+
+            if(command.Contains('{') && command.Contains('}') && command.Contains('?'))
+            {
+                var index = command.IndexOf("{?")+1;
+                var indexEnd = command.IndexOf('}');
+
+                var packageInfo = PackageManager.ParseUrl(command.Substring(index, indexEnd - index));
+
+                await PackageManager.EnsurePackage(packageInfo.package, packageInfo.version, console);
+
+                var directory = PackageManager.GetPackageDirectory(packageInfo.package, packageInfo.version);
+
+                command = command.Remove(index-1, indexEnd - index + 2);
+
+                command = command.Insert(index-1, directory);
+            }
 
             command = command.ExpandVariables(environment);
             args = args.ExpandVariables(environment);
@@ -107,12 +124,14 @@ namespace AvalonStudio.Toolchains.Standard
 
                 console.WriteLine(e.Message);
                 console.WriteLine(e.StackTrace);
+
+                return false;
             }
 
             console.Clear();
-            IoC.Get<IErrorList>().Remove(this);
+            IoC.Get<IErrorList>()?.Remove(this);
 
-            console.WriteLine("Starting Build...");
+            console.WriteLine($"Starting Build with {Jobs} jobs...");
             console.WriteLine();
 
             if (!ValidateToolchainExecutables(console))
@@ -132,7 +151,7 @@ namespace AvalonStudio.Toolchains.Standard
             {
                 console.WriteLine("Pre-Build Commands:");
 
-                result = ExecuteCommands(console, project, preBuildCommands);
+                result = await ExecuteCommands(console, project, preBuildCommands);
             }
 
             terminateBuild = !result;
@@ -146,11 +165,18 @@ namespace AvalonStudio.Toolchains.Standard
 
             if (defines != null)
             {
-                foreach (var define in defines)
+                if (defines.Any())
                 {
-                    var injectableDefinition = new Definition() { Global = true, Value = define };
-                    (project as IStandardProject).Defines.Add(injectableDefinition);
-                    injectedDefines.Add(injectableDefinition);
+                    console.WriteLine("Build Specific Defines:");
+
+                    foreach (var define in defines)
+                    {
+                        var injectableDefinition = new Definition() { Global = true, Value = define };
+                        (project as IStandardProject).Defines.Add(injectableDefinition);
+                        injectedDefines.Add(injectableDefinition);
+
+                        console.WriteLine(injectableDefinition.Value);
+                    }
                 }
             }
 
@@ -174,6 +200,24 @@ namespace AvalonStudio.Toolchains.Standard
 
                     if (result)
                     {
+                        bool objectsCompiled = false;
+
+                        foreach (var compiledProject in compiledProjects)
+                        {
+                            if(compiledProject.NumberOfObjectsCompiled > 0)
+                            {
+                                objectsCompiled = true;
+                                break;
+                            }
+                        }
+
+                        if (objectsCompiled)
+                        {
+                            console.WriteLine();
+                            console.WriteLine();
+                            console.WriteLine();
+                        }
+
                         var linkedReferences = new CompileResult
                         {
                             Project = project as IStandardProject
@@ -196,7 +240,7 @@ namespace AvalonStudio.Toolchains.Standard
                                 if (postBuildCommands.Count > 0)
                                 {
                                     console.WriteLine("Post-Build Commands:");
-                                    bool succeess = ExecuteCommands(console, project, postBuildCommands);
+                                    bool succeess = await ExecuteCommands(console, project, postBuildCommands);
 
                                     if (!succeess)
                                     {
@@ -248,13 +292,15 @@ namespace AvalonStudio.Toolchains.Standard
         {
             await Task.Factory.StartNew(async () =>
             {
-                console.WriteLine("Starting Clean...");
+                console?.WriteLine("Starting Clean...");
+                console?.WriteLine();
 
-                IoC.Get<IErrorList>().Remove(this);
+                IoC.Get<IErrorList>()?.Remove(this);
 
                 await CleanAll(console, project as IStandardProject, project as IStandardProject);
 
-                console.WriteLine("Clean Completed.");
+                console?.WriteLine();
+                console?.WriteLine("Clean Completed.");
             });
         }
 
@@ -428,7 +474,15 @@ namespace AvalonStudio.Toolchains.Standard
                 {
                     superProject.Executable = superProject.Location.MakeRelativePath(linkResult.Executable).ToAvalonPath();
                     superProject.Save();
+
+                    if (compileResult.NumberOfObjectsCompiled > 0)
+                    {
+                        console.WriteLine();
+                        console.WriteLine();
+                    }
+
                     console.WriteLine();
+
                     Size(console, compileResult.Project, linkResult);
                     linkResults.ExecutableLocations.Add(executable);
                 }
@@ -595,7 +649,9 @@ namespace AvalonStudio.Toolchains.Standard
 
                                         if (!string.IsNullOrEmpty(output))
                                         {
+                                            console.WriteLine();
                                             console.WriteLine(output);
+                                            console.WriteLine();
                                         }
 
                                         var errorList = IoC.Get<IErrorList>();
@@ -668,7 +724,7 @@ namespace AvalonStudio.Toolchains.Standard
 
             if (hasCleaned)
             {
-                console.WriteLine(string.Format("[BB] - Cleaning Project - {0}", project.Name));
+                console?.WriteLine(string.Format("[BB] - Cleaning Project - {0}", project.Name));
             }
         }
 

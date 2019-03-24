@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using System.Threading.Tasks;
+using AvalonStudio.Extensibility.Shell;
+using System.Reactive.Linq;
 
 namespace AvalonStudio.Extensibility.Editor
 {
@@ -25,6 +27,7 @@ namespace AvalonStudio.Extensibility.Editor
         private ISegment _selection;
         private IList<ITextEditorInputHelper> _inputHelpers;
         private int _lastLineNumber;
+        private IStatusBar _statusBar;
 
         public event EventHandler<TooltipDataRequestEventArgs> TooltipContentRequested;
 
@@ -64,6 +67,13 @@ namespace AvalonStudio.Extensibility.Editor
                     _lastLineNumber = lineNumber;
                 }
             });
+
+            this.WhenAnyValue(x => x.Offset).ObserveOn(RxApp.MainThreadScheduler).Subscribe(x =>
+            {
+                _statusBar?.SetTextPosition(Offset, Line, Column);
+            });
+
+            _statusBar = IoC.Get<IStatusBar>();
         }
 
         ~TextEditorViewModel()
@@ -252,7 +262,7 @@ namespace AvalonStudio.Extensibility.Editor
         {
         }
 
-        public virtual Task<object> GetToolTipContentAsync(int offset)
+        public virtual async Task<object> GetToolTipContentAsync(int offset)
         {
             var args = new TooltipDataRequestEventArgs(this, offset);
 
@@ -260,11 +270,11 @@ namespace AvalonStudio.Extensibility.Editor
 
             if (args.GetViewModelAsyncTask != null)
             {
-                return args.GetViewModelAsyncTask(this, offset);
+                return await args.GetViewModelAsyncTask(this, offset);
             }
             else
             {
-                return Task.FromResult<object>(null);
+                return null;
             }
         }
     }

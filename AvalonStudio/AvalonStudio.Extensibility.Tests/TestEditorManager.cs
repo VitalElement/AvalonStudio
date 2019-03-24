@@ -1,8 +1,9 @@
-﻿using AvalonStudio.Controls.Standard.CodeEditor;
+﻿using AvalonStudio.Controls.Editor;
 using AvalonStudio.Documents;
 using AvalonStudio.Editor;
 using AvalonStudio.Extensibility.Editor;
 using System.Collections.Generic;
+using Xunit;
 
 namespace AvalonStudio.Extensibility.Tests
 {
@@ -12,6 +13,19 @@ namespace AvalonStudio.Extensibility.Tests
     /// </summary>
     public class TestEditorManager
     {
+        public void AssertEditorState (string expectedTextState)
+        {
+            var index = expectedTextState.IndexOf('|');
+
+            if(index >= 0)
+            {
+                expectedTextState = expectedTextState.Replace("|", "");
+                Assert.Equal(index, Editor.Offset);
+            }
+
+            Assert.Equal(expectedTextState, Document.Text);
+        }
+
         /// <summary>
         /// Creates an instance of TestEditorManager
         /// </summary>

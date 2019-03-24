@@ -5,10 +5,12 @@ using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
 using AvalonStudio.Toolchains.Standard;
 using AvalonStudio.Utils;
+using Avalonia;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 
 namespace AvalonStudio.Toolchains.GCC
 {
@@ -92,14 +94,14 @@ namespace AvalonStudio.Toolchains.GCC
             UpdateCompileString();
         }
 
-        public ReactiveCommand AddIncludePathCommand { get; }
-        public ReactiveCommand RemoveIncludePathCommand { get; }
-        public ReactiveCommand AddDefineCommand { get; }
-        public ReactiveCommand RemoveDefineCommand { get; }
-        public ReactiveCommand AddCompileExtensionCommand { get; }
-        public ReactiveCommand RemoveCompileExtensionCommand { get; }
-        public ReactiveCommand AddAssembleExtensionCommand { get; }
-        public ReactiveCommand RemoveAssembleExtensionCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddIncludePathCommand { get; }
+        public ReactiveCommand<Unit, Unit> RemoveIncludePathCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddDefineCommand { get; }
+        public ReactiveCommand<Unit, Unit> RemoveDefineCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddCompileExtensionCommand { get; }
+        public ReactiveCommand<Unit, Unit> RemoveCompileExtensionCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddAssembleExtensionCommand { get; }
+        public ReactiveCommand<Unit, Unit> RemoveAssembleExtensionCommand { get; }
 
         public string[] CLanguageStandards
         {
@@ -411,7 +413,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             fbd.InitialDirectory = Model.CurrentDirectory;
 
-            var result = await fbd.ShowAsync();
+            var result = await fbd.ShowAsync(Application.Current.MainWindow);
 
             if (!string.IsNullOrEmpty(result))
             {

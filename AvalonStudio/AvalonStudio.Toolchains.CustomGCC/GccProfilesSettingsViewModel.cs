@@ -1,8 +1,10 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Settings;
 using ReactiveUI;
 using System.Collections.ObjectModel;
+using System.Reactive;
 
 namespace AvalonStudio.Toolchains.CustomGCC
 {
@@ -33,11 +35,11 @@ namespace AvalonStudio.Toolchains.CustomGCC
                 }
             });
 
-            BrowseCommand = ReactiveCommand.Create(async () =>
+            BrowseCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var fbd = new OpenFolderDialog();
 
-                var result = await fbd.ShowAsync();
+                var result = await fbd.ShowAsync(Application.Current.MainWindow);
 
                 if (!string.IsNullOrEmpty(result))
                 {
@@ -50,7 +52,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
 
         public void Activation()
         {
-            IoC.Get<ISettingsManager>().RegisterSettingsDialog("Toolchains", this);
+            IoC.Get<ISettingsManager>()?.RegisterSettingsDialog("Toolchains", this);
         }
 
         public void BeforeActivation()
@@ -92,7 +94,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
             _settings.Save();
         }
 
-        public ReactiveCommand SaveCommand { get; }
+        public ReactiveCommand<Unit, Unit> SaveCommand { get; }
 
         public ObservableCollection<string> Profiles
         {
@@ -122,6 +124,6 @@ namespace AvalonStudio.Toolchains.CustomGCC
             set { this.RaiseAndSetIfChanged(ref _basePath, value); }
         }
 
-        public ReactiveCommand BrowseCommand { get; }
+        public ReactiveCommand<Unit, Unit> BrowseCommand { get; }
     }
 }

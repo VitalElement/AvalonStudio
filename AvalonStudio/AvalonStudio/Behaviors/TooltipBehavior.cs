@@ -180,9 +180,9 @@ namespace AvalonStudio.Shell.Behaviors
         ///     Method is called before popup opens to retrieve data and cancel popup open if required.
         /// </summary>
         /// <returns>true if the popup will open, false if it wont.</returns>
-        public virtual async Task<bool> OnBeforePopupOpen()
+        public virtual Task<bool> OnBeforePopupOpen()
         {
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

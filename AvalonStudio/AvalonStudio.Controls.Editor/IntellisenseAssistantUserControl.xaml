@@ -1,0 +1,16 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+              xmlns:local="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor"
+              xmlns:vm="clr-namespace:AvalonStudio.Languages.ViewModels;assembly=AvalonStudio.Extensibility">
+    <Grid Background="{DynamicResource ThemeControlBackgroundBrush}" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}"
+          TextBlock.FontFamily="Segoi UI" TextBlock.FontSize="14" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+        <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
+            <StackPanel Margin="4 0">
+                <StackPanel Spacing="2" Orientation="Horizontal">
+                    <TextBlock Text="{Binding Hint}" />
+                    <TextBlock Text="{Binding OverloadText}" />
+                </StackPanel>
+                <TextBlock Text="{Binding Comment}" />
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

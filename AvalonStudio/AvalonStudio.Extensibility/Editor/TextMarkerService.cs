@@ -39,7 +39,7 @@ namespace AvalonStudio.Extensibility.Editor
 
         public void Draw(TextView textView, DrawingContext drawingContext)
         {
-            if (markers == null)
+            if (markers == null || markers.Count == 0)
             {
                 return;
             }
@@ -58,7 +58,7 @@ namespace AvalonStudio.Extensibility.Editor
 
             foreach (TextMarker marker in markers.FindOverlappingSegments(start, end - start))
             {
-                if (marker.Diagnostic.Level != DiagnosticLevel.Hidden && marker.Length > 0)
+                if (marker.Diagnostic.Level != DiagnosticLevel.Hidden && marker.Length >= 0)
                 {
                     if (marker.EndOffset < textView.Document.TextLength)
                     {

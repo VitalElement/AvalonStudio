@@ -13,6 +13,8 @@ using Avalonia.Threading;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility.Threading;
+using Avalonia.Platform;
+using Avalonia;
 
 namespace AvalonStudio.Projects
 {
@@ -56,7 +58,7 @@ namespace AvalonStudio.Projects
         }
 
         private VisualStudioSolution(SlnFile solutionModel)
-        {            
+        {
             _solutionModel = solutionModel;
             _solutionItems = new Dictionary<Guid, ISolutionItem>();
 
@@ -78,10 +80,19 @@ namespace AvalonStudio.Projects
 
                 await LoadProjectLoadingPlaceholdersAsync();
 
-                await Dispatcher.UIThread.InvokeAsync(() =>
+                var platform = AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>();
+
+                if (platform != null)
+                {
+                    await Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        BuildTree();
+                    });
+                }
+                else
                 {
                     BuildTree();
-                });
+                }
             });
         }
 
@@ -138,13 +149,25 @@ namespace AvalonStudio.Projects
                 newItems.Add(newItem);
             }
 
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            var platform = AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>();
+
+            if (platform != null)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    foreach (var newItem in newItems)
+                    {
+                        Items.InsertSorted(newItem, false);
+                    }
+                });
+            }
+            else
             {
                 foreach (var newItem in newItems)
                 {
                     Items.InsertSorted(newItem, false);
                 }
-            });
+            }
         }
 
         private async Task ResolveReferencesAsync()
@@ -253,10 +276,15 @@ namespace AvalonStudio.Projects
 
             var jobrunner = new JobRunner<(ISolutionItem placeHolder, SlnProject projectInfo, string path), IProject>(Environment.ProcessorCount, loadInfo =>
             {
-                Dispatcher.UIThread.Post(() =>
+                var threadingPlatform = AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>();
+
+                if (threadingPlatform != null)
                 {
-                    statusBar.SetText($"Loading Project: {loadInfo.path}");
-                });
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        statusBar.SetText($"Loading Project: {loadInfo.path}");
+                    });
+                }
 
                 var task = ProjectUtils.LoadProjectFileAsync(this, Guid.Parse(loadInfo.projectInfo.TypeGuid), loadInfo.path);
 
@@ -312,10 +340,15 @@ namespace AvalonStudio.Projects
                 }
             }
 
-            Dispatcher.UIThread.Post(() =>
+            var platform = AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>();
+
+            if (platform != null)
             {
-                statusBar.ClearText();
-            });
+                Dispatcher.UIThread.Post(() =>
+                {
+                    statusBar.ClearText();
+                });
+            }
 
             jobrunner.Stop();
         }
@@ -356,13 +389,25 @@ namespace AvalonStudio.Projects
                 }
             }
 
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            var platform = AvaloniaLocator.Current.GetService<IPlatformThreadingInterface>();
+
+            if (platform != null)
+            {
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    foreach (var newItem in newItems)
+                    {
+                        Items.InsertSorted(newItem);
+                    }
+                });
+            }
+            else
             {
                 foreach (var newItem in newItems)
                 {
                     Items.InsertSorted(newItem);
                 }
-            });
+            }
         }
 
         public bool CanRename => true;

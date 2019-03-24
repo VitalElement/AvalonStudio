@@ -16,5 +16,7 @@
         {
             return Equals(obj as RecentProject);
         }
+
+        public override int GetHashCode() => (string.IsNullOrEmpty(Name) ? 0 : Name.GetHashCode()) + (string.IsNullOrEmpty(Path) ? 0 : Path.GetHashCode());        
     }
 }

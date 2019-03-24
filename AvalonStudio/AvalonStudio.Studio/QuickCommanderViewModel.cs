@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
@@ -60,7 +61,7 @@ namespace AvalonStudio.Studio
                 }
             });
 
-            EnterCommand = ReactiveCommand.Create(async () =>
+            EnterCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var selectedResult = SelectedResult.Model;
                 IsVisible = false;
@@ -117,7 +118,7 @@ namespace AvalonStudio.Studio
                             {
                                 if (range.matched)
                                 {
-                                    var span = new FormattedTextStyleSpan(index + tp.Item4.Project.Name.Length + 1, range.text.Length, ColorTheme.CurrentTheme.Accent);
+                                    var span = new FormattedTextStyleSpan(index + tp.Item4.Project.Name.Length + 1, range.text.Length, ColorTheme.CurrentTheme.AccentLow);
                                     spans.Add(span);
                                 }
 
@@ -147,13 +148,13 @@ namespace AvalonStudio.Studio
             }
         }
 
-        public ReactiveCommand UpCommand { get; }
+        public ReactiveCommand<Unit, Unit> UpCommand { get; }
 
-        public ReactiveCommand DownCommand { get; }
+        public ReactiveCommand<Unit, Unit> DownCommand { get; }
 
-        public ReactiveCommand EscapeCommand { get; }
+        public ReactiveCommand<Unit, Unit> EscapeCommand { get; }
 
-        public ReactiveCommand EnterCommand { get; }
+        public ReactiveCommand<Unit, Unit> EnterCommand { get; }
 
         public SearchResultViewModel SelectedResult
         {

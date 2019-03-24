@@ -10,6 +10,6 @@
   
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Debugging.GDB\AvalonStudio.Debugging.GDB.csproj" />
-    <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
+    <ProjectReference Include="..\PackageManager\PackageManager.csproj" />
   </ItemGroup>
 </Project>

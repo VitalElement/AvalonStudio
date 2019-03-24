@@ -140,10 +140,14 @@ namespace AvalonStudio.CommandLineTools
             shellProc.EnableRaisingEvents = true;
             new ProcessManager(shellProc);
 
-            shellProc.Start();
+            try
+            {
+                shellProc.Start();
 
-            shellProc.BeginOutputReadLine();
-            shellProc.BeginErrorReadLine();                       
+                shellProc.BeginOutputReadLine();
+                shellProc.BeginErrorReadLine();
+            }
+            catch { }
 
             return shellProc;
         }
@@ -156,27 +160,47 @@ namespace AvalonStudio.CommandLineTools
             {
                 _process = process;
 
-                Application.Current.OnExit += Current_OnExit;
+                if (Application.Current != null)
+                {
+                    Application.Current.OnExit += Current_OnExit;
 
-                _process.Exited += _process_Exited;                
+                    _process.Exited += _process_Exited;
+                }
             }
 
             private void Current_OnExit(object sender, EventArgs e)
             {
-                if (!_process.HasExited)
+                try
                 {
-                    _process.Kill();
+                    if (!_process.HasExited)
+                    {
+                        _process.Kill();
+                    }
+                }
+                catch
+                {
+
                 }
             }
 
             private void _process_Exited(object sender, EventArgs e)
             {
-                _process.Exited -= _process_Exited;
+                if (Application.Current != null)
+                {
+                    _process.Exited -= _process_Exited;
 
-                Application.Current.OnExit -= Current_OnExit;
+                    Application.Current.OnExit -= Current_OnExit;
+                }
 
                 _process = null;
             }
+        }
+
+        public static string[] GetSystemPaths ()
+        {
+            var result = ExecuteShellCommand("/bin/bash", "-l -c 'echo $PATH'");
+
+            return result.Output.Split(':');
         }
 
 

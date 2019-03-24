@@ -11,6 +11,7 @@ namespace AvalonStudio.Debugging
     using System.Collections.ObjectModel;
     using System.Composition;
     using System.Linq;
+    using System.Reactive;
     using System.Threading.Tasks;
 
     [ExportToolControl]
@@ -205,7 +206,7 @@ namespace AvalonStudio.Debugging
             set { this.RaiseAndSetIfChanged(ref _expression, value); }
         }
 
-        public ReactiveCommand AddExpressionCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddExpressionCommand { get; }
 
     }
 }

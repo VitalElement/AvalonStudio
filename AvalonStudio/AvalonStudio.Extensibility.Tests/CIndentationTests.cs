@@ -64,6 +64,5 @@ namespace AvalonStudio.Extensibility.Tests
 
             Assert.Equal("{\n    if(statement)\n        statement;\n    else\n        \n}", testEditor.Document.Text);
         }
-
     }
 }

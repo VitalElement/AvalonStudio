@@ -3,6 +3,7 @@ using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using ReactiveUI;
 using System;
+using System.Reactive;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -29,8 +30,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        public new ReactiveCommand OpenInExplorerCommand { get; }
-        public ReactiveCommand RemoveCommand { get; }
+        public new ReactiveCommand<Unit, Unit> OpenInExplorerCommand { get; }
+        public ReactiveCommand<Unit, Unit> RemoveCommand { get; }
         
         public override DrawingGroup Icon => _icon;
     }

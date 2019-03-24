@@ -86,7 +86,7 @@ namespace AvalonStudio.Debugging.GDB
         /// <summary>
 		/// Raised when the debugging session is paused
 		/// </summary>
-		private event EventHandler<TargetEventArgs> TargetStoppedWhenSuppressed;
+		public event EventHandler<TargetEventArgs> TargetStoppedWhenSuppressed;
 
         public GdbSession(string gdbExecutable, string runCommand = "-exec-run", bool detectAsync = true, bool waitForStopBeforeRunning = false)
         {
@@ -109,103 +109,110 @@ namespace AvalonStudio.Debugging.GDB
                 string ttyfileDone = ttyfile + "_done";
                 string tty = string.Empty;
 
-                StartGdb(startInfo);
-
-                // Initialize the terminal
-                RunCommand("-inferior-tty-set", Escape(tty));
-
-                if (ManuallyLoadSymbols)
+                if (File.Exists(_gdbExecutable))
                 {
-                    try
+                    StartGdb(startInfo);
+
+                    // Initialize the terminal
+                    RunCommand("-inferior-tty-set", Escape(tty));
+
+                    if (ManuallyLoadSymbols)
                     {
-                        RunCommand("-file-exec-and-symbols", Escape(startInfo.Command.ToAvalonPath()));
-                    }
-                    catch
-                    {
-                        FireTargetEvent(TargetEventType.TargetExited, null);
-                        throw;
-                    }
-                }
-
-                RunCommand("-environment-cd", Escape(startInfo.WorkingDirectory));
-
-                // Set inferior arguments
-                if (!string.IsNullOrEmpty(startInfo.Arguments))
-                    RunCommand("-exec-arguments", startInfo.Arguments);
-
-                if (startInfo.EnvironmentVariables != null)
-                {
-                    foreach (var v in startInfo.EnvironmentVariables)
-                        RunCommand("-gdb-set", "environment", v.Key, v.Value);
-                }
-
-                currentProcessName = startInfo.Command + " " + startInfo.Arguments;
-
-                if (_detectAsync)
-                {
-                    asyncMode = RunCommand("-gdb-set", "mi-async", "on").Status == CommandStatus.Done;
-                }
-                else
-                {
-                    asyncMode = false;
-                }
-
-                if (!asyncMode && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
-                {
-                    // TODO check if this code can be removed, it was used to support  ctrl+c signals, but no longer seems
-                    // to be needed for .net core.
-                    var attempts = 0;
-                    while (!Platform.FreeConsole() && attempts < 10)
-                    {
-                        _console.WriteLine(Marshal.GetLastWin32Error().ToString());
-                        Thread.Sleep(10);
-                        attempts++;
-                    }
-
-                    attempts = 0;
-
-                    while (!Platform.AttachConsole(proc.Id) && attempts < 10)
-                    {
-                        Thread.Sleep(10);
-                        attempts++;
-                    }
-
-                    while (!Platform.SetConsoleCtrlHandler(null, true))
-                    {
-                        _console.WriteLine(Marshal.GetLastWin32Error().ToString());
-                        Thread.Sleep(10);
-                    }
-                }
-
-                if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
-                {
-                    RunCommand("-gdb-set", "new-console", "on");
-                }
-
-                RunCommand("-enable-pretty-printing");
-
-                OnStarted();
-
-                if (!startInfo.RequiresManualStart)
-                {
-                    if (_waitForStopBeforeRunning)
-                    {
-                        _suppressEvents = true;
-
-                        var catchFirstStop = Observable.FromEventPattern(this, nameof(TargetStoppedWhenSuppressed)).Take(1).Subscribe(s =>
+                        try
                         {
-                            ThreadPool.QueueUserWorkItem(delegate
-                            {
-                                _suppressEvents = false;
-                                running = true;
-                                RunCommand(_runCommand);
-                            });
-                        });
+                            RunCommand("-file-exec-and-symbols", Escape(startInfo.Command.ToAvalonPath()));
+                        }
+                        catch
+                        {
+                            FireTargetEvent(TargetEventType.TargetExited, null);
+                            throw;
+                        }
+                    }
+
+                    RunCommand("-environment-cd", Escape(startInfo.WorkingDirectory));
+
+                    // Set inferior arguments
+                    if (!string.IsNullOrEmpty(startInfo.Arguments))
+                        RunCommand("-exec-arguments", startInfo.Arguments);
+
+                    if (startInfo.EnvironmentVariables != null)
+                    {
+                        foreach (var v in startInfo.EnvironmentVariables)
+                            RunCommand("-gdb-set", "environment", v.Key, v.Value);
+                    }
+
+                    currentProcessName = startInfo.Command + " " + startInfo.Arguments;
+
+                    if (_detectAsync)
+                    {
+                        asyncMode = RunCommand("-gdb-set", "mi-async", "on").Status == CommandStatus.Done;
                     }
                     else
                     {
-                        running = true;
-                        RunCommand(_runCommand);
+                        asyncMode = false;
+                    }
+
+                    if (!asyncMode && Platform.PlatformIdentifier == AvalonStudio.Platforms.PlatformID.Win32NT)
+                    {
+                        // TODO check if this code can be removed, it was used to support  ctrl+c signals, but no longer seems
+                        // to be needed for .net core.
+                        var attempts = 0;
+                        while (!Platform.FreeConsole() && attempts < 10)
+                        {
+                            _console.WriteLine(Marshal.GetLastWin32Error().ToString());
+                            Thread.Sleep(10);
+                            attempts++;
+                        }
+
+                        attempts = 0;
+
+                        while (!Platform.AttachConsole(proc.Id) && attempts < 10)
+                        {
+                            Thread.Sleep(10);
+                            attempts++;
+                        }
+
+                        while (!Platform.SetConsoleCtrlHandler(null, true))
+                        {
+                            _console.WriteLine(Marshal.GetLastWin32Error().ToString());
+                            Thread.Sleep(10);
+                        }
+                    }
+
+                    if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+                    {
+                        RunCommand("-gdb-set", "new-console", "on");
+                    }
+
+                    RunCommand("-enable-pretty-printing");
+
+                    OnStarted();
+
+                    if (!startInfo.RequiresManualStart)
+                    {
+                        if (_waitForStopBeforeRunning)
+                        {
+                            _suppressEvents = true;
+
+                            var catchFirstStop = Observable.FromEventPattern(this, nameof(TargetStoppedWhenSuppressed)).Take(1).Subscribe(s =>
+                            {
+                                ThreadPool.QueueUserWorkItem(delegate
+                                {
+                                    _suppressEvents = false;
+                                    running = true;
+                                    RunCommand(_runCommand);
+                                });
+                            });
+                        }
+                        else
+                        {
+                            running = true;
+                            RunCommand(_runCommand);
+                        }
+                    }
+                    else
+                    {
+                        running = false;
                     }
                 }
                 else
@@ -323,7 +330,16 @@ namespace AvalonStudio.Debugging.GDB
             lock (gdbLock)
             {
                 InternalStop();
-                sin.WriteLine("-gdb-exit");
+
+                try
+                {
+                    sin?.WriteLine("-gdb-exit");
+                }
+                catch(System.IO.IOException)
+                {
+
+                }
+                
                 closeTokenSource?.Cancel();
                 TargetEventArgs args = new TargetEventArgs(TargetEventType.TargetExited);
                 OnTargetEvent(args);

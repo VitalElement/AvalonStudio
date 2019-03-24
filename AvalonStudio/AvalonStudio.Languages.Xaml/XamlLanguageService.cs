@@ -1,6 +1,6 @@
 using Avalonia.Ide.CompletionEngine;
 using Avalonia.Ide.CompletionEngine.AssemblyMetadata;
-using Avalonia.Ide.CompletionEngine.SrmMetadataProvider;
+using Avalonia.Ide.CompletionEngine.DnlibMetadataProvider;
 using Avalonia.Threading;
 using AvalonStudio.Documents;
 using System.Collections.Generic;
@@ -42,6 +42,9 @@ namespace AvalonStudio.Languages.Xaml
 
                 case CompletionKind.Namespace:
                     return CodeCompletionKind.NamespacePublic;
+
+                case CompletionKind.MarkupExtension:
+                    return CodeCompletionKind.MethodPublic;
             }
 
             return result;
@@ -75,6 +78,8 @@ namespace AvalonStudio.Languages.Xaml
                             RecommendImmediateSuggestions = completion.InsertText.Contains("=") || completion.InsertText.EndsWith('.')
                         });
                     }
+
+                    results.StartOffset = completionSet.StartPosition;
                 }
 
                 results.Contexts = CompletionContext.AnyType;
@@ -90,7 +95,7 @@ namespace AvalonStudio.Languages.Xaml
         {
             if (metaData == null && File.Exists(executable))
             {
-                metaData = new MetadataReader(new SrmMetadataProvider()).GetForTargetAssembly(executable);
+                metaData = new MetadataReader(new DnlibMetadataProvider()).GetForTargetAssembly(executable);
             }
         }
 

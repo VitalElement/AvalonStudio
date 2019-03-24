@@ -4,25 +4,25 @@ using AvalonStudio.Extensibility.Dialogs;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Packages;
-using AvalonStudio.Platforms;
+using AvalonStudio.Packaging;
 using AvalonStudio.Utils;
-
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls
 {
     public class PackageManagerDialogViewModel : ModalDialogViewModelBase, IConsole
     {
-        private ObservableCollection<PackageMetaData> availablePackages;
+        //private ObservableCollection<PackageMetaData> availablePackages;
 
         private bool enableInterface = true;
 
-        private PackageMetaData selectedPackage;
+        //private PackageMetaData selectedPackage;
 
         private string selectedVersion;
 
@@ -30,13 +30,14 @@ namespace AvalonStudio.Controls
 
         private void InvalidateInstalledPackages()
         {
-            InstalledPackages = new ObservableCollection<PackageIdentityViewModel>(PackageManager.ListInstalledPackages().Select(pr => new PackageIdentityViewModel(pr)));
+            InstalledPackages = new ObservableCollection<PackageIdentityViewModel>(PackageManager.ListInstalledPackages().Select(x => new PackageIdentityViewModel(x)));
+            //InstalledPackages = new ObservableCollection<PackageIdentityViewModel>(AvalonStudio.Packages.PackageManager.ListInstalledPackages().Select(pr => new PackageIdentityViewModel(pr)));
         }
 
         public PackageManagerDialogViewModel()
             : base("Packages")
         {
-            AvailablePackages = new ObservableCollection<PackageMetaData>();
+            //AvailablePackages = new ObservableCollection<PackageMetaData>();
 
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
@@ -52,18 +53,18 @@ namespace AvalonStudio.Controls
                 }
             });
 
-            InstallCommand = ReactiveCommand.Create(async () =>
+            InstallCommand = ReactiveCommand.Create(() =>
             {
-                await PackageManager.InstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToFullString());
+                //await AvalonStudio.Packages.PackageManager.InstallPackage(selectedPackage.Identity.Id, selectedPackage.Identity.Version.ToFullString());
 
                 InvalidateInstalledPackages();
             });
 
-            UninstallCommand = ReactiveCommand.Create(async () =>
+            UninstallCommand = ReactiveCommand.Create(() =>
             {
                 if (SelectedInstalledPackage != null)
                 {
-                    await PackageManager.UninstallPackage(SelectedInstalledPackage.Model.Id, SelectedInstalledPackage.Model.Version.ToNormalizedString());
+                   // await AvalonStudio.Packages.PackageManager.UninstallPackage(SelectedInstalledPackage.Model.Id, SelectedInstalledPackage.Model.Version.ToNormalizedString());
 
                     InvalidateInstalledPackages();
                 }
@@ -83,7 +84,7 @@ namespace AvalonStudio.Controls
         {
             get
             {
-                if (selectedPackage != null)
+               // if (selectedPackage != null)
                 {
                     //if (selectedPackage.IsInstalled)
                     //{
@@ -116,7 +117,7 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref status, value); }
         }
 
-        public PackageMetaData SelectedPackage
+        /*public PackageMetaData SelectedPackage
         {
             get
             {
@@ -132,7 +133,7 @@ namespace AvalonStudio.Controls
                 this.RaiseAndSetIfChanged(ref selectedPackage, value);
                 this.RaisePropertyChanged(() => ButtonText);
             }
-        }
+        }*/
 
         private IEnumerable<string> _versions;
 
@@ -154,11 +155,11 @@ namespace AvalonStudio.Controls
             }
         }
 
-        public ObservableCollection<PackageMetaData> AvailablePackages
+        /*public ObservableCollection<PackageMetaData> AvailablePackages
         {
             get { return availablePackages; }
             set { this.RaiseAndSetIfChanged(ref availablePackages, value); }
-        }
+        }*/
 
         private ObservableCollection<PackageIdentityViewModel> installedPackages;
 
@@ -176,9 +177,9 @@ namespace AvalonStudio.Controls
             set { this.RaiseAndSetIfChanged(ref selectedInstalledPackage, value); }
         }
 
-        public ReactiveCommand InstallCommand { get; }
-        public ReactiveCommand UninstallCommand { get; }
-        public override ReactiveCommand OKCommand { get; protected set; }
+        public ReactiveCommand<Unit, Unit> InstallCommand { get; }
+        public ReactiveCommand<Unit, Unit> UninstallCommand { get; }
+        public override ReactiveCommand<Unit, Unit> OKCommand { get; protected set; }
 
         public void WriteLine(string data)
         {
@@ -210,14 +211,16 @@ namespace AvalonStudio.Controls
             throw new NotImplementedException();
         }
 
-        private async Task DownloadCatalog()
+        private Task DownloadCatalog()
         {
-            var packages = await PackageManager.ListPackagesAsync(100);
+            // var packages = await AvalonStudio.Packages.PackageManager.ListPackagesAsync(100);
 
-            foreach (var package in packages.Where(p => p.Title.EndsWith(Platform.AvalonRID) || p.Tags.Contains("gccdescription")))
-            {
-                availablePackages.Add(package);
-            }
+            //foreach (var package in packages.Where(p => p.Title.EndsWith(Platform.AvalonRID) || p.Tags.Contains("gccdescription")))
+            //{
+            //  availablePackages.Add(package);
+            //}
+
+            return Task.CompletedTask;
         }
 
         public void LogDebug(string data)

@@ -9,7 +9,7 @@
             <Setter Property="Background" Value="{DynamicResource ThemeControlBackgroundBrush}" />
           </Style>
           <Style Selector="dg|DataGridRow /template/ Rectangle#BackgroundRectangle">
-            <Setter Property="Fill" Value="{DynamicResource ApplicationAccentBrush}"/>
+            <Setter Property="Fill" Value="{DynamicResource ApplicationAccentBrushLow}"/>
           </Style>
       </Styles>
   </DockPanel.Styles>

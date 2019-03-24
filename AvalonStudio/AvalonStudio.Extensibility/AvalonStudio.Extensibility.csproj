@@ -4,25 +4,19 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>AvalonStudio.Extensibility</RootNamespace>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Languages\QuickInfoView.xaml" />
-  </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.6.2-build5392-beta" />    
+    <PackageReference Include="Avalonia" />    
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="ReactiveUI" />
+    <PackageReference Include="System.Composition" Version="1.2.0" />
     <PackageReference Include="AvalonStudio.winpty.NET" Version="0.4.5" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.0.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="reactiveui" Version="8.0.1" />
-    <PackageReference Include="System.Composition" Version="1.1.0" />
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" /> 
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\AvaloniaEdit\src\AvaloniaEdit\AvaloniaEdit.csproj" />
-    <ProjectReference Include="..\..\AvalonStudio.Shell\Dock\src\Dock.Model\Dock.Model.csproj" />
     <ProjectReference Include="..\..\AvalonStudio.Shell\src\AvalonStudio.Shell.Extensibility\AvalonStudio.Shell.Extensibility.csproj" />  
     <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Abstractions\Microsoft.TemplateEngine.Abstractions.csproj" />
     <ProjectReference Include="..\..\templating\src\Microsoft.TemplateEngine.Cli\Microsoft.TemplateEngine.Cli.csproj" />
@@ -47,15 +41,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>LocalizableStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Editor\CodeEditorView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Editor\EditorView - Copy.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
+    <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Debugging\AvalonStudio.Debugging.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Highlighting\Resources\XML-Mode.xshd" />
+    <EmbeddedResource Include="CodeEditor.xaml" />
+    <EmbeddedResource Include="CodeEditorToolTip.xaml" />
+    <EmbeddedResource Include="CompletionAssistantView.xaml" />
+    <EmbeddedResource Include="EditorSettingsView.xaml" />
+    <EmbeddedResource Include="Intellisense.xaml" />
+    <EmbeddedResource Include="IntellisenseAssistantUserControl.xaml" />
+    <EmbeddedResource Include="IntellisenseUserControl.xaml" />
+    <EmbeddedResource Include="SignatureView.xaml" />
+    <EmbeddedResource Include="SymbolView.xaml" />
+    <EmbeddedResource Include="ErrorProbeView.paml" />
+    <EmbeddedResource Include="SignatureHelpView.paml" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Avalonia"  />
+  </ItemGroup>
+
+</Project>

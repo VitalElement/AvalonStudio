@@ -244,7 +244,7 @@ namespace AvalonStudio.Projects.OmniSharp.MSBuild
                         outputFilePath: projectOptions.outputFile,
                         compilationOptions: projectOptions.compilationOptions,
                         parseOptions: projectOptions.parseOptions,
-                        metadataReferences: loadData.MetaDataReferences.Select(ar => MetadataReference.CreateFromFile(ar, documentation: IoC.Get<AvalonStudio.Projects.OmniSharp.Roslyn.DocumentationProvider>()?.GetDocumentationProvider(ar))));
+                        metadataReferences: loadData.MetaDataReferences.Where(ar => File.Exists(ar)).Select(ar => MetadataReference.CreateFromFile(ar, documentation: IoC.Get<AvalonStudio.Projects.OmniSharp.Roslyn.DocumentationProvider>()?.GetDocumentationProvider(ar))));
 
                     return (projectInfo, projectReferences, loadData.TargetPath);
                 }

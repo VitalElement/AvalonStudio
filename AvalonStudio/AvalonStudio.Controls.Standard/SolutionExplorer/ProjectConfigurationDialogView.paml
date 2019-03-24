@@ -15,11 +15,11 @@
               <Setter Property="Margin" Value="0" />
             </Style>
             <Style Selector="TabStripItem:pointerover">
-              <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLight}" />
+              <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushMid}" />
               <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
             </Style>
             <Style Selector="TabStripItem:selected">
-              <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrush}" />
+              <Setter Property="Background" Value="{DynamicResource ApplicationAccentBrushLow}" />
               <Setter Property="Foreground" Value="{DynamicResource ApplicationAccentForegroundBrush}" />
             </Style>
           </TabStrip.Styles>

@@ -6,6 +6,7 @@ using Mono.Debugging.Client;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.Reactive;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Debugging
@@ -118,11 +119,11 @@ namespace AvalonStudio.Debugging
             set { this.RaiseAndSetIfChanged(ref children, value); }
         }
 
-        public ReactiveCommand DeleteCommand { get; }
+        public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
 
-        public ReactiveCommand DisplayFormatCommand { get; }
+        public ReactiveCommand<String, Unit> DisplayFormatCommand { get; }
 
-        public ReactiveCommand AddWatchPointCommand { get; }
+        public ReactiveCommand<Unit, Unit> AddWatchPointCommand { get; }
 
         public string Value
         {
@@ -239,7 +240,10 @@ namespace AvalonStudio.Debugging
                 }
                 else
                 {
-                    Children.Clear();
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        Children.Clear();
+                    });
                 }
             }
             else if (IsExpanded && !Model.HasChildren)

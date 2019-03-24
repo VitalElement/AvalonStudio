@@ -55,7 +55,7 @@ var isNuGetRelease = isTagged && isReleasable;
 // VERSION
 ///////////////////////////////////////////////////////////////////////////////
 
-var version = "0.4.5";
+var version = "0.51";
 
 if (isRunningOnAppVeyor)
 {
@@ -137,7 +137,7 @@ public NuGetPackSettings GetPackSettings(string rid, string version, string nuge
 // INFORMATION
 ///////////////////////////////////////////////////////////////////////////////
 
-Information("Building version {0} of AvaloniaEdit ({1}, {2}, {3}) using version {4} of Cake.", 
+Information("Building version {0} of AvalonStudio ({1}, {2}, {3}) using version {4} of Cake.", 
     version,
     platform,
     configuration,
@@ -167,8 +167,7 @@ Information("IsNuGetRelease: " + isNuGetRelease);
 
 var avalonBuildRIDs = new List<string>
 {
-    "win7-x64",
-    "ubuntu.14.04-x64"
+    "win7-x64"
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -177,6 +176,7 @@ var avalonBuildRIDs = new List<string>
 
 Task("Clean")
 .Does(()=>{
+    CleanDirectory(zipRootDir);
     CleanDirectory(nugetRoot);
     CleanDirectories(buildDirs);
 });
@@ -236,8 +236,6 @@ Task("Run-Net-Core-Unit-Tests")
 
 
 Task("Publish-NetCore")
-    .IsDependentOn("Restore-NetCore")    
-    .WithCriteria(()=>((isMainRepo && isMasterBranch && isRunningOnAppVeyor  && !isPullRequest) || isLocalBuild))
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
@@ -254,7 +252,7 @@ Task("Publish-NetCore")
                 OutputDirectory = outputDir.FullPath
             });
 
-            if (IsRunningOnWindows() && (runtime == "win7-x86" || runtime == "win7-x64"))
+            /*if (IsRunningOnWindows() && (runtime == "win7-x86" || runtime == "win7-x64"))
             {
                 Information("Patching executable subsystem for: {0}, runtime: {1}", project.Name, runtime);
                 var targetExe = outputDir.CombineWithFilePath(project.Name + ".exe");
@@ -262,7 +260,7 @@ Task("Publish-NetCore")
                     Arguments = "/subsystem:windows " + targetExe.FullPath
                 });
                 Information("The editbin command exit code: {0}", exitCodeWithArgument);
-            }
+            }*/
         }
     }
 });
@@ -277,7 +275,7 @@ Task("Copy-Redist-Files-NetCore")
         foreach(var runtime in project.Runtimes)
         {
             var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
-            if (IsRunningOnWindows() && runtime == "win7-x86")
+            /*if (IsRunningOnWindows() && runtime == "win7-x86")
             {
                 Information("Copying redist files for: {0}, runtime: {1}", project.Name, runtime);
                 CopyFileToDirectory(msvcp140_x86, outputDir);
@@ -288,14 +286,13 @@ Task("Copy-Redist-Files-NetCore")
                 Information("Copying redist files for: {0}, runtime: {1}", project.Name, runtime);
                 CopyFileToDirectory(msvcp140_x64, outputDir);
                 CopyFileToDirectory(vcruntime140_x64, outputDir);
-            }
+            }*/
         }
     }
 });
 
 Task("Zip-NetCore")
     .IsDependentOn("Publish-NetCore")
-    .WithCriteria(()=>isMainRepo && isMasterBranch  && !isPullRequest)
     .Does(() =>
 {
     foreach (var project in netCoreProjects)
@@ -305,6 +302,14 @@ Task("Zip-NetCore")
             var outputDir = zipRootDir.Combine(project.Name + "-" + runtime);
 
             Zip(outputDir.FullPath, zipRootDir.CombineWithFilePath(project.Name + "-" + runtime + fileZipSuffix));
+
+            if(DirectoryExists(outputDir))
+            {
+                DeleteDirectory(outputDir, new DeleteDirectorySettings {
+                    Recursive = true,
+                    Force = true
+                });
+            }
         }
     }    
 });
@@ -325,7 +330,7 @@ Task("Publish-AppVeyorNuget")
     .Does(() =>
 {
     var apiKey = EnvironmentVariable("NUGET_API_KEY");
-    if(string.IsNullOrEmpty(apiKey)) 
+    if(string.IsNullOrEmpty(apiKey))
     {
         throw new InvalidOperationException("Could not resolve MyGet API key.");
     }
@@ -350,13 +355,16 @@ Task("Publish-AppVeyorNuget")
 });
 
 Task("Default")
-    .IsDependentOn("Restore-NetCore")
-    .IsDependentOn("Build-NetCore")
+    .IsDependentOn("Clean")
     .IsDependentOn("Run-Net-Core-Unit-Tests")
     .IsDependentOn("Publish-NetCore")
     .IsDependentOn("Copy-Redist-Files-NetCore")
-    .IsDependentOn("Zip-NetCore")
-    .IsDependentOn("Generate-NuGetPackages")
-    .IsDependentOn("Publish-AppVeyorNuget");
+    .IsDependentOn("Zip-NetCore");
+
+Task("OSX")
+    .IsDependentOn("Run-Net-Core-Unit-Tests");
+
+Task("Linux")
+    .IsDependentOn("Run-Net-Core-Unit-Tests");
 
 RunTarget(target);

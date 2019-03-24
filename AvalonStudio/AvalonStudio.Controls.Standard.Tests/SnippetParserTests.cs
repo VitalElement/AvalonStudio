@@ -1,8 +1,8 @@
 using AvaloniaEdit.Snippets;
-using AvalonStudio.Controls.Standard.CodeEditor.Snippets;
+using AvalonStudio.Controls.Editor.Snippets;
 using System;
 using Xunit;
-using static AvalonStudio.Controls.Standard.CodeEditor.Snippets.SnippetParser;
+using static AvalonStudio.Controls.Editor.Snippets.SnippetParser;
 
 namespace AvalonStudio.Controls.Standard.Tests
 {

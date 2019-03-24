@@ -61,7 +61,7 @@ namespace AvalonStudio.TextEditor.Rendering
         {
             _owner = textView;
 
-            if (textView.VisualLinesValid)
+            if (textView.VisualLinesValid && textView.Document != null)
             {
                 if (_line > 0 && _line < textView.Document.LineCount)
                 {

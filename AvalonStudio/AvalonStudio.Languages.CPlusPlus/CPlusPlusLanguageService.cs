@@ -906,6 +906,7 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 switch (file.Extension)
                 {
+                    case ".cc":
                     case ".c":
                         {
                             AddArguments(args, superProject?.CCompilerArguments);

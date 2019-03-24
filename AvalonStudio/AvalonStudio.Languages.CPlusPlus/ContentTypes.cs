@@ -3,7 +3,7 @@
     internal class ContentTypes
     {
         [ExportContentType("C", ContentCapabilities.C)]
-        [FileExtensions(".h", ".c")]
+        [FileExtensions(".h", ".c", ".cc")]
         public object CContentType { get; }
 
         [ExportContentType("C++", ContentCapabilities.CPP)]

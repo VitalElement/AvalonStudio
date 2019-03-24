@@ -218,7 +218,7 @@ namespace AvalonStudio.Debugging
 
         public void Stop()
         {
-            _session.Exit();
+            _session?.Exit();
         }
 
         public async void Start()

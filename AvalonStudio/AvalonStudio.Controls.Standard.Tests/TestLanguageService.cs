@@ -17,7 +17,7 @@ namespace AvalonStudio.Controls.Standard.Tests
 
         public IDictionary<string, Func<string, string>> SnippetCodeGenerators { get; set; } = new Dictionary<string, Func<string, string>>();
 
-        public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables { get; set; } = new Dictionary<string, Func<int, int, int, string>>(); 
+        public IDictionary<string, Func<int, int, int, string>> SnippetDynamicVariables { get; set; } = new Dictionary<string, Func<int, int, int, string>>();
 
         public string LanguageId => "cpp";
 
@@ -37,37 +37,37 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
-        public Task<CodeCompletionResults> CodeCompleteAtAsync(ITextEditor editor, int index, int line, int column, List<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
+        public Task<CodeCompletionResults> CodeCompleteAtAsync(int index, int line, int column, IEnumerable<UnsavedFile> unsavedFiles, char lastChar, string filter = "")
         {
             throw new NotImplementedException();
         }
 
-        public int Comment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int Comment(int firstLine, int endLine, int caret = -1, bool format = true)
         {
             throw new NotImplementedException();
         }
 
-        public int Format(ITextEditor editor, uint offset, uint length, int cursor)
-        {
-            throw new NotImplementedException();
-        }        
-
-        public IEnumerable<IContextActionProvider> GetContextActionProviders(ITextEditor editor)
+        public int Format(uint offset, uint length, int cursor)
         {
             throw new NotImplementedException();
         }
 
-        public Task<QuickInfoResult> QuickInfo(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset)
+        public IEnumerable<IContextActionProvider> GetContextActionProviders()
         {
             throw new NotImplementedException();
         }
 
-        public Task<List<Symbol>> GetSymbolsAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, string name)
+        public Task<QuickInfoResult> QuickInfo(IEnumerable<UnsavedFile> unsavedFiles, int offset)
         {
             throw new NotImplementedException();
         }
 
-        public Task<GotoDefinitionInfo> GotoDefinition(ITextEditor editor, int offset)
+        public Task<List<Symbol>> GetSymbolsAsync(IEnumerable<UnsavedFile> unsavedFiles, string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<GotoDefinitionInfo> GotoDefinition(int offset)
         {
             throw new NotImplementedException();
         }
@@ -77,32 +77,32 @@ namespace AvalonStudio.Controls.Standard.Tests
             throw new NotImplementedException();
         }
 
-        public void RegisterSourceFile(ITextEditor editor)
+        public void RegisterEditor(ITextEditor editor)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(ITextEditor editor, string renameTo)
+        public Task<IEnumerable<SymbolRenameInfo>> RenameSymbol(string renameTo)
         {
             throw new NotImplementedException();
         }
 
-        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(ITextEditor editor, List<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
+        public Task<CodeAnalysisResults> RunCodeAnalysisAsync(IEnumerable<UnsavedFile> unsavedFiles, Func<bool> interruptRequested)
         {
             throw new NotImplementedException();
         }
 
-        public Task<SignatureHelp> SignatureHelp(ITextEditor editor, List<UnsavedFile> unsavedFiles, int offset, string methodName)
+        public Task<SignatureHelp> SignatureHelp(IEnumerable<UnsavedFile> unsavedFiles, int offset, string methodName)
         {
             throw new NotImplementedException();
         }
 
-        public int UnComment(ITextEditor editor, int firstLine, int endLine, int caret = -1, bool format = true)
+        public int UnComment(int firstLine, int endLine, int caret = -1, bool format = true)
         {
             throw new NotImplementedException();
         }
 
-        public void UnregisterSourceFile(ITextEditor editor)
+        public void UnregisterEditor()
         {
             throw new NotImplementedException();
         }

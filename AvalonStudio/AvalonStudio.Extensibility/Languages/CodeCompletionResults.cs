@@ -12,5 +12,7 @@ namespace AvalonStudio.Languages
         public List<CodeCompletionData> Completions { get; set; }
 
         public CompletionContext Contexts { get; set; }
+
+        public int? StartOffset { get; set; }
     }
 }

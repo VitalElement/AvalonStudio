@@ -390,7 +390,7 @@ namespace AvalonStudio.Projects.CPlusPlus
                 var result = IoC.Get<IStudio>()
                     .TestFrameworks.FirstOrDefault(tf => tf.Value.GetType().ToString() == TestFrameworkReference);
 
-                return result.Value;
+                return result?.Value;
             }
             set
             {

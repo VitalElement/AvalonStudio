@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <AssemblyName>AvalonStudio.Sdk.Build.Tasks</AssemblyName>
+    <RootNamespace>AvalonStudio.Sdk.Build.Tasks</RootNamespace>
+    <PackageId>AvalonStudio.Sdk</PackageId>
+    <DevelopmentDependency>True</DevelopmentDependency>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="build\**" Pack="True" PackagePath="build\" />
+  </ItemGroup>
+    
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Framework" Version="15.3.409" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.3.409" PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <IncludeBuildOutput>False</IncludeBuildOutput>
+    <!-- NuGet 4.8+ -->
+    <SuppressDependenciesWhenPacking>True</SuppressDependenciesWhenPacking>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackSdk</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+
+  <Target Name="PackSdk" DependsOnTargets="Publish">
+
+    <ItemGroup>
+      <_GeneratedFiles Include="$(PublishDepsFilePath)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="@(_GeneratedFiles)">
+        <PackagePath>tools\%(_GeneratedFiles.RecursiveDir)%(_GeneratedFiles.Filename)%(_GeneratedFiles.Extension)</PackagePath>
+      </TfmSpecificPackageFile>
+      <TfmSpecificPackageFile Include="@(ResolvedFileToPublish->'$([MSBuild]::NormalizeDirectory($(PublishDir)))%(RelativePath)')">
+        <PackagePath>tools\%(ResolvedFileToPublish.RelativePath)</PackagePath>
+      </TfmSpecificPackageFile>
+    </ItemGroup>
+
+  </Target>
+
+</Project>

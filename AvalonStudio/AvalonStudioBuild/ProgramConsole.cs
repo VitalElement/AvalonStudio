@@ -1,9 +1,14 @@
+using AvalonStudio.Extensibility;
+using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
 using AvalonStudio.Utils;
 using System;
+using System.Composition;
 
 namespace AvalonStudio
 {
+    [Export(typeof(IConsole))]
+    [Shared]
     internal class ProgramConsole : IConsole
     {
         private bool canOverwrite = true;
@@ -32,15 +37,11 @@ namespace AvalonStudio
 
         public void OverWrite(string data)
         {
-            //if (canOverwrite)
-            //{
-            //    int currentLineCursor = Console.CursorTop;
-            //    Console.SetCursorPosition(0, Console.CursorTop);
-            //    Console.Write(new string(' ', Console.WindowWidth));
-            //    Console.SetCursorPosition(0, currentLineCursor);
-            //    Console.Write(data);
-            //}
-            //else
+            if (canOverwrite)
+            {
+                Console.Write("\r" + data);
+            }
+            else
             {
                 WriteLine(data);
             }

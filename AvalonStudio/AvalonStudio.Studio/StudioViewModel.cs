@@ -1,5 +1,5 @@
 ﻿using Avalonia.Threading;
-using AvalonStudio.Controls.Standard.CodeEditor;
+using AvalonStudio.Controls.Editor;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
@@ -86,7 +87,7 @@ namespace AvalonStudio.Studio
         public DockBase DebugLayout { get; set; }
         public DockBase MainLayout { get; set; }
 
-        public ReactiveCommand EnableDebugModeCommand { get; }
+        public ReactiveCommand<Unit, Unit> EnableDebugModeCommand { get; }
 
         public IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> SolutionTypes { get; }
 
@@ -201,7 +202,7 @@ namespace AvalonStudio.Studio
         {
             var shell = IoC.Get<IShell>();
 
-            if (shell.SelectedDocument is ITextDocumentTabViewModel document)
+            if (shell.SelectedDocument is ITextDocumentTabViewModel document && document.IsDirty)
             {
                 document.Save();
             }
@@ -211,7 +212,7 @@ namespace AvalonStudio.Studio
         {
             var shell = IoC.Get<IShell>();
 
-            foreach (var document in shell.Documents.OfType<ITextDocumentTabViewModel>())
+            foreach (var document in shell.Documents.OfType<ITextDocumentTabViewModel>().Where(x=>x.IsDirty))
             {
                 document.Save();
             }

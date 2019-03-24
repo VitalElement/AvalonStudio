@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("VitalElement")]
 [assembly: AssemblyProduct("AvalonStudio")]
-[assembly: AssemblyCopyright("Copyright © 2018 Vital Element")]
+[assembly: AssemblyCopyright("Copyright © 2019 Vital Element")]
 // [assembly: AssemblyTrademark("")]
 // [assembly: AssemblyCulture("")]
 //
@@ -38,5 +38,5 @@ using System.Runtime.InteropServices;
 
 
 [assembly: AssemblyVersion (ThisAssembly.Git.BaseVersion.Major + "." + ThisAssembly.Git.BaseVersion.Minor + "." + ThisAssembly.Git.BaseVersion.Patch)]
-[assembly: AssemblyFileVersion (ThisAssembly.Git.BaseVersion.Major + "." + ThisAssembly.Git.BaseVersion.Minor + "." + ThisAssembly.Git.BaseVersion.Patch + "-" + ThisAssembly.Git.Commits)]
+[assembly: AssemblyFileVersion (ThisAssembly.Git.BaseVersion.Major + "." + ThisAssembly.Git.BaseVersion.Minor + "." + ThisAssembly.Git.BaseVersion.Patch)]
 

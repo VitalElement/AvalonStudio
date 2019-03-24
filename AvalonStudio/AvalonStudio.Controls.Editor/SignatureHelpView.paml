@@ -1,0 +1,16 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:local="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor">
+  <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
+    <Grid TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}" Background="{DynamicResource ThemeControlBackgroundBrush}">
+      <StackPanel Orientation="Horizontal" Spacing="4">
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="(" />
+          <TextBlock Text="{Binding SelectedSignatureIndex}" />
+          <TextBlock Text="/" />
+          <TextBlock Text="{Binding SignatureCount}" />
+          <TextBlock Text=")" />
+        </StackPanel>
+        <local:SignatureView DataContext="{Binding SelectedSignature}" />
+      </StackPanel>
+    </Grid>
+  </Border>
+</UserControl>

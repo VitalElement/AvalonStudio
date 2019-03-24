@@ -6,17 +6,25 @@ namespace AvalonStudio.Editor
     {
         private (ISegment whitespace, int offset, char character) GetPreviousBracketInfo(ITextEditor editor, int offset)
         {
-            var location = editor.Document.GetLocation(offset);
-            var line = editor.Document.Lines[location.Line];
-
-            var previousBracket = editor.Document.GetLastCharMatching(c => c == '{' || c == '}', line.Offset, 0);
-
-            if (previousBracket.index != -1)
+            if(offset >= editor.Document.TextLength)
             {
-                var previousBracketLocation = editor.Document.GetLocation(previousBracket.index);
-                var previousBracketLine = editor.Document.Lines[previousBracketLocation.Line];
+                offset = editor.Document.TextLength - 1;
+            }
 
-                return (editor.Document.GetWhitespaceAfter(previousBracketLine.Offset), previousBracket.index, previousBracket.character);
+            if (offset >= 0)
+            {
+                var location = editor.Document.GetLocation(offset);
+                var line = editor.Document.Lines[location.Line];
+
+                var previousBracket = editor.Document.GetLastCharMatching(c => c == '{' || c == '}', line.Offset, 0);
+
+                if (previousBracket.index != -1)
+                {
+                    var previousBracketLocation = editor.Document.GetLocation(previousBracket.index);
+                    var previousBracketLine = editor.Document.Lines[previousBracketLocation.Line];
+
+                    return (editor.Document.GetWhitespaceAfter(previousBracketLine.Offset), previousBracket.index, previousBracket.character);
+                }
             }
 
             return (null, -1, '\0');

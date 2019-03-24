@@ -5,12 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReactiveUI" Version="8.2.1" />
+    <PackageReference Include="ReactiveUI" />
+    <PackageReference Include="Dock.Avalonia" Version="0.0.4-build20190323-01" />
+    <PackageReference Include="Dock.Model.ReactiveUI" Version="0.0.4-build20190323-01" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AvalonStudio.Shell\Dock\src\Dock.Model.ReactiveUI\Dock.Model.ReactiveUI.csproj" />
-    <ProjectReference Include="..\AvalonStudio.Controls.Standard\AvalonStudio.Controls.Standard.csproj" />
+    <ProjectReference Include="..\AvalonStudio.Controls.Editor\AvalonStudio.Controls.Editor.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
   </ItemGroup>
 

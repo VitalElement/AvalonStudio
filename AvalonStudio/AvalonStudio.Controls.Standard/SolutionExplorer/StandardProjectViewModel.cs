@@ -6,6 +6,7 @@ using System.IO;
 using System.Reactive.Linq;
 using System;
 using AvalonStudio.Platforms;
+using System.Reactive;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
@@ -23,7 +24,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 IsExpanded = true;
             }
 
-            NewFileCommand = ReactiveCommand.Create(async () =>
+            NewFileCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var observable = Items.ObserveNewItems().OfType<SourceFileViewModel>().FirstOrDefaultAsync();
 
@@ -38,7 +39,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                 }
             });
 
-            NewFolderCommand = ReactiveCommand.Create(async () =>
+            NewFolderCommand = ReactiveCommand.CreateFromTask(async () =>
             {
                 var observable = Items.ObserveNewItems().OfType<ProjectFolderViewModel>().FirstOrDefaultAsync();
 
@@ -54,13 +55,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             });
         }
 
-        public ReactiveCommand NewFileCommand { get; }
+        public ReactiveCommand<Unit, Unit> NewFileCommand { get; }
 
-        public ReactiveCommand NewFolderCommand { get; }
+        public ReactiveCommand<Unit, Unit> NewFolderCommand { get; }
 
-        public ReactiveCommand SetDefaultProjectCommand { get; private set; }
+        public ReactiveCommand<Unit, Unit> SetDefaultProjectCommand { get; private set; }
 
-        public ReactiveCommand Remove { get; private set; }
+        public ReactiveCommand<Unit, Unit> Remove { get; private set; }
 
         public override DrawingGroup Icon => Model.GetIcon();
     }

@@ -15,7 +15,7 @@
                 </ScrollViewer>
 
                 <Grid Background="#7fffffff" x:Name="PART_Overlay" IsVisible="False">
-                  <StackPanel Spacing="4" VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource EditorForegroundBrush}">
+                  <StackPanel Spacing="4" VerticalAlignment="Center" TextBlock.Foreground="{DynamicResource EditorForegroundBrush}" Margin="20">
                     <TextBlock Text="Unable to Load Previewer" FontSize="18"  HorizontalAlignment="Center" />
                     <TextBlock x:Name="PART_Status" HorizontalAlignment="Center" />
                   </StackPanel>

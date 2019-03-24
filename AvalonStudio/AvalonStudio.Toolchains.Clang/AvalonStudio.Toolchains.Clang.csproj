@@ -10,9 +10,9 @@
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.CPlusPlus\AvalonStudio.Projects.CPlusPlus.csproj" />
     <ProjectReference Include="..\AvalonStudio.Projects.Standard\AvalonStudio.Projects.Standard.csproj" />
-    <ProjectReference Include="..\AvalonStudio.Repository\AvalonStudio.Repository.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.GCC\AvalonStudio.Toolchains.GCC.csproj" />
     <ProjectReference Include="..\AvalonStudio.Toolchains.Standard\AvalonStudio.Toolchains.Standard.csproj" />
+    <ProjectReference Include="..\PackageManager\PackageManager.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Templates\ArmLinkerScriptTemplate.template.cshtml">
