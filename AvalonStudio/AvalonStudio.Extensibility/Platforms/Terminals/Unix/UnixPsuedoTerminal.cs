@@ -67,6 +67,9 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         [DllImport("libc.so.6")]
         internal static extern void free(IntPtr ptr);
 
+        [DllImport("libc.so.6")]
+        internal static extern int pipe(IntPtr[] fds);
+
 
         [DllImport("libc.so.6")]
         internal static extern void setsid();
@@ -140,7 +143,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
     {
         public static void Test()
         {
-            var pt = _vte_pty_getpt();
+            var terminal = _vte_pty_open_unix98(out int child, new string[0], "/bin/bash", new string[0], "~/", 80, 20);
 
             var m = Native.open("/dev/ptmx", Native.O_RDWR | Native.O_NOCTTY);
 
@@ -225,13 +228,13 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             int pid;
 
             /* Open pipes for synchronizing between parent and child. */
-            /* if (_vte_pty_pipe_open_bi(&ready_a[0], &ready_a[1],
-                          &ready_b[0], &ready_b[1]) == -1)
+            if (_vte_pty_pipe_open_bi(ref ready_a[0], ref ready_a[1],
+                          ref ready_b[0], ref ready_b[1]) == -1)
             {
                 // Error setting up pipes.  Bail. 
                 child = -1;
                 return -1;
-            }*/
+            }
 
             /* Start up a child. */
             ///pid = Native.fork();
@@ -305,6 +308,39 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             throw new Exception();
             //Native.g_assert_not_reached();
             return -1;
+        }
+
+        static int _vte_pty_pipe_open(ref IntPtr a, ref IntPtr b)
+        {
+
+            IntPtr[] p = new IntPtr[2];
+            int ret = -1;
+
+            ret = Native.pipe(p);
+
+            if (ret == 0)
+            {
+                a = p[0];
+                b = p[1];
+            }
+            return ret;
+        }
+
+        static int _vte_pty_pipe_open_bi(ref IntPtr a, ref IntPtr b, ref IntPtr c, ref IntPtr d)
+        {
+            int ret;
+            ret = _vte_pty_pipe_open(ref a, ref b);
+            if (ret != 0)
+            {
+                return ret;
+            }
+            ret = _vte_pty_pipe_open(ref c, ref d);
+            if (ret != 0)
+            {
+                Native.close(a);
+                Native.close(b);
+            }
+            return ret;
         }
 
         /* Like read, but hide EINTR and EAGAIN. */
