@@ -15,6 +15,8 @@ namespace AvalonStudio.Controls.Standard.Terminal
 {
     [ExportToolControl]
     [Export(typeof(IExtension))]
+    [Export(typeof(TerminalViewModel))]
+    [Shared]
     public class TerminalViewModel : ToolViewModel, IActivatableExtension
     {
         private IConnection _connection;
@@ -55,7 +57,7 @@ namespace AvalonStudio.Controls.Standard.Terminal
             }
         }
 
-        public void Activation()
+        public override void OnOpen()
         {
             CreateConnection(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
 
@@ -86,6 +88,16 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
             shell.MainPerspective.AddOrSelectTool(this);
             IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
+        }
+
+        public override bool OnClose()
+        {
+            return base.OnClose();
+        }
+
+        public void Activation()
+        {
+            
         }
 
         private void Connection_Closed(object sender, System.EventArgs e)
