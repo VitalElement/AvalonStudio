@@ -1,15 +1,15 @@
+using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
+using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
+using AvalonStudio.Platforms;
 using AvalonStudio.Platforms.Terminals;
 using AvalonStudio.Shell;
 using ReactiveUI;
+using System;
+using System.Composition;
 using System.Reactive.Linq;
 using VtNetCore.Avalonia;
-using System;
-using AvalonStudio.Platforms;
-using AvalonStudio.CommandLineTools;
-using AvalonStudio.Extensibility.Studio;
-using System.Composition;
 
 namespace AvalonStudio.Controls.Standard.Terminal
 {
@@ -22,6 +22,7 @@ namespace AvalonStudio.Controls.Standard.Terminal
         private IConnection _connection;
         private bool _terminalVisible;
         private IStudio _studio;
+        private object _createLock = new object();
 
         public TerminalViewModel() : base("Terminal")
         {
@@ -29,75 +30,86 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
         public override Location DefaultLocation => Location.Bottom;
 
-        private void CreateConnection(string workingDirectory)
+        private void CreateConnection(string workingDirectory = null)
+        {
+            lock (_createLock)
+            {
+                if (workingDirectory == null)
+                {
+                    _studio = IoC.Get<IStudio>();
+
+                    workingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+                    var solution = _studio.CurrentSolution;
+
+                    if (solution != null)
+                    {
+                        if (solution?.StartupProject != null)
+                        {
+                            workingDirectory = solution.StartupProject.CurrentDirectory;
+                        }
+                        else
+                        {
+                            workingDirectory = solution.CurrentDirectory;
+                        }
+                    }
+                }
+
+                CloseConnection();
+
+                var provider = IoC.Get<IPsuedoTerminalProvider>();
+
+                if (provider != null)
+                {
+                    var shellExecutable = PlatformSupport.ResolveFullExecutablePath("powershell" + Platform.ExecutableExtension);
+
+                    if (shellExecutable != null)
+                    {
+                        System.Console.WriteLine("Starting terminal");
+                        var terminal = provider.Create(80, 32, workingDirectory, null, shellExecutable);
+
+                        Connection = new PsuedoTerminalConnection(terminal);
+
+                        TerminalVisible = true;
+
+                        Connection.Closed += Connection_Closed;
+                    }
+                }
+            }
+        }
+
+        private void CloseConnection ()
         {
             if (Connection != null)
             {
+                System.Console.WriteLine("Closing Terminal");
                 Connection.Closed -= Connection_Closed;
                 Connection.Disconnect();
                 Connection = null;
-            }
-
-            var provider = IoC.Get<IPsuedoTerminalProvider>();
-
-            if (provider != null)
-            {
-                var shellExecutable = PlatformSupport.ResolveFullExecutablePath("powershell" + Platform.ExecutableExtension);
-
-                if (shellExecutable != null)
-                {
-                    var terminal = provider.Create(80, 32, workingDirectory, null, shellExecutable);
-
-                    Connection = new PsuedoTerminalConnection(terminal);
-
-                    TerminalVisible = true;
-
-                    Connection.Closed += Connection_Closed;
-                }
             }
         }
 
         public override void OnOpen()
         {
-            CreateConnection(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
-
-            _studio = IoC.Get<IStudio>();
+            CreateConnection();
 
             Observable.FromEventPattern<SolutionChangedEventArgs>(_studio, nameof(_studio.SolutionChanged)).Subscribe(args =>
             {
-                if (args.EventArgs.NewValue != null)
-                {
-                    var workingDirectoy = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
-                    var solution = args.EventArgs.NewValue;
-
-                    if (solution.StartupProject != null)
-                    {
-                        workingDirectoy = solution.StartupProject.CurrentDirectory;
-                    }
-                    else
-                    {
-                        workingDirectoy = solution.CurrentDirectory;
-                    }
-
-                    CreateConnection(workingDirectoy);
-                }
+                CreateConnection();
             });
 
-            var shell = IoC.Get<IShell>();
-
-            shell.MainPerspective.AddOrSelectTool(this);
-            IoC.Get<IStudio>().DebugPerspective.AddOrSelectTool(this);
+            base.OnOpen();
         }
 
         public override bool OnClose()
         {
+            CloseConnection();
             return base.OnClose();
         }
 
         public void Activation()
         {
-            
+
         }
 
         private void Connection_Closed(object sender, System.EventArgs e)
