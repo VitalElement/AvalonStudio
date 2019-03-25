@@ -23,7 +23,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
         public PublishedToolchainSettingsViewModel(IProject model) : base("Platform", model)
         {
             _settings = model.GetToolchainSettings<PublishedGCCToolchainSettings>();
-            
+
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 try
@@ -32,7 +32,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
                     AvailableToolchains = new ObservableCollection<string>(packages);
                 }
-                catch(System.Exception)
+                catch (System.Exception)
                 {
                     AvailableToolchains = new ObservableCollection<string>();
                 }
@@ -47,7 +47,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
                     {
                         SelectedVersion = Versions.FirstOrDefault(v => v.Version == Version.Parse(_settings.Version));
 
-                        if(SelectedVersion == null)
+                        if (SelectedVersion == null)
                         {
                             SelectedVersion = Versions.FirstOrDefault();
                         }

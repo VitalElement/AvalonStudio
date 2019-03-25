@@ -2,6 +2,7 @@ using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Languages;
+using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Projects.Standard;
@@ -59,12 +60,24 @@ namespace AvalonStudio.Toolchains.GCC
 
         public virtual string SizeExecutable => Path.Combine(BinDirectory, $"{SizePrefix}{SizeName}" + Platform.ExecutableExtension);
 
+        public virtual string SysRoot { get; set; }
+
         public virtual string[] ExtraPaths => new string[0];
 
         [ImportingConstructor]
         public GCCToolchain(IStatusBar statusBar)
             : base(statusBar)
         {
+        }
+
+        public override IList<object> GetConfigurationPages(IProject project)
+        {
+            return new List<object>
+            {
+                new SysRootSettingsFormViewModel(project),
+                new CompileSettingsFormViewModel(project),
+                new LinkerSettingsFormViewModel(project)
+            };
         }
 
         public override bool SupportsFile(ISourceFile file)
@@ -211,7 +224,17 @@ namespace AvalonStudio.Toolchains.GCC
             }
 
             var environment = superProject.GetEnvironmentVariables().AppendRange(Platform.EnvironmentVariables);
-            var arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile).ExpandVariables(environment);
+
+            var arguments = "";
+
+            if (!string.IsNullOrWhiteSpace(SysRoot))
+            {
+                arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP --sysroot \"{4}\"", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile, SysRoot).ExpandVariables(environment);
+            }
+            else
+            {
+                arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile).ExpandVariables(environment);
+            }
 
             result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) => console.WriteLine(e.Data), (s, e) =>
             {
@@ -322,7 +345,16 @@ namespace AvalonStudio.Toolchains.GCC
             else
             {
                 var environment = superProject.GetEnvironmentVariables().AppendRange(Platform.EnvironmentVariables);
-                arguments = string.Format("{0} {1} -o{2} {3} {4} -Wl,--start-group {5} {6} -Wl,--end-group", GetLinkerArguments(superProject, project).ExpandVariables(environment), linkerScripts, executable, objectArguments, libraryPaths, linkedLibraries, libs);
+
+                if(!string.IsNullOrWhiteSpace(SysRoot))
+                {
+                    arguments = string.Format("{0} {1} -o{2} {3} {4} -Wl,--start-group {5} {6} -Wl,--end-group --sysroot \"{7}\"", GetLinkerArguments(superProject, project).ExpandVariables(environment), linkerScripts, executable, objectArguments, libraryPaths, linkedLibraries, libs, SysRoot);
+                }
+                else
+                {
+                    arguments = string.Format("{0} {1} -o{2} {3} {4} -Wl,--start-group {5} {6} -Wl,--end-group", GetLinkerArguments(superProject, project).ExpandVariables(environment), linkerScripts, executable, objectArguments, libraryPaths, linkedLibraries, libs);
+                }
+
             }
 
             result.ExitCode = PlatformSupport.ExecuteShellCommand(commandName, arguments, (s, e) =>
@@ -404,6 +436,13 @@ namespace AvalonStudio.Toolchains.GCC
         public override async Task<bool> InstallAsync(IConsole console, IProject project)
         {
             await InitialiseInbuiltLibraries();
+
+            var settings = project.GetToolchainSettingsIfExists<GccToolchainSettings>();
+
+            if(settings != null && !string.IsNullOrWhiteSpace(settings.SysRoot) && (settings.SysRoot.Contains('?') || settings.SysRoot.Contains('='))) 
+            {
+                SysRoot = await PackageManager.ResolvePackagePathAsync(settings.SysRoot, appendExecutableExtension: false, console: console);
+            }
 
             return true;
         }

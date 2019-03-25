@@ -8,6 +8,8 @@ namespace AvalonStudio.Toolchains.GCC
             LinkSettings = new LinkSettings();
         }
 
+        public string SysRoot { get; set; }
+
         public CompileSettings CompileSettings { get; set; }
         public LinkSettings LinkSettings { get; set; }
     }

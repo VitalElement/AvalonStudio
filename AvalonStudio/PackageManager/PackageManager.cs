@@ -477,7 +477,7 @@ namespace AvalonStudio.Packaging
                     switch ((char)tarEntry.TarHeader.TypeFlag)
                     {
                         case '1':
-                            if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+                            if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
                             {
                                 Platform.CreateHardLinkWin32(outName.NormalizePath(), Path.Combine(targetDir, tarEntry.TarHeader.LinkName).NormalizePath(), !tarEntry.IsDirectory);
                             }
@@ -503,26 +503,34 @@ namespace AvalonStudio.Packaging
                 }
                 else
                 {
-                    FileStream outStr = new FileStream(outName, FileMode.Create);
-
-                    if (asciiTranslate)
-                        CopyWithAsciiTranslate(tarIn, outStr);
-                    else
-                        tarIn.CopyEntryContents(outStr);
-
-                    outStr.Close();
-
-                    if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix || Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
+                    try
                     {
-                        var unixFileInfo = new UnixFileInfo(outName);
+                        using (var outStr = new FileStream(outName, FileMode.Create))
+                        {
 
-                        unixFileInfo.FileAccessPermissions = (FileAccessPermissions)tarEntry.TarHeader.Mode;
+                            if (asciiTranslate)
+                                CopyWithAsciiTranslate(tarIn, outStr);
+                            else
+                                tarIn.CopyEntryContents(outStr);
+                        }
+
+                        if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix || Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
+                        {
+                            var unixFileInfo = new UnixFileInfo(outName)
+                            {
+                                FileAccessPermissions = (FileAccessPermissions)tarEntry.TarHeader.Mode
+                            };
+                        }
+
+                        // Set the modification date/time. This approach seems to solve timezone issues.
+                        DateTime myDt = DateTime.SpecifyKind(tarEntry.ModTime, DateTimeKind.Utc);
+                        File.SetLastWriteTime(outName, myDt);
                     }
+                    catch (Exception)
+                    {
 
-                    // Set the modification date/time. This approach seems to solve timezone issues.
-                    DateTime myDt = DateTime.SpecifyKind(tarEntry.ModTime, DateTimeKind.Utc);
-                    File.SetLastWriteTime(outName, myDt);
-                }
+                    }
+                    }
             }
 
             tarIn.Close();
@@ -667,7 +675,7 @@ namespace AvalonStudio.Packaging
 
                 console?.WriteLine($"Package: {packageName} v{ver} will be downloaded and installed.");
 
-                var package = packages.FirstOrDefault(p => p.Version == ver && p.Platform == systemPlatform);
+                var package = packages.FirstOrDefault(p => p.Version == ver && (p.Platform == systemPlatform || p.Platform == PackagePlatform.Any));
 
                 await DownloadPackage(package, p =>
                 {
@@ -693,6 +701,28 @@ namespace AvalonStudio.Packaging
             {
                 return await ResolveDependencies(packageName, ver?.ToString(), console);
             }
+        }
+
+        public static async Task<string> ResolvePackagePathAsync(string url, bool appendExecutableExtension = true, IConsole console = null)
+        {
+            string result = "";
+
+            var packageInfo = ParseUrl(url);
+
+            var fullPackageId = (packageInfo.package + packageInfo.version).ToLower();
+
+            var packageLocation = "";
+
+            if (await EnsurePackage(packageInfo.package, packageInfo.version, console) == PackageEnsureStatus.NotFound)
+            {
+                throw new Exception("Package not found.");
+            }
+
+            packageLocation = PackageManager.GetPackageDirectory(packageInfo.package, packageInfo.version).ToPlatformPath();
+
+            result = (Path.Combine(packageLocation, packageInfo.location) + (appendExecutableExtension ? Platform.ExecutableExtension : "")).ToPlatformPath();
+
+            return result;
         }
 
         public static (string package, string version, string location) ParseUrl(string url)
