@@ -145,6 +145,8 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         {
             var terminal = _vte_pty_open_unix98(out int child, new string[0], "/bin/bash", new string[0], "~/", 80, 20);
 
+
+
             var m = Native.open("/dev/ptmx", Native.O_RDWR | Native.O_NOCTTY);
 
             var result = Native.grantpt(m);
@@ -180,6 +182,8 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             child = -1;
             IntPtr fd = new IntPtr(-1);
             IntPtr buf;
+
+            
 
             /* Attempt to open the master. */
             fd = _vte_pty_getpt();
@@ -237,8 +241,16 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             }
 
             /* Start up a child. */
-            ///pid = Native.fork();
-            pid = -1;
+            var process = new Process();
+            process.StartInfo = new ProcessStartInfo();
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardInput = true;
+            process.StartInfo.FileName = "/bin/bash";
+            process.Start();
+
+            
+            //pid = Native.fork();
+            pid = process.Id;
             switch (pid)
             {
                 case -1:
@@ -256,13 +268,13 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
                     Native.setpgid(0, 0);
 
                     /* Close most descriptors. */
-                    for (i = 0; i < Native.sysconf(Native._SC_OPEN_MAX); i++)
+                    /* for (i = 0; i < Native.sysconf(Native._SC_OPEN_MAX); i++)
                     {
                         if ((i != (int)ready_b[0]) && (i != (int)ready_a[1]))
                         {
                             Native.close(new IntPtr(i));
                         }
-                    }
+                    }*/
 
                     /* Open the slave PTY, acquiring it as the controlling terminal
                      * for this process and its children. */
