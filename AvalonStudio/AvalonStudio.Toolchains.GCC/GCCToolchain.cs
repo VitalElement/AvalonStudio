@@ -229,7 +229,7 @@ namespace AvalonStudio.Toolchains.GCC
 
             if (!string.IsNullOrWhiteSpace(SysRoot))
             {
-                arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP --sysroot \"{4}\"", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile, SysRoot).ExpandVariables(environment);
+                arguments = string.Format("{0} {1} {2} -o{3} -MMD -MP --sysroot=\"{4}\"", fileArguments, GetCompilerArguments(superProject, project, file), file.Location, outputFile, SysRoot).ExpandVariables(environment);
             }
             else
             {
@@ -348,7 +348,7 @@ namespace AvalonStudio.Toolchains.GCC
 
                 if(!string.IsNullOrWhiteSpace(SysRoot))
                 {
-                    arguments = string.Format("{0} {1} -o{2} {3} {4} -Wl,--start-group {5} {6} -Wl,--end-group --sysroot \"{7}\"", GetLinkerArguments(superProject, project).ExpandVariables(environment), linkerScripts, executable, objectArguments, libraryPaths, linkedLibraries, libs, SysRoot);
+                    arguments = string.Format("{0} {1} -o{2} {3} {4} -Wl,--start-group {5} {6} -Wl,--end-group --sysroot=\"{7}\"", GetLinkerArguments(superProject, project).ExpandVariables(environment), linkerScripts, executable, objectArguments, libraryPaths, linkedLibraries, libs, SysRoot);
                 }
                 else
                 {
@@ -442,6 +442,10 @@ namespace AvalonStudio.Toolchains.GCC
             if(settings != null && !string.IsNullOrWhiteSpace(settings.SysRoot) && (settings.SysRoot.Contains('?') || settings.SysRoot.Contains('='))) 
             {
                 SysRoot = await PackageManager.ResolvePackagePathAsync(settings.SysRoot, appendExecutableExtension: false, console: console);
+            }
+            else
+            {
+                SysRoot = "";
             }
 
             return true;
