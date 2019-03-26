@@ -38,8 +38,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             var attributes = Marshal.AllocHGlobal(1024);
             res = Native.posix_spawnattr_init(attributes);
 
-            res = Native.posix_spawnp(out var pid, "dotnet", fileActions, attributes, new string[] { "dotnet", "/home/ubuntu/repos/AvalonStudio/AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.2/AvalonStudio.dll", "--trampoline", null }, new string[] { null });
-
+            res = Native.posix_spawnp(out var pid, "dotnet", fileActions, attributes, new string[] { "dotnet", "/home/ubuntu/repos/AvalonStudio/AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.2/AvalonStudio.dll", "--trampoline", null }, new string[] { "TERM=xterm-256color", null });
 
             var fs = new FileStream(new SafeFileHandle(fdm, true), FileAccess.ReadWrite);
             var process = Process.GetProcessById((int)pid);

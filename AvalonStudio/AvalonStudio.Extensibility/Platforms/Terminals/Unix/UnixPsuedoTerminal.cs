@@ -34,7 +34,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         {
             Native.setsid();
             Native.ioctl (IntPtr.Zero, Native.TIOCSCTTY, IntPtr.Zero);
-            Native.execve("/bin/bash", new string[]{"/bin/bash", null}, new string[]{null});
+            Native.execve("/bin/bash", new string[]{"/bin/bash", null}, new string[]{ "TERM=xterm-256color", null});
         }
 
         public void Dispose()
@@ -61,7 +61,13 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
                 buffer[0] = 13;
             }
 
-            await _stdin.WriteAsync(buffer, offset, count);
+            var buf = Marshal.AllocHGlobal(count);
+            Marshal.Copy(buffer, offset, buf, count);
+            Native.write(_cfg, buf, count);
+
+            Marshal.FreeHGlobal(buf);
+            //await _stdin.WriteAsync(buffer, offset, count);
+            
         }
 
         public void SetSize(int columns, int rows)
