@@ -172,6 +172,8 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 
             int x = Mono.Posix.Syscall.fork();
 
+            Console.WriteLine(x + " --- ");
+
             var fdm = Native.open("/dev/ptmx", Native.O_RDWR | Native.O_NOCTTY);
 
             var result = Native.grantpt(fdm);
