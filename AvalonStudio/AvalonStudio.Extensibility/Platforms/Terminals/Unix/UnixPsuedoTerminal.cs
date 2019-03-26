@@ -205,7 +205,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 
                 IntPtr pid = Marshal.AllocHGlobal(1024);
                 
-             res= Native.posix_spawnp(ref pid, "bash", fileActions, attributes, new string[] {"bash", "/home/ubuntu/repos/AvalonStudio/AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.2/AvalonStudio.dll", "--trampoline" ,null}, new string[]{ null});
+             res= Native.posix_spawnp(ref pid, "dotnet", fileActions, attributes, new string[] {"dotnet", "/home/ubuntu/repos/AvalonStudio/AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.2/AvalonStudio.dll", "--trampoline" ,null}, new string[]{ null});
 
                 var data = new byte[1024];
                 using (var fs = new FileStream(new SafeFileHandle(fdm, true), FileAccess.ReadWrite))
