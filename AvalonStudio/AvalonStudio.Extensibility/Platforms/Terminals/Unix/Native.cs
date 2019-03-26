@@ -142,8 +142,8 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 
 
 
-
-        public struct winsize
+        [StructLayout(LayoutKind.Sequential)]
+        public class winsize
         {
             public ushort ws_row;   /* rows, in characters */
             public ushort ws_col;   /* columns, in characters */

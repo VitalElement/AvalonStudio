@@ -61,7 +61,7 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
                 if (provider != null)
                 {
-                    var shellExecutable = PlatformSupport.ResolveFullExecutablePath("powershell" + Platform.ExecutableExtension);
+                    var shellExecutable = PlatformSupport.ResolveFullExecutablePath("bash" + Platform.ExecutableExtension);
 
                     if (shellExecutable != null)
                     {
