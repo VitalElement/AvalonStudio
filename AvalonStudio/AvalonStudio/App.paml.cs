@@ -38,8 +38,6 @@ namespace AvalonStudio
             {
                 UnixPsuedoTerminal.Trampoline();
             }
-
-            UnixPsuedoTerminal.Test();
         
 #if !DEBUG
         try
