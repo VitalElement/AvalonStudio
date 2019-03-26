@@ -479,7 +479,7 @@ namespace AvalonStudio.Packaging
                         case '1':
                             if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
                             {
-                                Platform.CreateHardLinkWin32(outName.NormalizePath(), Path.Combine(targetDir, tarEntry.TarHeader.LinkName).NormalizePath(), !tarEntry.IsDirectory);
+                                Platform.CreateHardLinkWin32(outName.NormalizePath(), tarEntry.TarHeader.LinkName, !tarEntry.IsDirectory);
                             }
                             else
                             {
@@ -490,7 +490,7 @@ namespace AvalonStudio.Packaging
                         case '2':
                             if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
                             {
-                                Platform.CreateSymbolicLinkWin32(outName.NormalizePath(), Path.Combine(targetDir, tarEntry.TarHeader.LinkName).NormalizePath(), !tarEntry.IsDirectory);
+                                Platform.CreateSymbolicLinkWin32(outName.NormalizePath(), tarEntry.TarHeader.LinkName, !tarEntry.IsDirectory);
                             }
                             else
                             {
