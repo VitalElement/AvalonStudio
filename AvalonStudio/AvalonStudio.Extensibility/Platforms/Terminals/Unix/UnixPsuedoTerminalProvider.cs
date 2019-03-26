@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Composition;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -38,7 +39,24 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             var attributes = Marshal.AllocHGlobal(1024);
             res = Native.posix_spawnattr_init(attributes);
 
-            res = Native.posix_spawnp(out var pid, "dotnet", fileActions, attributes, new string[] { "dotnet", "/home/ubuntu/repos/AvalonStudio/AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.2/AvalonStudio.dll", "--trampoline", null }, new string[] { "TERM=xterm-256color", null });
+            var envVars = new List<string>();
+            var env = Environment.GetEnvironmentVariables();
+
+            foreach(var variable in env.Keys)
+            {
+                if(variable.ToString() != "TERM"){
+                envVars.Add($"{variable}={env[variable]}");
+
+                Console.WriteLine(envVars.Last());
+                }
+            }
+
+            envVars.Add("TERM=xterm-256color");
+            envVars.Add(null);
+
+
+            var path = System.Reflection.Assembly.GetEntryAssembly().Location;
+            res = Native.posix_spawnp(out var pid, "dotnet", fileActions, attributes, new string[] { "dotnet", path, "--trampoline", null }, envVars.ToArray());
 
             var fs = new FileStream(new SafeFileHandle(fdm, true), FileAccess.ReadWrite);
             var process = Process.GetProcessById((int)pid);

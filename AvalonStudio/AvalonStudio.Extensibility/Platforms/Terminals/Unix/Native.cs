@@ -31,65 +31,65 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         public const int TIOCSCTTY = 0x540E;
 
         //int open(const char *pathname, int flags);
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern IntPtr open(string name, int flags);
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern int close(IntPtr fd);
 
 
 
         //ssize_t read(int fd, void *buf, size_t count);
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern int read(IntPtr fd, IntPtr buffer, int length);
 
         //ssize_t write(int fd, const void *buf, size_t count); 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern int write(IntPtr fd, IntPtr buffer, int length);
 
         //int grantpt(int fd);
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern int grantpt(IntPtr fd);
 
         //int unlockpt(int fd);
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern int unlockpt(IntPtr fd);
 
         //i later marshall the pointer to a string
         //char *ptsname(int fd);
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern IntPtr ptsname(IntPtr fd);
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern void free(IntPtr ptr);
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern int pipe(IntPtr[] fds);
 
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern void setsid();
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern int setpgid(int pid, int pgid);
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern int posix_spawn_file_actions_adddup2(IntPtr file_actions, int fildes, int newfildes);
         
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern int posix_spawn_file_actions_addclose(IntPtr file_actions, int fildes); 
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern int posix_spawn_file_actions_init(IntPtr file_actions);
         
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern int posix_spawnattr_init(IntPtr attributes);
         
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern int posix_spawnp(out IntPtr pid, string path, IntPtr fileActions, IntPtr attrib, string[] argv, string[] envp);
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         internal static extern  int execve(string filename, string[] argv,string[] envp);
 
 
@@ -116,19 +116,19 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             F_NOTIFY = 1026, // Required notifications on a directory
         }
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         public static extern long sysconf(int name);
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         public static extern int fcntl(IntPtr fd, FcntlCommand cmd);
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         public static extern int fcntl(IntPtr fd, FcntlCommand cmd, long arg);
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         public static extern int fcntl(IntPtr fd, FcntlCommand cmd, int arg);
 
-        [DllImport("libc.so.6")]
+        [DllImport("libSystem.dylib")]
         public static extern int fcntl(IntPtr fd, FcntlCommand cmd, IntPtr ptr);
 
         [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
