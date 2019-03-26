@@ -1,4 +1,5 @@
 ﻿using AvalonStudio.Platforms.Terminals;
+using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -94,10 +95,10 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         
 
         [DllImport("libc.so.6")]
-        internal static extern int posix_spawn(ref IntPtr pid, string path, IntPtr fileActions, IntPtr attrib, string[] argv, string[] envp);
+        internal static extern int posix_spawnp(ref IntPtr pid, string path, IntPtr fileActions, IntPtr attrib, string[] argv, string[] envp);
 
-
-        
+        [DllImport("libc.so.6")]
+        internal static extern  int execve(string filename, string[] argv,string[] envp);
 
 
 
@@ -145,7 +146,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
         internal static extern int ioctl(IntPtr handle, int request, IntPtr BufferSizeBytes);
 
-
+        
 
 
 
@@ -165,10 +166,9 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
     {
         public static void Trampoline()
         {
-            //Native.setsid();
-            //Native.ioctl (IntPtr.Zero, Native.TIOCSCTTY, IntPtr.Zero);
-                
-                //execve(...)
+            Native.setsid();
+            Native.ioctl (IntPtr.Zero, Native.TIOCSCTTY, IntPtr.Zero);
+            Native.execve("/bin/bash", new string[]{"/bin/bash", null}, new string[]{null});
         }
         public static void Test()
         {
@@ -205,13 +205,14 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 
                 IntPtr pid = Marshal.AllocHGlobal(1024);
                 
-             res= Native.posix_spawn(ref pid, "/bin/bash", fileActions, attributes, new string[] {"/bin/bash","-c", "touch -c ~/hello", null}, new string[]{ null});
+             res= Native.posix_spawnp(ref pid, "bash", fileActions, attributes, new string[] {"bash", "/home/ubuntu/repos/AvalonStudio/AvalonStudio/AvalonStudio/bin/Debug/netcoreapp2.2/AvalonStudio.dll", "--trampoline" ,null}, new string[]{ null});
 
                 var data = new byte[1024];
-                using (var fs = new FileStream(name, FileMode.Open))
+                using (var fs = new FileStream(new SafeFileHandle(fdm, true), FileAccess.ReadWrite))
                 {
-                    int bytes = fs.Read(data, 0, 1);
+                    int bytes = fs.Read(data, 0, 1024);
                     
+                    Console.WriteLine(Encoding.ASCII.GetString(data));
                 }
         }
 

@@ -36,6 +36,7 @@ namespace AvalonStudio
         {
             if(args.Length>0 && args[0] == "--terminal-trampoline")
             {
+                Console.WriteLine("Trampolining");
                 UnixPsuedoTerminal.Trampoline();
             }
 
