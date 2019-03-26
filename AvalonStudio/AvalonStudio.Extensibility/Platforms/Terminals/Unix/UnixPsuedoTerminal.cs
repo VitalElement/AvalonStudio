@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -81,6 +82,9 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 
         [DllImport("libc.so.6")]
         internal static extern int posix_spawn_file_actions_adddup2(IntPtr file_actions, int fildes, int newfildes);
+        
+        [DllImport("libc.so.6")]
+        internal static extern int posix_spawn_file_actions_addclose(IntPtr file_actions, int fildes); 
 
         [DllImport("libc.so.6")]
         internal static extern int posix_spawn_file_actions_init(IntPtr file_actions);
@@ -170,9 +174,9 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         {
             //var terminal = _vte_pty_open_unix98(out int child, new string[0], "/bin/bash", new string[0], "~/", 80, 20);
 
-            int x = Mono.Posix.Syscall.fork();
+            //int x = Mono.Posix.Syscall.fork();
 
-            Console.WriteLine(x + " --- ");
+            //Console.WriteLine(x + " --- ");
 
             var fdm = Native.open("/dev/ptmx", Native.O_RDWR | Native.O_NOCTTY);
 
@@ -188,18 +192,27 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 
             var fileActions = Marshal.AllocHGlobal(1024);
             Native.posix_spawn_file_actions_init(fileActions);
-            var fd = Native.posix_spawn_file_actions_adddup2(fileActions, (int)fds, 0);
-             fd = Native.posix_spawn_file_actions_adddup2(fileActions, (int)fds, 1);
-             fd = Native.posix_spawn_file_actions_adddup2(fileActions, (int)fds, 2);
+            var res = Native.posix_spawn_file_actions_adddup2(fileActions, (int)fds, 0);
+             res = Native.posix_spawn_file_actions_adddup2(fileActions, (int)fds, 1);
+             res = Native.posix_spawn_file_actions_adddup2(fileActions, (int)fds, 2);
+             res = Native.posix_spawn_file_actions_addclose(fileActions, (int)fdm);
+             res = Native.posix_spawn_file_actions_addclose(fileActions, (int)fds);
+             
+
 
             var attributes = Marshal.AllocHGlobal(1024);
-            fd = Native.posix_spawnattr_init(attributes);
+            res = Native.posix_spawnattr_init(attributes);
 
                 IntPtr pid = Marshal.AllocHGlobal(1024);
                 
-             var res= Native.posix_spawn(ref pid, "/bin/bash", fileActions, attributes, new string[] {"-c", "touch -c ~/hello"}, new string[]{"test=1"});
+             res= Native.posix_spawn(ref pid, "/bin/bash", fileActions, attributes, new string[] {"/bin/bash","-c", "touch -c ~/hello", null}, new string[]{ null});
 
-
+                var data = new byte[1024];
+                using (var fs = new FileStream(name, FileMode.Open))
+                {
+                    int bytes = fs.Read(data, 0, 1);
+                    
+                }
         }
 
         static IntPtr _vte_pty_getpt()
