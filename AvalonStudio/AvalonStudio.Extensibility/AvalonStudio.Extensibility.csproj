@@ -6,7 +6,8 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Avalonia" />    
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />    
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="ReactiveUI" />
     <PackageReference Include="System.Composition" Version="1.2.0" />

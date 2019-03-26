@@ -170,7 +170,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         {
             //var terminal = _vte_pty_open_unix98(out int child, new string[0], "/bin/bash", new string[0], "~/", 80, 20);
 
-
+            int x = Mono.Posix.Syscall.fork();
 
             var fdm = Native.open("/dev/ptmx", Native.O_RDWR | Native.O_NOCTTY);
 
