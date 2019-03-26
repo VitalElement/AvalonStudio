@@ -34,6 +34,8 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 
         public const int ENOENT = 2;
 
+        public const int TIOCSCTTY = 0x540E;
+
         //int open(const char *pathname, int flags);
         [DllImport("libc.so.6")]
         internal static extern IntPtr open(string name, int flags);
@@ -82,6 +84,16 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 
         [DllImport("libc.so.6")]
         internal static extern int posix_spawn_file_actions_init(IntPtr file_actions);
+        
+        [DllImport("libc.so.6")]
+        internal static extern int posix_spawnattr_init(IntPtr attributes);
+        
+
+        [DllImport("libc.so.6")]
+        internal static extern int posix_spawn(ref IntPtr pid, string path, IntPtr fileActions, IntPtr attrib, string[] argv, string[] envp);
+
+
+        
 
 
 
@@ -147,26 +159,44 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 
     public class UnixPsuedoTerminal : IPsuedoTerminal
     {
+        public static void Trampoline()
+        {
+            //Native.setsid();
+            //Native.ioctl (IntPtr.Zero, Native.TIOCSCTTY, IntPtr.Zero);
+                
+                //execve(...)
+        }
         public static void Test()
         {
             //var terminal = _vte_pty_open_unix98(out int child, new string[0], "/bin/bash", new string[0], "~/", 80, 20);
 
 
 
-            var m = Native.open("/dev/ptmx", Native.O_RDWR | Native.O_NOCTTY);
+            var fdm = Native.open("/dev/ptmx", Native.O_RDWR | Native.O_NOCTTY);
 
-            var result = Native.grantpt(m);
+            var result = Native.grantpt(fdm);
 
-            result = Native.unlockpt(m);
+            result = Native.unlockpt(fdm);
 
-            var namePtr = Native.ptsname(m);
+            var namePtr = Native.ptsname(fdm);
 
             var name = Marshal.PtrToStringAnsi(namePtr);
 
+            var fds= Native.open(name, (int)Native.O_RDWR);
 
             var fileActions = Marshal.AllocHGlobal(1024);
             Native.posix_spawn_file_actions_init(fileActions);
-            var fd = Native.posix_spawn_file_actions_adddup2(fileActions, 0, 0);
+            var fd = Native.posix_spawn_file_actions_adddup2(fileActions, (int)fds, 0);
+             fd = Native.posix_spawn_file_actions_adddup2(fileActions, (int)fds, 1);
+             fd = Native.posix_spawn_file_actions_adddup2(fileActions, (int)fds, 2);
+
+            var attributes = Marshal.AllocHGlobal(1024);
+            fd = Native.posix_spawnattr_init(attributes);
+
+                IntPtr pid = Marshal.AllocHGlobal(1024);
+                
+             var res= Native.posix_spawn(ref pid, "/bin/bash", fileActions, attributes, new string[] {"-c", "touch -c ~/hello"}, new string[]{"test=1"});
+
 
         }
 
