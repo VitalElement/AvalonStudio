@@ -77,6 +77,12 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         [DllImport("libc.so.6")]
         internal static extern int setpgid(int pid, int pgid);
 
+        [DllImport("libc.so.6")]
+        internal static extern int posix_spawn_file_actions_adddup2(IntPtr file_actions, int fildes, int newfildes);
+
+        [DllImport("libc.so.6")]
+        internal static extern int posix_spawn_file_actions_init(IntPtr file_actions);
+
 
 
         [Map]
@@ -143,7 +149,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
     {
         public static void Test()
         {
-            var terminal = _vte_pty_open_unix98(out int child, new string[0], "/bin/bash", new string[0], "~/", 80, 20);
+            //var terminal = _vte_pty_open_unix98(out int child, new string[0], "/bin/bash", new string[0], "~/", 80, 20);
 
 
 
@@ -156,6 +162,11 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             var namePtr = Native.ptsname(m);
 
             var name = Marshal.PtrToStringAnsi(namePtr);
+
+
+            var fileActions = Marshal.AllocHGlobal(1024);
+            Native.posix_spawn_file_actions_init(fileActions);
+            var fd = Native.posix_spawn_file_actions_adddup2(fileActions, 0, 0);
 
         }
 
