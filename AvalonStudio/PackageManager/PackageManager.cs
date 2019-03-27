@@ -210,7 +210,7 @@ namespace AvalonStudio.Packaging
                 catch { }
             }
 
-            return result.OrderByDescending(x => x.Version).ToList();
+            return result?.OrderByDescending(x => x.Version).ToList();
         }
 
         public static PackageManifest GetPackageManifest(string package, string version = null)
