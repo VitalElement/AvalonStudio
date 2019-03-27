@@ -668,7 +668,7 @@ namespace AvalonStudio.Packaging
 
                     if (supportedPlatforms.Any())
                     {
-                        console?.WriteLine("Package {packageName} v{ver} supports:");
+                        console?.WriteLine($"Package {packageName} v{ver} supports:");
                         foreach (var platformPkg in supportedPlatforms)
                         {
                             console?.Write($"{platformPkg.Key} ");
