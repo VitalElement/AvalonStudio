@@ -483,7 +483,9 @@ namespace AvalonStudio.Packaging
                             }
                             else
                             {
-                                Console.WriteLine($"Hard links not supported  on linux.: {outName}");
+                                var symLinkInfo = new UnixSymbolicLinkInfo(outName);
+
+                                symLinkInfo.CreateLink(Path.Combine(targetDir, tarEntry.TarHeader.LinkName).NormalizePath());
                             }
                             break;
 
