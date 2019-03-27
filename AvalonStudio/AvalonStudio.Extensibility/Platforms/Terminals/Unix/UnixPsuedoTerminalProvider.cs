@@ -13,7 +13,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 {
     [Shared]
     [Export(typeof(IExtension))]
-    [Export(typeof(IPsuedoTerminalProvider))]
+    [Export("Unix", typeof(IPsuedoTerminalProvider))]
     class UnixPsuedoTerminalProvider : IPsuedoTerminalProvider, IExtension
     {
         public IPsuedoTerminal Create(int columns, int rows, string initialDirectory, string environment, string command, params string[] arguments)

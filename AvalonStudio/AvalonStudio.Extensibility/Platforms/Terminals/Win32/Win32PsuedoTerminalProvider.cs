@@ -9,9 +9,9 @@ using static winpty.WinPty;
 
 namespace AvalonStudio.Platforms.Terminals.Win32
 {
-    //[Shared]
-    //[Export(typeof(IExtension))]
-    //[Export(typeof(IPsuedoTerminalProvider))]
+    [Shared]
+    [Export(typeof(IExtension))]
+    [Export("Windows", typeof( IPsuedoTerminalProvider))]
     public class Win32PsuedoTerminalProvider : IPsuedoTerminalProvider, IExtension
     {
         private static IntPtr TryGetHandle(Process p)

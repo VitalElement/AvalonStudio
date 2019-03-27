@@ -57,11 +57,11 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
                 CloseConnection();
 
-                var provider = IoC.Get<IPsuedoTerminalProvider>();
+                var provider = IoC.Get<IPsuedoTerminalProvider>(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT ? "Windows" : "Unix");
 
                 if (provider != null)
                 {
-                    var shellExecutable = PlatformSupport.ResolveFullExecutablePath("bash" + Platform.ExecutableExtension);
+                    var shellExecutable = PlatformSupport.ResolveFullExecutablePath((Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT ? "powershell" : "bash") + Platform.ExecutableExtension);
 
                     if (shellExecutable != null)
                     {
