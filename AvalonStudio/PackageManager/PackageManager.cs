@@ -227,6 +227,8 @@ namespace AvalonStudio.Packaging
 
         public static string GetPackageDirectory(string package, string version = null)
         {
+            package = package.ToLower();
+            
             var destinationPath = Path.Combine(Platform.PackageDirectory, package);
 
             if (Directory.Exists(destinationPath))
@@ -465,7 +467,7 @@ namespace AvalonStudio.Packaging
                     name = name.Substring(Path.GetPathRoot(name).Length);
 
                 // Apply further name transformations here as necessary
-                string outName = Path.Combine(targetDir, name);
+                string outName = Path.Combine(targetDir, name).NormalizePath();
 
                 string directoryName = Path.GetDirectoryName(outName);
 
@@ -483,9 +485,9 @@ namespace AvalonStudio.Packaging
                             }
                             else
                             {
-                                var symLinkInfo = new UnixSymbolicLinkInfo(outName);
+                                var symLinkInfo = new UnixSymbolicLinkInfo(Path.Combine(targetDir, tarEntry.TarHeader.LinkName).NormalizePath());
 
-                                symLinkInfo.CreateLink(Path.Combine(targetDir, tarEntry.TarHeader.LinkName).NormalizePath());
+                                symLinkInfo.CreateLink(outName);
                             }
                             break;
 
@@ -496,7 +498,7 @@ namespace AvalonStudio.Packaging
                             }
                             else
                             {
-                                var symLinkInfo = new UnixSymbolicLinkInfo(outName);
+                                var symLinkInfo = new UnixSymbolicLinkInfo(outName.NormalizePath());
 
                                 symLinkInfo.CreateSymbolicLinkTo(tarEntry.TarHeader.LinkName);
                             }
@@ -597,11 +599,14 @@ namespace AvalonStudio.Packaging
 
         public static async Task<PackageEnsureStatus> EnsurePackage(string packageName, string version, IConsole console)
         {
+            packageName = packageName.ToLower();
+
             if (string.IsNullOrWhiteSpace(packageName))
             {
                 console.WriteLine("Package with no name. Check definition in manifest file.");
                 return PackageEnsureStatus.NotFound;
             }
+
             Version ver = string.IsNullOrWhiteSpace(version) ? null : Version.Parse(version);
 
             var packageDirectory = Path.Combine(Platform.PackageDirectory, packageName);

@@ -62,7 +62,10 @@ namespace AvalonStudio.Debugging.GDB.JLink
 
             var versions = await PackageManager.ListToolchainPackages("JLink");
 
-            Versions = new List<string>(versions.Select(v => v.Version.ToString()));
+            if(versions != null)
+            {
+                Versions = new List<string>(versions.Select(v => v.Version.ToString()));
+            }
 
             if(File.Exists(deviceFile))
             {
