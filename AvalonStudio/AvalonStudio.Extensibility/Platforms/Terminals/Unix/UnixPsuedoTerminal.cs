@@ -81,6 +81,8 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             Marshal.StructureToPtr(size, unmanagedAddr, true);
             ret = Native.ioctl(_cfg, Native.TIOCSWINSZ, unmanagedAddr);
 
+            var error = Marshal.GetLastWin32Error();
+
             Marshal.PtrToStructure(unmanagedAddr, size);
 
             Marshal.FreeHGlobal(unmanagedAddr);

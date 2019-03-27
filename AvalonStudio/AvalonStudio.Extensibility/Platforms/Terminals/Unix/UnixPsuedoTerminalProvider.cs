@@ -54,7 +54,6 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             envVars.Add("TERM=xterm-256color");
             envVars.Add(null);
 
-
             var path = System.Reflection.Assembly.GetEntryAssembly().Location;
             res = Native.posix_spawnp(out var pid, "dotnet", fileActions, attributes, new string[] { "dotnet", path, "--trampoline", null }, envVars.ToArray());
 

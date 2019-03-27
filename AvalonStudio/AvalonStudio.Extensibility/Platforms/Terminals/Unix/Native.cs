@@ -18,7 +18,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         public const int O_NONBLOCK = 0x2000;
 
         public const int TIOCGWINSZ = 0x5413;
-        public const int TIOCSWINSZ = 0x5414;
+        public const uint TIOCSWINSZ = 0x80087467;
 
         public const int _SC_OPEN_MAX = 5;
 
@@ -136,7 +136,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 
 
         [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
-        internal static extern int ioctl(IntPtr handle, int request, IntPtr BufferSizeBytes);
+        internal static extern int ioctl(IntPtr handle, uint request, IntPtr BufferSizeBytes);
 
         
 
