@@ -9,6 +9,7 @@ using AvalonStudio.Terminals.Unix;
 using AvalonStudio.Terminals.Win32;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.Composition;
 using System.Reactive.Linq;
 using VtNetCore.Avalonia;
@@ -62,17 +63,17 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
                 var args = new List<string>();
 
-                if(Platform.PlatformIdentifier == Platforms.PlatformID.Osx)
+                if(Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
                 {
                     args.Add("-l");
                 }
 
-                var shellExecutable = PlatformSupport.ResolveFullExecutablePath((Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT ? "powershell" : "bash") + Platform.ExecutableExtension, args.ToArray());
+                var shellExecutable = PlatformSupport.ResolveFullExecutablePath((Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT ? "powershell" : "bash") + Platform.ExecutableExtension);
 
                 if (shellExecutable != null)
                 {
                     System.Console.WriteLine("Starting terminal");
-                    var terminal = s_provider.Create(80, 32, workingDirectory, null, shellExecutable);
+                    var terminal = s_provider.Create(80, 32, workingDirectory, null, shellExecutable, args.ToArray());
 
                     Connection = new PsuedoTerminalConnection(terminal);
 
