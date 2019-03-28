@@ -33,8 +33,8 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         public static void Trampoline()
         {
             Native.setsid();
-            Native.ioctl (0, Native.TIOCSCTTY, IntPtr.Zero);
-            Native.execve("/bin/bash", new string[]{"/bin/bash", null}, new string[]{ "TERM=xterm-256color", null});
+            Native.ioctl(0, Native.TIOCSCTTY, IntPtr.Zero);
+            Native.execve("/bin/bash", new string[] { "/bin/bash", null }, new string[] { "TERM=xterm-256color", null });
         }
 
         public void Dispose()
@@ -61,17 +61,28 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
                 buffer[0] = 13;
             }
 
-            
-            /* var buf = Marshal.AllocHGlobal(count);
-            Marshal.Copy(buffer, offset, buf, count);
-            Native.write(_cfg, buf, count);
+            await Task.Run(() =>
+            {
+                var buf = Marshal.AllocHGlobal(count);
+                Marshal.Copy(buffer, offset, buf, count);
+                Native.write(_cfg, buf, count);
 
-            Marshal.FreeHGlobal(buf);*/
+                Marshal.FreeHGlobal(buf);
+            });
 
-             await _stdin.WriteAsync(buffer, offset, count);
+            //await _stdin.WriteAsync(System.Text.Encoding.UTF8.GetString(buffer).ToCharArray(), offset, count);
 
-            await _stdin.FlushAsync();
-            
+            //_stdin.WriteByte(buffer[0]);
+            //_stdin.Flush();
+            //_stdin.WriteByte(0);
+
+
+
+
+            //await _stdin.FlushAsync();
+
+            //await _stdin.FlushAsync();
+
         }
 
         public void SetSize(int columns, int rows)
