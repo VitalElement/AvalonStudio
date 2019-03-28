@@ -23,7 +23,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
         public PublishedToolchainSettingsViewModel(IProject model) : base("Platform", model)
         {
             _settings = model.GetToolchainSettings<PublishedGCCToolchainSettings>();
-            
+
             Dispatcher.UIThread.InvokeAsync(async () =>
             {
                 try
@@ -32,7 +32,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
                     AvailableToolchains = new ObservableCollection<string>(packages);
                 }
-                catch(System.Exception)
+                catch (System.Exception)
                 {
                     AvailableToolchains = new ObservableCollection<string>();
                 }
@@ -45,16 +45,16 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
                     if (!string.IsNullOrEmpty(_settings.Version))
                     {
-                        SelectedVersion = Versions.FirstOrDefault(v => v.Version == Version.Parse(_settings.Version));
+                        SelectedVersion = Versions?.FirstOrDefault(v => v.Version == Version.Parse(_settings.Version));
 
-                        if(SelectedVersion == null)
+                        if (SelectedVersion == null)
                         {
-                            SelectedVersion = Versions.FirstOrDefault();
+                            SelectedVersion = Versions?.FirstOrDefault();
                         }
                     }
                     else
                     {
-                        SelectedVersion = Versions.FirstOrDefault();
+                        SelectedVersion = Versions?.FirstOrDefault();
                     }
                 }
                 _initialised = true;
@@ -102,9 +102,12 @@ namespace AvalonStudio.Toolchains.PublishedGCC
 
         private async Task LoadVersions()
         {
-            Versions = new ObservableCollection<Package>(await PackageManager.ListToolchainPackages(SelectedPackage));
+            var packages = await PackageManager.ListToolchainPackages(SelectedPackage);
 
-            //Versions = new ObservableCollection<string>((await packages.FirstOrDefault().GetAllVersionsAsync()).Select(v=>v.Version.ToNormalizedString()));
+            if (packages != null)
+            {
+                Versions = new ObservableCollection<Package>(packages);
+            }
         }
 
         public string SelectedPackage

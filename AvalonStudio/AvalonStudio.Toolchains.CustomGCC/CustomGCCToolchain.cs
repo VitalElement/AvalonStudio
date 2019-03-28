@@ -318,9 +318,7 @@ namespace AvalonStudio.Toolchains.CustomGCC
             return new List<object>
             {
                 new GccProfileFormViewModel(project),
-                new CompileSettingsFormViewModel(project),
-                new LinkerSettingsFormViewModel(project)
-        };
+            }.Concat(base.GetConfigurationPages(project)).ToList();
         }
 
         private string GetLinkerScriptLocation(IStandardProject project)

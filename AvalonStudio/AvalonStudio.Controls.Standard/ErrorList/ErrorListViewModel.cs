@@ -35,9 +35,8 @@ namespace AvalonStudio.Controls.Standard.ErrorList
         /// <inheritdoc/>
         public event EventHandler<DiagnosticsUpdatedEventArgs> DiagnosticsUpdated;
 
-        public ErrorListViewModel()
+        public ErrorListViewModel() : base("Error List")
         {
-            Title = "Error List";
             errors = new ObservableCollection<ErrorViewModel>();
 
             FilteredErrors = errors.CreateDerivedCollection(x=>x, (error) =>

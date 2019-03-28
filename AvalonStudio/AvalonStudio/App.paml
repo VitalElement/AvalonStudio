@@ -24,6 +24,7 @@
     <StyleInclude Source="avares://Dock.Avalonia/Controls/DockTarget.xaml"/>
     <StyleInclude Source="avares://Dock.Avalonia/Controls/DockToolChrome.xaml"/>
     <StyleInclude Source="avares://Dock.Avalonia/Controls/MetroWindow.xaml"/>
+    <StyleInclude Source="resm:VtNetCore.Avalonia.VirtualTerminalControl.xaml?assembly=VtNetCore.Avalonia" />
     <StyleInclude Source="resm:Avalonia.DataGrid.Themes.Default.DefaultTheme.xaml?assembly=Avalonia.DataGrid.Themes.Default"/>
   </Application.Styles>  
     <Application.DataTemplates>

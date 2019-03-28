@@ -1,0 +1,32 @@
+<UserControl xmlns="https://github.com/avaloniaui" Width="1000" Design.Height="400">
+  <DockPanel LastChildFill="True">
+    <DockPanel DockPanel.Dock="Left" MinWidth="150">
+      <TextBlock Text="SysRoot from Package" DockPanel.Dock="Top" Margin="0 0 0 5" />
+      <TextBox Text="{Binding PackageSearchTerm}" Watermark="Search" UseFloatingWatermark="True" DockPanel.Dock="Top" />
+      <DockPanel DockPanel.Dock="Bottom" Margin="0 5 0 0" MinHeight="150">
+        <TextBlock Text="Package Version" DockPanel.Dock="Top" Margin="0 0 0 5" />
+        <ListBox Items="{Binding Versions}" SelectedItem="{Binding SelectedVersion}">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Version}" />
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+
+      <ListBox Items="{Binding Packages}" SelectedItem="{Binding SelectedPackage}"  VerticalAlignment="Stretch" Margin="0 5 0 0" />
+
+    </DockPanel>
+
+    <StackPanel Spacing="5" Margin="10 21" DockPanel.Dock="Top">
+      <TextBox Text="{Binding SysRoot}" Watermark="SysRoot" UseFloatingWatermark="True" />
+      <StackPanel Spacing="5" Orientation="Horizontal">
+        <Button Content="Browse" Command="{Binding BrowseCommand}" />
+        <Button Content="Clear" Command="{Binding ClearCommand}" />
+      </StackPanel>
+    </StackPanel>
+
+    <TextBlock Text="Sysroot is the location of the libraries and headers that will be available on the target operating system. If this is a baremetal system, normally this is left blank. (Use the Clear button to do this). Some toolchains automatically set this up. However this setting can be used to override. You may specify a path on your local system. Or a path within a published package. The list on the left helps you locate SysRoots available to download." TextWrapping="Wrap" Margin="10" />
+
+  </DockPanel>
+</UserControl>

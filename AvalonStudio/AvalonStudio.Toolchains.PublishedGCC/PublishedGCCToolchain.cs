@@ -319,9 +319,7 @@ namespace AvalonStudio.Toolchains.PublishedGCC
             return new List<object>
             {
                 new PublishedToolchainSettingsViewModel(project),
-                new CompileSettingsFormViewModel(project),
-                new LinkerSettingsFormViewModel(project)
-        };
+            }.Concat(base.GetConfigurationPages(project)).ToList();
         }
 
         private string GetLinkerScriptLocation(IStandardProject project)

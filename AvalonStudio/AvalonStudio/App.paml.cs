@@ -10,8 +10,10 @@ using System;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Extensibility;
 using System.IO;
+using AvalonStudio.Extensibility.Platforms.Terminals.Unix;
 using AvalonStudio.Utils;
 using AvalonStudio.Packaging;
+using AvalonStudio.Extensibility.Platforms.Terminals.Unix;
 
 namespace AvalonStudio
 {
@@ -32,6 +34,8 @@ namespace AvalonStudio
         [STAThread]
         private static void Main(string[] args)
         {
+            UnixPsuedoTerminal.Trampoline(args);
+        
 #if !DEBUG
         try
             {
