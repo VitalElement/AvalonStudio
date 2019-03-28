@@ -3,8 +3,10 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.MVVM;
 using AvalonStudio.Platforms;
-using AvalonStudio.Platforms.Terminals;
 using AvalonStudio.Shell;
+using AvalonStudio.Terminals;
+using AvalonStudio.Terminals.Unix;
+using AvalonStudio.Terminals.Win32;
 using ReactiveUI;
 using System;
 using System.Composition;
@@ -23,6 +25,7 @@ namespace AvalonStudio.Controls.Standard.Terminal
         private bool _terminalVisible;
         private IStudio _studio;
         private object _createLock = new object();
+        static IPsuedoTerminalProvider s_provider = Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT ? new Win32PsuedoTerminalProvider() : new UnixPsuedoTerminalProvider() as IPsuedoTerminalProvider;
 
         public TerminalViewModel() : base("Terminal")
         {
@@ -57,23 +60,19 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
                 CloseConnection();
 
-                var provider = IoC.Get<IPsuedoTerminalProvider>(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT ? "Windows" : "Unix");
 
-                if (provider != null)
+                var shellExecutable = PlatformSupport.ResolveFullExecutablePath((Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT ? "powershell" : "bash") + Platform.ExecutableExtension);
+
+                if (shellExecutable != null)
                 {
-                    var shellExecutable = PlatformSupport.ResolveFullExecutablePath((Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT ? "powershell" : "bash") + Platform.ExecutableExtension);
+                    System.Console.WriteLine("Starting terminal");
+                    var terminal = s_provider.Create(80, 32, workingDirectory, null, shellExecutable);
 
-                    if (shellExecutable != null)
-                    {
-                        System.Console.WriteLine("Starting terminal");
-                        var terminal = provider.Create(80, 32, workingDirectory, null, shellExecutable);
+                    Connection = new PsuedoTerminalConnection(terminal);
 
-                        Connection = new PsuedoTerminalConnection(terminal);
+                    TerminalVisible = true;
 
-                        TerminalVisible = true;
-
-                        Connection.Closed += Connection_Closed;
-                    }
+                    Connection.Closed += Connection_Closed;
                 }
             }
         }

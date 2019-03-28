@@ -3,6 +3,6 @@
              xmlns:vt100="clr-namespace:VtNetCore.Avalonia;assembly=VtNetCore.Avalonia">
     <Panel>
         <TextBlock Text="Terminal is not connected." VerticalAlignment="Center" HorizontalAlignment="Center" />
-        <vt100:VirtualTerminalControl ActiveConnection="{Binding Connection}" IsVisible="{Binding TerminalVisible}" />
+        <vt100:VirtualTerminalControl ActiveConnection="{Binding Connection}" IsVisible="{Binding TerminalVisible}" FontFamily="{DynamicResource EditorFont}" />
     </Panel>
 </UserControl>
