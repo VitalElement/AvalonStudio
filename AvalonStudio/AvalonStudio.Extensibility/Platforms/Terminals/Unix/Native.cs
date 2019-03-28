@@ -44,7 +44,9 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
                 var dl = dlopen_mac("libSystem.dylib", 2);
-                var a = dlsym_mac(dl, typeof(T).Name);
+
+                var name = typeof(T).Name;
+                var a = dlsym_mac(dl, name);
                 return Marshal.GetDelegateForFunctionPointer<T>(a);
             }
             else
@@ -74,8 +76,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         public delegate void dup2(int oldfd, int newfd);
         public delegate int fork();
         public delegate void setsid();
-        public delegate int ioctl(int fd, UInt64 ctl, int arg);
-        public delegate int ioctl_wsize(int fd, UInt64 ctl, [MarshalAs(UnmanagedType.LPStruct)]ref Native.winsize arg);
+        public delegate int ioctl(int fd, UInt64 ctl, IntPtr arg);
         public delegate void close(int fd);
         public delegate int open([MarshalAs(UnmanagedType.LPStr)] string file, int flags);
         public delegate IntPtr ptsname(int fd);
@@ -110,9 +111,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         public const int O_TRUNC = 0x0800;
         public const int O_APPEND = 0x1000;
         public const int O_NONBLOCK = 0x2000;
-
-        public const int TIOCGWINSZ = 0x5413;
-        public const ulong TIOCSWINSZ = 0x0000000080087467;
+        public static readonly ulong TIOCSWINSZ = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? 0x80087467 : 0x5414;
 
         public const int _SC_OPEN_MAX = 5;
 
@@ -122,7 +121,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 
         public const int ENOENT = 2;
 
-        public const int TIOCSCTTY = 0x540E;
+        public static readonly ulong TIOCSCTTY = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? (ulong)0x20007484 : 0x540E;
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct winsize
@@ -145,11 +144,15 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         public static NativeDelegates.posix_spawnp posix_spawnp = NativeDelegates.GetProc<NativeDelegates.posix_spawnp>();
         public static NativeDelegates.dup dup = NativeDelegates.GetProc<NativeDelegates.dup>();
         public static NativeDelegates.setsid setsid = NativeDelegates.GetProc<NativeDelegates.setsid>();
-        public static NativeDelegates.ioctl ioctl = NativeDelegates.GetProc<NativeDelegates.ioctl>();
-        public static NativeDelegates.ioctl_wsize ioctl_wsize = NativeDelegates.GetProc<NativeDelegates.ioctl_wsize>();
+        public static NativeDelegates.ioctl ioctl = NativeDelegates.GetProc<NativeDelegates.ioctl>();        
         public static NativeDelegates.execve execve = NativeDelegates.GetProc<NativeDelegates.execve>();
 
-
+        public static IntPtr StructToPtr(object obj)
+        {
+            var ptr = Marshal.AllocHGlobal(Marshal.SizeOf(obj));
+            Marshal.StructureToPtr(obj, ptr, false);
+            return ptr;
+        }
 
 
     }

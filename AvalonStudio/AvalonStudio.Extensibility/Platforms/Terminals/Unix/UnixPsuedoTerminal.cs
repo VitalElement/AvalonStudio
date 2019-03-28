@@ -33,7 +33,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         public static void Trampoline()
         {
             Native.setsid();
-            Native.ioctl(0, Native.TIOCSCTTY, 0);
+            Native.ioctl(0, Native.TIOCSCTTY, IntPtr.Zero);
             Native.execve("/bin/bash", new string[] { "/bin/bash", null }, new string[] { "TERM=xterm-256color", null });
         }
 
@@ -91,7 +91,12 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             int ret;
             size.ws_row = (ushort)(rows > 0 ? rows : 24);
             size.ws_col = (ushort)(columns > 0 ? columns : 80);
-            ret = Native.ioctl_wsize(_cfg, Native.TIOCSWINSZ, ref size);
+
+            var ptr = Native.StructToPtr(size);
+
+            ret = Native.ioctl(_cfg, Native.TIOCSWINSZ, ptr);
+
+            Marshal.FreeHGlobal(ptr);
 
             var error = Marshal.GetLastWin32Error();
         }
