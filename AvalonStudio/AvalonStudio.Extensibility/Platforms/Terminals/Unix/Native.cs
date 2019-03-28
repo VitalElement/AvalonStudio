@@ -18,7 +18,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         public const int O_NONBLOCK = 0x2000;
 
         public const int TIOCGWINSZ = 0x5413;
-        public const uint TIOCSWINSZ = 0x80087467;
+        public const ulong TIOCSWINSZ =	0x0000000080087467;
 
         public const int _SC_OPEN_MAX = 5;
 
@@ -31,34 +31,39 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         public const int TIOCSCTTY = 0x540E;
 
         //int open(const char *pathname, int flags);
-        [DllImport("libSystem.dylib")]
-        internal static extern IntPtr open(string name, int flags);
+        [DllImport("libc")]
+        internal static extern int open(string name, int flags);
 
         [DllImport("libSystem.dylib")]
-        internal static extern int close(IntPtr fd);
+        internal static extern int close(int fd);
+
+        [DllImport("libSystem.dylib")]
+        internal static extern int dup(int fd);
+
+        
 
 
 
         //ssize_t read(int fd, void *buf, size_t count);
         [DllImport("libSystem.dylib")]
-        internal static extern int read(IntPtr fd, IntPtr buffer, int length);
+        internal static extern int read(int fd, IntPtr buffer, int length);
 
         //ssize_t write(int fd, const void *buf, size_t count); 
         [DllImport("libSystem.dylib")]
-        internal static extern int write(IntPtr fd, IntPtr buffer, int length);
+        internal static extern int write(int fd, IntPtr buffer, int length);
 
         //int grantpt(int fd);
         [DllImport("libSystem.dylib")]
-        internal static extern int grantpt(IntPtr fd);
+        internal static extern int grantpt(int fd);
 
         //int unlockpt(int fd);
         [DllImport("libSystem.dylib")]
-        internal static extern int unlockpt(IntPtr fd);
+        internal static extern int unlockpt(int fd);
 
         //i later marshall the pointer to a string
         //char *ptsname(int fd);
         [DllImport("libSystem.dylib")]
-        internal static extern IntPtr ptsname(IntPtr fd);
+        internal static extern IntPtr ptsname(int fd);
 
         [DllImport("libSystem.dylib")]
         internal static extern void free(IntPtr ptr);
@@ -131,19 +136,24 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         [DllImport("libSystem.dylib")]
         public static extern int fcntl(IntPtr fd, FcntlCommand cmd, IntPtr ptr);
 
-        [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
-        internal static extern int ioctl(IntPtr handle, IntPtr request);
+        [DllImport("libSystem.dylib", EntryPoint = "ioctl", SetLastError = true)]
+        internal static extern int ioctl(int handle, IntPtr request);
 
 
-        [DllImport("libc", EntryPoint = "ioctl", SetLastError = true)]
-        internal static extern int ioctl(IntPtr handle, uint request, IntPtr BufferSizeBytes);
+        [DllImport("libSystem.dylib", EntryPoint = "ioctl", SetLastError = true)]
+        internal static extern int ioctl(int handle, uint request, IntPtr BufferSizeBytes);
 
+
+        [DllImport("libSystem.dylib", EntryPoint = "ioctl", SetLastError = true)]
+        internal static extern int ioctl(int handle, ulong request, ref winsize winsize);
+
+        
         
 
 
 
-        [StructLayout(LayoutKind.Sequential)]
-        public class winsize
+        [StructLayout(LayoutKind.Sequential, Pack=1)]
+        public struct winsize
         {
             public ushort ws_row;   /* rows, in characters */
             public ushort ws_col;   /* columns, in characters */

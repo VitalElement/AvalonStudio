@@ -77,7 +77,7 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
         public void SendData(byte[] data)
         {
-            _terminal.WriteAsync(data, 0, data.Length).Wait();
+            _terminal.WriteAsync(data, 0, data.Length);
         }
 
         public void SetTerminalWindowSize(int columns, int rows, int width, int height)

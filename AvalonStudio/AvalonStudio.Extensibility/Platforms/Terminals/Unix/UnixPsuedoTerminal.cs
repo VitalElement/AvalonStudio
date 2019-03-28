@@ -12,14 +12,14 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 {
     public class UnixPsuedoTerminal : IPsuedoTerminal
     {
-        private IntPtr _handle = IntPtr.Zero;
-        private IntPtr _cfg = IntPtr.Zero;
+        private int _handle;
+        private int _cfg;
         private Stream _stdin = null;
         private Stream _stdout = null;
         private Process _process;
         private bool _isDisposed = false;
 
-        public UnixPsuedoTerminal(Process process, IntPtr handle, IntPtr cfg, Stream stdin, Stream stdout)
+        public UnixPsuedoTerminal(Process process, int handle, int cfg, Stream stdin, Stream stdout)
         {
             _process = process;
 
@@ -33,7 +33,7 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
         public static void Trampoline()
         {
             Native.setsid();
-            Native.ioctl (IntPtr.Zero, Native.TIOCSCTTY, IntPtr.Zero);
+            Native.ioctl (0, Native.TIOCSCTTY, IntPtr.Zero);
             Native.execve("/bin/bash", new string[]{"/bin/bash", null}, new string[]{ "TERM=xterm-256color", null});
         }
 
@@ -61,12 +61,16 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
                 buffer[0] = 13;
             }
 
-            var buf = Marshal.AllocHGlobal(count);
+            
+            /* var buf = Marshal.AllocHGlobal(count);
             Marshal.Copy(buffer, offset, buf, count);
             Native.write(_cfg, buf, count);
 
-            Marshal.FreeHGlobal(buf);
-            //await _stdin.WriteAsync(buffer, offset, count);
+            Marshal.FreeHGlobal(buf);*/
+
+             await _stdin.WriteAsync(buffer, offset, count);
+
+            await _stdin.FlushAsync();
             
         }
 
@@ -76,17 +80,9 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             int ret;
             size.ws_row = (ushort)(rows > 0 ? rows : 24);
             size.ws_col = (ushort)(columns > 0 ? columns : 80);
-
-            IntPtr unmanagedAddr = Marshal.AllocHGlobal(Marshal.SizeOf(size));
-            Marshal.StructureToPtr(size, unmanagedAddr, true);
-            ret = Native.ioctl(_cfg, Native.TIOCSWINSZ, unmanagedAddr);
+            ret = Native.ioctl(_cfg, Native.TIOCSWINSZ, ref size);
 
             var error = Marshal.GetLastWin32Error();
-
-            Marshal.PtrToStructure(unmanagedAddr, size);
-
-            Marshal.FreeHGlobal(unmanagedAddr);
-            unmanagedAddr = IntPtr.Zero;
         }
 
         public struct winsize

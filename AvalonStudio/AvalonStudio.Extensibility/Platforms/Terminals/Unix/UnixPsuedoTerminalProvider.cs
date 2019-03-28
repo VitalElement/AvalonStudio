@@ -44,10 +44,9 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 
             foreach(var variable in env.Keys)
             {
-                if(variable.ToString() != "TERM"){
-                envVars.Add($"{variable}={env[variable]}");
-
-                Console.WriteLine(envVars.Last());
+                if(variable.ToString() != "TERM")
+                {
+                    envVars.Add($"{variable}={env[variable]}");
                 }
             }
 
@@ -57,9 +56,9 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             var path = System.Reflection.Assembly.GetEntryAssembly().Location;
             res = Native.posix_spawnp(out var pid, "dotnet", fileActions, attributes, new string[] { "dotnet", path, "--trampoline", null }, envVars.ToArray());
 
-            var fs = new FileStream(new SafeFileHandle(fdm, true), FileAccess.ReadWrite);
+            var stdin = Native.dup(fdm);
             var process = Process.GetProcessById((int)pid);
-            return new UnixPsuedoTerminal(process, fds, fdm, fs, fs);
+            return new UnixPsuedoTerminal(process, fds, stdin, new FileStream(new SafeFileHandle(new IntPtr(stdin), true), FileAccess.Write), new FileStream(new SafeFileHandle(new IntPtr(fdm), true), FileAccess.Read));
         }
     }
 }
