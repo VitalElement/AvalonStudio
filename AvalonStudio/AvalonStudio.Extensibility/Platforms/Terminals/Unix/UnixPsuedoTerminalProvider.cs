@@ -54,7 +54,11 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             envVars.Add(null);
 
             var path = System.Reflection.Assembly.GetEntryAssembly().Location;
-            res = Native.posix_spawnp(out var pid, "dotnet", fileActions, attributes, new string[] { "dotnet", path, "--trampoline", null }, envVars.ToArray());
+            var argsArray = new List<string> { "dotnet", path, "--trampoline", command };
+            argsArray.AddRange(arguments);
+            argsArray.Add(null);
+
+            res = Native.posix_spawnp(out var pid, "dotnet", fileActions, attributes, argsArray.ToArray(), envVars.ToArray());
 
             var stdin = Native.dup(fdm);
             var process = Process.GetProcessById((int)pid);

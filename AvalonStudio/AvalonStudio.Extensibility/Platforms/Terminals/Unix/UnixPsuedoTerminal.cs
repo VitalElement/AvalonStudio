@@ -7,6 +7,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
 {
@@ -30,11 +31,36 @@ namespace AvalonStudio.Extensibility.Platforms.Terminals.Unix
             _cfg = cfg;
         }
 
-        public static void Trampoline()
+        public static void Trampoline(string[] args)
         {
-            Native.setsid();
-            Native.ioctl(0, Native.TIOCSCTTY, IntPtr.Zero);
-            Native.execve("/bin/bash", new string[] { "/bin/bash", null }, new string[] { "TERM=xterm-256color", null });
+            if (args.Length > 1 && args[0] == "--trampoline")
+            {
+                Native.setsid();
+                Native.ioctl(0, Native.TIOCSCTTY, IntPtr.Zero);
+
+                var envVars = new List<string>();
+                var env = Environment.GetEnvironmentVariables();
+
+                foreach (var variable in env.Keys)
+                {
+                    if (variable.ToString() != "TERM")
+                    {
+                        envVars.Add($"{variable}={env[variable]}");
+                    }
+                }
+
+                envVars.Add("TERM=xterm-256color");
+                envVars.Add(null);
+
+                var argsArray = args.Skip(2).ToList();
+                argsArray.Add(null);
+
+                Native.execve(args[1], argsArray.ToArray(), envVars.ToArray());
+            }
+            else
+            {
+                return;
+            }
         }
 
         public void Dispose()
