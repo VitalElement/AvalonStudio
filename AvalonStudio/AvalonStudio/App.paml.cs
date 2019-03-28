@@ -34,10 +34,7 @@ namespace AvalonStudio
         [STAThread]
         private static void Main(string[] args)
         {
-            if(args.Length>0 && args[0] == "--trampoline")
-            {
-                UnixPsuedoTerminal.Trampoline();
-            }
+            UnixPsuedoTerminal.Trampoline(args);
         
 #if !DEBUG
         try
