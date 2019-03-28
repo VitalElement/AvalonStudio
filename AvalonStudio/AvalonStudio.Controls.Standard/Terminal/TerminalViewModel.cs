@@ -72,7 +72,6 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
                 if (shellExecutable != null)
                 {
-                    System.Console.WriteLine("Starting terminal");
                     var terminal = s_provider.Create(80, 32, workingDirectory, null, shellExecutable, args.ToArray());
 
                     Connection = new PsuedoTerminalConnection(terminal);
