@@ -60,8 +60,14 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
                 CloseConnection();
 
+                var args = new List<string>();
 
-                var shellExecutable = PlatformSupport.ResolveFullExecutablePath((Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT ? "powershell" : "bash") + Platform.ExecutableExtension);
+                if(Platform.PlatformIdentifier == Platforms.PlatformID.Osx)
+                {
+                    args.Add("-l");
+                }
+
+                var shellExecutable = PlatformSupport.ResolveFullExecutablePath((Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT ? "powershell" : "bash") + Platform.ExecutableExtension, args.ToArray());
 
                 if (shellExecutable != null)
                 {
