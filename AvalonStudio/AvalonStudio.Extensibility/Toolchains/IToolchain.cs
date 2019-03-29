@@ -11,6 +11,8 @@ namespace AvalonStudio.Toolchains
     {
         IEnumerable<string> GetToolchainIncludes(ISourceFile file);
 
+        IEnumerable<string> GetToolchainFlags(ISourceFile file);
+
         Task<bool> BuildAsync(IConsole console, IProject project, string label = "", IEnumerable<string> definitions = null);
 
         Task Clean(IConsole console, IProject project);

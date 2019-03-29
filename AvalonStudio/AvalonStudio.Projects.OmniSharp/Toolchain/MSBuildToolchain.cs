@@ -276,5 +276,10 @@ namespace AvalonStudio.Toolchains.MSBuild
         public void ProvisionSettings(IProject project)
         {
         }
+
+        public IEnumerable<string> GetToolchainFlags(ISourceFile file)
+        {
+            return new List<string>();
+        }
     }
 }

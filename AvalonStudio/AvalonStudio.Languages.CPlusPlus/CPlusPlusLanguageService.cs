@@ -869,6 +869,15 @@ namespace AvalonStudio.Languages.CPlusPlus
 
                 var project = file.Project as IStandardProject;
 
+                superProject?.ToolChain.InstallAsync(IoC.Get<IConsole>(), superProject).Wait();
+
+                var toolchainFlags = superProject?.ToolChain?.GetToolchainFlags(file);
+
+                if (toolchainFlags != null)
+                {
+                    AddArguments(args, toolchainFlags);
+                }
+
                 var toolchainIncludes = superProject?.ToolChain?.GetToolchainIncludes(file);
 
                 if (toolchainIncludes != null)

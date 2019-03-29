@@ -95,5 +95,10 @@ namespace AvalonStudio.LanguageSupport.TypeScript.Toolchain
         {
             return Task.FromResult(true);
         }
+
+        public IEnumerable<string> GetToolchainFlags(ISourceFile file)
+        {
+            return new List<string>();
+        }
     }
 }
