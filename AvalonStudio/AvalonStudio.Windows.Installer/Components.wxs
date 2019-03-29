@@ -36,7 +36,7 @@
                   Part="last"
                   System="yes"
                   Value="[INSTALLABFOLDER]"
-                  Action="create" />
+                  Action="set" />
       </Component>
     </DirectoryRef>
     
