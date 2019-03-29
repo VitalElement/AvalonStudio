@@ -2,16 +2,14 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   
   <?define UpgradeCode = "{03E9955F-4EA1-40AF-A7E2-16994046922C}"?>
-	<Product Id="{90701A97-B91F-4BBA-AA1E-EC9AD158E981}" 
+	<Product Id="{C6CD2047-E073-4621-B8EA-16F038715A2F}" 
            Name="!(loc.ProductName)" Language="1033" 
            Version="$(var.BuildVersion)" 
            Manufacturer="VitalElement" 
            UpgradeCode="b9bca33e-4d27-49a0-b633-ed6a628a6615">
 		<Package InstallerVersion="200" 
              Compressed="yes" 
-             InstallScope="perMachine"
-             
-             />
+             InstallScope="perMachine"/>
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
 		<MediaTemplate EmbedCab="yes" />
