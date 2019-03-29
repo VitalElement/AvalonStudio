@@ -908,7 +908,7 @@ namespace AvalonStudio.Debugging.GDB
                     if (logGdb)
                         _console.WriteLine("gdb<: " + command + " " + string.Join(" ", args));
 
-                    sin.WriteLine(command + " " + string.Join(" ", args));
+                    sin?.WriteLine(command + " " + string.Join(" ", args));
 
                     if (!Monitor.Wait(syncLock, timeout))
                     {
