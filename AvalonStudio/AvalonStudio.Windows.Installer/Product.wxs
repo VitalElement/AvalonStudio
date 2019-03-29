@@ -25,7 +25,8 @@
 
 		<Feature Id="ProductFeature" Title="AvalonStudio" Level="1">
 			<ComponentGroupRef Id="ProductComponents" />
-      <ComponentGroupRef Id="PublishedComponents" />
+      <ComponentGroupRef Id="PublishedComponentsAS" />
+      <ComponentGroupRef Id="PublishedComponentsAB" />
 		</Feature>
 	</Product>
 
