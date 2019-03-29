@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   
-  <?define UpgradeCode = "{03E9955F-4EA1-40AF-A7E2-16994046922C}"?>
+  <!-- TODO Change Product Id every time a new version is released. -->
 	<Product Id="{C6CD2047-E073-4621-B8EA-16F038715A2F}" 
            Name="!(loc.ProductName)" Language="1033" 
            Version="$(var.BuildVersion)" 
