@@ -4,12 +4,22 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>AvalonStudio.Extensibility</RootNamespace>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Avalonia" />    
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />    
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="ReactiveUI" />
     <PackageReference Include="System.Composition" Version="1.2.0" />
+    <PackageReference Include="AvalonStudio.winpty.NET" Version="0.4.5" />
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" /> 
   </ItemGroup>

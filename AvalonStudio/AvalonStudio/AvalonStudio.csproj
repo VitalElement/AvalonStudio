@@ -35,10 +35,12 @@
     <PackageReference Include="System.Composition" Version="1.1.0" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Security.Principal" Version="4.3.0" />
+    <PackageReference Include="Avalonia.Angle.Windows.Natives" Version="2.1.0.2019013001" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\AvalonStudio.Shell\src\AvalonStudio.Shell\AvalonStudio.Shell.csproj" />
+    <ProjectReference Include="..\..\AvalonStudio.TerminalEmulator\src\AvalonStudio.Terminals\AvalonStudio.Terminals.csproj" />
     <ProjectReference Include="..\..\DataGrid\src\Avalonia.DataGrid.Themes.Default\Avalonia.DataGrid.Themes.Default.csproj" />
     <ProjectReference Include="..\..\debugger-libs\Mono.Debugging\Mono.Debugging.csproj" />
     <ProjectReference Include="..\Avalonia.Ide\src\Avalonia.Ide.LanguageServer.MSBuild\Avalonia.Ide.LanguageServer.MSBuild.csproj" />

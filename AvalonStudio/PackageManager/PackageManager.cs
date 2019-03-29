@@ -210,7 +210,7 @@ namespace AvalonStudio.Packaging
                 catch { }
             }
 
-            return result.OrderByDescending(x => x.Version).ToList();
+            return result?.OrderByDescending(x => x.Version).ToList();
         }
 
         public static PackageManifest GetPackageManifest(string package, string version = null)
@@ -227,6 +227,8 @@ namespace AvalonStudio.Packaging
 
         public static string GetPackageDirectory(string package, string version = null)
         {
+            package = package.ToLower();
+            
             var destinationPath = Path.Combine(Platform.PackageDirectory, package);
 
             if (Directory.Exists(destinationPath))
@@ -465,7 +467,7 @@ namespace AvalonStudio.Packaging
                     name = name.Substring(Path.GetPathRoot(name).Length);
 
                 // Apply further name transformations here as necessary
-                string outName = Path.Combine(targetDir, name);
+                string outName = Path.Combine(targetDir, name).NormalizePath();
 
                 string directoryName = Path.GetDirectoryName(outName);
 
@@ -477,24 +479,26 @@ namespace AvalonStudio.Packaging
                     switch ((char)tarEntry.TarHeader.TypeFlag)
                     {
                         case '1':
-                            if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
+                            if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
                             {
                                 Platform.CreateHardLinkWin32(outName.NormalizePath(), Path.Combine(targetDir, tarEntry.TarHeader.LinkName).NormalizePath(), !tarEntry.IsDirectory);
                             }
                             else
                             {
-                                Console.WriteLine($"Hard links not supported  on linux.: {outName}");
+                                var symLinkInfo = new UnixSymbolicLinkInfo(Path.Combine(targetDir, tarEntry.TarHeader.LinkName).NormalizePath());
+
+                                symLinkInfo.CreateLink(outName);
                             }
                             break;
 
                         case '2':
                             if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
                             {
-                                Platform.CreateSymbolicLinkWin32(outName.NormalizePath(), Path.Combine(targetDir, tarEntry.TarHeader.LinkName).NormalizePath(), !tarEntry.IsDirectory);
+                                Platform.CreateSymbolicLinkWin32(outName.NormalizePath(), tarEntry.TarHeader.LinkName, !tarEntry.IsDirectory);
                             }
                             else
                             {
-                                var symLinkInfo = new UnixSymbolicLinkInfo(outName);
+                                var symLinkInfo = new UnixSymbolicLinkInfo(outName.NormalizePath());
 
                                 symLinkInfo.CreateSymbolicLinkTo(tarEntry.TarHeader.LinkName);
                             }
@@ -503,26 +507,34 @@ namespace AvalonStudio.Packaging
                 }
                 else
                 {
-                    FileStream outStr = new FileStream(outName, FileMode.Create);
-
-                    if (asciiTranslate)
-                        CopyWithAsciiTranslate(tarIn, outStr);
-                    else
-                        tarIn.CopyEntryContents(outStr);
-
-                    outStr.Close();
-
-                    if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix || Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
+                    try
                     {
-                        var unixFileInfo = new UnixFileInfo(outName);
+                        using (var outStr = new FileStream(outName, FileMode.Create))
+                        {
 
-                        unixFileInfo.FileAccessPermissions = (FileAccessPermissions)tarEntry.TarHeader.Mode;
+                            if (asciiTranslate)
+                                CopyWithAsciiTranslate(tarIn, outStr);
+                            else
+                                tarIn.CopyEntryContents(outStr);
+                        }
+
+                        if (Platform.PlatformIdentifier == Platforms.PlatformID.Unix || Platform.PlatformIdentifier == Platforms.PlatformID.MacOSX)
+                        {
+                            var unixFileInfo = new UnixFileInfo(outName)
+                            {
+                                FileAccessPermissions = (FileAccessPermissions)tarEntry.TarHeader.Mode
+                            };
+                        }
+
+                        // Set the modification date/time. This approach seems to solve timezone issues.
+                        DateTime myDt = DateTime.SpecifyKind(tarEntry.ModTime, DateTimeKind.Utc);
+                        File.SetLastWriteTime(outName, myDt);
                     }
+                    catch (Exception)
+                    {
 
-                    // Set the modification date/time. This approach seems to solve timezone issues.
-                    DateTime myDt = DateTime.SpecifyKind(tarEntry.ModTime, DateTimeKind.Utc);
-                    File.SetLastWriteTime(outName, myDt);
-                }
+                    }
+                    }
             }
 
             tarIn.Close();
@@ -587,11 +599,14 @@ namespace AvalonStudio.Packaging
 
         public static async Task<PackageEnsureStatus> EnsurePackage(string packageName, string version, IConsole console)
         {
+            packageName = packageName.ToLower();
+
             if (string.IsNullOrWhiteSpace(packageName))
             {
                 console.WriteLine("Package with no name. Check definition in manifest file.");
                 return PackageEnsureStatus.NotFound;
             }
+
             Version ver = string.IsNullOrWhiteSpace(version) ? null : Version.Parse(version);
 
             var packageDirectory = Path.Combine(Platform.PackageDirectory, packageName);
@@ -653,7 +668,7 @@ namespace AvalonStudio.Packaging
 
                     if (supportedPlatforms.Any())
                     {
-                        console?.WriteLine("Package {packageName} v{ver} supports:");
+                        console?.WriteLine($"Package {packageName} v{ver} supports:");
                         foreach (var platformPkg in supportedPlatforms)
                         {
                             console?.Write($"{platformPkg.Key} ");
@@ -667,7 +682,7 @@ namespace AvalonStudio.Packaging
 
                 console?.WriteLine($"Package: {packageName} v{ver} will be downloaded and installed.");
 
-                var package = packages.FirstOrDefault(p => p.Version == ver && p.Platform == systemPlatform);
+                var package = packages.FirstOrDefault(p => p.Version == ver && (p.Platform == systemPlatform || p.Platform == PackagePlatform.Any));
 
                 await DownloadPackage(package, p =>
                 {
@@ -693,6 +708,28 @@ namespace AvalonStudio.Packaging
             {
                 return await ResolveDependencies(packageName, ver?.ToString(), console);
             }
+        }
+
+        public static async Task<string> ResolvePackagePathAsync(string url, bool appendExecutableExtension = true, IConsole console = null)
+        {
+            string result = "";
+
+            var packageInfo = ParseUrl(url);
+
+            var fullPackageId = (packageInfo.package + packageInfo.version).ToLower();
+
+            var packageLocation = "";
+
+            if (await EnsurePackage(packageInfo.package, packageInfo.version, console) == PackageEnsureStatus.NotFound)
+            {
+                throw new Exception("Package not found.");
+            }
+
+            packageLocation = PackageManager.GetPackageDirectory(packageInfo.package, packageInfo.version).ToPlatformPath();
+
+            result = (Path.Combine(packageLocation, packageInfo.location) + (appendExecutableExtension ? Platform.ExecutableExtension : "")).ToPlatformPath();
+
+            return result;
         }
 
         public static (string package, string version, string location) ParseUrl(string url)

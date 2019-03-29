@@ -24,9 +24,8 @@ namespace AvalonStudio.Controls.Standard.Console
         private int caretIndex;
         private IShell shell;
 
-        public ConsoleViewModel()
-        {
-            Title = "Console";
+        public ConsoleViewModel() : base ("Output")
+        {            
             document = new TextDocument();
             document.Insert(Document.TextLength, Environment.NewLine);
             document.Insert(Document.TextLength, Environment.NewLine + "     ");

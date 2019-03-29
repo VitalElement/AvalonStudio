@@ -23,7 +23,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles
         private string _fileMask;
         private string _searchStats;
 
-        public FindInFilesViewModel()
+        public FindInFilesViewModel() : base("Find Results")
         {
             Title = "Find Results";
 

@@ -413,17 +413,6 @@ namespace AvalonStudio.Toolchains.STM32
             return result;
         }
 
-        public override IList<object> GetConfigurationPages(IProject project)
-        {
-            var result = new List<object>
-            {
-                new CompileSettingsFormViewModel(project),
-                new LinkerSettingsFormViewModel(project)
-            };
-
-            return result;
-        }
-
         public override bool CanHandle(IProject project)
         {
             var result = false;

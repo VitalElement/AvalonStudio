@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="VitalElementFolder" Name="VitalElement">
+          <Directory Id="InstallProgramMenuFolder" Name="AvalonStudio" />
+        </Directory>
+      </Directory>
+      
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="VITALELEMENTFOLDER" Name="VitalElement">
+          <Directory Id="INSTALLASFOLDER" Name="AvalonStudio">
+            <Directory Id="ExtensionsASFolder" Name="Extensions" />
+          </Directory>
+          <Directory Id="INSTALLABFOLDER" Name="AvalonBuild">
+            <Directory Id="ExtensionsABFolder" Name="Extensions" />
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+  </Fragment>
+</Wix>
