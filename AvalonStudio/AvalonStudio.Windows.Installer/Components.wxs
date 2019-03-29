@@ -35,7 +35,8 @@
                   Name="PATH"
                   Part="last"
                   System="yes"
-                  Value="[INSTALLABFOLDER]" />
+                  Value="[INSTALLABFOLDER]"
+                  Action="create" />
       </Component>
     </DirectoryRef>
     
