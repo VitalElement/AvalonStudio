@@ -80,10 +80,10 @@
       <Output TaskParameter="Assemblies" ItemName="AssemblyVersion" />
     </GetAssemblyIdentity>
     <PropertyGroup>
-      <DefineConstants>BuildVersion=%(AssemblyVersion.Version);BasePath=..\AvalonStudio\bin\$(Configuration)\netcoreapp2.2\win7-x64\publish</DefineConstants>
+      <DefineConstants>BuildVersion=%(AssemblyVersion.Version);BasePathAS=..\AvalonStudio\bin\$(Configuration)\netcoreapp2.2\win7-x64\publish;BasePathAB=..\AvalonStudioBuild\bin\$(Configuration)\netcoreapp2.2\win7-x64\publish</DefineConstants>
     </PropertyGroup>
-    <HeatDirectory OutputFile="ComponentsGeneratedAS.wxs" PreprocessorVariable="var.BasePath" DirectoryRefId="INSTALLASFOLDER" ComponentGroupName="PublishedComponentsAS" SuppressCom="True" Directory="..\AvalonStudio\bin\$(Configuration)\netcoreapp2.2\win7-x64\publish" SuppressFragments="True" SuppressRegistry="True" SuppressRootDirectory="True" AutoGenerateGuids="False" GenerateGuidsNow="true" ToolPath="$(WixToolPath)" />
-    <HeatDirectory OutputFile="ComponentsGeneratedASB.wxs" PreprocessorVariable="var.BasePath" DirectoryRefId="INSTALLABFOLDER" ComponentGroupName="PublishedComponentsAB" SuppressCom="True" Directory="..\AvalonStudioBuild\bin\$(Configuration)\netcoreapp2.2\win7-x64\publish" SuppressFragments="True" SuppressRegistry="True" SuppressRootDirectory="True" AutoGenerateGuids="False" GenerateGuidsNow="true" ToolPath="$(WixToolPath)" />
+    <HeatDirectory OutputFile="ComponentsGeneratedAS.wxs" PreprocessorVariable="var.BasePathAS" DirectoryRefId="INSTALLASFOLDER" ComponentGroupName="PublishedComponentsAS" SuppressCom="True" Directory="..\AvalonStudio\bin\$(Configuration)\netcoreapp2.2\win7-x64\publish" SuppressFragments="True" SuppressRegistry="True" SuppressRootDirectory="True" AutoGenerateGuids="False" GenerateGuidsNow="true" ToolPath="$(WixToolPath)" />
+    <HeatDirectory OutputFile="ComponentsGeneratedASB.wxs" PreprocessorVariable="var.BasePathAB" DirectoryRefId="INSTALLABFOLDER" ComponentGroupName="PublishedComponentsAB" SuppressCom="True" Directory="..\AvalonStudioBuild\bin\$(Configuration)\netcoreapp2.2\win7-x64\publish" SuppressFragments="True" SuppressRegistry="True" SuppressRootDirectory="True" AutoGenerateGuids="False" GenerateGuidsNow="true" ToolPath="$(WixToolPath)" />
   </Target>
   <Target Name="AfterBuild">
   </Target>
