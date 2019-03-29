@@ -29,7 +29,4 @@
       <ComponentGroupRef Id="PublishedComponentsAB" />
 		</Feature>
 	</Product>
-
-	  
-  
 </Wix>

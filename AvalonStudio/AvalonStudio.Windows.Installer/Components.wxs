@@ -12,7 +12,7 @@
       <Component Id="MainAppShortcut" Guid="{52CCFB0B-489A-4A7D-9BD3-E8704792C8FF}">
         <Shortcut Id="MainAppShortcut"
                   Name="AvalonStudio"
-                  Target="[INSTALLFOLDER]AvalonStudio.exe"
+                  Target="[INSTALLASFOLDER]AvalonStudio.exe"
                   Directory="InstallProgramMenuFolder"
                   WorkingDirectory="INSTALLASFOLDER"
                   Icon="app.icon" />
@@ -20,11 +20,13 @@
         <RegistryValue Id="RegShortcutKet" Root="HKCU" Key="SOFTWARE\AvalonStudio" Name="Shortcut" Value="1" Type="integer" KeyPath="yes" />
 
         <RemoveFolder Id="RemoveStartMenu" Directory="InstallProgramMenuFolder" On="uninstall" />
+        <RemoveFolder Id="RemoveVESmFolder" Directory="VitalElementFolder" On="uninstall" />
       </Component>
     </DirectoryRef>
 
     <DirectoryRef Id="INSTALLABFOLDER" FileSource="..\AvalonStudioBuild\bin\Release\netcoreapp2.2\win7-x64\publish\">
       <Component Id="ASBuildComponent" Guid="{89C57461-C489-47FB-80D1-80345C25B335}">
+        <CreateFolder />
         <Environment
                   Id="Environment"
                   Name="PATH"
