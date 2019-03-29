@@ -80,14 +80,18 @@ namespace AvalonStudio
             {
                 result
                     .UseWin32()
-                    .UseDirect2D1();
+                    .UseSkia();
             }
             else
             {
                 result.UsePlatformDetect();
             }
 
-            return result;
+            return result
+                .With(new Win32PlatformOptions { AllowEglInitialization = true, UseDeferredRendering = true })
+                .With(new MacOSPlatformOptions { ShowInDock = true })
+                .With(new AvaloniaNativePlatformOptions { UseDeferredRendering = true, UseGpu = true })
+                .With(new X11PlatformOptions { UseGpu = true, UseEGL = true });
         }
 
         public override void Initialize()
