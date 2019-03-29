@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   
-  <?define UpgradeCode = "{03E9955F-4EA1-40AF-A7E2-16994046922C}"?>
-	<Product Id="{90701A97-B91F-4BBA-AA1E-EC9AD158E981}" 
+  <!-- TODO Change Product Id every time a new version is released. -->
+	<Product Id="{38E525A5-DD08-4636-8487-AF117E61ACEA}" 
            Name="!(loc.ProductName)" Language="1033" 
            Version="$(var.BuildVersion)" 
            Manufacturer="VitalElement" 
            UpgradeCode="b9bca33e-4d27-49a0-b633-ed6a628a6615">
 		<Package InstallerVersion="200" 
              Compressed="yes" 
-             InstallScope="perMachine"
-             
-             />
+             InstallScope="perMachine"/>
 
-		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." Schedule="afterInstallInitialize" />
 		<MediaTemplate EmbedCab="yes" />
 
     <Icon Id="app.icon" SourceFile="$(var.AvalonStudio.ProjectDir)..\AvalonStudio.Controls.Standard\AboutScreen\Assets\logo-256.ico" />
@@ -27,10 +25,8 @@
 
 		<Feature Id="ProductFeature" Title="AvalonStudio" Level="1">
 			<ComponentGroupRef Id="ProductComponents" />
-      <ComponentGroupRef Id="PublishedComponents" />
+      <ComponentGroupRef Id="PublishedComponentsAS" />
+      <ComponentGroupRef Id="PublishedComponentsAB" />
 		</Feature>
 	</Product>
-
-	  
-  
 </Wix>
