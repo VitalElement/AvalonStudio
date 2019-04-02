@@ -145,6 +145,19 @@ namespace AvalonStudio.Toolchains.GCC
             }
         }
 
+        public override IEnumerable<string> GetToolchainFlags(ISourceFile file)
+        {
+            if (file.Project.Solution.StartupProject != null)
+            {
+                if(!string.IsNullOrWhiteSpace(SysRoot))
+                {
+                    return new List<string> { $"--sysroot =\"{SysRoot}\"" };
+                }
+            }
+
+            return Enumerable.Empty<string>();
+        }
+
         private bool CheckFile(IConsole console, string file)
         {
             bool result = true;
@@ -393,7 +406,8 @@ namespace AvalonStudio.Toolchains.GCC
 
             string args = cpp ? "-xc++" : "-E";
 
-            var process = PlatformSupport.LaunchShellCommand("echo", $" | {LibraryQueryCommand} {args} -Wp,-v -", (s, e) => { }, (s, e) =>
+            var sysroot = string.IsNullOrWhiteSpace(SysRoot) ? "" : $"--sysroot={SysRoot}";
+            var process = PlatformSupport.LaunchShellCommand("echo", $" | {LibraryQueryCommand} {args} -Wp,-v {sysroot} -", (s, e) => { }, (s, e) =>
             {
                 if (e.Data != null)
                 {
@@ -435,8 +449,6 @@ namespace AvalonStudio.Toolchains.GCC
 
         public override async Task<bool> InstallAsync(IConsole console, IProject project)
         {
-            await InitialiseInbuiltLibraries();
-
             var settings = project.GetToolchainSettingsIfExists<GccToolchainSettings>();
 
             if(settings != null && !string.IsNullOrWhiteSpace(settings.SysRoot) && (settings.SysRoot.Contains('?') || settings.SysRoot.Contains('='))) 
@@ -447,6 +459,8 @@ namespace AvalonStudio.Toolchains.GCC
             {
                 SysRoot = "";
             }
+
+            await InitialiseInbuiltLibraries();
 
             return true;
         }

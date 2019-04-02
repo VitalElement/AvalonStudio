@@ -332,6 +332,8 @@ namespace AvalonStudio.Toolchains.Standard
 
         public abstract IEnumerable<string> GetToolchainIncludes(ISourceFile file);
 
+        public abstract IEnumerable<string> GetToolchainFlags(ISourceFile file);
+
         public abstract bool SupportsFile(ISourceFile file);
 
         /// <summary>
