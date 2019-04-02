@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Composition;
 using System.Reactive.Linq;
 using VtNetCore.Avalonia;
+using VtNetCore.VirtualTerminal;
 
 namespace AvalonStudio.Controls.Standard.Terminal
 {
@@ -24,6 +25,7 @@ namespace AvalonStudio.Controls.Standard.Terminal
     {
         private IConnection _connection;
         private bool _terminalVisible;
+        private VirtualTerminalController _terminal;
         private IStudio _studio;
         private object _createLock = new object();
         static IPsuedoTerminalProvider s_provider = Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT ? new Win32PsuedoTerminalProvider() : new UnixPsuedoTerminalProvider() as IPsuedoTerminalProvider;
@@ -76,7 +78,11 @@ namespace AvalonStudio.Controls.Standard.Terminal
 
                     Connection = new PsuedoTerminalConnection(terminal);
 
+                    Terminal = new VirtualTerminalController();
+
                     TerminalVisible = true;
+
+                    Connection.Connect();
 
                     Connection.Closed += Connection_Closed;
                 }
@@ -131,6 +137,12 @@ namespace AvalonStudio.Controls.Standard.Terminal
         {
             get { return _connection; }
             set { this.RaiseAndSetIfChanged(ref _connection, value); }
+        }
+
+        public VirtualTerminalController Terminal
+        {
+            get => _terminal;
+            set => this.RaiseAndSetIfChanged(ref _terminal,value);
         }
 
         public bool TerminalVisible
