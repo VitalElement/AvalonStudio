@@ -18,10 +18,9 @@ using VtNetCore.VirtualTerminal;
 namespace AvalonStudio.Controls.Standard.Terminal
 {
     [ExportToolControl]
-    [Export(typeof(IExtension))]
     [Export(typeof(TerminalViewModel))]
     [Shared]
-    public class TerminalViewModel : ToolViewModel, IActivatableExtension
+    public class TerminalViewModel : ToolViewModel
     {
         private IConnection _connection;
         private bool _terminalVisible;
@@ -118,19 +117,10 @@ namespace AvalonStudio.Controls.Standard.Terminal
             return base.OnClose();
         }
 
-        public void Activation()
-        {
-
-        }
-
         private void Connection_Closed(object sender, System.EventArgs e)
         {
             (sender as IConnection).Closed -= Connection_Closed;
             TerminalVisible = false;
-        }
-
-        public void BeforeActivation()
-        {
         }
 
         public IConnection Connection
