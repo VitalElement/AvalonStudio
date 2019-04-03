@@ -18,7 +18,13 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             Title = project.Name;
 
             ConfigPages = new List<object>();
-            ConfigPages.AddRange(project.ConfigurationPages);
+
+            var configPages = project.ConfigurationPages;
+
+            if (configPages != null)
+            {
+                ConfigPages.AddRange(configPages);
+            }
 
             _onClose = onClose;
         }

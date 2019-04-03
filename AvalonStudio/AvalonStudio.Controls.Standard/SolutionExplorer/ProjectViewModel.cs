@@ -8,6 +8,7 @@ using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using ReactiveUI;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Reactive;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
@@ -95,7 +96,10 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             DevConsoleCommand = ReactiveCommand.Create(() =>
             {
-                PlatformSupport.LaunchShell(Model.CurrentDirectory, Model.ToolChain?.BinDirectory, Model.Debugger2?.BinDirectory);
+                if (Directory.Exists(Model.CurrentDirectory))
+                {
+                    PlatformSupport.LaunchShell(Model.CurrentDirectory, Model.ToolChain?.BinDirectory, Model.Debugger2?.BinDirectory);
+                }
             });
         }
 

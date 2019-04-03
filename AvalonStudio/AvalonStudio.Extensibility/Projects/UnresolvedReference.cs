@@ -29,28 +29,28 @@
 
         public ObservableCollection<IProject> References => null;
 
-        public IToolchain ToolChain { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public IDebugger Debugger2 { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public ITestFramework TestFramework { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IToolchain ToolChain { get; set; }
+        public IDebugger Debugger2 { get; set; }
+        public ITestFramework TestFramework { get; set; }
         public bool Hidden { get; set; }
 
         public string CurrentDirectory { get; }
 
-        public IList<object> ConfigurationPages => throw new NotImplementedException();
+        public IList<object> ConfigurationPages => null;
 
-        public string Executable { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Executable { get; set; }
 
-        public dynamic ToolchainSettings => throw new NotImplementedException();
+        public dynamic ToolchainSettings { get; }
 
-        public dynamic DebugSettings => throw new NotImplementedException();
+        public dynamic DebugSettings { get; }
 
-        public dynamic Settings => throw new NotImplementedException();
+        public dynamic Settings { get; }
 
         public ObservableCollection<IProjectItem> Items => null;
 
         public string Location { get; set; }
 
-        public string LocationDirectory => throw new NotImplementedException();
+        public string LocationDirectory { get; }
 
         public string Name
         {
@@ -63,7 +63,7 @@
 
         public bool CanRename => false;
 
-        public IProject Project { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IProject Project { get; set; }
 
         public Guid Id { get; set; }
 
@@ -71,39 +71,26 @@
 
         public IReadOnlyList<ISourceFile> SourceFiles => null;
 
-        public event EventHandler FileAdded;
+        public event EventHandler<ISourceFile> FileAdded;
 
-        event EventHandler<ISourceFile> IProject.FileAdded
-        {
-            add
-            {
-                throw new NotImplementedException();
-            }
-
-            remove
-            {
-                throw new NotImplementedException();
-            }
-        }
 
         public void AddReference(IProject project)
         {
-            throw new NotImplementedException();
-        }
-
-        public int CompareTo(IProjectItem other)
-        {
-            throw new NotImplementedException();
         }
 
         public int CompareTo(IProjectFolder other)
         {
-            throw new NotImplementedException();
+            return Location.CompareFilePath(other.Location);
         }
 
         public int CompareTo(string other)
         {
-            throw new NotImplementedException();
+            return Location.CompareFilePath(other);
+        }
+
+        public int CompareTo(IProjectItem other)
+        {
+            return Name.CompareTo(other.Name);
         }
 
         public int CompareTo(IProject other)
@@ -123,12 +110,10 @@
 
         public void ExcludeFile(ISourceFile file)
         {
-            throw new NotImplementedException();
         }
 
         public void ExcludeFolder(IProjectFolder folder)
         {
-            throw new NotImplementedException();
         }
 
         public ISourceFile FindFile(string path)

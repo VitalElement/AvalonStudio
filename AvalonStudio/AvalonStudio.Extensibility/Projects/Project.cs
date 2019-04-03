@@ -34,7 +34,10 @@ namespace AvalonStudio.Projects
             {
                 try
                 {
-                    return await projectType.LoadAsync(solution, fileName);
+                    if (File.Exists(fileName))
+                    {
+                        return await projectType.LoadAsync(solution, fileName);
+                    }
                 }
                 catch (Exception)
                 {

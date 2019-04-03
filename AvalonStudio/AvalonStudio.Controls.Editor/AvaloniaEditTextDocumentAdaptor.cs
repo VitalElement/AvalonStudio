@@ -259,14 +259,19 @@ namespace AvalonStudio.Controls.Editor
 
         public static async Task<ITextDocument> CreateAsync (string path)
         {
-            using (var fileStream = File.OpenText(path))
+            if (File.Exists(path))
             {
-                var text = await fileStream.ReadToEndAsync();
+                using (var fileStream = File.OpenText(path))
+                {
+                    var text = await fileStream.ReadToEndAsync();
 
-                var document = new AvaloniaEdit.Document.TextDocument(text);
+                    var document = new AvaloniaEdit.Document.TextDocument(text);
 
-                return new AvalonStudioTextDocument(document);
+                    return new AvalonStudioTextDocument(document);
+                }
             }
+
+            return null;
         }
 
         public static ITextDocument Create (string text)

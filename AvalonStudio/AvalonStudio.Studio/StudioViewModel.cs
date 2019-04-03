@@ -328,11 +328,18 @@ namespace AvalonStudio.Studio
                 else
                 {
                     var document = await AvalonStudioTextDocument.CreateAsync(file);
-                    currentTab = new TextEditorViewModel(document, file);
+
+                    if (document != null)
+                    {
+                        currentTab = new TextEditorViewModel(document, file);
+                    }
                 }
             }
 
-            shell.AddOrSelectDocument(currentTab);
+            if (currentTab != null)
+            {
+                shell.AddOrSelectDocument(currentTab);
+            }
 
             return currentTab;
         }
