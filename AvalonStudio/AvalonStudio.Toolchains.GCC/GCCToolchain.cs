@@ -440,11 +440,8 @@ namespace AvalonStudio.Toolchains.GCC
 
         private async Task InitialiseInbuiltLibraries()
         {
-            if (_cppToolchainIncludes == null || _cToolchainIncludes == null)
-            {
-                _cppToolchainIncludes = await CalculateToolchainIncludes(true);
-                _cToolchainIncludes = await CalculateToolchainIncludes(false);
-            }
+            _cppToolchainIncludes = await CalculateToolchainIncludes(true);
+            _cToolchainIncludes = await CalculateToolchainIncludes(false);
         }
 
         public override async Task<bool> InstallAsync(IConsole console, IProject project)
