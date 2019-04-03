@@ -65,7 +65,7 @@ namespace AvalonStudio.Debugging.GDB
         private const int BreakEventUpdateNotifyDelay = 500;
 
         private bool internalStop;
-        private bool logGdb = false;
+        protected bool logGdb = false;
         private bool asyncMode;
         private bool _detectAsync;
 
@@ -218,6 +218,9 @@ namespace AvalonStudio.Debugging.GDB
                 else
                 {
                     running = false;
+                    Exit();
+
+                    _console?.WriteLine($"Debugger executable not found: {_gdbExecutable}");
                 }
             }
         }
@@ -900,24 +903,32 @@ namespace AvalonStudio.Debugging.GDB
                 {
                     lastResult = null;
 
-                    lock (eventLock)
+                    if (sin != null)
                     {
-                        running = true;
+                        lock (eventLock)
+                        {
+                            running = true;
+                        }
+
+                        if (logGdb)
+                            _console.WriteLine("gdb<: " + command + " " + string.Join(" ", args));
+
+                        sin.WriteLine(command + " " + string.Join(" ", args));
+
+                        if (!Monitor.Wait(syncLock, timeout))
+                        {
+                            lastResult = new GdbCommandResult("");
+                            lastResult.Status = CommandStatus.Timeout;
+                            throw new TimeoutException();
+                        }
+
+                        return lastResult;
+                    }
+                    else
+                    {
+                        return null;
                     }
 
-                    if (logGdb)
-                        _console.WriteLine("gdb<: " + command + " " + string.Join(" ", args));
-
-                    sin?.WriteLine(command + " " + string.Join(" ", args));
-
-                    if (!Monitor.Wait(syncLock, timeout))
-                    {
-                        lastResult = new GdbCommandResult("");
-                        lastResult.Status = CommandStatus.Timeout;
-                        throw new TimeoutException();
-                    }
-
-                    return lastResult;
                 }
             }
         }
@@ -944,24 +955,27 @@ namespace AvalonStudio.Debugging.GDB
                 return false;
             internalStop = true;
 
-            if (asyncMode)
+            if (sin != null && proc != null)
             {
-                lock (eventLock)
+                if (asyncMode)
                 {
-                    sin.WriteLine("-exec-interrupt");
-
-                    Monitor.Wait(eventLock);
-                }
-            }
-            else
-            {
-                lock (eventLock)
-                {
-                    do
+                    lock (eventLock)
                     {
-                        Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
+                        sin.WriteLine("-exec-interrupt");
+
+                        Monitor.Wait(eventLock);
                     }
-                    while (!Monitor.Wait(eventLock, 100));
+                }
+                else
+                {
+                    lock (eventLock)
+                    {
+                        do
+                        {
+                            Platform.SendSignal(proc.Id, Platform.Signum.SIGINT);
+                        }
+                        while (!Monitor.Wait(eventLock, 100));
+                    }
                 }
             }
 

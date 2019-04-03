@@ -133,8 +133,12 @@ namespace AvalonStudio.Debugging.GDB.Remote
 
                     var arguments = args.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                    console.WriteLine($"Running GDB Command: {command}");
-                    RunCommand(commandParts[0], arguments);
+                    if (logGdb)
+                    {
+                        console.WriteLine($"Running GDB Command: {command}");
+                    }
+
+                    RunCommand(commandParts[0], 5000, arguments);
                 }
             }
 

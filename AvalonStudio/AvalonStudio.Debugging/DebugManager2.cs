@@ -266,7 +266,8 @@ namespace AvalonStudio.Debugging
 
                 _session.Breakpoints = Breakpoints;
 
-                _session.Run(debugger2.GetDebuggerStartInfo(project), debugger2.GetDebuggerSessionOptions(project));
+                var startinfo = debugger2.GetDebuggerStartInfo(project);
+                _session.Run(startinfo, debugger2.GetDebuggerSessionOptions(project));
 
                 _studio.CurrentPerspective = Perspective.Debugging;
 

@@ -18,9 +18,9 @@ namespace AvalonStudio.Debugging.GDB.Remote
 
         public DebuggerSession CreateSession(IProject project)
         {
-            if (project.ToolChain is GCCToolchain)
+            if (project.ToolChain is GCCToolchain tc)
             {
-                return new RemoteGdbSession(project, (project.ToolChain as GCCToolchain).GDBExecutable);
+                return new RemoteGdbSession(project, tc.GDBExecutable);
             }
 
             throw new Exception("No toolchain");
