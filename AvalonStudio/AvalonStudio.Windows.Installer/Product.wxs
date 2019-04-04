@@ -2,7 +2,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   
   <!-- TODO Change Product Id every time a new version is released. -->
-	<Product Id="{38E525A5-DD08-4636-8487-AF117E61ACEA}" 
+	<Product Id="{F09094AA-3D75-4D62-98E7-AC84908CA3BB}" 
            Name="!(loc.ProductName)" Language="1033" 
            Version="$(var.BuildVersion)" 
            Manufacturer="VitalElement" 
