@@ -158,8 +158,15 @@ namespace AvalonStudio.Languages.Xaml
             {
                 Dispatcher.UIThread.Post(() =>
                 {
-                    _statusText.Text = "Please build your project to enable previewing and intellisense.";
-                    _overlay.IsVisible = true;
+                    if (_statusText != null)
+                    {
+                        _statusText.Text = "Please build your project to enable previewing and intellisense.";
+                    }
+
+                    if (_overlay != null)
+                    {
+                        _overlay.IsVisible = true;
+                    }
                 });
             }
         }
