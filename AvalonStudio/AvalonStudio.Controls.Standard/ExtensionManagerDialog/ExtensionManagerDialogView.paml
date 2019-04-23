@@ -1,7 +1,6 @@
 ﻿<UserControl x:Class="AvalonStudio.Controls.Standard.ExtensionManagerDialog.ExtensionManagerDialogView"
              xmlns="https://github.com/avaloniaui"
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:converters="clr-namespace:AvalonStudio.Extensibility.Converters;assembly=AvalonStudio.Shell.Extensibility"
              Background="{DynamicResource ThemeBackgroundBrush}">
 
