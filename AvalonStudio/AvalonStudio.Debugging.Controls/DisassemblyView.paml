@@ -1,16 +1,17 @@
 ﻿<UserControl x:Class="AvalonStudio.Debugging.DisassemblyView"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility">
+             xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility"
+             xmlns:editor="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor">
   <DockPanel>
     <StackPanel Margin="5 0 0 0" Orientation="Horizontal" Spacing="4" DockPanel.Dock="Top">
       <TextBlock Text="Mixed Mode" />
       <CheckBox IsChecked="{Binding MixedMode}" />
     </StackPanel>
-    <!--<editor:CodeEditor Grid.Row="1" BorderThickness="0" TextBlock.FontFamily="{DynamicResource EditorFont}" Background="{DynamicResource ThemeControlBackgroundBrush}"
+    <editor:CodeEditor Grid.Row="1" BorderThickness="0" TextBlock.FontFamily="{DynamicResource EditorFont}" Background="{DynamicResource ThemeControlBackgroundBrush}"
                      TextBlock.FontSize="13" TextBlock.FontWeight="Thin" TextBlock.Foreground="#D4D4D4" Document="{Binding Document}"
                      EditorCaretOffset="{Binding CaretIndex, Mode=TwoWay}" BackgroundRenderers="{Binding BackgroundRenderers}"
                      DocumentLineTransformers="{Binding LineTransformers}"
-                     LineNumbersVisible="false" ShowBreakpoints="false" IsReadOnly="true" HighlightSelectedLine="false" HighlightSelectedWord="false" />-->
+                     LineNumbersVisible="false" ShowBreakpoints="false" IsReadOnly="true" HighlightSelectedLine="false" HighlightSelectedWord="false" />
   </DockPanel>
 </UserControl>

@@ -2,11 +2,11 @@
              xmlns="https://github.com/avaloniaui"
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:editor="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor">
-  <!--<editor:CodeEditor Grid.Row="1" BorderThickness="0" Background="{DynamicResource ThemeControlBackgroundBrush}"
+  <editor:CodeEditor Grid.Row="1" BorderThickness="0" Background="{DynamicResource ThemeControlBackgroundBrush}"
                      TextBlock.FontFamily="{DynamicResource EditorFont}" TextBlock.FontSize="14" FontWeight="Thin"
                      Document="{Binding Document}" EditorCaretOffset="{Binding CaretIndex, Mode=TwoWay}"
                      BackgroundRenderers="{Binding BackgroundRenderers}"
                      LineNumbersVisible="false" ShowBreakpoints="false" IsReadOnly="true"
                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Visible"
-                     HighlightSelectedLine="false" HighlightSelectedWord="false" />-->
+                     HighlightSelectedLine="false" HighlightSelectedWord="false" />
 </UserControl>

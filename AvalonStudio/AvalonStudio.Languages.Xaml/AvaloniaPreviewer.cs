@@ -106,7 +106,10 @@ namespace AvalonStudio.Languages.Xaml
                     {
                         _connection = t;
 
-                        _remoteContainer.Child = _remote = new RemoteWidget(t);
+                        if (_remoteContainer != null)
+                        {
+                            _remoteContainer.Child = _remote = new RemoteWidget(t);
+                        }
 
                         t.Send(new UpdateXamlMessage
                         {
