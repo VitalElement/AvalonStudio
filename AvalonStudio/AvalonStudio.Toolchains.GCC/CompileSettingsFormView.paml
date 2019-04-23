@@ -1,4 +1,6 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui">
+﻿<UserControl x:Class="AvalonStudio.Toolchains.GCC.CompileSettingsFormView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Grid Width="1000" HorizontalAlignment="Left">
     <Grid.Styles>
       <Style Selector="TextBox">

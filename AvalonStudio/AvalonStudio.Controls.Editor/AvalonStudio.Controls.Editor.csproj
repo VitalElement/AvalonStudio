@@ -11,43 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Highlighting\Resources\XML-Mode.xshd" />
-    <EmbeddedResource Include="CodeEditor.xaml" />
-    <EmbeddedResource Include="CodeEditorToolTip.xaml" />
-    <EmbeddedResource Include="CompletionAssistantView.xaml" />
-    <EmbeddedResource Include="EditorSettingsView.xaml" />
-    <EmbeddedResource Include="Intellisense.xaml" />
-    <EmbeddedResource Include="IntellisenseAssistantUserControl.xaml" />
-    <EmbeddedResource Include="IntellisenseUserControl.xaml" />
-    <EmbeddedResource Include="SignatureView.xaml" />
-    <EmbeddedResource Include="SymbolView.xaml" />
-    <EmbeddedResource Include="ErrorProbeView.paml" />
-    <EmbeddedResource Include="SignatureHelpView.paml" />
+    <EmbeddedResource Include="**\*.xshd;**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Avalonia" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Update="CodeEditorView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="EditorView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Editor\CodeEditorView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Editor\EditorView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Editor\TextEditorView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="TextEditorView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,6 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui">
+﻿<UserControl x:Class="AvalonStudio.Projects.CPlusPlus.TargetSettingsForm"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="180"/>

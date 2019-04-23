@@ -1,4 +1,7 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:proj="clr-namespace:AvalonStudio.Projects.CPlusPlus;assembly=AvalonStudio.Projects.CPlusPlus">
+﻿<UserControl x:Class="AvalonStudio.Projects.CPlusPlus.IncludePathSettingsFormView"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:proj="clr-namespace:AvalonStudio.Projects.CPlusPlus;assembly=AvalonStudio.Projects.CPlusPlus">
   <UserControl.Styles>
     <Style Selector="CheckBox /template/ Path#checkMark">
       <Setter Property="Fill" Value="{DynamicResource ThemeBackgroundBrush}" />
