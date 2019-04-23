@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <AvaloniaResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />

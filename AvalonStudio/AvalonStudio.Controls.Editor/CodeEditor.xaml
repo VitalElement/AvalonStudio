@@ -3,10 +3,10 @@
         xmlns:AvalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
         xmlns:codeFixes="clr-namespace:AvalonStudio.Languages;assembly=AvalonStudio.Extensibility"
         xmlns:Editing="clr-namespace:AvaloniaEdit.Editing;assembly=AvaloniaEdit">
-  <StyleInclude Source="resm:AvalonStudio.Controls.Editor.RenameControl.xaml?assembly=AvalonStudio.Controls.Editor" />
-  <StyleInclude Source="resm:AvalonStudio.Controls.Editor.Intellisense.xaml?assembly=AvalonStudio.Controls.Editor" />
-  <StyleInclude Source="resm:AvalonStudio.Controls.Editor.CompletionAssistantView.xaml?assembly=AvalonStudio.Controls.Editor" />
-  <StyleInclude Source="resm:AvalonStudio.Controls.Editor.CodeEditorToolTip.xaml?assembly=AvalonStudio.Controls.Editor" />
+  <StyleInclude Source="avares://AvalonStudio.Controls.Editor/RenameControl.xaml" />
+  <StyleInclude Source="avares://AvalonStudio.Controls.Editor/Intellisense.xaml" />
+  <StyleInclude Source="avares://AvalonStudio.Controls.Editor/CompletionAssistantView.xaml" />
+  <StyleInclude Source="avares://AvalonStudio.Controls.Editor/CodeEditorToolTip.xaml" />
 
   <Style Selector="local|CodeEditor">
     <Setter Property="Template">

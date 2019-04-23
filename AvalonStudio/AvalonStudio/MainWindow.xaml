@@ -8,7 +8,7 @@
                       xmlns:menu="clr-namespace:AvalonStudio.Shell.Extensibility.MainMenu.Views;assembly=AvalonStudio.Shell.Extensibility"
                       xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      Icon="resm:AvalonStudio.Shell.Assets.logo-256.png?assembly=AvalonStudio.Shell"
+                      Icon="avares://AvalonStudio.Shell/Assets/logo-256.png"
                       Title="AvalonStudio" MinWidth="800" MinHeight="600"
                       FontFamily="{DynamicResource UiFont}" FontSize="12"
                       Foreground="{DynamicResource ThemeForegroundBrush}" WindowState="Maximized" RenderOptions.BitmapInterpolationMode="HighQuality" UseLayoutRounding="True">
