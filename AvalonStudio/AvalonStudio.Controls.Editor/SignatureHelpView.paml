@@ -1,4 +1,6 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" xmlns:local="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor">
+﻿<UserControl x:Class="AvalonStudio.Controls.Editor.SignatureHelpView"
+             xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor">
   <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1">
     <Grid TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}" Background="{DynamicResource ThemeControlBackgroundBrush}">
       <StackPanel Orientation="Horizontal" Spacing="4">
