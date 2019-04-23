@@ -5,14 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ReactiveUI" />
-    <PackageReference Include="Dock.Avalonia" Version="0.8.0" />
-    <PackageReference Include="Dock.Model.ReactiveUI" Version="0.8.0" />
+    <EmbeddedResource Include="**\*.xshd;**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Controls.Editor\AvalonStudio.Controls.Editor.csproj" />
-    <ProjectReference Include="..\AvalonStudio.Extensibility.Editor\AvalonStudio.Extensibility.Editor.csproj" />
     <ProjectReference Include="..\AvalonStudio.Extensibility\AvalonStudio.Extensibility.csproj" />
   </ItemGroup>
 
