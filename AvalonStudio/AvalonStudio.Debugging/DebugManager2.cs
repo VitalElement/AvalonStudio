@@ -12,6 +12,7 @@ namespace AvalonStudio.Debugging
     using Mono.Debugging.Client;
     using System;
     using System.Composition;
+    using System.IO;
     using System.Reactive.Linq;
     using System.Xml;
 
@@ -309,7 +310,12 @@ namespace AvalonStudio.Debugging
 
                 if (sourceLocation.FileName != null)
                 {
-                    var normalizedPath = sourceLocation.FileName.NormalizePath();
+                    string normalizedPath = sourceLocation.FileName;
+
+                    if(Path.IsPathRooted(sourceLocation.FileName))
+                    {
+                        normalizedPath = sourceLocation.FileName.NormalizePath();
+                    }
 
                     ISourceFile file = null;
 

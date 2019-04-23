@@ -330,16 +330,37 @@ namespace AvalonStudio.Languages.Xaml
                 {
                     if (result.Error != null)
                     {
-                        _errorText.Text = result.Error;
-                        _showErrors.IsVisible = true;
+                        if (_errorText != null)
+                        {
+                            _errorText.Text = result.Error;
+                        }
 
-                        _remote.InError = true;
+                        if (_showErrors != null)
+                        {
+                            _showErrors.IsVisible = true;
+                        }
+
+                        if (_remote != null)
+                        {
+                            _remote.InError = true;
+                        }
                     }
                     else
                     {
-                        _remote.InError = false;
-                        _showErrors.IsVisible = false;
-                        _errorText.Text = "";
+                        if (_remote != null)
+                        {
+                            _remote.InError = false;
+                        }
+
+                        if (_showErrors != null)
+                        {
+                            _showErrors.IsVisible = false;
+                        }
+
+                        if (_errorText != null)
+                        {
+                            _errorText.Text = "";
+                        }
                     }
                 }
             });
