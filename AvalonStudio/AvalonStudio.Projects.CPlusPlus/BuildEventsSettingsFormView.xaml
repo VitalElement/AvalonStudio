@@ -1,4 +1,6 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui">
+﻿<UserControl x:Class="AvalonStudio.Projects.CPlusPlus.BuildEventsSetttingsFormView"
+             xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <StackPanel>
     <StackPanel Spacing="4">
       <TextBox UseFloatingWatermark="true" Watermark="Pre-build event command line:" Text="{Binding PreBuildCommands}" AcceptsReturn="True" Height="200" />

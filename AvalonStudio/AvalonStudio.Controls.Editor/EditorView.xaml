@@ -1,4 +1,6 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl x:Class="AvalonStudio.Extensibility.Editor.EditorView"
+             xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:beh="clr-namespace:AvalonStudio.Utils.Behaviors;assembly=AvalonStudio.Utils"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:actions="clr-namespace:AvalonStudio.Actions;assembly=AvalonStudio"
@@ -8,16 +10,16 @@
   <UserControl.KeyBindings>
     <KeyBinding Command="{Binding RenameSymbolCommand}" Gesture="F2" />
   </UserControl.KeyBindings>
-  <DockPanel LastChildFill="True">
-    <i:Interaction.Behaviors>
-      <beh:PointerWheelValueBehavior Value="{Binding ZoomLevel}" MinValue="20" MaxValue="400" Scale="10" InputModifiers="Control" />
-    </i:Interaction.Behaviors>
-    <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
-      <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
-    </Grid>
-    <Grid>
-      <Grid.ContextMenu>
-        <!--<ContextMenu Items="{Binding ContextMenu}">
+    <DockPanel LastChildFill="True">
+      <i:Interaction.Behaviors>
+        <beh:PointerWheelValueBehavior Value="{Binding ZoomLevel}" MinValue="20" MaxValue="400" Scale="10" InputModifiers="Control" />
+      </i:Interaction.Behaviors>
+      <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
+        <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />
+      </Grid>
+      <Grid>
+        <Grid.ContextMenu>
+          <!--<ContextMenu Items="{Binding ContextMenu}">
                         <ContextMenu.Styles>
                             <Style Selector="MenuItem">
                                 <Setter Property="Command" Value="{Binding Command}" />
@@ -38,12 +40,12 @@
                             </DataTemplate>
                         </ContextMenu.DataTemplates>
                     </ContextMenu>-->
-        <ContextMenu>
-          <MenuItem Header="Goto Definition" Command="{Binding GotoDefinitionCommand}" />
-        </ContextMenu>
-      </Grid.ContextMenu>
+          <ContextMenu>
+            <MenuItem Header="Goto Definition" Command="{Binding GotoDefinitionCommand}" />
+          </ContextMenu>
+        </Grid.ContextMenu>
 
-      <editor:CodeEditor Name="editor"
+            <editor:CodeEditor Name="editor"
                            BorderThickness="0" Margin="0"
                            VerticalAlignment="Stretch"
                            FontFamily="{DynamicResource EditorFont}"
@@ -58,14 +60,8 @@
                            Line="{Binding Line}"
                            Column="{Binding Column}"
                            Selection="{Binding Selection}"
-                           Editor="{Binding }"
-                           RenameText="{Binding RenameText}"
-                           RenameOpen="{Binding InRenameMode}"
-                           DebugHighlight="{Binding DebugHighlight}">
-        <i:Interaction.Behaviors>
-          <beh:BindFocusedBehavior IsFocused="{Binding IsFocused}" />
-        </i:Interaction.Behaviors>
-      </editor:CodeEditor>
-    </Grid>
-  </DockPanel>
+                           Editor="{Binding }">          
+        </editor:CodeEditor>
+      </Grid>
+    </DockPanel>
 </UserControl>

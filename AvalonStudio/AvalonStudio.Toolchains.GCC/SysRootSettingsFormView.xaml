@@ -1,4 +1,6 @@
-<UserControl xmlns="https://github.com/avaloniaui" Width="1000" Design.Height="400">
+<UserControl x:Class="AvalonStudio.Toolchains.GCC.SysRootSettingsFormView"
+             xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Width="1000" Design.Height="400">
   <DockPanel LastChildFill="True">
     <DockPanel DockPanel.Dock="Left" MinWidth="150">
       <TextBlock Text="SysRoot from Package" DockPanel.Dock="Top" Margin="0 0 0 5" />

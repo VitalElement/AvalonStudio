@@ -1,3 +1,5 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui">
+﻿<UserControl x:Class="AvalonStudio.Toolchains.STM32.STM32ProjectSetupModalDialogView"
+             xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <TextBlock>Hello world!</TextBlock> 
 </UserControl>

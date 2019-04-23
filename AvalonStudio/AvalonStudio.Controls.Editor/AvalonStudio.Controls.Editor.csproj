@@ -26,7 +26,28 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Avalonia"  />
+    <PackageReference Include="Avalonia" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="CodeEditorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="EditorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Editor\CodeEditorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Editor\EditorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Editor\TextEditorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="TextEditorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,6 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl x:Class="AvalonStudio.Controls.Editor.SignatureView"
+             xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
               xmlns:local="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor" FontFamily="{DynamicResource UiFont}" FontSize="14">
     <Grid Background="{DynamicResource ThemeControlBackgroundBrush}" TextBlock.Foreground="{DynamicResource ThemeForegroundBrush}">
         <StackPanel>

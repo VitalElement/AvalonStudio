@@ -1,4 +1,6 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui">
+﻿<UserControl x:Class="AvalonStudio.Controls.Editor.EditorSettingsView"
+             xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <StackPanel Spacing="8">
         <Grid>
             <Border BorderBrush="{DynamicResource ThemeBorderDarkBrush}" BorderThickness="1" Padding="8 16 8 8" Margin="8" HorizontalAlignment="Left" VerticalAlignment="Top">

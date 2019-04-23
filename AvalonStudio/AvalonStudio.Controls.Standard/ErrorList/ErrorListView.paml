@@ -1,18 +1,17 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:dg="clr-namespace:Avalonia.Controls;assembly=Avalonia.DataGrid"
              xmlns:vm="clr-namespace:AvalonStudio.Controls.Standard.ErrorList;assembly=AvalonStudio.Controls.Standard"
              Design.Width="800" Design.Height="400">
 <DockPanel LastChildFill="True">
-  <DockPanel.Styles>
+  <!--<DockPanel.Styles>
       <Styles>
-          <Style Selector="dg|DataGridColumnHeader">
+          <Style Selector="DataGridColumnHeader">
             <Setter Property="Background" Value="{DynamicResource ThemeControlBackgroundBrush}" />
           </Style>
-          <Style Selector="dg|DataGridRow /template/ Rectangle#BackgroundRectangle">
+          <Style Selector="DataGridRow /template/ Rectangle#BackgroundRectangle">
             <Setter Property="Fill" Value="{DynamicResource ApplicationAccentBrushLow}"/>
           </Style>
       </Styles>
-  </DockPanel.Styles>
+  </DockPanel.Styles>-->
 
    <Grid Background="{DynamicResource ThemeControlBackgroundBrush}" DockPanel.Dock="Top">
       <StackPanel Orientation="Horizontal" Spacing="20" Margin="5" HorizontalAlignment="Left">
@@ -24,38 +23,38 @@
       </StackPanel>
    </Grid>
 
-  <dg:DataGrid Items="{Binding FilteredErrors}" SelectedItem="{Binding SelectedError, Mode=TwoWay}"
+  <!--<DataGrid Items="{Binding FilteredErrors}" SelectedItem="{Binding SelectedError, Mode=TwoWay}"
         BorderThickness="0"
         RowBackground="Transparent"
         CanUserResizeColumns="True"
         CanUserReorderColumns="True">
-    <dg:DataGrid.Columns>
-      <dg:DataGridTextColumn
+    <DataGrid.Columns>
+      <DataGridTextColumn
         Header="Level"
         Binding="{Binding Level}"
         Width="0.5*" />
-      <dg:DataGridTextColumn
+      <DataGridTextColumn
         Header="Code"
         Binding="{Binding Code}"
         Width="0.5*" />
-      <dg:DataGridTextColumn
+      <DataGridTextColumn
         Header="Error"
         Binding="{Binding Spelling}"
         Width="10*" />
-      <dg:DataGridTextColumn
+      <DataGridTextColumn
         Header="Project"
         Binding="{Binding Project}"
         Width="1.5*" />
-      <dg:DataGridTextColumn
+      <DataGridTextColumn
         Header="File"
         Binding="{Binding File}"
         Width="1.5*" />
-      <dg:DataGridTextColumn
+      <DataGridTextColumn
         Header="Line"
         Binding="{Binding Line}"
         Width="0.3*"
         CellStyleClasses="gdp" />
-    </dg:DataGrid.Columns>
-  </dg:DataGrid>
+    </DataGrid.Columns>
+  </DataGrid>-->
   </DockPanel>
 </UserControl>

@@ -1,4 +1,5 @@
-﻿<cont:MetroWindow xmlns="https://github.com/avaloniaui"
+﻿<cont:MetroWindow x:Class="AvalonStudio.MainWindow"
+             xmlns="https://github.com/avaloniaui"
                       xmlns:cont="clr-namespace:AvalonStudio.Shell.Controls;assembly=AvalonStudio.Shell"
                       xmlns:ide="clr-namespace:AvalonStudio.Studio;assembly=AvalonStudio.Studio"
                       xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"

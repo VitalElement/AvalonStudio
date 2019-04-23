@@ -1,4 +1,6 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl x:Class="AvalonStudio.Controls.Editor.SymbolView"
+             xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
              xmlns:vm="clr-namespace:AvalonStudio.Controls.Editor;assembly=AvalonStudio.Controls.Editor"
              FontFamily="{DynamicResource UiFont}" FontSize="14">

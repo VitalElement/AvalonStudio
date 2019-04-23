@@ -1,4 +1,6 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
+﻿<UserControl x:Class="AvalonStudio.Languages.Xaml.XamlEditorView"
+             xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:previewer="clr-namespace:AvalonStudio.Languages.Xaml"
              xmlns:as="clr-namespace:AvalonStudio.Extensibility.Controls;assembly=AvalonStudio.Extensibility"
              xmlns:local="clr-namespace:AvalonStudio.Extensibility.Editor;assembly=AvalonStudio.Extensibility">

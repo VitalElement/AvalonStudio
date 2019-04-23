@@ -1,4 +1,6 @@
-﻿<Application xmlns="https://github.com/avaloniaui"
+﻿<Application x:Class="AvalonStudio.App"
+             xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:idc="clr-namespace:Dock.Avalonia.Controls;assembly=Dock.Avalonia"
              xmlns:id="clr-namespace:Dock.Model;assembly=Dock.Model"
              xmlns:Documents="clr-namespace:AvaloniaDemo.ViewModels.Documents;assembly=AvalonStudio"
@@ -25,7 +27,6 @@
     <StyleInclude Source="avares://Dock.Avalonia/Controls/DockToolChrome.xaml"/>
     <StyleInclude Source="avares://Dock.Avalonia/Controls/MetroWindow.xaml"/>
     <StyleInclude Source="resm:VtNetCore.Avalonia.VirtualTerminalControl.xaml?assembly=VtNetCore.Avalonia" />
-    <StyleInclude Source="resm:Avalonia.DataGrid.Themes.Default.DefaultTheme.xaml?assembly=Avalonia.DataGrid.Themes.Default"/>
   </Application.Styles>  
     <Application.DataTemplates>
       <!-- Views -->

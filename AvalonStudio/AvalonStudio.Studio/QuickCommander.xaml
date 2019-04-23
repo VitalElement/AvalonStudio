@@ -1,4 +1,6 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui" 
+﻿<UserControl x:Class="AvalonStudio.Studio.QuickCommander"
+             xmlns="https://github.com/avaloniaui"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
              xmlns:control="clr-namespace:AvalonStudio.Studio;assembly=AvalonStudio.Studio"
              xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
              xmlns:iac="clr-namespace:Avalonia.Xaml.Interactions.Custom;assembly=Avalonia.Xaml.Interactions.Custom"
