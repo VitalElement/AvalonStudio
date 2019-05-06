@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="ReactiveUI" />
-    <PackageReference Include="Dock.Avalonia" Version="0.8.1-build20190423-02" />
-    <PackageReference Include="Dock.Model.ReactiveUI" Version="0.8.1-build20190423-02" />
+    <PackageReference Include="Dock.Avalonia" Version="0.8.1-build20190506-01" />
+    <PackageReference Include="Dock.Model.ReactiveUI" Version="0.8.1-build20190506-01" />
   </ItemGroup>
 
   <ItemGroup>

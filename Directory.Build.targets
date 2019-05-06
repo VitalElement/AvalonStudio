@@ -1,8 +1,8 @@
 <Project>
 
   <PropertyGroup>
-    <AvaloniaVersion>0.8.1-cibuild0002064-beta</AvaloniaVersion>
-    <AvaloniaBehaviorsVersion>0.8.1-build20190423-02</AvaloniaBehaviorsVersion>
+    <AvaloniaVersion>0.8.1-cibuild0002194-beta</AvaloniaVersion>
+    <AvaloniaBehaviorsVersion>0.8.1-build20190506-01</AvaloniaBehaviorsVersion>
     <GitInfoVersion>2.0.11</GitInfoVersion>
     <MicrosoftExtensionsDependencyModelVersion>2.0.4</MicrosoftExtensionsDependencyModelVersion>
     <NewtonsoftJsonVersion>12.0.1</NewtonsoftJsonVersion>
