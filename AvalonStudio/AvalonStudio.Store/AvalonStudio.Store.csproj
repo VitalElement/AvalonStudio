@@ -4,7 +4,6 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
-    <UseWPF>true</UseWPF>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
@@ -18,6 +17,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio\AvalonStudio.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
   </ItemGroup>
 
 </Project>

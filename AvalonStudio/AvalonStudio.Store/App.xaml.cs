@@ -8,18 +8,11 @@ using System.Windows;
 
 namespace AvalonStudio.Store
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
+    class Program
     {
-        protected override void OnStartup(StartupEventArgs e)
+        public static void Main(string[] args)
         {
-            base.OnStartup(e);
-
-            AvalonStudio.App.Main(e.Args);
-
-           
+            AvalonStudio.App.Main(args);
         }
     }
 }
