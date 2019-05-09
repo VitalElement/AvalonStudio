@@ -1,16 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp2.2</TargetFrameworks>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
     <TieredCompilations>True</TieredCompilations>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <PreserveCompilationContext>true</PreserveCompilationContext>
-    <RuntimeIdentifiers>win7-x64</RuntimeIdentifiers>
     <ApplicationIcon>logo-256.ico</ApplicationIcon>
     <NoWarn>NU1701</NoWarn>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWPF>true</UseWPF>
+    <StartupObject />
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -77,4 +79,10 @@
       <_FakeOutputPath Include="$(MSBuildProjectDirectory)\$(PackageOutputPath)\$(AssemblyName).UNK" />
     </ItemGroup>
   </Target>
+
+  <PropertyGroup>
+    <GetTargetPathWithTargetPlatformMonikerDependsOn>$(GetTargetPathDependsOn); GetTargetPath</GetTargetPathWithTargetPlatformMonikerDependsOn>
+  </PropertyGroup>
+ 
+  <Target Name="GetTargetPathWithTargetPlatformMoniker" DependsOnTargets="$(GetTargetPathWithTargetPlatformMonikerDependsOn)" Returns="@(TargetPathWithTargetPlatformMoniker)" />
 </Project>

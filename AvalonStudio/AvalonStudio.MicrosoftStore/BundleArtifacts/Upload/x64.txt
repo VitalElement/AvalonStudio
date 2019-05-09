@@ -1,0 +1,2 @@
+MainPackage=E:\repos\AvalonStudio\AvalonStudio\AvalonStudio.MicrosoftStore\bin\x64\Release\Upload\AvalonStudio.MicrosoftStore_1.0.5.0_x64.msix
+SymbolPackage=E:\repos\AvalonStudio\AvalonStudio\AvalonStudio.MicrosoftStore\bin\x64\Release\Upload\AvalonStudio.MicrosoftStore_1.0.5.0\AvalonStudio.MicrosoftStore_1.0.5.0_x64.appxsym
