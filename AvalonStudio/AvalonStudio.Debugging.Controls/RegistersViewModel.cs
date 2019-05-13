@@ -1,4 +1,5 @@
 using Avalonia.Threading;
+using AvalonStudio.Debugging;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Shell;
 using AvalonStudio.Extensibility.Studio;
@@ -12,7 +13,7 @@ using System.Composition;
 using System.Linq;
 using System.Reactive.Linq;
 
-namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging.Controls
 {
     [ExportToolControl, Export(typeof(IExtension)), Shared]
     public class RegistersViewModel : ToolViewModel<ObservableCollection<RegisterViewModel>>, IActivatableExtension

@@ -2,7 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using System.Collections;
 
-namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging.Controls
 {
     public class DisassemblyView : UserControl
     {

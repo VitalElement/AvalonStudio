@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Debugging
+﻿namespace AvalonStudio.Debugging.Controls
 {
     using Avalonia.Controls;
     using Avalonia.Markup.Xaml;

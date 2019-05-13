@@ -1,10 +1,11 @@
-﻿namespace AvalonStudio.Debugging
+﻿namespace AvalonStudio.Debugging.Controls
 {
     using ReactiveUI;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Threading.Tasks;
+    using AvalonStudio.Debugging;
 
     public class MemoryBytesViewModel<T> : MemoryBytesViewModel
     {

@@ -1,10 +1,11 @@
 using Avalonia.Media;
+using AvalonStudio.Debugging;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System;
 using System.Reactive;
 
-namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging.Controls
 {
     public class RegisterViewModel : ViewModel
     {

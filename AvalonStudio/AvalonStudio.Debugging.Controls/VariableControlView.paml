@@ -1,8 +1,7 @@
-﻿<UserControl x:Class="AvalonStudio.Debugging.VariableControlView"
+﻿<UserControl x:Class="AvalonStudio.Debugging.Controls.VariableControlView"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:cont="clr-namespace:AvalonStudio.Controls;assembly=AvalonStudio"
-             xmlns:vm="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging">
+             xmlns:vm="clr-namespace:AvalonStudio.Debugging.Controls">
   <Grid>
     <TreeView Items="{Binding Children}" BorderThickness="0" Background="{DynamicResource ThemeControlBackgroundBrush}">
       <TreeView.Styles>

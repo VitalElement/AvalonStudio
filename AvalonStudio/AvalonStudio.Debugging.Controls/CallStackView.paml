@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="AvalonStudio.Debugging.CallStackView"
+﻿<UserControl x:Class="AvalonStudio.Debugging.Controls.CallStackView"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging" IsVisible="{Binding IsVisible}">

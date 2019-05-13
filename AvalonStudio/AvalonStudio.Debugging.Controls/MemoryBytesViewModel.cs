@@ -1,5 +1,6 @@
-﻿namespace AvalonStudio.Debugging
+﻿namespace AvalonStudio.Debugging.Controls
 {
+    using AvalonStudio.Debugging;
     using MVVM;
     using System.Threading.Tasks;
 

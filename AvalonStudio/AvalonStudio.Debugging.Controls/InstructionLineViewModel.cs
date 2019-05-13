@@ -1,6 +1,7 @@
 ﻿using System;
+using AvalonStudio.Debugging;
 
-namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging.Controls
 {
     public class InstructionLineViewModel : LineViewModel
     {

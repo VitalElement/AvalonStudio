@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Controls
+﻿namespace AvalonStudio.Debugging.Controls
 {
     using AvalonStudio.Debugging;
     using System.Composition;

@@ -1,5 +1,7 @@
-﻿namespace AvalonStudio.Debugging
+﻿namespace AvalonStudio.Debugging.Controls
 {
+    using AvalonStudio.Debugging;
+
     public class SourceLineViewModel : LineViewModel
     {
         public SourceLineViewModel(SourceLine model) : base(model)

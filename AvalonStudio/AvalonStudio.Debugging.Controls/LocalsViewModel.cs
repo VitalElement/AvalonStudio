@@ -6,8 +6,9 @@ using AvalonStudio.Shell;
 using Mono.Debugging.Client;
 using System.Composition;
 using System.Threading.Tasks;
+using AvalonStudio.Debugging;
 
-namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging.Controls
 {
     [ExportToolControl, Export(typeof(IExtension)), Shared]
     public class LocalsViewModel : WatchListViewModel, IActivatableExtension

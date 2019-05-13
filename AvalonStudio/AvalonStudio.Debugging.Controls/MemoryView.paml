@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="AvalonStudio.Debugging.MemoryView"
+﻿<UserControl x:Class="AvalonStudio.Debugging.Controls.MemoryView"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:debugging="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Extensibility"             >
