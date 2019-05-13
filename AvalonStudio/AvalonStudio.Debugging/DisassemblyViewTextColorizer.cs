@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace AvalonStudio.Debugging
 {
-    class DisassemblyViewTextColorizer : GenericLineTransformer
+    public class DisassemblyViewTextColorizer : GenericLineTransformer
     {
         private Dictionary<string, int> _addressLines;
         private IBrush _addressBrush = Brush.Parse("#569CD6");
