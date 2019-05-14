@@ -16,8 +16,9 @@ using System.Linq;
 using System.Composition;
 using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Shell;
+using AvalonStudio.Debugging;
 
-namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging.Controls
 {
     [ExportToolControl]
     [Export(typeof(IExtension))]

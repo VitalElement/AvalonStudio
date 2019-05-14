@@ -1,7 +1,7 @@
-<UserControl x:Class="AvalonStudio.Debugging.WatchListView"
+<UserControl x:Class="AvalonStudio.Debugging.Controls.WatchListView"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:ucont="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging">  
+             xmlns:ucont="clr-namespace:AvalonStudio.Debugging.Controls">  
     <DockPanel>
       <TextBox Text="{Binding Expression}" Watermark="Expression" UseFloatingWatermark="true" DockPanel.Dock="Top">
         <TextBox.KeyBindings>

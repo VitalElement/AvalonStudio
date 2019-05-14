@@ -1,6 +1,7 @@
-﻿namespace AvalonStudio.Debugging
+﻿namespace AvalonStudio.Debugging.Controls
 {
     using Avalonia.Threading;
+    using AvalonStudio.Debugging;
     using Extensibility;
     using MVVM;
     using ReactiveUI;

@@ -1,4 +1,4 @@
-namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging.Controls
 {
     using Avalonia.Threading;
     using AvalonStudio.Extensibility;
@@ -13,6 +13,7 @@ namespace AvalonStudio.Debugging
     using System.Linq;
     using System.Reactive;
     using System.Threading.Tasks;
+    using AvalonStudio.Debugging;
 
     [ExportToolControl]
     [Export(typeof(IWatchList))]

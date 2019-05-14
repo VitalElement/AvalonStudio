@@ -7,8 +7,9 @@ using AvalonStudio.Shell;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Composition;
+using AvalonStudio.Debugging;
 
-namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging.Controls
 {
     [ExportToolControl]
     [Export(typeof(IExtension))]

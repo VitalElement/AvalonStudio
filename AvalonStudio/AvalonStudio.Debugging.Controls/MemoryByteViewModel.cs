@@ -1,4 +1,4 @@
-﻿namespace AvalonStudio.Debugging
+﻿namespace AvalonStudio.Debugging.Controls
 {
     using Avalonia.Media;
     using AvalonStudio.MVVM;

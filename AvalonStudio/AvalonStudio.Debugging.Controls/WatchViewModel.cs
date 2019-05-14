@@ -8,8 +8,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Threading.Tasks;
+using AvalonStudio.Debugging;
 
-namespace AvalonStudio.Debugging
+namespace AvalonStudio.Debugging.Controls
 {
     public class ObjectValueViewModel : ViewModel<ObjectValue>
     {

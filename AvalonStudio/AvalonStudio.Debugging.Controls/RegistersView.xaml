@@ -1,7 +1,7 @@
-<UserControl x:Class="AvalonStudio.Debugging.RegistersView"
+<UserControl x:Class="AvalonStudio.Debugging.Controls.RegistersView"
              xmlns="https://github.com/avaloniaui"
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"             
-             xmlns:vm="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging">
+             xmlns:vm="clr-namespace:AvalonStudio.Debugging.Controls">
     <Grid>
         <ListBox BorderThickness="0" Items="{Binding Model}" Background="{DynamicResource ThemeControlBackgroundBrush}"
                  VirtualizationMode="None">

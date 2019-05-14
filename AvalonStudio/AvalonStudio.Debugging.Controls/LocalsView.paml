@@ -1,6 +1,6 @@
-﻿<UserControl x:Class="AvalonStudio.Debugging.LocalsView"
+﻿<UserControl x:Class="AvalonStudio.Debugging.Controls.LocalsView"
              xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:ucont="clr-namespace:AvalonStudio.Debugging;assembly=AvalonStudio.Debugging" MinHeight="200">
+             xmlns:ucont="clr-namespace:AvalonStudio.Debugging.Controls" MinHeight="200">
   <ucont:VariableControlView Grid.Row="1" />
 </UserControl>

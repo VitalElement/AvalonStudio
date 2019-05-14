@@ -139,12 +139,7 @@ namespace AvalonStudio.Studio
                         break;
 
                     case Perspective.Debugging:
-                        // find all tools with debugging perspective attribute
-                        // they must also have IsOpen (i.e. user didnt close them)
-                        // re-dock them.
                         shell.CurrentPerspective = DebugPerspective;
-
-                        //IoC.Get<IShell>().Layout?.Navigate(DebugLayout);
 
                         // TODO close intellisense, and tooltips.
                         // disable documents, get rid of error list, solution explorer, etc.    (isreadonly)
