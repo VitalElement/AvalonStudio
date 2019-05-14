@@ -95,7 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Store\AvalonStudio.Store.csproj">
-      <DesktopBridgeSelfContained>True</DesktopBridgeSelfContained>
+      <DesktopBridgeSelfContained>true</DesktopBridgeSelfContained>
       <DesktopBridgeIdentifier>$(DesktopBridgeRuntimeIdentifier)</DesktopBridgeIdentifier>
       <Properties>SelfContained=%(DesktopBridgeSelfContained);RuntimeIdentifier=%(DesktopBridgeIdentifier)</Properties>
       <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>

@@ -9,7 +9,7 @@
   <Identity
     Name="43743VitalElement.AvalonStudio"
     Publisher="CN=A77810A5-709D-4273-B6D4-9240A5A7B905"
-    Version="1.0.8.0" />
+    Version="1.0.13.0" />
 
   <Properties>
     <DisplayName>Avalon Studio</DisplayName>
@@ -28,8 +28,8 @@
 
   <Applications>
     <Application Id="App"
-      Executable="$targetnametoken$.exe"
-      EntryPoint="$targetentrypoint$">
+      Executable="AvalonStudio.exe"
+      EntryPoint="AvalonStudio.App.Main">
       <uap:VisualElements
         DisplayName="Avalon Studio"
         Description="AvalonStudio.MicrosoftStore"
