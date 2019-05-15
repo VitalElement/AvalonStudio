@@ -23,6 +23,7 @@
     <PackageReference Update="Avalonia.X11" Version="$(AvaloniaVersion)" />
     <PackageReference Update="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
     <PackageReference Update="Avalonia.ReactiveUI" Version="$(AvaloniaVersion)" />
+    <PackageReference Update="Avalonia.Controls.DataGrid" Version="$(AvaloniaVersion)" />
     <PackageReference Update="Avalonia.Xaml.Behaviors" Version="$(AvaloniaBehaviorsVersion)" />
     <PackageReference Update="Avalonia.Xaml.Interactions" Version="$(AvaloniaBehaviorsVersion)" />
     <PackageReference Update="Avalonia.Xaml.Interactions.Custom" Version="$(AvaloniaBehaviorsVersion)" />
