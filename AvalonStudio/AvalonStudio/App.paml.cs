@@ -33,6 +33,11 @@ namespace AvalonStudio
         [STAThread]
         public static void Main(string[] args)
         {
+            Entry(args);
+        }
+
+        public static void Entry(string[] args)
+        {
             UnixPsuedoTerminal.Trampoline(args);
         
 #if !DEBUG

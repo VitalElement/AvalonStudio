@@ -23,13 +23,13 @@
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <PackageCertificateKeyFile>AvalonStudio.MicrosoftStore_StoreKey.pfx</PackageCertificateKeyFile>
-    <EntryPointProjectUniqueName>..\AvalonStudio.Store\AvalonStudio.Store.csproj</EntryPointProjectUniqueName>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
     <PackageCertificateThumbprint>A5903B9605B87DFCEF6CC4897EBD03AE421F273B</PackageCertificateThumbprint>
+    <EntryPointProjectUniqueName>..\AvalonStudio.Store\AvalonStudio.Store.csproj</EntryPointProjectUniqueName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <AppxBundle>Always</AppxBundle>
@@ -95,7 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonStudio.Store\AvalonStudio.Store.csproj">
-      <DesktopBridgeSelfContained>true</DesktopBridgeSelfContained>
+      <DesktopBridgeSelfContained>True</DesktopBridgeSelfContained>
       <DesktopBridgeIdentifier>$(DesktopBridgeRuntimeIdentifier)</DesktopBridgeIdentifier>
       <Properties>SelfContained=%(DesktopBridgeSelfContained);RuntimeIdentifier=%(DesktopBridgeIdentifier)</Properties>
       <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
