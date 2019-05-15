@@ -4,7 +4,7 @@
              xmlns:vm="clr-namespace:AvalonStudio.Controls.Standard.ErrorList;assembly=AvalonStudio.Controls.Standard"
              Design.Width="800" Design.Height="400">
 <DockPanel LastChildFill="True">
-  <DockPanel.Styles>
+  <!--<DockPanel.Styles>
       <Styles>
           <Style Selector="DataGridColumnHeader">
             <Setter Property="Background" Value="{DynamicResource ThemeControlBackgroundBrush}" />
@@ -13,7 +13,7 @@
             <Setter Property="Fill" Value="{DynamicResource ApplicationAccentBrushLow}"/>
           </Style>
       </Styles>
-  </DockPanel.Styles>
+  </DockPanel.Styles>-->
 
    <Grid Background="{DynamicResource ThemeControlBackgroundBrush}" DockPanel.Dock="Top">
       <StackPanel Orientation="Horizontal" Spacing="20" Margin="5" HorizontalAlignment="Left">
@@ -25,7 +25,7 @@
       </StackPanel>
    </Grid>
 
-  <DataGrid Items="{Binding FilteredErrors}" SelectedItem="{Binding SelectedError, Mode=TwoWay}"
+  <!--<DataGrid Items="{Binding FilteredErrors}" SelectedItem="{Binding SelectedError, Mode=TwoWay}"
         BorderThickness="0"
         RowBackground="Transparent"
         CanUserResizeColumns="True"
@@ -57,6 +57,6 @@
         Width="0.3*"
         CellStyleClasses="gdp" />
     </DataGrid.Columns>
-  </DataGrid>
+  </DataGrid>-->
   </DockPanel>
 </UserControl>

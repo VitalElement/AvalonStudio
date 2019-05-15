@@ -16,7 +16,7 @@ using AvalonStudio.Terminals.Unix;
 
 namespace AvalonStudio
 {
-    public class App : Application
+    internal class App : Application
     {
 #if !DEBUG
         static void Print(Exception ex)
@@ -31,7 +31,7 @@ namespace AvalonStudio
 #endif
 
         [STAThread]
-        public static void Main(string[] args)
+        private static void Main(string[] args)
         {
             UnixPsuedoTerminal.Trampoline(args);
         
