@@ -108,7 +108,7 @@ namespace AvalonStudio.Languages.Xaml
                 engine = new CompletionEngine();
             }
 
-            CreateMetaDataIfRequired(editor.SourceFile.Project.Solution.StartupProject.Executable);
+            CreateMetaDataIfRequired(editor.SourceFile.Project.Solution.StartupProject?.Executable);
         }
     }
 }
