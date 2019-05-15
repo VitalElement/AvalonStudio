@@ -1,6 +1,0 @@
-MainPackage=E:\repos\AvalonStudio\AvalonStudio\AvalonStudio.MicrosoftStore\bin\x64\Debug\AvalonStudio.MicrosoftStore_1.0.13.0_x64_Debug.msix
-SymbolPackage=E:\repos\AvalonStudio\AvalonStudio\AvalonStudio.MicrosoftStore\obj\x64\Debug\Symbols\AvalonStudio.MicrosoftStore_1.0.13.0_x64_Debug.appxsym
-ResourcePack=E:\repos\AvalonStudio\AvalonStudio\AvalonStudio.MicrosoftStore\bin\x64\Debug\AvalonStudio.MicrosoftStore_1.0.13.0_scale-100.msix
-ResourcePack=E:\repos\AvalonStudio\AvalonStudio\AvalonStudio.MicrosoftStore\bin\x64\Debug\AvalonStudio.MicrosoftStore_1.0.13.0_scale-125.msix
-ResourcePack=E:\repos\AvalonStudio\AvalonStudio\AvalonStudio.MicrosoftStore\bin\x64\Debug\AvalonStudio.MicrosoftStore_1.0.13.0_scale-150.msix
-ResourcePack=E:\repos\AvalonStudio\AvalonStudio\AvalonStudio.MicrosoftStore\bin\x64\Debug\AvalonStudio.MicrosoftStore_1.0.13.0_scale-400.msix
