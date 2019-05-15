@@ -1,0 +1,1 @@
+E:\repos\AvalonStudio\AvalonStudio\AvalonStudio.MicrosoftStore\bin\x64\Release\Upload\AvalonStudio.MicrosoftStore_1.0.11.0\AvalonStudio.MicrosoftStore_1.0.11.0_x64.msixbundle
