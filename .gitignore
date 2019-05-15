@@ -245,3 +245,5 @@ AvalonStudio/ToolchainUploader/Properties/launchSettings\.json
 AvalonStudio/AvalonStudio\.Windows\.Installer/ComponentsGeneratedASB\.wxs
 
 AvalonStudio/AvalonStudio\.Windows\.Installer/ComponentsGeneratedAS\.wxs
+
+AvalonStudio/AvalonStudio\.MicrosoftStore/BundleArtifacts/x64\.txt
