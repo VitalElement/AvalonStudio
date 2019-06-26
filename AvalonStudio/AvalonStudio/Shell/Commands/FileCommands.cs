@@ -47,6 +47,6 @@ namespace AvalonStudio.Shell.Commands
         private void Save() => _studio.Save();
         private void SaveAll() => _studio.SaveAll();
 
-        private void Exit() => Application.Current.Exit();
+        private void Exit() => Application.Current.Shutdown(0);
     }
 }

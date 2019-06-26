@@ -68,7 +68,7 @@ namespace AvalonStudio
             finally
 #endif
             {
-                Application.Current.Exit();
+                Application.Current.Shutdown(0);
             }
         }
 

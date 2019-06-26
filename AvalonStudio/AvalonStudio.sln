@@ -144,9 +144,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencie
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IDE", "IDE", "{B289F4EC-4D3B-499D-8B03-6B59550A0F37}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Extensibility.Editor", "AvalonStudio.Extensibility.Editor\AvalonStudio.Extensibility.Editor.csproj", "{267E7AE6-0695-47AD-AC0D-845C08D63A02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Extensibility.Editor", "AvalonStudio.Extensibility.Editor\AvalonStudio.Extensibility.Editor.csproj", "{267E7AE6-0695-47AD-AC0D-845C08D63A02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvalonStudio.Debugging.Controls", "AvalonStudio.Debugging.Controls\AvalonStudio.Debugging.Controls.csproj", "{11A9ABB6-62AA-43EE-A6D4-983CB40F57CB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Debugging.Controls", "AvalonStudio.Debugging.Controls\AvalonStudio.Debugging.Controls.csproj", "{11A9ABB6-62AA-43EE-A6D4-983CB40F57CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1105,6 +1105,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{8E501956-B9A6-430E-86AC-350ED94B44E4} = {E22D2558-C9DA-4E94-9014-084F28A38431}
 		{5D5FE113-FFEF-4E49-A011-00A167EFA36E} = {528C3D32-4210-4109-AE60-B965C6BED1C3}
 		{D7720520-9184-45D3-9817-7C12983C075C} = {2217D14F-37C4-46D3-A4D3-959AB3D7C4AD}
 		{A9B2958A-0B02-4598-B7B1-42EEC7E2FAE4} = {5F514911-0404-4D14-B69A-458BA643F5C7}

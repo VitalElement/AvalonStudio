@@ -162,7 +162,7 @@ namespace AvalonStudio.CommandLineTools
 
                 if (Application.Current != null)
                 {
-                    Application.Current.OnExit += Current_OnExit;
+                    Application.Current.Exit += Current_OnExit;
 
                     _process.Exited += _process_Exited;
                 }
@@ -189,7 +189,7 @@ namespace AvalonStudio.CommandLineTools
                 {
                     _process.Exited -= _process_Exited;
 
-                    Application.Current.OnExit -= Current_OnExit;
+                    Application.Current.Exit -= Current_OnExit;
                 }
 
                 _process = null;
