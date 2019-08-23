@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Avalonia" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="..\Avalonia.Designer.HostApp\Avalonia.Designer.HostApp.csproj" />
     <ProjectReference Include="..\Avalonia.Ide\src\Avalonia.Ide.CompletionEngine.DnlibMetadataProvider\Avalonia.Ide.CompletionEngine.DnlibMetadataProvider.csproj" />
     <ProjectReference Include="..\Avalonia.Ide\src\Avalonia.Ide.CompletionEngine\Avalonia.Ide.CompletionEngine.csproj" />

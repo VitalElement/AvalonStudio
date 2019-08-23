@@ -490,6 +490,11 @@ namespace AvalonStudio.Platforms
                 Directory.CreateDirectory(ExtensionsFolder);
             }
 
+            if(!Directory.Exists(ProjectDirectory))
+            {
+                Directory.CreateDirectory(ProjectDirectory);
+            }
+
             if (Platform.PlatformIdentifier == PlatformID.MacOSX)
             {
                 var paths = PlatformSupport.GetSystemPaths();
