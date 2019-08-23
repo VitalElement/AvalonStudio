@@ -20,7 +20,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             if(DataContext is SolutionExplorerViewModel vm)
             {
-                vm.OnKeyDown(e.Key, e.Modifiers);
+                vm.OnKeyDown(e.Key, e.KeyModifiers);
             }
         }
     }

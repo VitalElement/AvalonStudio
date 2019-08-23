@@ -100,9 +100,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             }
         }
 
-        internal void OnKeyDown(Key key, InputModifiers modifiers)
+        internal void OnKeyDown(Key key, KeyModifiers modifiers)
         {
-            if (key == Key.Delete && modifiers == InputModifiers.None)
+            if (key == Key.Delete && modifiers == KeyModifiers.None)
             {
                 if (SelectedItem?.Model is IDeleteable deletable)
                 {

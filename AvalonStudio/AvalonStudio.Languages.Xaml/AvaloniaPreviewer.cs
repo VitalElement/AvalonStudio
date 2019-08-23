@@ -1,14 +1,12 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Remote;
 using Avalonia.Controls.Shapes;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Remote.Protocol;
 using Avalonia.Remote.Protocol.Designer;
-using Avalonia.Remote.Protocol.Viewport;
 using Avalonia.Threading;
 using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility;
@@ -17,7 +15,6 @@ using AvalonStudio.Extensibility.Studio;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
-using AvalonStudio.Utils;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -204,11 +201,11 @@ namespace AvalonStudio.Languages.Xaml
         {
             AddHandler(PointerWheelChangedEvent, (sender, e) =>
             {
-                if (e.InputModifiers.HasFlag(InputModifiers.Control) && _remote != null)
+                if (e.KeyModifiers.HasFlag(KeyModifiers.Control) && _remote != null)
                 {
                     var delta = e.Delta.Y / 25;
 
-                    if (e.InputModifiers.HasFlag(InputModifiers.Shift))
+                    if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
                     {
                         delta = e.Delta.Y / 100;
                     }

@@ -172,9 +172,10 @@ namespace AvalonStudio.Controls.Editor.ContextActions
 
         private async void ContextActionsRenderer_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key != Key.OemPeriod ||
-                e.Modifiers != InputModifiers.Control
-                ) return;
+            if (e.Key != Key.OemPeriod || !e.KeyModifiers.HasFlag(KeyModifiers.Control))
+            {
+                return;
+            }
 
             if (Line <= 0)
             {

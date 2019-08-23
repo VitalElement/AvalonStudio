@@ -175,13 +175,13 @@ namespace AvalonStudio.Controls.Editor
                 {
                     _selecting = true;
                     _selectionStart = new AnchorSegment(Document, currentSeg.Offset, currentSeg.Length);
-                    if (e.InputModifiers.HasFlag(InputModifiers.Shift))
+                    if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
                     {
                         if (_textArea.Selection is SimpleSelection simpleSelection)
                             _selectionStart = new AnchorSegment(Document, simpleSelection.SurroundingSegment);
                     }
                     _textArea.Selection = Selection.Create(_textArea, _selectionStart);
-                    if (e.InputModifiers.HasFlag(InputModifiers.Shift))
+                    if (e.KeyModifiers.HasFlag(KeyModifiers.Shift))
                     {
                         ExtendSelection(currentSeg);
                     }

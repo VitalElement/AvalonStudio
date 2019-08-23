@@ -173,9 +173,12 @@ namespace AvalonStudio.CommandLineTools
             {
                 try
                 {
-                    if (!_process.HasExited)
+                    if (_process != null)
                     {
-                        _process.Kill();
+                        if (!_process.HasExited)
+                        {
+                            _process.Kill();
+                        }
                     }
                 }
                 catch

@@ -12,7 +12,7 @@
   </UserControl.KeyBindings>
   <DockPanel LastChildFill="True">
     <i:Interaction.Behaviors>
-      <beh:PointerWheelValueBehavior Value="{Binding ZoomLevel}" MinValue="20" MaxValue="400" Scale="10" InputModifiers="Control" />
+      <beh:PointerWheelValueBehavior Value="{Binding ZoomLevel}" MinValue="20" MaxValue="400" Scale="10" KeyModifiers="Control" />
     </i:Interaction.Behaviors>
     <Grid DockPanel.Dock="Bottom" Margin="10 0 0 0">
       <TextBlock Text="{Binding ZoomLevelText}" FontSize="10" />

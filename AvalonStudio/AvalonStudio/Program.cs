@@ -45,7 +45,7 @@ namespace AvalonStudio
 
         // Your application's entry point. Here you can initialize your MVVM framework, DI
         // container, etc.
-        private static void AppMain(Application app, string[] args)
+        private static void AppMain(string[] args)
         {
             var studio = IoC.Get<IStudio>();
 
@@ -56,15 +56,7 @@ namespace AvalonStudio
             Dispatcher.UIThread.Post(async () =>
             {
                 await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
-
             });
-
-            var window = new MainWindow
-            {
-                DataContext = new MainWindowViewModel(),
-            };
-
-            window.Show();
         }
 
         public static AppBuilder BuildAvaloniaApp()
