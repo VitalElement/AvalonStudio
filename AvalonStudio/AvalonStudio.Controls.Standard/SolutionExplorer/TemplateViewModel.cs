@@ -1,11 +1,12 @@
 ﻿using Avalonia.Diagnostics.ViewModels;
 using AvalonStudio.Extensibility.Templating;
+using AvalonStudio.MVVM;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    class TemplateViewModel : ViewModelBase
+    class TemplateViewModel : ViewModel
     {
         private ITemplate _inner;
 

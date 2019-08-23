@@ -1,11 +1,13 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Diagnostics.ViewModels;
 using AvalonStudio.Extensibility.Templating;
+using AvalonStudio.MVVM;
+using ReactiveUI;
 using System.Globalization;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
-    class TemplateParameterViewModel : ViewModelBase
+    class TemplateParameterViewModel : ViewModel
     {
         private ITemplateParameter _inner;
         private string _value;

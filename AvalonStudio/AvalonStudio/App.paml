@@ -22,11 +22,8 @@
     <StyleInclude Source="avares://AvalonStudio.Debugging/Icons/Icons.xaml" />
     <StyleInclude Source="avares://AvalonStudio.Controls.Standard/SolutionExplorer/Icons/Icons.xaml" />
     <StyleInclude Source="resm:AvalonStudio.Languages.Xaml.AvaloniaPreviewer.xaml?assembly=AvalonStudio.Languages.Xaml" />
-    <StyleInclude Source="avares://Dock.Avalonia/Controls/DockPanelSplitter.xaml" />    
-    <StyleInclude Source="avares://Dock.Avalonia/Controls/ProportionalStackPanelSplitter.xaml"/>
-    <StyleInclude Source="avares://Dock.Avalonia/Controls/DockTarget.xaml"/>
-    <StyleInclude Source="avares://Dock.Avalonia/Controls/DockToolChrome.xaml"/>
-    <StyleInclude Source="avares://Dock.Avalonia/Controls/MetroWindow.xaml"/>
+    <StyleInclude Source="avares://Dock.Avalonia.Themes.Default/DefaultTheme.xaml"/>
+    <StyleInclude Source="avares://Dock.Avalonia.Themes.Metro/DefaultTheme.xaml"/>
     <StyleInclude Source="avares://VtNetCore.Avalonia/VirtualTerminalControl.xaml" />
   </Application.Styles>  
     <Application.DataTemplates>

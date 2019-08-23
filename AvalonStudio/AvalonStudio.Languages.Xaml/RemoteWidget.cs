@@ -82,7 +82,8 @@ namespace AvalonStudio.Languages.Xaml
 
             if (window == null)
             {
-                window = Application.Current.MainWindow;
+                var mainWindow = AvaloniaLocator.CurrentMutable.GetService<Window>();
+                window = mainWindow;
             }
 
             if (window != null)

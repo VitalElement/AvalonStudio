@@ -35,7 +35,10 @@
     <PackageReference Include="System.Composition" Version="1.1.0" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Security.Principal" Version="4.3.0" />
-    <PackageReference Include="Avalonia.Angle.Windows.Natives" Version="2.1.0.2019013001" />
+    <PackageReference Include="Avalonia.Angle.Windows.Natives" Version="2.1.0.2019013001" />    
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Dock.Avalonia.Themes.Default" />
+    <PackageReference Include="Dock.Avalonia.Themes.Metro" />
   </ItemGroup>
 
   <ItemGroup>

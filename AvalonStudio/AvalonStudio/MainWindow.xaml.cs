@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using AvalonStudio.Extensibility.Theme;
 using AvalonStudio.GlobalSettings;
 using AvalonStudio.Shell.Controls;
+using AvalonStudio.Extensibility;
 
 namespace AvalonStudio
 {
@@ -14,6 +15,8 @@ namespace AvalonStudio
 		public MainWindow()
 		{
 			InitializeComponent();
+
+            AvaloniaLocator.CurrentMutable.BindToSelf<Window>(this);
 
 			this.AttachDevTools();
 

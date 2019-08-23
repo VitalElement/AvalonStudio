@@ -133,7 +133,9 @@ namespace AvalonStudio.Projects.CPlusPlus
 
             fbd.InitialDirectory = Model.CurrentDirectory;
 
-            var result = await fbd.ShowAsync(Application.Current.MainWindow);
+            var mainWindow = AvaloniaLocator.CurrentMutable.GetService<Window>();
+
+            var result = await fbd.ShowAsync(mainWindow);
 
             if (!string.IsNullOrEmpty(result))
             {

@@ -58,7 +58,7 @@ namespace AvalonStudio.Controls.Editor
 
                         // adjust offset so popup is always a little bit below the line queried.
                         var translated = editor.TranslatePoint(_lastPoint, editor.TextArea.TextView);
-                        var delta = (translated.Y % editor.TextArea.TextView.DefaultLineHeight);
+                        var delta = (translated.Value.Y % editor.TextArea.TextView.DefaultLineHeight);
 
                         _popup.VerticalOffset = (editor.TextArea.TextView.DefaultLineHeight - delta) + 1;
 
@@ -78,7 +78,8 @@ namespace AvalonStudio.Controls.Editor
             {
                 var distance = e.GetPosition(_editor).DistanceTo(_lastPoint);
 
-                if (distance > 25 && !_popup.PopupRoot.IsPointerOver)
+                Console.WriteLine("Check code here");
+                if (distance > 25 && !_popup.IsPointerOver)
                 {
                     _popup.Close();
                 }

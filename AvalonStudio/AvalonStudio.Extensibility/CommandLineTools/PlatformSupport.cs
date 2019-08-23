@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using AvalonStudio.Platforms;
 using System;
 using System.Collections.Generic;
@@ -160,9 +161,9 @@ namespace AvalonStudio.CommandLineTools
             {
                 _process = process;
 
-                if (Application.Current != null)
+                if (Application.Current != null && Application.Current.ApplicationLifetime is ClassicDesktopStyleApplicationLifetime lifetime)
                 {
-                    Application.Current.Exit += Current_OnExit;
+                    lifetime.Exit += Current_OnExit;
 
                     _process.Exited += _process_Exited;
                 }
@@ -185,11 +186,11 @@ namespace AvalonStudio.CommandLineTools
 
             private void _process_Exited(object sender, EventArgs e)
             {
-                if (Application.Current != null)
+                if (Application.Current != null && Application.Current.ApplicationLifetime is ClassicDesktopStyleApplicationLifetime lifetime)
                 {
                     _process.Exited -= _process_Exited;
 
-                    Application.Current.Exit -= Current_OnExit;
+                    lifetime.Exit -= Current_OnExit;
                 }
 
                 _process = null;

@@ -44,7 +44,9 @@ namespace AvalonStudio
                 throw new ArgumentNullException(nameof(args));
             }
 
-            BuildAvaloniaApp().BeforeStarting(_ =>
+            
+            BuildAvaloniaApp()
+            .StartShellApp<AppBuilder, MainWindow>("AvalonStudio", null, () => new MainWindowViewModel(), _=>
             {
                 var studio = IoC.Get<IStudio>();
 
@@ -53,12 +55,11 @@ namespace AvalonStudio
                 Platform.Initialise();
 
                 Dispatcher.UIThread.Post(async () =>
-                   {
-                       await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
-                       
-                   });
-            })
-            .StartShellApp<AppBuilder, MainWindow>("AvalonStudio", null, () => new MainWindowViewModel());
+                {
+                    await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
+
+                });
+            });
 #if !DEBUG
     }
             catch (Exception e)
@@ -67,9 +68,6 @@ namespace AvalonStudio
             }
             finally
 #endif
-            {
-                Application.Current.Shutdown(0);
-            }
         }
 
         public static AppBuilder BuildAvaloniaApp()

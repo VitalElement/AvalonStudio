@@ -465,7 +465,9 @@ namespace AvalonStudio.Toolchains.GCC
 
             ofd.InitialDirectory = Model.CurrentDirectory;
 
-            var result = await ofd.ShowAsync(Application.Current.MainWindow);
+            var mainWindow = AvaloniaLocator.CurrentMutable.GetService<Window>();
+
+            var result = await ofd.ShowAsync(mainWindow);
 
             if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
             {
@@ -483,7 +485,9 @@ namespace AvalonStudio.Toolchains.GCC
 
             ofd.InitialDirectory = Model.LocationDirectory;
 
-            var result = await ofd.ShowAsync(Application.Current.MainWindow);
+            var mainWindow = AvaloniaLocator.CurrentMutable.GetService<Window>();
+
+            var result = await ofd.ShowAsync(mainWindow);
 
             if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
             {

@@ -23,7 +23,7 @@ namespace AvalonStudio.Controls.Editor
 
         private void _signatureHelper_Closed(object sender, System.EventArgs e)
         {
-            _popup.VerticalOffset -= _signatureHelper.Popup.PopupRoot.Bounds.Height;
+            _popup.VerticalOffset -= _signatureHelper.Popup.Bounds.Height;
             _popup.Open();
         }
 
@@ -44,7 +44,7 @@ namespace AvalonStudio.Controls.Editor
 
                 if(_signatureHelper != null && _signatureHelper.Popup.IsOpen)
                 {
-                    verticalOffset += _signatureHelper.Popup.PopupRoot.Bounds.Height;
+                    verticalOffset += _signatureHelper.Popup.Bounds.Height;
                 }
 
                 _popup.HorizontalOffset = (-PlacementTarget.Bounds.Width) + p.X;

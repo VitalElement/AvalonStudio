@@ -169,7 +169,7 @@ namespace AvalonStudio.Shell.Behaviors
             {
                 if (AssociatedObject.IsPointerOver)
                 {
-                    var mouseDevice = (popup.PopupRoot.GetVisualRoot() as IInputRoot)?.MouseDevice;
+                    var mouseDevice = (popup.GetVisualRoot() as IInputRoot)?.MouseDevice;
                     lastPoint = mouseDevice.GetPosition(AssociatedObject);
                     popup.Open();
                 }

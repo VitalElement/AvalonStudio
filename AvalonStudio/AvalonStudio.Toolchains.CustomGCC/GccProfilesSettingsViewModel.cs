@@ -39,7 +39,9 @@ namespace AvalonStudio.Toolchains.CustomGCC
             {
                 var fbd = new OpenFolderDialog();
 
-                var result = await fbd.ShowAsync(Application.Current.MainWindow);
+                var mainWindow = AvaloniaLocator.CurrentMutable.GetService<Window>();
+
+                var result = await fbd.ShowAsync(mainWindow);
 
                 if (!string.IsNullOrEmpty(result))
                 {

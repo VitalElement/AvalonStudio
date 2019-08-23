@@ -6,6 +6,7 @@ using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Studio;
 using System.Reactive.Linq;
 using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace AvalonStudio.Shell.Commands
 {
@@ -47,6 +48,6 @@ namespace AvalonStudio.Shell.Commands
         private void Save() => _studio.Save();
         private void SaveAll() => _studio.SaveAll();
 
-        private void Exit() => Application.Current.Shutdown(0);
+        private void Exit() => (Application.Current.ApplicationLifetime as ClassicDesktopStyleApplicationLifetime)?.Shutdown(0);
     }
 }

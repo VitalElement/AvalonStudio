@@ -86,7 +86,9 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                     InitialDirectory = location
                 };
 
-                var result = await ofd.ShowAsync(Application.Current.MainWindow);
+                var mainWindow = AvaloniaLocator.CurrentMutable.GetService<Window>();
+
+                var result = await ofd.ShowAsync(mainWindow);
 
                 if (!string.IsNullOrEmpty(result))
                 {

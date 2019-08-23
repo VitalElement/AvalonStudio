@@ -61,7 +61,9 @@
 
                 dlg.AllowMultiple = false;
 
-                var result = await dlg.ShowAsync(Application.Current.MainWindow);
+                var mainWindow = AvaloniaLocator.CurrentMutable.GetService<Window>();
+
+                var result = await dlg.ShowAsync(mainWindow);
 
                 if (result != null && !string.IsNullOrEmpty(result.FirstOrDefault()))
                 {

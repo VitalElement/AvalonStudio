@@ -1,9 +1,9 @@
 <Project>
 
   <PropertyGroup>
-    <AvaloniaBehaviorsVersion>0.8.1-build20190525-01</AvaloniaBehaviorsVersion>
-    <AvaloniaVersion>0.8.999-cibuild0003269-beta</AvaloniaVersion>
-    <DockVersion>0.8.1-build20190531-02</DockVersion>
+    <AvaloniaBehaviorsVersion>0.9.0-build20190810-02</AvaloniaBehaviorsVersion>
+    <AvaloniaVersion>0.8.999-cibuild0003524-beta</AvaloniaVersion>
+    <DockVersion>0.9.0-build20190810-28</DockVersion>
     <GitInfoVersion>2.0.11</GitInfoVersion>
     <MicrosoftExtensionsDependencyModelVersion>2.0.4</MicrosoftExtensionsDependencyModelVersion>
     <NewtonsoftJsonVersion>12.0.1</NewtonsoftJsonVersion>
@@ -45,6 +45,8 @@
     <PackageReference Update="System.Xml.XmlDocument" Version="$(SystemXmlXmlDocumentVersion)" />
     <PackageReference Update="Dock.Avalonia" Version="$(DockVersion)" />
     <PackageReference Update="Dock.Model.ReactiveUI" Version="$(DockVersion)" />
+    <PackageReference Update="Dock.Avalonia.Themes.Default" Version="$(DockVersion)" />
+    <PackageReference Update="Dock.Avalonia.Themes.Metro" Version="$(DockVersion)" />
   </ItemGroup>
 
   <ItemGroup>
