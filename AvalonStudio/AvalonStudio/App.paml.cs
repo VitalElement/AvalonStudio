@@ -13,6 +13,7 @@ using System.IO;
 using AvalonStudio.Utils;
 using AvalonStudio.Packaging;
 using AvalonStudio.Terminals.Unix;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace AvalonStudio
 {
@@ -68,6 +69,9 @@ namespace AvalonStudio
             }
             finally
 #endif
+            {
+                (Application.Current.ApplicationLifetime as ClassicDesktopStyleApplicationLifetime)?.Shutdown(0);
+            }
         }
 
         public static AppBuilder BuildAvaloniaApp()
