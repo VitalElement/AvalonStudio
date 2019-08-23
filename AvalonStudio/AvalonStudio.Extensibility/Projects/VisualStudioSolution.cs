@@ -438,7 +438,7 @@ namespace AvalonStudio.Projects
             {
                 var avalonStudioProperties = _solutionModel.Sections.FirstOrDefault(section => section.Id == "AvalonStudioProperties");
 
-                IProject result = null;
+                IProject result = Projects.FirstOrDefault();
 
                 if (avalonStudioProperties != null && avalonStudioProperties.Properties.ContainsKey("StartupItem"))
                 {
