@@ -1,114 +1,27 @@
 using Avalonia;
-using Avalonia.Threading;
-using Avalonia.Logging.Serilog;
-using Avalonia.Markup.Xaml;
-using AvalonStudio.Packages;
-using AvalonStudio.Platforms;
-using AvalonStudio.Shell;
-using Serilog;
-using System;
-using AvalonStudio.Extensibility.Studio;
-using AvalonStudio.Extensibility;
-using System.IO;
-using AvalonStudio.Utils;
-using AvalonStudio.Packaging;
-using AvalonStudio.Terminals.Unix;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml;
 
 namespace AvalonStudio
 {
     internal class App : Application
     {
-#if !DEBUG
-        static void Print(Exception ex)
+        public override void OnFrameworkInitializationCompleted()
         {
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
-            if (ex.InnerException != null)
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                Print(ex.InnerException);
-            }
-        }
-#endif
-
-        [STAThread]
-        private static void Main(string[] args)
-        {
-            UnixPsuedoTerminal.Trampoline(args);
-        
-#if !DEBUG
-        try
-            {
-#endif
-            if (args == null)
-            {
-                throw new ArgumentNullException(nameof(args));
-            }
-
-            
-            BuildAvaloniaApp()
-            .StartShellApp<AppBuilder, MainWindow>("AvalonStudio", null, () => new MainWindowViewModel(), _=>
-            {
-                var studio = IoC.Get<IStudio>();
-
-                InitializeLogging();
-
-                Platform.Initialise();
-
-                Dispatcher.UIThread.Post(async () =>
+                desktop.MainWindow = new MainWindow()
                 {
-                    await PackageManager.LoadAssetsAsync().ConfigureAwait(false);
-
-                });
-            });
-#if !DEBUG
-    }
-            catch (Exception e)
-            {
-                Print(e);
-            }
-            finally
-#endif
-            {
-                (Application.Current.ApplicationLifetime as ClassicDesktopStyleApplicationLifetime)?.Shutdown(0);
-            }
-        }
-
-        public static AppBuilder BuildAvaloniaApp()
-        {
-            var result = AppBuilder.Configure<App>();
-
-            if(Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
-            {
-                result
-                    .UseWin32()
-                    .UseSkia();
-            }
-            else
-            {
-                result.UsePlatformDetect();
+                    DataContext = new MainWindowViewModel()
+                };
             }
 
-            return result
-                .With(new Win32PlatformOptions { AllowEglInitialization = true, UseDeferredRendering = true })
-                .With(new MacOSPlatformOptions { ShowInDock = true })
-                .With(new AvaloniaNativePlatformOptions { UseDeferredRendering = true, UseGpu = true })
-                .With(new X11PlatformOptions { UseGpu = true, UseEGL = true });
+            base.OnFrameworkInitializationCompleted();
         }
 
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
-        }
-
-        private static void InitializeLogging()
-        {
-#if DEBUG
-            SerilogLogger.Initialize(new LoggerConfiguration()
-                .MinimumLevel.Warning()
-                .WriteTo.Trace(outputTemplate: "{Area}: {Message}")
-                .CreateLogger());
-#endif
         }
     }
 }
