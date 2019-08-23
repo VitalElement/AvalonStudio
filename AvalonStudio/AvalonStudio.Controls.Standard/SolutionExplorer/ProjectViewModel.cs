@@ -101,6 +101,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                     PlatformSupport.LaunchShell(Model.CurrentDirectory, Model.ToolChain?.BinDirectory, Model.Debugger2?.BinDirectory);
                 }
             });
+
+            if (Model.Location.CompareFilePath(Model.Solution.StartupProject.Location) == 0)
+            {
+                IsExpanded = true;
+            }
         }
 
         public bool IsExpanded
@@ -142,7 +147,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         {
             get
             {
-                if (Model == Model.Solution.StartupProject)
+                if (Model.Location.CompareFilePath(Model.Solution.StartupProject.Location) == 0)
                 {
                     return FontWeight.Bold;
                 }
