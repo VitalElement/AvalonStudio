@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <AvaloniaBehaviorsVersion>0.9.0-build20190810-02</AvaloniaBehaviorsVersion>
-    <AvaloniaVersion>0.8.999-cibuild0003548-beta</AvaloniaVersion>
-    <DockVersion>0.9.0-build20190810-28</DockVersion>
+    <AvaloniaVersion>0.8.999-cibuild0003670-beta</AvaloniaVersion>
+    <DockVersion>0.9.0-build20190827-02</DockVersion>
     <GitInfoVersion>2.0.11</GitInfoVersion>
     <MicrosoftExtensionsDependencyModelVersion>2.0.4</MicrosoftExtensionsDependencyModelVersion>
     <NewtonsoftJsonVersion>12.0.1</NewtonsoftJsonVersion>

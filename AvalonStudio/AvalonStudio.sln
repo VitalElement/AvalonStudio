@@ -137,6 +137,9 @@ EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "AvalonStudio.Installer", "AvalonStudio.Windows.Installer\AvalonStudio.Installer.wixproj", "{0ECB963D-916C-442E-80FB-4A066C9558DE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shell", "Shell", "{A12B5AC1-6892-47E6-9D30-6D0EB14DC092}"
+	ProjectSection(SolutionItems) = preProject
+		..\AvalonStudio.Shell\src\Versions.props = ..\AvalonStudio.Shell\src\Versions.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installers", "Installers", "{6E640CCC-3A68-4684-8E1F-90E4FE4BD5EA}"
 EndProject
@@ -147,6 +150,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Extensibility.Editor", "AvalonStudio.Extensibility.Editor\AvalonStudio.Extensibility.Editor.csproj", "{267E7AE6-0695-47AD-AC0D-845C08D63A02}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AvalonStudio.Debugging.Controls", "AvalonStudio.Debugging.Controls\AvalonStudio.Debugging.Controls.csproj", "{11A9ABB6-62AA-43EE-A6D4-983CB40F57CB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{C11A3BAF-B738-4050-9F19-F4AD362634C4}"
+	ProjectSection(SolutionItems) = preProject
+		..\Directory.Build.props = ..\Directory.Build.props
+		..\Directory.Build.targets = ..\Directory.Build.targets
+		..\nuget.config = ..\nuget.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -16,10 +16,6 @@
         <menu:MainMenuView DataContext="{Binding Shell.MainMenu}" Margin="4 0 0 0"  Foreground="{DynamicResource ThemeForegroundBrush}" VerticalAlignment="Stretch" FontSize="13" />
     </cont:MetroWindow.TitleBarContent>
 
-    <cont:MetroWindow.Resources>
-        <id:DockDropHandler x:Key="DockDropHandler0" Id="0" />
-    </cont:MetroWindow.Resources>
-
     <i:Interaction.Behaviors>
         <beh:OpenCloseWindowBehavior DataContext="{Binding ModalDialog}" WindowType="{x:Type cont:ModalDialog}" IsOpen="{Binding ModalDialog.IsVisible}" />
     </i:Interaction.Behaviors>
@@ -43,10 +39,7 @@
         <KeyBinding Command="{Binding EnableDebugModeCommand}" Gesture="CTRL+SHIFT+D" />
     </cont:MetroWindow.KeyBindings>
 
-    <Grid RowDefinitions="*,25">
-        <i:Interaction.Behaviors>
-            <id:DropBehavior Context="{Binding Layout}" Handler="{StaticResource DockDropHandler0}" />
-        </i:Interaction.Behaviors>
+    <Grid RowDefinitions="*,25" id:DockProperties.IsDropArea="True">
 
         <shell:ShellView DataContext="{Binding Shell}" />
 
