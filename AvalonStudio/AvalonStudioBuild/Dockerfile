@@ -31,6 +31,8 @@ RUN apt-get install -y apt-transport-https && apt-get update && apt-get install 
 
 RUN apt-get update && apt-get upgrade -y
 
+RUN chmod 0777 /opt/AvalonBuild/avalon
+
 # Install avalon command
 RUN ln -s /opt/AvalonBuild/avalon /usr/bin/
 
