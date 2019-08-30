@@ -34,4 +34,6 @@ RUN apt-get update && apt-get upgrade -y
 # Install avalon command
 RUN ln -s /opt/AvalonBuild/avalon /usr/bin/
 
+RUN avalon
+
 
