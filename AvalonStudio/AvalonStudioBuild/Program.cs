@@ -578,15 +578,22 @@ namespace AvalonStudio
             }
             else if(options.Operation.ToLower() == "extract")
             {
-                Console.WriteLine("Extracting Cache:");
+                if (File.Exists(options.ArchivePath))
+                {
+                    Console.WriteLine("Extracting Cache:");
 
-                var arguments = $"zxvf {options.ArchivePath} -C {Platform.BaseDirectory}";
+                    var arguments = $"zxvf {options.ArchivePath} -C {Platform.BaseDirectory}";
 
-                var process = Process.Start("tar", arguments);
+                    var process = Process.Start("tar", arguments);
 
-                process.WaitForExit();
+                    process.WaitForExit();
 
-                return 1;
+                    return 1;
+                }
+                else
+                {
+                    Console.WriteLine("No archive to extract.");
+                }
             }
 
             return 0;
