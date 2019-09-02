@@ -563,7 +563,7 @@ namespace AvalonStudio
             {
                 if(!Directory.Exists(Path.GetDirectoryName(options.ArchivePath)))
                 {
-                    Directory.CreateDirectory(options.ArchivePath);
+                    Directory.CreateDirectory(Path.GetDirectoryName(options.ArchivePath));
                 }
 
                 Console.WriteLine("Archiving Cache:");
