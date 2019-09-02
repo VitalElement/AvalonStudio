@@ -87,6 +87,16 @@ namespace AvalonStudio.Packaging
     {
         private const string sharedAccessString = "BlobEndpoint=https://avalonstudiotoolchains.blob.core.windows.net/;QueueEndpoint=https://avalonstudiotoolchains.queue.core.windows.net/;FileEndpoint=https://avalonstudiotoolchains.file.core.windows.net/;TableEndpoint=https://avalonstudiotoolchains.table.core.windows.net/;SharedAccessSignature=sv=2018-03-28&ss=b&srt=sco&sp=rl&se=2030-03-14T21:53:38Z&st=2019-03-14T13:53:38Z&spr=https&sig=looyudbytezOmD2iqCLiZ7xt%2F%2FajvQOF6PR8BULGmpI%3D";
 
+        static PackageManager()
+        {
+            if(Environment.GetEnvironmentVariable("AVALON_CI_MODE") != null)
+            {
+                CICacheMode = true;
+            }
+        }
+
+        public static bool CICacheMode { get; set; }
+
         public static IEnumerable<PackageIdentifier> ListInstalledPackages()
         {
             foreach (var packageDir in Directory.EnumerateDirectories(Platform.PackageDirectory))
@@ -101,6 +111,45 @@ namespace AvalonStudio.Packaging
         public static async Task<IList<string>> ListToolchains()
         {
             return await ListPackages("toolchain");
+        }
+
+            
+        public static void ExtractAllToolchainPackages (IConsole console = null)
+        {
+            foreach (var package in Directory.EnumerateDirectories(Platform.PackageDirectory))
+            {
+                foreach(var version in Directory.EnumerateDirectories(package))
+                {
+                    foreach (var archive in Directory.EnumerateFiles(version, "*.avpkg"))
+                    {
+                        UnpackArchive(archive, version, (offset, length) => console?.OverWrite($"Extracting: [{(((float)offset / length) * 100.0f).ToString("0.00")}%])"), true);
+                    }
+                }
+            }
+        }
+
+        public static void PrepareToCache (IConsole console = null)
+        {
+            foreach (var package in Directory.EnumerateDirectories(Platform.PackageDirectory))
+            {
+                foreach (var version in Directory.EnumerateDirectories(package))
+                {
+                    foreach (var file in Directory.EnumerateFiles(version))
+                    {
+                        var extension = Path.GetExtension(file);
+
+                        if (extension != ".avpkg")
+                        {
+                            File.Delete(file);
+                        }
+                    }
+
+                    foreach (var folder in Directory.EnumerateDirectories(version))
+                    {
+                        Directory.Delete(folder, true);
+                    }
+                }
+            }
         }
 
         public static async Task<IList<string>> ListPackages(string type = "")
@@ -588,7 +637,10 @@ namespace AvalonStudio.Packaging
                 
                 UnpackArchive(Path.Combine(archivePath, package.BlobIdentity), archivePath, progress, true);
 
-                File.Delete(Path.Combine(archivePath, package.BlobIdentity));
+                if (!CICacheMode)
+                {
+                    File.Delete(Path.Combine(archivePath, package.BlobIdentity));                    
+                }
             });
         }
 

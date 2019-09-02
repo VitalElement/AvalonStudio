@@ -97,4 +97,11 @@ namespace AvalonStudio
         [Value(0, MetaName = "Source", HelpText = "Directory containing files and manifest.", Required = true)]
         public string SourceDirectory { get; set; }
     }
+
+    [Verb("archive-cache", HelpText = "Places all the cache (appdata and toolchains) in an uncompressed tar file.")]
+    internal class ArchiveCacheOptions
+    {
+        [Value(0, MetaName = "Operation", HelpText = "Prepare or Extract", Required = true)]
+        public string Operation { get; set; }
+    }
 }

@@ -369,30 +369,6 @@ namespace AvalonStudio.Platforms
             }
         }
 
-        /// <summary>
-        /// The base directory for AvalonStudio's data
-        /// </summary>
-        public static string BaseDirectory
-        {
-            get
-            {
-                string userDir = string.Empty;
-
-                switch (PlatformIdentifier)
-                {
-                    case PlatformID.Win32NT:
-                        userDir = Environment.GetEnvironmentVariable("UserProfile");
-                        break;
-
-                    default:
-                        userDir = Environment.GetEnvironmentVariable("HOME");
-                        break;
-                }
-
-                return Path.Combine(userDir, "AvalonStudio");
-            }
-        }
-
         public static void EnsureSolutionUserDataDirectory(ISolution solution)
         {
             if (!Directory.Exists(GetUserDataDirectory(solution)))
@@ -415,6 +391,8 @@ namespace AvalonStudio.Platforms
         {
             return Path.Combine(project.CurrentDirectory, "Snippets");
         }
+
+        public static string BaseDirectory => AvalonStudio.Shell.Extensibility.Platforms.Platform.BaseDirectory;
 
         public static string ProjectDirectory => Path.Combine(BaseDirectory, "Projects");
 

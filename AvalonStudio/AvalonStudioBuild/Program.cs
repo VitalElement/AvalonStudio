@@ -557,6 +557,22 @@ namespace AvalonStudio
             return 1;
         }
 
+        private static int RunArchiveCache(ArchiveCacheOptions options)
+        {
+            if (options.Operation.ToLower() == "prepare")
+            {
+                PackageManager.PrepareToCache(console);
+
+                return 1;
+            }
+            else if(options.Operation.ToLower() == "extract")
+            {
+                PackageManager.ExtractAllToolchainPackages(console);
+            }
+
+            return 0;
+        }
+
         private static int Main(string[] args)
         {
             if(args.Length >= 1 && args[0] == "debug")
@@ -593,6 +609,8 @@ namespace AvalonStudio
 
             Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, ThisAssembly.Git.BaseVersion.Major + "." + ThisAssembly.Git.BaseVersion.Minor + "." + ThisAssembly.Git.BaseVersion.Patch, Platform.PlatformIdentifier);
 
+            Console.WriteLine($"Cache Path: {Platform.BaseDirectory}");
+
             var result = Parser.Default.ParseArguments<
                 BuildOptions, 
                 CleanOptions, 
@@ -604,7 +622,8 @@ namespace AvalonStudio
                 PrintEnvironmentOptions,
                 CreatePackageOptions,
                 PushPackageOptions,
-                PackageOptions>(args)
+                PackageOptions,
+                ArchiveCacheOptions>(args)
                 .MapResult((BuildOptions opts) => RunBuild(opts),
                         (CleanOptions opts) => RunClean(opts),
                         (CreateOptions opts) => RunCreate(opts),
@@ -616,6 +635,7 @@ namespace AvalonStudio
                         (CreatePackageOptions opts)=>RunCreatePackage(opts),
                         (PushPackageOptions opts)=>RunPushPackage(opts),
                         (PackageOptions opts)=>RunPackage(opts),
+                        (ArchiveCacheOptions opts)=>RunArchiveCache(opts),
                         errs => 1);
 
             return result - 1;
