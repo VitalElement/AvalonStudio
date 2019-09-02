@@ -557,6 +557,41 @@ namespace AvalonStudio
             return 1;
         }
 
+        private static int RunArchiveCache(ArchiveCacheOptions options)
+        {
+            if (options.Operation.ToLower() == "archive")
+            {
+                Console.WriteLine("Archiving Cache:");
+
+                var arguments = $"cvf {options.ArchivePath} {Platform.BaseDirectory}";
+
+                if (options.ArchivePath.CompareFilePath(Platform.BaseDirectory) == 0)
+                {
+                    arguments += $" --exclude={Path.GetFileName(options.ArchivePath)}";
+                }
+
+                var process = Process.Start("tar", arguments);
+
+                process.WaitForExit();
+
+                return 1;
+            }
+            else if(options.Operation.ToLower() == "extract")
+            {
+                Console.WriteLine("Extracting Cache:");
+
+                var arguments = $"zxvf {options.ArchivePath} -C {Platform.BaseDirectory}";
+
+                var process = Process.Start("tar", arguments);
+
+                process.WaitForExit();
+
+                return 1;
+            }
+
+            return 0;
+        }
+
         private static int Main(string[] args)
         {
             if(args.Length >= 1 && args[0] == "debug")
@@ -606,7 +641,8 @@ namespace AvalonStudio
                 PrintEnvironmentOptions,
                 CreatePackageOptions,
                 PushPackageOptions,
-                PackageOptions>(args)
+                PackageOptions,
+                ArchiveCacheOptions>(args)
                 .MapResult((BuildOptions opts) => RunBuild(opts),
                         (CleanOptions opts) => RunClean(opts),
                         (CreateOptions opts) => RunCreate(opts),
@@ -618,6 +654,7 @@ namespace AvalonStudio
                         (CreatePackageOptions opts)=>RunCreatePackage(opts),
                         (PushPackageOptions opts)=>RunPushPackage(opts),
                         (PackageOptions opts)=>RunPackage(opts),
+                        (ArchiveCacheOptions opts)=>RunArchiveCache(opts),
                         errs => 1);
 
             return result - 1;
