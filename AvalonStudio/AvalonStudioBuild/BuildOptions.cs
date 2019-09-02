@@ -101,10 +101,7 @@ namespace AvalonStudio
     [Verb("archive-cache", HelpText = "Places all the cache (appdata and toolchains) in an uncompressed tar file.")]
     internal class ArchiveCacheOptions
     {
-        [Value(0, MetaName = "Operation", HelpText = "Archive or Extract", Required = true)]
+        [Value(0, MetaName = "Operation", HelpText = "Prepare or Extract", Required = true)]
         public string Operation { get; set; }
-
-        [Value(1, MetaName = "ArchivePath", HelpText = "Path to the archive to create or extract.", Required = true)]
-        public string ArchivePath { get; set; }
     }
 }

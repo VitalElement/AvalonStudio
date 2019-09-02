@@ -559,46 +559,15 @@ namespace AvalonStudio
 
         private static int RunArchiveCache(ArchiveCacheOptions options)
         {
-            if (options.Operation.ToLower() == "archive")
+            if (options.Operation.ToLower() == "prepare")
             {
-                if(!Directory.Exists(Path.GetDirectoryName(options.ArchivePath)))
-                {
-                    Directory.CreateDirectory(Path.GetDirectoryName(options.ArchivePath));
-                }
-
-                Console.WriteLine("Archiving Cache:");
-
-                var arguments = $"cvf {options.ArchivePath} {Platform.BaseDirectory}";
-
-                if (options.ArchivePath.CompareFilePath(Platform.BaseDirectory) == 0)
-                {
-                    arguments += $" --exclude={Path.GetFileName(options.ArchivePath)}";
-                }
-
-                var process = Process.Start("tar", arguments);
-
-                process.WaitForExit();
+                PackageManager.PrepareToCache(console);
 
                 return 1;
             }
             else if(options.Operation.ToLower() == "extract")
             {
-                if (File.Exists(options.ArchivePath))
-                {
-                    Console.WriteLine("Extracting Cache:");
-
-                    var arguments = $"xvf {options.ArchivePath}";
-
-                    var process = Process.Start("tar", arguments);
-
-                    process.WaitForExit();
-
-                    return 1;
-                }
-                else
-                {
-                    Console.WriteLine("No archive to extract.");
-                }
+                PackageManager.ExtractAllToolchainPackages(console);
             }
 
             return 0;
