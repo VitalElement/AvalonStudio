@@ -587,7 +587,7 @@ namespace AvalonStudio
                 {
                     Console.WriteLine("Extracting Cache:");
 
-                    var arguments = $"xvf {options.ArchivePath} -C {Platform.BaseDirectory}";
+                    var arguments = $"xvf {options.ArchivePath}";
 
                     var process = Process.Start("tar", arguments);
 
