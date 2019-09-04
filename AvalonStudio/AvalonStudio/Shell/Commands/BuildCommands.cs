@@ -10,7 +10,7 @@ namespace AvalonStudio.Shell.Commands
     internal class BuildCommands
     {
         [ExportCommandDefinition("Build.Build")]
-        [DefaultKeyGestures("F6")]
+        [DefaultKeyGesture("F6")]
         public CommandDefinition BuildCommand { get; }
 
         [ExportCommandDefinition("Build.Clean")]

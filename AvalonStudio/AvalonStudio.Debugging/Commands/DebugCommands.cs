@@ -8,7 +8,7 @@ namespace AvalonStudio.Debugging.Commands
     internal class DebugCommands
     {
         [ExportCommandDefinition("Debug.Start")]
-        [DefaultKeyGestures("F5")]
+        [DefaultKeyGesture("F5")]
         public CommandDefinition StartDebuggingCommand { get; }
 
         [ExportCommandDefinition("Debug.Pause")]
@@ -21,19 +21,19 @@ namespace AvalonStudio.Debugging.Commands
         public CommandDefinition RestartDebuggingCommand { get; }
 
         [ExportCommandDefinition("Debug.StepOver")]
-        [DefaultKeyGestures("F10")]
+        [DefaultKeyGesture("F10")]
         public CommandDefinition StepOverCommand { get; }
 
         [ExportCommandDefinition("Debug.StepInto")]
-        [DefaultKeyGestures("F11")]
+        [DefaultKeyGesture("F11")]
         public CommandDefinition StepIntoCommand { get; }
 
         [ExportCommandDefinition("Debug.StepOut")]
-        [DefaultKeyGestures("SHIFT+F11")]
+        [DefaultKeyGesture("SHIFT+F11")]
         public CommandDefinition StepOutCommand { get; }
 
         [ExportCommandDefinition("Debug.StepInstruction")]
-        [DefaultKeyGestures("F9")]
+        [DefaultKeyGesture("F9")]
         public CommandDefinition StepInstructionCommand { get; }
 
         private IDebugManager2 _debugManager;

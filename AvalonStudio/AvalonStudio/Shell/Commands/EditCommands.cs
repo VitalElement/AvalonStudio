@@ -13,11 +13,11 @@ namespace AvalonStudio.Shell.Commands
         //public CommandDefinition ShowQuickCommanderCommand { get; }
 
         [ExportCommandDefinition("Edit.Undo")]
-        [DefaultKeyGestures("CTRL+Z")]
+        [DefaultKeyGesture("CTRL+Z")]
         public CommandDefinition UndoCommand { get; }
 
         [ExportCommandDefinition("Edit.Redo")]
-        [DefaultKeyGestures("CTRL+Y")]
+        [DefaultKeyGesture("CTRL+Y")]
         public CommandDefinition RedoCommand { get; }
 
         [ExportCommandDefinition("Edit.Comment")]
