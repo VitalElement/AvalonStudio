@@ -19,6 +19,8 @@ namespace AvalonStudio
             base.OnFrameworkInitializationCompleted();
         }
 
+        public override string Title => "Avalon Studio";
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
