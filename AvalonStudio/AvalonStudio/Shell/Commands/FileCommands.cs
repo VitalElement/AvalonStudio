@@ -20,7 +20,7 @@ namespace AvalonStudio.Shell.Commands
         public CommandDefinition SaveAllCommand { get; }
 
         [ExportCommandDefinition("File.Exit")]
-        [DefaultKeyGestures("ALT+F4")]
+        [DefaultKeyGestures("CMD+Q")]
         public CommandDefinition ExitCommand { get; }
 
         private readonly IStudio _studio;
