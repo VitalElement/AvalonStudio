@@ -78,7 +78,6 @@ namespace AvalonStudio.Controls.Editor
             {
                 var distance = e.GetPosition(_editor).DistanceTo(_lastPoint);
 
-                Console.WriteLine("Check code here");
                 if (distance > 25 && !_popup.IsPointerOver)
                 {
                     _popup.Close();
