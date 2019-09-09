@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Dialogs;
 using Avalonia.Logging.Serilog;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
@@ -71,7 +72,8 @@ namespace AvalonStudio
             }
             else
             {
-                result.UsePlatformDetect();
+                result.UsePlatformDetect()
+                    .UseManagedSystemDialogs();
             }
 
             return result
