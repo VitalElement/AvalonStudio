@@ -390,7 +390,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
             var documentId = GetDocumentId(file);
 
             var document = GetDocument(file);
-
+            
             OnDocumentOpened(documentId, textContainer);
             OnDocumentContextUpdated(documentId);
 
