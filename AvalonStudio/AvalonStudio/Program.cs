@@ -22,17 +22,17 @@ namespace AvalonStudio
             UnixPsuedoTerminal.Trampoline(args);
 
 #if !DEBUG
-        try
+            try
             {
 #endif
-            if (args == null)
-            {
-                throw new ArgumentNullException(nameof(args));
-            }
+                if (args == null)
+                {
+                    throw new ArgumentNullException(nameof(args));
+                }
 
-            BuildAvaloniaApp().StartShellApp("AvalonStudio", AppMain, args);
+                BuildAvaloniaApp().StartShellApp("AvalonStudio", AppMain, args);
 #if !DEBUG
-    }
+            }
             catch (Exception e)
             {
                 Print(e);
