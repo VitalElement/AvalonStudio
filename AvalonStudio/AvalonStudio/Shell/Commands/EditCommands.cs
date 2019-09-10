@@ -9,15 +9,15 @@ namespace AvalonStudio.Shell.Commands
     internal class EditCommands
     {
         //[ExportCommandDefinition("Edit.ShowQuickCommander")]
-        //[DefaultKeyGestures("CTRL+P")]
+        //[DefaultKeyGesture("CTRL+P")]
         //public CommandDefinition ShowQuickCommanderCommand { get; }
 
         [ExportCommandDefinition("Edit.Undo")]
-        [DefaultKeyGestures("CTRL+Z")]
+        [DefaultKeyGesture("CTRL+Z")]
         public CommandDefinition UndoCommand { get; }
 
         [ExportCommandDefinition("Edit.Redo")]
-        [DefaultKeyGestures("CTRL+Y")]
+        [DefaultKeyGesture("CTRL+Y")]
         public CommandDefinition RedoCommand { get; }
 
         [ExportCommandDefinition("Edit.Comment")]

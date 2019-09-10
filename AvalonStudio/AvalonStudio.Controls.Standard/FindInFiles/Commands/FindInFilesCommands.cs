@@ -8,7 +8,7 @@ namespace AvalonStudio.Controls.Standard.FindInFiles.Commands
     internal class FindInFilesCommands
     {
         [ExportCommandDefinition("Edit.FindInFiles")]
-        [DefaultKeyGestures("CTRL + SHIFT + F")]
+        [DefaultKeyGesture("CTRL + SHIFT + F")]
         public CommandDefinition FindInFilesCommandDefinition { get; }
 
         public FindInFilesCommands()

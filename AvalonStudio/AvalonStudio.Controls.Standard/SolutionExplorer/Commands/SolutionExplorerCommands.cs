@@ -11,11 +11,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer.Commands
     internal class SolutionExplorerCommands
     {
         [ExportCommandDefinition("File.NewSolution")]
-        [DefaultKeyGestures("CTRL+SHIFT+N")]
+        [DefaultKeyGesture("CTRL+SHIFT+N")]
         public CommandDefinition NewSolutionCommand { get; }
 
         [ExportCommandDefinition("File.OpenSolution")]
-        [DefaultKeyGestures("CTRL+SHIFT+O")]
+        [DefaultKeyGesture("CTRL+SHIFT+O")]
         public CommandDefinition OpenSolutionCommand { get; }
 
         [ExportCommandDefinition("File.CloseSolution")]
