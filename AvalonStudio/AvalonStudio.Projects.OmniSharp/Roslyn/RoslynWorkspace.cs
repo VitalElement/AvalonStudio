@@ -501,13 +501,10 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
 
             try
             {
-                using (ExceptionHelpers.SuppressFailFast())
+                using (var stream = new FileStream(document.FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    using (var stream = new FileStream(document.FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    {
-                        var onDiskText = EncodedStringText.Create(stream);
-                        return onDiskText.Encoding;
-                    }
+                    var onDiskText = EncodedStringText.Create(stream);
+                    return onDiskText.Encoding;
                 }
             }
             catch (IOException)
@@ -524,19 +521,16 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
         {
             try
             {
-                using (ExceptionHelpers.SuppressFailFast())
+                var dir = Path.GetDirectoryName(fullPath);
+                if (!Directory.Exists(dir))
                 {
-                    var dir = Path.GetDirectoryName(fullPath);
-                    if (!Directory.Exists(dir))
-                    {
-                        Directory.CreateDirectory(dir);
-                    }
+                    Directory.CreateDirectory(dir);
+                }
 
-                    Debug.Assert(encoding != null);
-                    using (var writer = new StreamWriter(fullPath, append: false, encoding: encoding))
-                    {
-                        newText.Write(writer);
-                    }
+                Debug.Assert(encoding != null);
+                using (var writer = new StreamWriter(fullPath, append: false, encoding: encoding))
+                {
+                    newText.Write(writer);
                 }
             }
             catch (IOException exception)
