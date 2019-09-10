@@ -19,7 +19,7 @@
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="ReactiveUI" />
     <PackageReference Include="System.Composition" Version="1.2.0" />
-    <PackageReference Include="AvalonStudio.winpty.NET" Version="0.4.5" />
+    <PackageReference Include="AvalonStudio.winpty.NET" Version="0.4.6" />
     <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" /> 
   </ItemGroup>
