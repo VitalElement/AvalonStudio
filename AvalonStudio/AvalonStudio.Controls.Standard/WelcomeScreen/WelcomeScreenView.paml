@@ -54,7 +54,7 @@
           <TextBlock Classes="h1" FontWeight="Light" Grid.Column="2">News</TextBlock>
           </StackPanel>
 
-          <ItemsControl Items="{Binding NewsFeed}" BorderThickness="0">
+          <ItemsControl Items="{Binding NewsFeed}" BorderThickness="0" Margin="0 15 0 0">
             <ItemsControl.ItemTemplate>
               <DataTemplate>
                 <StackPanel>
