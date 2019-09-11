@@ -66,7 +66,7 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
 
             _disposables = new CompositeDisposable
             {
-                Observable.FromEventPattern<SolutionChangedEventArgs>(studio, nameof(studio.SolutionChanged)).Subscribe(o => ShellOnSolutionChanged(o.Sender, o.EventArgs))
+                Observable.FromEventPattern<SolutionChangedEventArgs>(studio, nameof(studio.SolutionChanged)).Subscribe(o => ShellOnSolutionChanged(o.Sender, o.EventArgs))                
             };
             //shell.SolutionChanged += ShellOnSolutionChanged;
 
@@ -235,6 +235,12 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
                 RecentProjectsCollection.Save();
 
                 LoadRecentProjects();
+
+                Close();
+            }
+            else
+            {
+                IoC.Get<IShell>().AddOrSelectDocument(this);
             }
         }
 
