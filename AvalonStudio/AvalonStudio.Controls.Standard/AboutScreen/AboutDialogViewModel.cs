@@ -21,7 +21,7 @@ namespace AvalonStudio.Controls.Standard.AboutScreen
 
         public string Version => FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly().Location).FileVersion;
 
-	    public string DescriptiveVersion => ThisAssembly.Git.Sha;
+	    public string DescriptiveVersion => ThisAssembly.Git.Tag;
 
         public string PlatformString { get; }
     }
