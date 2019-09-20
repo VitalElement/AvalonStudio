@@ -9,6 +9,7 @@ using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using AvalonStudio.Terminals.Unix;
+using AvalonStudio.Shell.Controls;
 using Serilog;
 using System;
 
@@ -73,7 +74,7 @@ namespace AvalonStudio
             else
             {
                 result.UsePlatformDetect()
-                    .UseManagedSystemDialogs();
+                    .UseManagedSystemDialogs<AppBuilder, MetroWindow>();
             }
 
             return result
