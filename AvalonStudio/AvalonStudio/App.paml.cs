@@ -6,6 +6,11 @@ namespace AvalonStudio
 {
     internal class App : Application
     {
+        public App ()
+        {
+            Name = "AvalonStudio";
+        }
+
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -18,8 +23,6 @@ namespace AvalonStudio
 
             base.OnFrameworkInitializationCompleted();
         }
-
-         public override string Title { get; } = "AvalonStudio";
 
         public override void Initialize()
         {
