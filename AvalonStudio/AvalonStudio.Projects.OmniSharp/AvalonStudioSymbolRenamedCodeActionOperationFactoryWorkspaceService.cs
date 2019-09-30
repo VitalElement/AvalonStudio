@@ -7,11 +7,12 @@ using System.Composition;
 
 namespace Microsoft.VisualStudio.LanguageServices.Implementation
 {
+
     [ExportWorkspaceService(typeof(ISymbolRenamedCodeActionOperationFactoryWorkspaceService), ServiceLayer.Host), Shared]
     internal sealed class AvalonStudioRenameSymbolCodeActionOperationFactoryWorkspaceService : ISymbolRenamedCodeActionOperationFactoryWorkspaceService
     {
         public AvalonStudioRenameSymbolCodeActionOperationFactoryWorkspaceService()
-        {
+        {            
         }
 
         public CodeActionOperation CreateSymbolRenamedOperation(ISymbol symbol, string newName, Solution startingSolution, Solution updatedSolution)

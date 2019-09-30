@@ -6,9 +6,12 @@ using AvalonStudio.MVVM;
 using AvalonStudio.Projects;
 using AvalonStudio.Shell;
 using AvalonStudio.Utils;
+using DynamicData;
+using DynamicData.Binding;
 using ReactiveUI;
 using ReactiveUI.Legacy;
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Composition;
@@ -22,7 +25,8 @@ namespace AvalonStudio.Controls.Standard.ErrorList
     [Shared]
     public class ErrorListViewModel : ToolViewModel, IActivatableExtension, IErrorList
     {
-        private ObservableCollection<ErrorViewModel> errors;
+        private ReadOnlyObservableCollection<ErrorViewModel> _errors;
+        private SourceList<ErrorViewModel> sourceErrors;
 
         private ErrorViewModel selectedError;
         private IStudio studio;
@@ -37,9 +41,9 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         public ErrorListViewModel() : base("Error List")
         {
-            errors = new ObservableCollection<ErrorViewModel>();
+            sourceErrors = new SourceList<ErrorViewModel>();
 
-            FilteredErrors = errors.CreateDerivedCollection(x=>x, (error) =>
+            FilteredErrors = sourceErrors.Connect().Filter(error =>
             {
                 if(error.Level == DiagnosticLevel.Error && !ShowErrors)
                 {
@@ -67,7 +71,11 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                 }
 
                 return true;
-            }, null, this.WhenAnyValue(x=>x.ShowErrors, x=>x.ShowWarnings, x=>x.FromBuild, x=>x.FromIntellisense, x=>x.ShowNotes));
+            })
+            .Sort(SortExpressionComparer<ErrorViewModel>.Ascending(x=>x))
+            .Bind(out _errors)
+            .AutoRefreshOnObservable(_ => this.WhenAnyValue(x => x.ShowErrors, x => x.ShowWarnings, x => x.FromBuild, x => x.FromIntellisense, x => x.ShowNotes))
+            .AsObservableList();
         }
 
         public ErrorViewModel SelectedError
@@ -136,14 +144,10 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             set { this.RaiseAndSetIfChanged(ref _fromIntellisense, value); }
         }
 
-        public IReactiveDerivedList<ErrorViewModel> FilteredErrors { get; }
+        public IObservableList<ErrorViewModel> FilteredErrors { get; }
 
         /// <inheritdoc/>
-        public ObservableCollection<ErrorViewModel> Errors
-        {
-            get { return errors; }
-            set { this.RaiseAndSetIfChanged(ref errors, value); }
-        }
+        public ReadOnlyObservableCollection<ErrorViewModel> Errors => _errors;
 
         /// <inheritdoc/>
         public void Remove(object tag)
@@ -152,10 +156,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             {
                 var toRemove = Errors.Where(e => Equals(e.Tag, tag)).ToList();
 
-                foreach (var error in toRemove)
-                {
-                    Errors.Remove(error);
-                }
+                sourceErrors.RemoveMany(toRemove);
 
                 DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(tag, DiagnosticsUpdatedKind.DiagnosticsRemoved));
             });
@@ -170,7 +171,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                 {
                     if (diagnostic.Level != DiagnosticLevel.Hidden)
                     {
-                        Errors.InsertSorted(new ErrorViewModel(diagnostic, tag));
+                        _errors.Add(new[] { new ErrorViewModel(diagnostic, tag) });
                     }
                 }
 

@@ -1,5 +1,6 @@
 ﻿using AvalonStudio.Languages;
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 
@@ -7,7 +8,7 @@ namespace AvalonStudio.Utils
 {
     public interface IErrorList
     {
-        ObservableCollection<ErrorViewModel> Errors { get; }
+        ReadOnlyObservableCollection<ErrorViewModel> Errors { get; }
 
         /// <summary>
         /// Creates a set of diagnostics in the error list.

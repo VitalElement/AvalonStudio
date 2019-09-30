@@ -2,10 +2,12 @@
 using AvalonStudio.Documents;
 using AvalonStudio.Projects.OmniSharp.Roslyn;
 using Microsoft.CodeAnalysis.CodeRefactorings;
+using Microsoft.CodeAnalysis.PasteTracking;
 using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +15,15 @@ using System.Windows.Input;
 
 namespace AvalonStudio.Languages.CSharp
 {
+    [Export]
+    class PasteTrackingService : IPasteTrackingService
+    {
+        public bool TryGetPastedTextSpan(SourceTextContainer sourceTextContainer, out TextSpan textSpan)
+        {
+            throw new Exception();
+        }
+    }
+
     class RoslynContextActionProvider : IContextActionProvider
     {
         private static readonly ImmutableArray<string> ExcludedRefactoringProviders = ImmutableArray.Create("ExtractInterface", "GenerateOverrides");

@@ -9,7 +9,7 @@ using System.IO;
 
 namespace AvalonStudio.Utils
 {
-    public class ErrorViewModel : ViewModel<Diagnostic>, IComparable<ErrorViewModel>
+    public class ErrorViewModel : ViewModel<Diagnostic>, IComparable<ErrorViewModel>, IComparable
     {
         public ErrorViewModel(Diagnostic model, object tag) : base(model)
         {
@@ -81,6 +81,16 @@ namespace AvalonStudio.Utils
             }
 
             return result;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if(obj is ErrorViewModel evm)
+            {
+                return CompareTo(evm);
+            }
+
+            return -1;
         }
     }
 }
