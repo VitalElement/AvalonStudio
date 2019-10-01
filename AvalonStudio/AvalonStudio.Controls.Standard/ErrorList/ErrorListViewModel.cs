@@ -26,7 +26,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
     public class ErrorListViewModel : ToolViewModel, IActivatableExtension, IErrorList
     {
         private ReadOnlyObservableCollection<ErrorViewModel> _errors;
-        private SourceList<ErrorViewModel> sourceErrors;
+        private SourceList<ErrorViewModel> _sourceErrors;
 
         private ErrorViewModel selectedError;
         private IStudio studio;
@@ -41,9 +41,9 @@ namespace AvalonStudio.Controls.Standard.ErrorList
 
         public ErrorListViewModel() : base("Error List")
         {
-            sourceErrors = new SourceList<ErrorViewModel>();
+            _sourceErrors = new SourceList<ErrorViewModel>();
 
-            FilteredErrors = sourceErrors.Connect().Filter(error =>
+            FilteredErrors = _sourceErrors.Connect().Filter(error =>
             {
                 if(error.Level == DiagnosticLevel.Error && !ShowErrors)
                 {
@@ -156,7 +156,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
             {
                 var toRemove = Errors.Where(e => Equals(e.Tag, tag)).ToList();
 
-                sourceErrors.RemoveMany(toRemove);
+                _sourceErrors.RemoveMany(toRemove);
 
                 DiagnosticsUpdated?.Invoke(this, new DiagnosticsUpdatedEventArgs(tag, DiagnosticsUpdatedKind.DiagnosticsRemoved));
             });
@@ -171,7 +171,7 @@ namespace AvalonStudio.Controls.Standard.ErrorList
                 {
                     if (diagnostic.Level != DiagnosticLevel.Hidden)
                     {
-                        _errors.Add(new[] { new ErrorViewModel(diagnostic, tag) });
+                        _sourceErrors.Add(new ErrorViewModel(diagnostic, tag));
                     }
                 }
 
