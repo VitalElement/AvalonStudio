@@ -144,7 +144,7 @@ namespace AvalonStudio.Languages.Xaml
                         {
                             if (!_overlay.IsVisible)
                             {
-                                _statusText.Text = "Your app must target Avalonia version >= '0.7.0' to be compatible with the previewer.\r\n\r\n";
+                                _statusText.Text = "Your app must target Avalonia version >= '0.9.0' to be compatible with the previewer.\r\n\r\n";
                             }
 
                             _statusText.Text += e.Data + "\r\n";
