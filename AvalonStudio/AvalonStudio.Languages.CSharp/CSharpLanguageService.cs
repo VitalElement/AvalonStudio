@@ -720,6 +720,10 @@ namespace AvalonStudio.Languages.CSharp
                     result = HighlightType.Keyword;
                     break;
 
+                case "keyword - control":
+                    result = HighlightType.ControlKeyword;
+                    break;
+
                 case "identifier":
                     result = HighlightType.Identifier;
                     break;

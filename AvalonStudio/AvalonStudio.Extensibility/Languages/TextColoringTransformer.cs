@@ -141,6 +141,10 @@ namespace AvalonStudio.Languages
                     result = colorScheme.Identifier;
                     break;
 
+                case HighlightType.ControlKeyword:
+                    result = colorScheme.ControlKeyword;
+                    break;
+
                 case HighlightType.Keyword:
                     result = colorScheme.Keyword;
                     break;

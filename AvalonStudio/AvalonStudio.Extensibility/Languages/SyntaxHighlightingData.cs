@@ -8,6 +8,7 @@ namespace AvalonStudio.Languages
         None,
         CallExpression,
         Punctuation,
+        ControlKeyword,
         Keyword,
         Identifier,
         Literal,
