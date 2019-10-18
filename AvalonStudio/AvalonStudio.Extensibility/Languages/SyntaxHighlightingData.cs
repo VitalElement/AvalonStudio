@@ -23,6 +23,7 @@ namespace AvalonStudio.Languages
         PreProcessor,
         PreProcessorText,
         Operator,
+        ExcludedCode,
         Unnecessary
     }
 

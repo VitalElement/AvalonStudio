@@ -185,6 +185,10 @@ namespace AvalonStudio.Languages
                     result = colorScheme.StructName;
                     break;
 
+                case HighlightType.ExcludedCode:
+                    result = colorScheme.ExcludedCode;
+                    break;
+
                 default:
                     result = Brushes.Red;
                     break;
