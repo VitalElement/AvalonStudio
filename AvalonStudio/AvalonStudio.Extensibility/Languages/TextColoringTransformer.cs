@@ -185,6 +185,14 @@ namespace AvalonStudio.Languages
                     result = colorScheme.StructName;
                     break;
 
+                case HighlightType.PreProcessor:
+                    result = colorScheme.Punctuation;
+                    break;
+
+                case HighlightType.PreProcessorText:
+                    result = colorScheme.Text;
+                    break;
+
                 case HighlightType.ExcludedCode:
                     result = colorScheme.ExcludedCode;
                     break;
