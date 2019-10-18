@@ -40,6 +40,7 @@ namespace AvalonStudio.Extensibility.Editor
             s_colorAccessors["text"] = () => CurrentColorScheme.Text;
             s_colorAccessors["comment"] = () => CurrentColorScheme.Comment;
             s_colorAccessors["delegate.name"] = () => CurrentColorScheme.DelegateName;
+            s_colorAccessors["keyword.control"] = () => CurrentColorScheme.ControlKeyword;
             s_colorAccessors["keyword"] = () => CurrentColorScheme.Keyword;
             s_colorAccessors["literal"] = () => CurrentColorScheme.Literal;
             s_colorAccessors["identifier"] = () => CurrentColorScheme.Identifier;
@@ -51,6 +52,7 @@ namespace AvalonStudio.Extensibility.Editor
             s_colorAccessors["struct.name"] = () => CurrentColorScheme.StructName;
             s_colorAccessors["interface"] = () => CurrentColorScheme.InterfaceType;
             s_colorAccessors["punctuation"] = () => CurrentColorScheme.Punctuation;
+            s_colorAccessors["excudedcode"] = () => CurrentColorScheme.ExcludedCode;
             s_colorAccessors["type"] = () => CurrentColorScheme.Type;
             s_colorAccessors["xml.tag"] = () => CurrentColorScheme.XmlTag;
             s_colorAccessors["xml.property"] = () => CurrentColorScheme.XmlProperty;
@@ -79,6 +81,7 @@ namespace AvalonStudio.Extensibility.Editor
             InfoDiagnostic = Brush.Parse("#0019FF"),
             StyleDiagnostic = Brush.Parse("#D4D4D4"),
             Comment = Brush.Parse("#008000"),
+            ControlKeyword = Brush.Parse("#0000FF"),
             Keyword = Brush.Parse("#0000FF"),
             Literal = Brush.Parse("#A31515"),
             Identifier = Brush.Parse("#000000"),
@@ -88,6 +91,7 @@ namespace AvalonStudio.Extensibility.Editor
             EnumType = Brush.Parse("#2B91AF"),
             NumericLiteral = Brush.Parse("#000000"),
             Punctuation = Brush.Parse("#000000"),
+            ExcludedCode = Brush.Parse("#000000"),
             Type = Brush.Parse("#2B91AF"),
             StructName = Brush.Parse("#2B91AF"),
             Operator = Brush.Parse("#000000"),
@@ -113,6 +117,7 @@ namespace AvalonStudio.Extensibility.Editor
             InfoDiagnostic = Brush.Parse("#0019FF"),
             StyleDiagnostic = Brush.Parse("#D4D4D4"),
             Comment = Brush.Parse("#57A64A"),
+            ControlKeyword = Brush.Parse("#569CD6"),
             Keyword = Brush.Parse("#569CD6"),
             Literal = Brush.Parse("#D69D85"),
             Identifier = Brush.Parse("#C8C8C8"),
@@ -122,6 +127,7 @@ namespace AvalonStudio.Extensibility.Editor
             EnumType = Brush.Parse("#B5CEA8"),
             NumericLiteral = Brush.Parse("#B5CEA8"),
             Punctuation = Brush.Parse("#808080"),
+            ExcludedCode = Brush.Parse("#808080"),
             Type = Brush.Parse("#4EC9B0"),
             StructName = Brush.Parse("#4EC9B0"),
             Operator = Brush.Parse("#B4B4B4"),
@@ -147,6 +153,7 @@ namespace AvalonStudio.Extensibility.Editor
             InfoDiagnostic = Brush.Parse("#0019FF"),
             StyleDiagnostic = Brush.Parse("#D4D4D4"),
             Comment = Brush.Parse("#888a85"),
+            ControlKeyword = Brush.Parse("#009695"),
             Keyword = Brush.Parse("#009695"),
             Literal = Brush.Parse("#db7100"),
             Identifier = Brush.Parse("#000000"),
@@ -156,6 +163,7 @@ namespace AvalonStudio.Extensibility.Editor
             EnumType = Brush.Parse("#2B91AF"),
             NumericLiteral = Brush.Parse("#000000"),
             Punctuation = Brush.Parse("#000000"),
+            ExcludedCode = Brush.Parse("#000000"),
             Type = Brush.Parse("#3465a4"),
             StructName = Brush.Parse("#3465a4"),
             Operator = Brush.Parse("#000000"),
@@ -181,6 +189,7 @@ namespace AvalonStudio.Extensibility.Editor
             InfoDiagnostic = Brush.Parse("#0019FF"),
             StyleDiagnostic = Brush.Parse("#D4D4D4"),
             Comment = Brush.Parse("#586e75"),
+            ControlKeyword = Brush.Parse("#859900"),
             Keyword = Brush.Parse("#859900"),
             Literal = Brush.Parse("#2aa198"),
             Identifier = Brush.Parse("#839496"),
@@ -190,6 +199,7 @@ namespace AvalonStudio.Extensibility.Editor
             EnumType = Brush.Parse("#b58900"),
             NumericLiteral = Brush.Parse("#2aa198"),
             Punctuation = Brush.Parse("#839496"),
+            ExcludedCode = Brush.Parse("#839496"),
             Type = Brush.Parse("#b58900"),
             StructName = Brush.Parse("Red"),
             Operator = Brush.Parse("Red")
@@ -208,6 +218,7 @@ namespace AvalonStudio.Extensibility.Editor
             InfoDiagnostic = Brush.Parse("#0019FF"),
             StyleDiagnostic = Brush.Parse("#D4D4D4"),
             Comment = Brush.Parse("#93a1a1"),
+            ControlKeyword = Brush.Parse("#859900"),
             Keyword = Brush.Parse("#859900"),
             Literal = Brush.Parse("#2aa198"),
             Identifier = Brush.Parse("#839496"),
@@ -217,6 +228,7 @@ namespace AvalonStudio.Extensibility.Editor
             EnumType = Brush.Parse("#b58900"),
             NumericLiteral = Brush.Parse("#2aa198"),
             Punctuation = Brush.Parse("#839496"),
+            ExcludedCode = Brush.Parse("#839496"),
             Type = Brush.Parse("#b58900"),
             StructName = Brush.Parse("Red"),
             Operator = Brush.Parse("Red"),
@@ -315,6 +327,9 @@ namespace AvalonStudio.Extensibility.Editor
         [JsonProperty(PropertyName = "editor.keyword")]
         public IBrush Keyword { get; set; }
 
+        [JsonProperty(PropertyName = "editor.keyword.control")]
+        public IBrush ControlKeyword { get; set; }
+
         [JsonProperty(PropertyName = "editor.literal")]
         public IBrush Literal { get; set; }
 
@@ -347,6 +362,9 @@ namespace AvalonStudio.Extensibility.Editor
 
         [JsonProperty(PropertyName = "editor.type")]
         public IBrush Type { get; set; }
+
+        [JsonProperty(PropertyName = "editor.excludedcode")]
+        public IBrush ExcludedCode { get; set; }
 
         [JsonProperty(PropertyName = "editor.xml.tag")]
         public IBrush XmlTag { get; set; }

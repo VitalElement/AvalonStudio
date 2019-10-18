@@ -720,6 +720,10 @@ namespace AvalonStudio.Languages.CSharp
                     result = HighlightType.Keyword;
                     break;
 
+                case "keyword - control":
+                    result = HighlightType.ControlKeyword;
+                    break;
+
                 case "identifier":
                     result = HighlightType.Identifier;
                     break;
@@ -769,7 +773,7 @@ namespace AvalonStudio.Languages.CSharp
                     break;
 
                 case "excluded code":
-                    result = HighlightType.None;
+                    result = HighlightType.ExcludedCode;
                     break;
 
                 default:
@@ -835,6 +839,7 @@ namespace AvalonStudio.Languages.CSharp
                     result = Format((uint)startOffset, (uint)(endOffset - startOffset), caret);
                 }
             }
+
             return result;
         }
 

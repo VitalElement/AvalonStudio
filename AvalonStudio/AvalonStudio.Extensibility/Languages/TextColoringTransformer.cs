@@ -141,6 +141,10 @@ namespace AvalonStudio.Languages
                     result = colorScheme.Identifier;
                     break;
 
+                case HighlightType.ControlKeyword:
+                    result = colorScheme.ControlKeyword;
+                    break;
+
                 case HighlightType.Keyword:
                     result = colorScheme.Keyword;
                     break;
@@ -179,6 +183,18 @@ namespace AvalonStudio.Languages
 
                 case HighlightType.StructName:
                     result = colorScheme.StructName;
+                    break;
+
+                case HighlightType.PreProcessor:
+                    result = colorScheme.Punctuation;
+                    break;
+
+                case HighlightType.PreProcessorText:
+                    result = colorScheme.Text;
+                    break;
+
+                case HighlightType.ExcludedCode:
+                    result = colorScheme.ExcludedCode;
                     break;
 
                 default:

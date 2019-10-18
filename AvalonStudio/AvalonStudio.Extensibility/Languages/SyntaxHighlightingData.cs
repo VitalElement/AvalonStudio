@@ -8,6 +8,7 @@ namespace AvalonStudio.Languages
         None,
         CallExpression,
         Punctuation,
+        ControlKeyword,
         Keyword,
         Identifier,
         Literal,
@@ -22,6 +23,7 @@ namespace AvalonStudio.Languages
         PreProcessor,
         PreProcessorText,
         Operator,
+        ExcludedCode,
         Unnecessary
     }
 
