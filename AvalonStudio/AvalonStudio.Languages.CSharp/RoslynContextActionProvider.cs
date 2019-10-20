@@ -15,15 +15,6 @@ using System.Windows.Input;
 
 namespace AvalonStudio.Languages.CSharp
 {
-    [Export]
-    class PasteTrackingService : IPasteTrackingService
-    {
-        public bool TryGetPastedTextSpan(SourceTextContainer sourceTextContainer, out TextSpan textSpan)
-        {
-            throw new Exception();
-        }
-    }
-
     class RoslynContextActionProvider : IContextActionProvider
     {
         private static readonly ImmutableArray<string> ExcludedRefactoringProviders = ImmutableArray.Create("ExtractInterface", "GenerateOverrides");

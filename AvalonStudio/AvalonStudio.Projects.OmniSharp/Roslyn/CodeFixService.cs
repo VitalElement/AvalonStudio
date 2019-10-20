@@ -340,12 +340,12 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                     return;
                 }
 
-                //await AppendFixesOrSuppressionsAsync(
-                //    document, span, diagnostics, result, lazySuppressionProvider.Value,
-                //    hasFix: d => lazySuppressionProvider.Value.CanBeSuppressedOrUnsuppressed(d),
-                //    getFixes: async dxs => (await lazySuppressionProvider.Value.GetSuppressionsAsync(
-                //        document, span, dxs, cancellationToken).ConfigureAwait(false)).AsImmutable(),
-                //    cancellationToken: cancellationToken).ConfigureAwait(false);
+                await AppendFixesOrSuppressionsAsync(
+                    document, span, diagnostics, result, lazySuppressionProvider.Value,
+                    hasFix: d =>  SuppressionHelpers.CanBeUnsuppressed(d) || SuppressionHelpers.CanBeSuppressed(d),
+                    getFixes: async dxs => (await lazySuppressionProvider.Value.GetFixesAsync(
+                        document, span, dxs, cancellationToken).ConfigureAwait(false)).AsImmutable(),
+                    cancellationToken: cancellationToken).ConfigureAwait(false);
             }
 
             private async Task AppendFixesOrSuppressionsAsync(
@@ -784,16 +784,16 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                             {
                                 try
                                 {
-                                   
-                                    //if (attribute != null)
-                                    //{
-                                    //    if (attribute.Languages == null ||
-                                    //        attribute.Languages.Length == 0 ||
-                                    //        attribute.Languages.Contains(language))
-                                    //    {
-                                    //        builder.Add((CodeFixProvider)Activator.CreateInstance(typeInfo.AsType()));
-                                    //    }
-                                    //}
+                                    var attribute = typeInfo.GetCustomAttribute<ExportCodeFixProviderAttribute>();
+                                    if (attribute != null)
+                                    {
+                                        if (attribute.Languages == null ||
+                                            attribute.Languages.Length == 0 ||
+                                            attribute.Languages.Contains(language))
+                                        {
+                                            builder.Add((CodeFixProvider)Activator.CreateInstance(typeInfo.AsType()));
+                                        }
+                                    }
                                 }
                                 catch
                                 {
