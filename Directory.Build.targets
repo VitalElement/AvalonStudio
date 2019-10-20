@@ -1,8 +1,8 @@
 <Project>
 
   <PropertyGroup>
-    <AvaloniaBehaviorsVersion>0.9.0-preview2</AvaloniaBehaviorsVersion>
-    <AvaloniaVersion>0.9.0-preview2</AvaloniaVersion>
+    <AvaloniaBehaviorsVersion>0.9.0-preview3</AvaloniaBehaviorsVersion>
+    <AvaloniaVersion>0.9.0-preview3</AvaloniaVersion>
     <DockVersion>0.9.1-build20191018-06</DockVersion>
     <GitInfoVersion>2.0.20</GitInfoVersion>
     <MicrosoftExtensionsDependencyModelVersion>2.0.4</MicrosoftExtensionsDependencyModelVersion>
