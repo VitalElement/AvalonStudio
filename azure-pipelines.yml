@@ -23,7 +23,7 @@ jobs:
 
   - script: |
       cd AvalonStudio/AvalonStudioBuild
-      dotnet publish -c Release -f netcoreapp2.2 -r linux-x64
+      dotnet publish -c Release -f netcoreapp3.0 -r linux-x64
       
   - task: PublishBuildArtifacts@1
     inputs:
