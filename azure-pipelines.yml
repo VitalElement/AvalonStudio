@@ -4,8 +4,8 @@ jobs:
     vmImage: 'ubuntu-18.04'
   steps:
   - task: UseDotNet@2
-      inputs:
-        version: '3.0.x'
+    inputs:
+      version: '3.0.x'
         
   - script: |
       git fetch --tags
