@@ -12,6 +12,7 @@ using AvalonStudio.Terminals.Unix;
 using AvalonStudio.Shell.Controls;
 using Serilog;
 using System;
+using System.Threading.Tasks;
 
 namespace AvalonStudio
 {
@@ -31,7 +32,14 @@ namespace AvalonStudio
                     throw new ArgumentNullException(nameof(args));
                 }
 
+            try
+            {
                 BuildAvaloniaApp().StartShellApp("AvalonStudio", AppMain, args);
+            }
+            catch(Exception e)
+            {
+
+            }
 #if !DEBUG
             }
             catch (Exception e)
@@ -47,13 +55,23 @@ namespace AvalonStudio
 
         // Your application's entry point. Here you can initialize your MVVM framework, DI
         // container, etc.
-        private static void AppMain(string[] args)
+
+        private static async void TestMethodAsync ()
+        {
+            await Task.Delay(500);
+
+            throw new Exception("My Except");
+        }
+
+        private static async void AppMain(string[] args)
         {
             var studio = IoC.Get<IStudio>();
 
             InitializeLogging();
 
             Platform.Initialise();
+
+            TestMethodAsync();
 
             Dispatcher.UIThread.Post(async () =>
             {
