@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <AvaloniaBehaviorsVersion>0.9.0</AvaloniaBehaviorsVersion>
-    <AvaloniaVersion>0.9.0</AvaloniaVersion>
+    <AvaloniaVersion>0.9.1</AvaloniaVersion>
     <DockVersion>0.9.0</DockVersion>
     <GitInfoVersion>2.0.20</GitInfoVersion>
     <MicrosoftExtensionsDependencyModelVersion>2.0.4</MicrosoftExtensionsDependencyModelVersion>
