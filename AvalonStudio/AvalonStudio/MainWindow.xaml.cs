@@ -17,8 +17,6 @@ namespace AvalonStudio
 			InitializeComponent();
 
             AvaloniaLocator.CurrentMutable.BindToSelf<Window>(this);
-
-			this.AttachDevTools();
 		}
 
 		private void InitializeComponent()

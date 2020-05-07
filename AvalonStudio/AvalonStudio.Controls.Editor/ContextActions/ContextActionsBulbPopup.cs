@@ -126,7 +126,7 @@ namespace AvalonStudio.Controls.Editor.ContextActions
         {
             var style = new Style(c => c.OfType<MenuItem>())
             {
-                Setters = new[]
+                Setters =
                 {
                     new Setter(MenuItem.CommandProperty,
                         new Binding { Converter = new ActionCommandConverter(this) })

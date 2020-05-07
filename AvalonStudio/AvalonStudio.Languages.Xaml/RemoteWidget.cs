@@ -323,7 +323,7 @@ namespace AvalonStudio.Languages.Xaml
                 }
                 if (_bitmap != null)
                 {
-                    context.DrawImage(_bitmap, 1, new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height),
+                    context.DrawImage(_bitmap, new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height),
                         new Rect(Bounds.Size));
                 }
             }

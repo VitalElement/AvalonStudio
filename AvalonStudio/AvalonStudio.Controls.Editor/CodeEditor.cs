@@ -19,7 +19,6 @@ using AvalonStudio.Debugging;
 using AvalonStudio.Documents;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Editor;
-using AvalonStudio.Extensibility.Threading;
 using AvalonStudio.Languages;
 using AvalonStudio.Shell;
 using AvalonStudio.TextEditor.Rendering;
@@ -31,7 +30,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Controls.Editor
@@ -573,8 +571,8 @@ namespace AvalonStudio.Controls.Editor
                 }
             }),
 
-            AddHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel),
-            AddHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel)
+            this.AddDisposableHandler(KeyDownEvent, tunneledKeyDownHandler, RoutingStrategies.Tunnel),
+            this.AddDisposableHandler(KeyUpEvent, tunneledKeyUpHandler, RoutingStrategies.Tunnel)
         };
 
             Options = new AvaloniaEdit.TextEditorOptions
@@ -945,7 +943,7 @@ namespace AvalonStudio.Controls.Editor
             set => SetValue(DebugHighlightProperty, value);
         }
 
-        public static readonly AvaloniaProperty<ITextEditor> EditorProperty =
+        public static readonly StyledProperty<ITextEditor> EditorProperty =
             AvaloniaProperty.Register<CodeEditor, ITextEditor>(nameof(Editor));
 
         public ITextEditor Editor
@@ -954,7 +952,7 @@ namespace AvalonStudio.Controls.Editor
             set => SetValue(EditorProperty, value);
         }
 
-        public static readonly AvaloniaProperty<Documents.ISegment> SelectionProperty =
+        public static readonly StyledProperty<Documents.ISegment> SelectionProperty =
             AvaloniaProperty.Register<CodeEditor, Documents.ISegment>(nameof(Selection), defaultBindingMode: BindingMode.TwoWay);
 
         public Documents.ISegment Selection
@@ -963,7 +961,7 @@ namespace AvalonStudio.Controls.Editor
             set => SetValue(SelectionProperty, value);
         }
 
-        public static readonly AvaloniaProperty<string> RenameTextProperty =
+        public static readonly StyledProperty<string> RenameTextProperty =
             AvaloniaProperty.Register<CodeEditor, string>(nameof(RenameText), defaultBindingMode: BindingMode.TwoWay);
 
         public string RenameText
@@ -972,7 +970,7 @@ namespace AvalonStudio.Controls.Editor
             set => SetValue(RenameTextProperty, value);
         }
 
-        public static readonly AvaloniaProperty<bool> RenameOpenProperty =
+        public static readonly StyledProperty<bool> RenameOpenProperty =
             AvaloniaProperty.Register<CodeEditor, bool>(nameof(RenameOpen), defaultBindingMode: BindingMode.TwoWay);
 
         public bool RenameOpen

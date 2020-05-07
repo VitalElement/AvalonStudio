@@ -64,7 +64,7 @@ namespace AvalonStudio.Languages.Xaml
             return port;
         }
 
-        public static readonly AvaloniaProperty<string> XamlProperty = AvaloniaProperty.Register<AvaloniaPreviewer, string>(nameof(Xaml));
+        public static readonly StyledProperty<string> XamlProperty = AvaloniaProperty.Register<AvaloniaPreviewer, string>(nameof(Xaml));
 
         public string Xaml
         {
@@ -72,7 +72,7 @@ namespace AvalonStudio.Languages.Xaml
             set => SetValue(XamlProperty, value);
         }
 
-        public static readonly AvaloniaProperty<ISourceFile> SourceFileProperty =
+        public static readonly StyledProperty<ISourceFile> SourceFileProperty =
             AvaloniaProperty.Register<AvaloniaPreviewer, ISourceFile>(nameof(SourceFile), defaultBindingMode: BindingMode.TwoWay);
 
         public ISourceFile SourceFile

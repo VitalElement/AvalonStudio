@@ -1,5 +1,4 @@
-﻿using Avalonia.Diagnostics.ViewModels;
-using AvalonStudio.Extensibility.Templating;
+﻿using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.MVVM;
 using System.Collections.Generic;
 using System.Linq;
