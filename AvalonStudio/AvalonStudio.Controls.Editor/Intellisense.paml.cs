@@ -52,9 +52,9 @@ namespace AvalonStudio.Controls.Editor
             }
         }
 
-        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnTemplateApplied(e);
+            base.OnApplyTemplate(e);
 
             _popup = e.NameScope.Find<Popup>("PART_Popup");
             _assistantPopup = e.NameScope.Find<Popup>("PART_PopupAssistant");

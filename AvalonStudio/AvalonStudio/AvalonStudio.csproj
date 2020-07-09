@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Assets\**" Exclude="@(EmbeddedResource)" />
+    <AvaloniaResource Include="**\*.xaml;Assets\*" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
 
   <ItemGroup>

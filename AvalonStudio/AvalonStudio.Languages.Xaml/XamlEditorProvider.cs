@@ -18,6 +18,7 @@ namespace AvalonStudio.Languages.Xaml
             {
                 case ".xaml":
                 case ".paml":
+                case ".axaml":
                     result = true;
                     break;
             }

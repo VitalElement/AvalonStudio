@@ -7,7 +7,7 @@
         public object XmlContentType { get; }
 
         [ExportContentType("XAML", ContentCapabilities.Xml, ContentCapabilities.Xaml)]
-        [FileExtensions(".xaml", ".paml")]
+        [FileExtensions(".xaml", ".paml", ".axaml")]
         public object XamlContentType { get; }
     }
 }

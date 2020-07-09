@@ -17,7 +17,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             AvaloniaXamlLoader.Load(this);
         }
 
-        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             if(DataContext is TemplateParameterViewModel pvm)
             {
@@ -31,7 +31,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
                     textBox.CaretIndex = textBox.Text.Length - 1;
                 }
             }
-            base.OnTemplateApplied(e);
+            base.OnApplyTemplate(e);
         }
     }
 }

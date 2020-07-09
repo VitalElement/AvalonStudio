@@ -735,9 +735,9 @@ namespace AvalonStudio.Controls.Editor
             _textEntering = true;
         }
 
-        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnTemplateApplied(e);
+            base.OnApplyTemplate(e);
 
             _toolTip = e.NameScope.Find<CodeEditorToolTip>("PART_Tooltip");
             _toolTip.AttachEditor(this);

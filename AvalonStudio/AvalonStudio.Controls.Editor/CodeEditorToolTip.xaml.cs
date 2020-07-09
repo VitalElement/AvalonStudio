@@ -106,9 +106,9 @@ namespace AvalonStudio.Controls.Editor
             return await _editor.UpdateToolTipAsync();
         }
 
-        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnTemplateApplied(e);
+            base.OnApplyTemplate(e);
 
             _viewHost = e.NameScope.Find<Control>("PART_Presenter");
 

@@ -17,11 +17,11 @@
     <StyleInclude Source="avares://AvalonStudio.Shell/Controls/MetroWindowTheme.paml" />
     <StyleInclude Source="avares://AvalonStudio.Shell.Extensibility/Controls/ControlTheme.paml" />
     <StyleInclude Source="avares://AvalonStudio.Shell/Styles/GlobalStyles.xaml" />
-    <StyleInclude Source="resm:AvaloniaEdit.AvaloniaEdit.xaml?assembly=AvaloniaEdit" />
+    <StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />
     <StyleInclude Source="avares://AvalonStudio.Controls.Editor/CodeEditor.xaml" />
     <StyleInclude Source="avares://AvalonStudio.Debugging/Icons/Icons.xaml" />
     <StyleInclude Source="avares://AvalonStudio.Controls.Standard/SolutionExplorer/Icons/Icons.xaml" />
-    <StyleInclude Source="resm:AvalonStudio.Languages.Xaml.AvaloniaPreviewer.xaml?assembly=AvalonStudio.Languages.Xaml" />
+    <StyleInclude Source="avares://AvalonStudio.Languages.Xaml/AvaloniaPreviewer.xaml" />
     <StyleInclude Source="avares://Dock.Avalonia.Themes.Default/DefaultTheme.xaml"/>
     <StyleInclude Source="avares://Dock.Avalonia.Themes.Metro/DefaultTheme.xaml"/>
     <StyleInclude Source="avares://VtNetCore.Avalonia/VirtualTerminalControl.xaml" />
