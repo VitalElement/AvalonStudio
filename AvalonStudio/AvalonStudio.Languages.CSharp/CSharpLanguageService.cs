@@ -803,8 +803,7 @@ namespace AvalonStudio.Languages.CSharp
 
             try
             {
-                var highlightData = await Classifier.GetClassifiedSpansAsync(document, new TextSpan(0, textLength));
-                var displayParts = await Classifier.GetClassifiedSymbolDisplayPartsAsync(document, new TextSpan(0, textLength));
+                var highlightData = await Classifier.GetClassifiedSpansAsync(document, new TextSpan(0, textLength));                
 
                 foreach (var span in highlightData)
                 {

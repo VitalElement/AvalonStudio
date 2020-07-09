@@ -5,6 +5,10 @@
     <RootNamespace>AvalonStudio.Extensibility</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <AvaloniaResource Include="**\*.resx;**\*.xaml;Assets\*;" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
