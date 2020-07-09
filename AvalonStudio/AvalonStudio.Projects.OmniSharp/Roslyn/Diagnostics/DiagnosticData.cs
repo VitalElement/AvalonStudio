@@ -26,7 +26,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics
         public ProjectId ProjectId => _inner.ProjectId;
         public DocumentId DocumentId => _inner.DocumentId;
         public bool HasTextSpan => _inner.HasTextSpan;
-        public TextSpan TextSpan => _inner.TextSpan;
+        public TextSpan TextSpan => _inner.GetTextSpan();
 
         public DiagnosticDataLocation DataLocation { get; }
         public IReadOnlyCollection<DiagnosticDataLocation> AdditionalLocations { get; }

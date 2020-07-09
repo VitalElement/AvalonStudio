@@ -146,7 +146,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                     {
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        if (!range.IntersectsWith(diagnostic.TextSpan))
+                        if (!diagnostic.HasTextSpan && range.IntersectsWith(diagnostic.GetTextSpan()))
                         {
                             continue;
                         }
@@ -192,7 +192,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                         cancellationToken.ThrowIfCancellationRequested();
 
                         aggregatedDiagnostics = aggregatedDiagnostics ?? new Dictionary<TextSpan, List<DiagnosticData>>();
-                        aggregatedDiagnostics.GetOrAdd(diagnostic.TextSpan, _ => new List<DiagnosticData>()).Add(diagnostic);
+                        aggregatedDiagnostics.GetOrAdd(diagnostic.GetTextSpan(), _ => new List<DiagnosticData>()).Add(diagnostic);
                     }
 
                     if (aggregatedDiagnostics == null)
