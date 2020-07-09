@@ -8,7 +8,7 @@
     <MicrosoftExtensionsDependencyModelVersion>2.0.4</MicrosoftExtensionsDependencyModelVersion>
     <NewtonsoftJsonVersion>12.0.2</NewtonsoftJsonVersion>
     <ReactiveUIVersion>10.3.6</ReactiveUIVersion>
-    <RoslynVersion>3.3.1</RoslynVersion>
+    <RoslynVersion>3.4.0</RoslynVersion>
     <SystemCompositionVersion>1.0.31</SystemCompositionVersion>
     <SystemDiagnosticsProcessVersion>4.3.0</SystemDiagnosticsProcessVersion>
     <SystemDrawingCommonVersion>4.5.0</SystemDrawingCommonVersion>

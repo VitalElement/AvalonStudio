@@ -39,6 +39,7 @@
     <PackageReference Include="System.Security.Principal" Version="4.3.0" />
     <PackageReference Include="Avalonia.Angle.Windows.Natives" Version="2.1.0.2019013001" />    
     <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0-preview1" />
     <PackageReference Include="Dock.Avalonia.Themes.Default" />
     <PackageReference Include="Dock.Avalonia.Themes.Metro" />
   </ItemGroup>
