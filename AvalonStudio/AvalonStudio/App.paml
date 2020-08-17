@@ -84,13 +84,13 @@
   </Application.Styles>  
   <Application.DataTemplates>
     <!-- Views -->
-    <DataTemplate DataType="Views:MainView">
+    <DataTemplate DataType="Views:MainView" x:DataType="Views:MainView">
       <Grid>
-        <ContentControl Content="{Binding ActiveDockable}"/>
+        <ContentControl Content="{CompiledBinding ActiveDockable}"/>
       </Grid>
     </DataTemplate>
-    <DataTemplate DataType="id:IDockable">
-      <cont:ViewModelViewHost DataContext="{Binding Context}" />
+    <DataTemplate DataType="id:IDockable" x:DataType="id:IDockable">
+      <cont:ViewModelViewHost DataContext="{CompiledBinding Context}" />
     </DataTemplate>
   </Application.DataTemplates>
   <NativeMenu.Menu>

@@ -88,7 +88,7 @@ namespace AvalonStudio.Languages.Xaml
 
             if (window != null)
             {
-                return window.PlatformImpl.Scaling;
+                return window.PlatformImpl.RenderScaling;
             }
 
             return 1;
