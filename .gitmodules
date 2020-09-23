@@ -12,7 +12,7 @@
 	url = https://github.com/VitalElement/templating.git
 [submodule "AvalonStudio.Shell"]
 	path = AvalonStudio.Shell
-	url = https://github.com/VitalElement/AvalonStudio.Shell.git
+	url = https://github.com/FlaviusHouk/AvalonStudio.Shell.git
 [submodule "AvalonStudio.TerminalEmulator"]
 	path = AvalonStudio.TerminalEmulator
 	url = https://github.com/VitalElement/AvalonStudio.TerminalEmulator.git
