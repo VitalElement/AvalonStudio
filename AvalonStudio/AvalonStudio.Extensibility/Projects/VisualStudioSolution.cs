@@ -57,6 +57,16 @@ namespace AvalonStudio.Projects
             return result;
         }
 
+        public static VisualStudioSolution Create()
+        {
+            return new VisualStudioSolution(new SlnFile 
+            { 
+                FormatVersion = "12.00", 
+                MinimumVisualStudioVersion = "10.0.40219.1", 
+                VisualStudioVersion = "15.0.27009.1" 
+            });
+        }
+
         private VisualStudioSolution(SlnFile solutionModel)
         {
             _solutionModel = solutionModel;
@@ -286,15 +296,24 @@ namespace AvalonStudio.Projects
                     });
                 }
 
-                var task = ProjectUtils.LoadProjectFileAsync(this, Guid.Parse(loadInfo.projectInfo.TypeGuid), loadInfo.path);
-
-                var result = task.GetAwaiter().GetResult();
-
-                if (result != null)
+                IProject result;
+                if (loadInfo.placeHolder is PlaceHolderProject)
                 {
-                    result.Id = loadInfo.placeHolder.Id;
-                    result.Solution = this;
+                    var task = ProjectUtils.LoadProjectFileAsync(this, Guid.Parse(loadInfo.projectInfo.TypeGuid), loadInfo.path);
 
+                    result = task.GetAwaiter().GetResult();
+
+                    if (result != null)
+                    {
+                        result.Id = loadInfo.placeHolder.Id;
+                        result.Solution = this;
+
+                        result.LoadFilesAsync().Wait();
+                    }
+                }
+                else
+                {
+                    result = loadInfo.placeHolder as IProject;
                     result.LoadFilesAsync().Wait();
                 }
 
@@ -304,11 +323,11 @@ namespace AvalonStudio.Projects
             foreach (var project in solutionProjects)
             {
                 var placeHolder = _solutionItems[Guid.Parse(project.Id)];
-
+                
                 tasks.Add(jobrunner.Add((placeHolder, project, Path.Combine(CurrentDirectory, project.FilePath))));
             }
 
-            while (true)
+            while (tasks.Any())
             {
                 var currentProjectTask = await Task.WhenAny(tasks);
 
@@ -322,7 +341,7 @@ namespace AvalonStudio.Projects
                     {
                         var placeHolder = _solutionItems[newProject.Id];
 
-                        if (newProject != null)
+                        if (newProject != null && (placeHolder is PlaceHolderProject))
                         {
                             SetItemParent(newProject, placeHolder.Parent);
 
@@ -332,11 +351,6 @@ namespace AvalonStudio.Projects
                             _solutionItems.Add(newProject.Id, newProject);
                         }
                     }
-                }
-
-                if (tasks.Count == 0)
-                {
-                    break;
                 }
             }
 
@@ -363,16 +377,21 @@ namespace AvalonStudio.Projects
             {
                 if (File.Exists(project.FilePath))
                 {
-                    var newProject = new LoadingProject(this, project.FilePath)
+                    var projectId = Guid.Parse(project.Id);
+
+                    if (!_solutionItems.ContainsKey(projectId))
                     {
-                        Id = Guid.Parse(project.Id),
-                        Solution = this
-                    };
+                        var newProject = new LoadingProject(this, project.FilePath)
+                        {
+                            Id = projectId,
+                            Solution = this
+                        };
 
-                    (newProject as ISolutionItem).Parent = this;
+                        (newProject as ISolutionItem).Parent = this;
 
-                    _solutionItems.Add(newProject.Id, newProject);
-                    newItems.Add(newProject);
+                        _solutionItems.Add(newProject.Id, newProject);
+                        newItems.Add(newProject);
+                    }
                 }
                 else
                 {
@@ -521,13 +540,17 @@ namespace AvalonStudio.Projects
 
                     _solutionItems.Add(project.Id, project);
 
-                    _solutionModel.Projects.Add(new SlnProject
+                    var solutionProject = new SlnProject
                     {
                         Id = project.Id.GetGuidString(),
                         TypeGuid = itemGuid?.GetGuidString(),
                         Name = project.Name,
-                        FilePath = CurrentDirectory.MakeRelativePath(project.Location)
-                    });
+                        FilePath = string.IsNullOrEmpty(_solutionModel.FullPath) ?
+                                        project.Location :
+                                        CurrentDirectory.MakeRelativePath(project.Location)
+                    };
+
+                    _solutionModel.Projects.Add(solutionProject);
 
                     var debug1 = new SlnPropertySet(project.Id.GetGuidString()); debug1["Debug|Any CPU.ActiveCfg"] = "Debug|Any CPU";
                     var debug2 = new SlnPropertySet(project.Id.GetGuidString()); debug2["Debug|Any CPU.Build.0"] = "Debug|Any CPU";
@@ -633,10 +656,13 @@ namespace AvalonStudio.Projects
             return result;
         }
 
-        public void Save()
+        public void Save(string path = null)
         {
             if (SaveEnabled)
             {
+                if (!string.IsNullOrEmpty(path))
+                    _solutionModel.FullPath = path;
+
                 _solutionModel.Write();
             }
         }

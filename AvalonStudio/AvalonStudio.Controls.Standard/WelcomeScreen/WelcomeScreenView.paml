@@ -24,7 +24,7 @@
         </StackPanel>
         <StackPanel Margin="10 15 0 0" VerticalAlignment="Top" HorizontalAlignment="Left">
           <Button Content="New Solution" Command="{Binding NewSolution}" Classes="hyperlink h3"/>
-          <Button Content="Open Solution" Command="{Binding OpenSolution}" Classes="hyperlink h3"/>
+          <Button Content="Open" Command="{Binding OpenSolution}" Classes="hyperlink h3"/>
         </StackPanel>
 
         <TextBlock Text=" "/>
