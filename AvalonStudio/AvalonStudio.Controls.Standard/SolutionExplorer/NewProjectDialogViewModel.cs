@@ -83,7 +83,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
             {
                 var ofd = new OpenFolderDialog
                 {
-                    InitialDirectory = location
+                    Directory = location
                 };
 
                 var mainWindow = AvaloniaLocator.CurrentMutable.GetService<Window>();

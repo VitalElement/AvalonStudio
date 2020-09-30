@@ -1,7 +1,5 @@
 ﻿using AvalonStudio.Projects;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace AvalonStudio.Extensibility.Projects.OpenableItems
@@ -13,7 +11,7 @@ namespace AvalonStudio.Extensibility.Projects.OpenableItems
 
         public async Task<ISolution> LoadAsync(string path)
         {
-            var solution = VisualStudioSolution.Create();
+            var solution = VisualStudioSolution.Create(string.Empty, Path.GetFileNameWithoutExtension(path), save: false);
             var projIdentifier = ProjectUtils.GetProjectTypeGuidForProject(path);
             
             if (!projIdentifier.HasValue)

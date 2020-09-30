@@ -57,16 +57,6 @@ namespace AvalonStudio.Projects
             return result;
         }
 
-        public static VisualStudioSolution Create()
-        {
-            return new VisualStudioSolution(new SlnFile 
-            { 
-                FormatVersion = "12.00", 
-                MinimumVisualStudioVersion = "10.0.40219.1", 
-                VisualStudioVersion = "15.0.27009.1" 
-            });
-        }
-
         private VisualStudioSolution(SlnFile solutionModel)
         {
             _solutionModel = solutionModel;
@@ -436,16 +426,12 @@ namespace AvalonStudio.Projects
             get => Path.GetFileNameWithoutExtension(_solutionModel.FullPath);
             set
             {
-                if (value != Name)
+                if (value != Name && Directory.Exists(CurrentDirectory))
                 {
                     var newLocation = Path.Combine(CurrentDirectory, value + Path.GetExtension(Location));
 
-                    System.IO.File.Move(Location, newLocation);
-
-                    _solutionModel.FullPath = newLocation;
+                    Save(newLocation);
                 }
-
-                Save();
             }
         }
 
@@ -545,9 +531,9 @@ namespace AvalonStudio.Projects
                         Id = project.Id.GetGuidString(),
                         TypeGuid = itemGuid?.GetGuidString(),
                         Name = project.Name,
-                        FilePath = string.IsNullOrEmpty(_solutionModel.FullPath) ?
-                                        project.Location :
-                                        CurrentDirectory.MakeRelativePath(project.Location)
+                        FilePath = File.Exists(_solutionModel.FullPath) ?
+                                        CurrentDirectory.MakeRelativePath(project.Location) :
+                                        project.Location
                     };
 
                     _solutionModel.Projects.Add(solutionProject);
@@ -661,7 +647,16 @@ namespace AvalonStudio.Projects
             if (SaveEnabled)
             {
                 if (!string.IsNullOrEmpty(path))
+                {
+                    if (File.Exists(Location))
+                        File.Move(Location, path);
+
                     _solutionModel.FullPath = path;
+                }
+
+                //TODO: Recalculate new relative path if solution path changed to new one.
+                foreach (SlnProject proj in _solutionModel.Projects.Where(p => Path.IsPathRooted(p.FilePath)))
+                    proj.FilePath = CurrentDirectory.MakeRelativePath(proj.FilePath);
 
                 _solutionModel.Write();
             }
