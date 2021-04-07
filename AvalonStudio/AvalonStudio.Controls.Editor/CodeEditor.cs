@@ -285,17 +285,17 @@ namespace AvalonStudio.Controls.Editor
             {
                 if (s.Sender == this)
                 {
-                    if (s.OldValue != null)
+                    if (s.OldValue.Value != null)
                     {
-                        foreach (var renderer in (ObservableCollection<IBackgroundRenderer>)s.OldValue)
+                        foreach (var renderer in s.OldValue.Value)
                         {
                             TextArea.TextView.BackgroundRenderers.Remove(renderer);
                         }
                     }
 
-                    if (s.NewValue != null)
+                    if (s.NewValue.Value != null)
                     {
-                        foreach (var renderer in (ObservableCollection<IBackgroundRenderer>)s.NewValue)
+                        foreach (var renderer in s.NewValue.Value)
                         {
                             TextArea.TextView.BackgroundRenderers.Add(renderer);
                         }
@@ -307,17 +307,17 @@ namespace AvalonStudio.Controls.Editor
             {
                 if (s.Sender == this)
                 {
-                    if (s.OldValue != null)
+                    if (s.OldValue.Value != null)
                     {
-                        foreach (var renderer in (ObservableCollection<IVisualLineTransformer>)s.OldValue)
+                        foreach (var renderer in s.OldValue.Value)
                         {
                             TextArea.TextView.LineTransformers.Remove(renderer);
                         }
                     }
 
-                    if (s.NewValue != null)
+                    if (s.NewValue.Value != null)
                     {
-                        foreach (var renderer in (ObservableCollection<IVisualLineTransformer>)s.NewValue)
+                        foreach (var renderer in s.NewValue.Value)
                         {
                             TextArea.TextView.LineTransformers.Add(renderer);
                         }

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net5.0</TargetFrameworks>
     <TieredCompilations>True</TieredCompilations>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <PreserveCompilationContext>true</PreserveCompilationContext>
@@ -24,7 +24,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Reflection.Emit" Version="4.6.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
     <PackageReference Include="Mono.Cecil" Version="0.10.3" />
     <PackageReference Include="Avalonia.X11" />
     <PackageReference Include="Avalonia.Desktop" />
@@ -37,10 +37,9 @@
     <PackageReference Include="System.Composition" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.1" />
     <PackageReference Include="System.Security.Principal" Version="4.3.0" />
-    <PackageReference Include="Avalonia.Angle.Windows.Natives" Version="2.1.0.2019013001" />    
+    <PackageReference Include="Avalonia.Angle.Windows.Natives" Version="2.1.0.2020091801" />    
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Dock.Avalonia.Themes.Default" />
-    <PackageReference Include="Dock.Avalonia.Themes.Metro" />
   </ItemGroup>
 
   <ItemGroup>

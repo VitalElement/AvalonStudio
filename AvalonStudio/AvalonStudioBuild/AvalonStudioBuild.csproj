@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>net5.0</TargetFrameworks>
     <AssemblyName>avalon</AssemblyName>
     <TieredCompilation>True</TieredCompilation>
     <PreserveCompilationContext>true</PreserveCompilationContext>

@@ -1,13 +1,13 @@
 <Project>
 
   <PropertyGroup>
-    <AvaloniaBehaviorsVersion>0.10.0-preview3</AvaloniaBehaviorsVersion>
-    <AvaloniaVersion>0.10.0-preview3</AvaloniaVersion>
-    <DockVersion>0.10.0-preview3</DockVersion>
+    <AvaloniaBehaviorsVersion>0.10.0</AvaloniaBehaviorsVersion>
+    <AvaloniaVersion>0.10.0</AvaloniaVersion>
+    <DockVersion>0.10.0</DockVersion>
     <GitInfoVersion>2.0.20</GitInfoVersion>
     <MicrosoftExtensionsDependencyModelVersion>2.0.4</MicrosoftExtensionsDependencyModelVersion>
     <NewtonsoftJsonVersion>12.0.2</NewtonsoftJsonVersion>
-    <ReactiveUIVersion>11.5.17</ReactiveUIVersion>
+    <ReactiveUIVersion>12.1.1</ReactiveUIVersion>
     <RoslynVersion>3.6.0</RoslynVersion>
     <SystemCompositionVersion>1.0.31</SystemCompositionVersion>
     <SystemDiagnosticsProcessVersion>4.3.0</SystemDiagnosticsProcessVersion>
@@ -48,7 +48,6 @@
     <PackageReference Update="Dock.Avalonia" Version="$(DockVersion)" />
     <PackageReference Update="Dock.Model.ReactiveUI" Version="$(DockVersion)" />
     <PackageReference Update="Dock.Avalonia.Themes.Default" Version="$(DockVersion)" />
-    <PackageReference Update="Dock.Avalonia.Themes.Metro" Version="$(DockVersion)" />
   </ItemGroup>
 
   <ItemGroup>

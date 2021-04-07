@@ -22,8 +22,7 @@
     <StyleInclude Source="avares://AvalonStudio.Debugging/Icons/Icons.xaml" />
     <StyleInclude Source="avares://AvalonStudio.Controls.Standard/SolutionExplorer/Icons/Icons.xaml" />
     <StyleInclude Source="avares://AvalonStudio.Languages.Xaml/AvaloniaPreviewer.xaml" />
-    <StyleInclude Source="avares://Dock.Avalonia.Themes.Default/DefaultTheme.xaml"/>
-    <StyleInclude Source="avares://Dock.Avalonia.Themes.Metro/DefaultTheme.xaml"/>
+    <StyleInclude Source="avares://Dock.Avalonia.Themes.Default/DefaultTheme.axaml"/>
     <StyleInclude Source="avares://VtNetCore.Avalonia/VirtualTerminalControl.xaml" />
 
     <Style Selector="shell|MetroWindow /template/ Button#minimiseButton">
