@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net5.0</TargetFrameworks>
+    <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>avalon</AssemblyName>
     <TieredCompilation>True</TieredCompilation>
     <PreserveCompilationContext>true</PreserveCompilationContext>

@@ -8,6 +8,11 @@ using System.Linq;
 
 namespace AvalonStudio
 {
+    class GeneralSettings
+    {
+        public string Theme { get; set; } = ColorTheme.VisualStudioDark.Name;
+    }
+
     class GeneralSettingsViewModel : SettingsViewModel, IActivatableExtension
     {
         private int _selectedThemeIndex;
