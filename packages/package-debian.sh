@@ -8,12 +8,12 @@ echo ${BUILD_VERSION}
 TARG_DIR=$PACK_DIR/avalon-studio_$BUILD_VERSION/opt/vitalelement/avalonstudio/bin
 
 rm -rf $TARG_DIR
-rm -rf $BUILD_DIR/bin/Release/netcoreapp2.2/linux-x64/publish
+rm -rf $BUILD_DIR/bin/Release/net5.0/linux-x64/publish
 pushd $BUILD_DIR
-dotnet publish -c Release -r linux-x64 -f netcoreapp2.2
+dotnet publish -c Release -r linux-x64 -f net5.0
 popd
 mkdir -p $TARG_DIR
-cp -rv $BUILD_DIR/bin/Release/netcoreapp2.2/linux-x64/publish/. $TARG_DIR
+cp -rv $BUILD_DIR/bin/Release/net5.0/linux-x64/publish/. $TARG_DIR
 pwd
 cp -rv deb/DEBIAN $PACK_DIR/avalon-studio_$BUILD_VERSION/
 cp -rv deb/rootfs/. $PACK_DIR/avalon-studio_$BUILD_VERSION/
