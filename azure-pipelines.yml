@@ -5,7 +5,7 @@ jobs:
   steps:
   - task: UseDotNet@2
     inputs:
-      version: '3.0.x'
+      version: '5.0.x'
         
   - script: |
       git fetch --tags
@@ -23,7 +23,7 @@ jobs:
 
   - script: |
       cd AvalonStudio/AvalonStudioBuild
-      dotnet publish -c Release -f netcoreapp3.0 -r linux-x64
+      dotnet publish -c Release -f net5.0 -r linux-x64
       
   - task: PublishBuildArtifacts@1
     inputs:
