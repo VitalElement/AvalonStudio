@@ -33,6 +33,10 @@ jobs:
   pool:
     vmImage: 'macOS-10.14'
   steps:
+  - task: UseDotNet@2
+    inputs:
+      version: '5.0.x'
+        
   - script: |
       git fetch --tags
       export COREHOST_TRACE=0
