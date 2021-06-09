@@ -246,6 +246,11 @@ namespace AvalonStudio.Controls.Editor.ContextActions
 
         private async Task<IEnumerable<object>> LoadActionsAsync(CancellationToken cancellationToken)
         {
+            if (_editor.Document == null)
+            {
+                return Array.Empty<object>();
+            }
+
             var allActions = new List<object>();
             foreach (var provider in _providers)
             {
