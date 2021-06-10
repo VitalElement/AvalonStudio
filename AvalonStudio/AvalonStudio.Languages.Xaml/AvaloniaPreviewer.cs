@@ -109,9 +109,9 @@ namespace AvalonStudio.Languages.Xaml
                         }
 
                         if (SourceFile == null)
-						{
+                        {
                             return;
-						}
+                        }
 
                         t.Send(new UpdateXamlMessage
                         {
