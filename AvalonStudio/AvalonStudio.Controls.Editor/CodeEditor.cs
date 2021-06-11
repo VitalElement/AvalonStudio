@@ -541,7 +541,8 @@ namespace AvalonStudio.Controls.Editor
 
                     Dispatcher.UIThread.Post(()=>
                     {
-                        TextArea.ScrollToLine(Line);
+                        if (TextArea.Document != null)
+                            TextArea.ScrollToLine(Line);
                         Focus();
                     });
                 }
@@ -1052,7 +1053,8 @@ namespace AvalonStudio.Controls.Editor
 
                 if (viewPortLines < Document.LineCount)
                 {
-                    TextArea.ScrollToLine(line);
+                    if (TextArea.Document != null)
+                        TextArea.ScrollToLine(line);
                 }
             });
         }

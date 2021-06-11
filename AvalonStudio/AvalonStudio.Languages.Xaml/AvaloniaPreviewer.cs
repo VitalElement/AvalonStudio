@@ -108,6 +108,11 @@ namespace AvalonStudio.Languages.Xaml
                             _remoteContainer.Child = _remote = new RemoteWidget(t);
                         }
 
+                        if (SourceFile == null)
+                        {
+                            return;
+                        }
+
                         t.Send(new UpdateXamlMessage
                         {
                             Xaml = Xaml,
