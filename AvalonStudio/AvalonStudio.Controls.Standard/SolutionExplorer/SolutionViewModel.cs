@@ -1,29 +1,28 @@
+using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
-using AvalonStudio.Extensibility;
 using AvalonStudio.Platforms;
 using AvalonStudio.Projects;
-using AvalonStudio.Shell;
 using ReactiveUI;
+using System;
+using System.IO;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Linq;
 
 namespace AvalonStudio.Controls.Standard.SolutionExplorer
 {
     public class SolutionViewModel : SolutionParentViewModel<ISolution>
     {
-        private readonly IShell shell;
-
         public SolutionViewModel(ISolution model) : base(null, model)
         {
             Parent = this;
 
-            shell = IoC.Get<IShell>();
-
             OpenInExplorerCommand = ReactiveCommand.Create(() => { Platform.OpenFolderInExplorer(model.CurrentDirectory); });
 
-            BuildSolutionCommand = ReactiveCommand.Create(() => BuildSolution());
+            BuildSolutionCommand = ReactiveCommand.Create(BuildSolution);
 
-            CleanSolutionCommand = ReactiveCommand.Create(() => CleanSolution());
+            CleanSolutionCommand = ReactiveCommand.Create(CleanSolution);
 
             RebuildSolutionCommand = ReactiveCommand.Create(() =>
             {
@@ -34,6 +33,8 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
             RunAllTestsCommand = ReactiveCommand.Create(() => RunTests());
 
+            SaveCommand = ReactiveCommand.CreateFromObservable(SaveSolution);
+
             IsExpanded = true;
         }
 
@@ -42,6 +43,7 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         public ReactiveCommand<Unit, Unit> RebuildSolutionCommand { get; }
         public ReactiveCommand<Unit, Unit> RunAllTestsCommand { get; }
         public ReactiveCommand<Unit, Unit> OpenInExplorerCommand { get; }
+        public ReactiveCommand<Unit, Unit> SaveCommand { get; }
 
         private void CleanSolution()
         {
@@ -53,6 +55,30 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
 
         private void RunTests()
         {
+        }
+
+        private IObservable<Unit> SaveSolution()
+        {
+            return Observable.Start(() =>
+            {
+                string location = Platform.ProjectDirectory;
+
+                var ofd = new SaveFileDialog
+                {
+                    Directory = location,
+                    InitialFileName = Model.Name,
+                    DefaultExtension = Path.GetExtension(Model.Name)
+                };
+
+                var mainWindow = AvaloniaLocator.CurrentMutable.GetService<Window>();
+
+                var result = ofd.ShowAsync(mainWindow).GetAwaiter().GetResult();
+
+                if (!string.IsNullOrEmpty(result))
+                {
+                    Model.Save(result);
+                }
+            });
         }
 
         public override string Title

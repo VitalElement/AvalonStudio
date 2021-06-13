@@ -73,7 +73,7 @@ namespace AvalonStudio.Projects
             }
         }
 
-        public void Save()
+        public void Save(string name = null)
         {
             StartupItem = StartupProject?.Name;
 

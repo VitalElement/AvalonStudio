@@ -14,7 +14,7 @@ namespace AvalonStudio.Extensibility.Studio
     public interface IStudio
     {
         IEnumerable<Lazy<ILanguageServiceProvider, LanguageServiceProviderMetadata>> LanguageServiceProviders { get; }
-        IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> SolutionTypes { get; }
+        IEnumerable<Lazy<IOpenableItem, SolutionTypeMetadata>> SolutionTypes { get; }
         IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
         IEnumerable<Lazy<IEditorProvider>> EditorProviders { get; }
         IEnumerable<Lazy<ITestFramework>> TestFrameworks { get; }

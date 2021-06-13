@@ -36,6 +36,6 @@ namespace AvalonStudio.Projects
 
         Task UnloadProjectsAsync();
 
-        void Save();
+        void Save(string path = null);
     }
 }

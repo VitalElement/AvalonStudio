@@ -18,6 +18,7 @@
             <MenuItem Header="New Solution Folder..." Command="{Binding Solution.AddNewFolderCommand}" />
           </MenuItem>
           <Separator />
+          <MenuItem Header="Save" Command="{Binding Solution.SaveCommand}"/>
           <MenuItem Header="Open Containing Folder"  Command="{Binding Solution.OpenInExplorerCommand}" />
         </ContextMenu>
       </StackPanel.ContextMenu>

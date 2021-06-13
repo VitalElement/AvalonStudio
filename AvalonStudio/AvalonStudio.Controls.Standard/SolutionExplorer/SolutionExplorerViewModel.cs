@@ -32,11 +32,11 @@ namespace AvalonStudio.Controls.Standard.SolutionExplorer
         private ISolution model;
         private SolutionViewModel solution;
 
-        private IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> _solutionTypes;
+        private IEnumerable<Lazy<IOpenableItem, SolutionTypeMetadata>> _solutionTypes;
 
         [ImportingConstructor]
         public SolutionExplorerViewModel(
-            [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes) : base("Solution Explorer")
+            [ImportMany] IEnumerable<Lazy<IOpenableItem, SolutionTypeMetadata>> solutionTypes) : base("Solution Explorer")
         {
             _shell = IoC.Get<IShell>();
             _studio = IoC.Get<IStudio>();

@@ -214,27 +214,30 @@ namespace AvalonStudio.Controls.Standard.WelcomeScreen
         {
             if (e.NewValue != null)
             {
-                var newProject = new RecentProject
+                if (!File.Exists(e.NewValue.Location))
                 {
-                    Name = e.NewValue.Name,
-                    Path = e.NewValue.Location
-                };
+                    var newProject = new RecentProject
+                    {
+                        Name = e.NewValue.Name,
+                        Path = e.NewValue.Location
+                    };
 
-                if (RecentProjectsCollection.RecentProjects == null)
-                {
-                    RecentProjectsCollection.RecentProjects = new List<RecentProject>();
-                }
+                    if (RecentProjectsCollection.RecentProjects == null)
+                    {
+                        RecentProjectsCollection.RecentProjects = new List<RecentProject>();
+                    }
 
-                if (RecentProjectsCollection.RecentProjects.Contains(newProject))
-                {
-                    RecentProjectsCollection.RecentProjects.Remove(newProject);
-                }
+                    if (RecentProjectsCollection.RecentProjects.Contains(newProject))
+                    {
+                        RecentProjectsCollection.RecentProjects.Remove(newProject);
+                    }
 
-                RecentProjectsCollection.RecentProjects.Insert(0, newProject);
+                    RecentProjectsCollection.RecentProjects.Insert(0, newProject);
 
-                RecentProjectsCollection.Save();
+                    RecentProjectsCollection.Save();
 
-                LoadRecentProjects();
+                    LoadRecentProjects();
+                }    
 
                 Close();
             }
