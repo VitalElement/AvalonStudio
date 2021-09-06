@@ -9,17 +9,18 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <AvaloniaResource Include="**\*.resx;**\*.xaml;Assets\*;AboutScreen\Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <AvaloniaResource Include="**\*.resx;**\*.xaml;Assets\*;AboutScreen\Assets\*;" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Controls.DataGrid" />
+    <PackageReference Include="DynamicData" Version="7.1.1" />
     <PackageReference Include="GitInfo" Version="2.0.20">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.SyndicationFeed.ReaderWriter" Version="1.0.2" />
-    <PackageReference Include="System.Composition" Version="1.1.0" />
+    <PackageReference Include="System.Composition" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AvalonStudio.Shell\src\AvalonStudio.Utils\AvalonStudio.Utils.csproj" />

@@ -12,19 +12,17 @@
     <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Default.xaml"/>
     <StyleInclude Source="avares://AvalonStudio.Shell/Themes/BaseDark.xaml"/>
-    <StyleInclude Source="avares://AvalonStudio.Shell/Themes/Theme.xaml"/>
     <StyleInclude Source="avares://AvalonStudio.Shell/Themes/Accents/DarkAccent.xaml"/>
     <StyleInclude Source="avares://AvalonStudio.Shell/Icons/Icons.xaml"/>
     <StyleInclude Source="avares://AvalonStudio.Shell/Controls/MetroWindowTheme.paml" />
     <StyleInclude Source="avares://AvalonStudio.Shell.Extensibility/Controls/ControlTheme.paml" />
     <StyleInclude Source="avares://AvalonStudio.Shell/Styles/GlobalStyles.xaml" />
-    <StyleInclude Source="resm:AvaloniaEdit.AvaloniaEdit.xaml?assembly=AvaloniaEdit" />
+    <StyleInclude Source="avares://AvaloniaEdit/AvaloniaEdit.xaml" />
     <StyleInclude Source="avares://AvalonStudio.Controls.Editor/CodeEditor.xaml" />
     <StyleInclude Source="avares://AvalonStudio.Debugging/Icons/Icons.xaml" />
     <StyleInclude Source="avares://AvalonStudio.Controls.Standard/SolutionExplorer/Icons/Icons.xaml" />
-    <StyleInclude Source="resm:AvalonStudio.Languages.Xaml.AvaloniaPreviewer.xaml?assembly=AvalonStudio.Languages.Xaml" />
-    <StyleInclude Source="avares://Dock.Avalonia.Themes.Default/DefaultTheme.xaml"/>
-    <StyleInclude Source="avares://Dock.Avalonia.Themes.Metro/DefaultTheme.xaml"/>
+    <StyleInclude Source="avares://AvalonStudio.Languages.Xaml/AvaloniaPreviewer.xaml" />
+    <StyleInclude Source="avares://Dock.Avalonia.Themes.Default/DefaultTheme.axaml"/>
     <StyleInclude Source="avares://VtNetCore.Avalonia/VirtualTerminalControl.xaml" />
 
     <Style Selector="shell|MetroWindow /template/ Button#minimiseButton">
@@ -83,15 +81,18 @@
       </Setter>
     </Style>
   </Application.Styles>  
-    <Application.DataTemplates>
-      <!-- Views -->
-      <DataTemplate DataType="Views:MainView">
-        <Grid>
-          <ContentControl Content="{Binding ActiveDockable}"/>
-        </Grid>
-      </DataTemplate>
-      <DataTemplate DataType="id:IDockable">
-        <cont:ViewModelViewHost DataContext="{Binding Context}" />
-      </DataTemplate>
-    </Application.DataTemplates>  
+  <Application.DataTemplates>
+    <!-- Views -->
+    <DataTemplate DataType="Views:MainView" x:DataType="Views:MainView">
+      <Grid>
+        <ContentControl Content="{CompiledBinding ActiveDockable}"/>
+      </Grid>
+    </DataTemplate>
+    <DataTemplate DataType="id:IDockable" x:DataType="id:IDockable">
+      <cont:ViewModelViewHost DataContext="{CompiledBinding Context}" />
+    </DataTemplate>
+  </Application.DataTemplates>
+  <NativeMenu.Menu>
+    <NativeMenu />
+  </NativeMenu.Menu>
 </Application>

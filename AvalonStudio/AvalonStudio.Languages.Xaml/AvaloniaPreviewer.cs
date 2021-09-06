@@ -64,7 +64,7 @@ namespace AvalonStudio.Languages.Xaml
             return port;
         }
 
-        public static readonly AvaloniaProperty<string> XamlProperty = AvaloniaProperty.Register<AvaloniaPreviewer, string>(nameof(Xaml));
+        public static readonly StyledProperty<string> XamlProperty = AvaloniaProperty.Register<AvaloniaPreviewer, string>(nameof(Xaml));
 
         public string Xaml
         {
@@ -72,7 +72,7 @@ namespace AvalonStudio.Languages.Xaml
             set => SetValue(XamlProperty, value);
         }
 
-        public static readonly AvaloniaProperty<ISourceFile> SourceFileProperty =
+        public static readonly StyledProperty<ISourceFile> SourceFileProperty =
             AvaloniaProperty.Register<AvaloniaPreviewer, ISourceFile>(nameof(SourceFile), defaultBindingMode: BindingMode.TwoWay);
 
         public ISourceFile SourceFile
@@ -106,6 +106,11 @@ namespace AvalonStudio.Languages.Xaml
                         if (_remoteContainer != null)
                         {
                             _remoteContainer.Child = _remote = new RemoteWidget(t);
+                        }
+
+                        if (SourceFile == null)
+                        {
+                            return;
                         }
 
                         t.Send(new UpdateXamlMessage
@@ -144,7 +149,7 @@ namespace AvalonStudio.Languages.Xaml
                         {
                             if (!_overlay.IsVisible)
                             {
-                                _statusText.Text = "Your app must target Avalonia version >= '0.7.0' to be compatible with the previewer.\r\n\r\n";
+                                _statusText.Text = "Your app must target Avalonia version >= '0.9.0' to be compatible with the previewer.\r\n\r\n";
                             }
 
                             _statusText.Text += e.Data + "\r\n";
@@ -298,9 +303,9 @@ namespace AvalonStudio.Languages.Xaml
             _disposables.Dispose();
         }
 
-        protected override void OnTemplateApplied(TemplateAppliedEventArgs e)
+        protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
-            base.OnTemplateApplied(e);
+            base.OnApplyTemplate(e);
 
             _remoteContainer = e.NameScope.Find<Center>("PART_Center");
 

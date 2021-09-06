@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="**\*.resx;**\*.xaml;Assets\*;**\*.paml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <AvaloniaResource Include="**\*.resx;**\*.xaml;Assets\*;" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -19,8 +19,8 @@
 
   <ItemGroup>
     <PackageReference Include="IgnoresAccessChecksToGenerator" Version="0.4.0" PrivateAssets="all" />    
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="2.10.0" />    
-    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="2.10.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" />    
+    <PackageReference Include="Microsoft.CodeAnalysis.Features" />
   </ItemGroup>
 
   <ItemGroup>

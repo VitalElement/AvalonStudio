@@ -105,7 +105,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
             private readonly ConditionalWeakTable<AnalyzerReference, ProjectCodeFixProvider> _analyzerReferenceToFixersMap;
             private readonly ConditionalWeakTable<AnalyzerReference, ProjectCodeFixProvider>.CreateValueCallback _createProjectCodeFixProvider;
 
-            private readonly ImmutableDictionary<LanguageKind, Lazy<ISuppressionFixProvider>> _suppressionProvidersMap;
+            private readonly ImmutableDictionary<LanguageKind, Lazy<AbstractSuppressionCodeFixProvider>> _suppressionProvidersMap;
 
             private ImmutableDictionary<object, FixAllProviderInfo> _fixAllProviderMap;
 
@@ -113,7 +113,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
             public CodeFixService(
                 IDiagnosticAnalyzerService service,
                 [ImportMany]IEnumerable<Lazy<CodeFixProvider, CodeChangeProviderMetadata>> fixers,
-                [ImportMany]IEnumerable<Lazy<ISuppressionFixProvider, CodeChangeProviderMetadata>> suppressionProviders)
+                [ImportMany]IEnumerable<Lazy<AbstractSuppressionCodeFixProvider, CodeChangeProviderMetadata>> suppressionProviders)
             {
                 _diagnosticService = service;
                 var fixersPerLanguageMap = fixers.ToPerLanguageMapWithMultipleLanguages();
@@ -146,7 +146,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                     {
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        if (!range.IntersectsWith(diagnostic.TextSpan))
+                        if (!diagnostic.HasTextSpan && range.IntersectsWith(diagnostic.GetTextSpan()))
                         {
                             continue;
                         }
@@ -192,7 +192,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                         cancellationToken.ThrowIfCancellationRequested();
 
                         aggregatedDiagnostics = aggregatedDiagnostics ?? new Dictionary<TextSpan, List<DiagnosticData>>();
-                        aggregatedDiagnostics.GetOrAdd(diagnostic.TextSpan, _ => new List<DiagnosticData>()).Add(diagnostic);
+                        aggregatedDiagnostics.GetOrAdd(diagnostic.GetTextSpan(), _ => new List<DiagnosticData>()).Add(diagnostic);
                     }
 
                     if (aggregatedDiagnostics == null)
@@ -334,7 +334,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                 Document document, TextSpan span, IEnumerable<DiagnosticData> diagnostics,
                 IList<CodeFixCollection> result, CancellationToken cancellationToken)
             {
-                Lazy<ISuppressionFixProvider> lazySuppressionProvider;
+                Lazy<AbstractSuppressionCodeFixProvider> lazySuppressionProvider;
                 if (!_suppressionProvidersMap.TryGetValue(document.Project.Language, out lazySuppressionProvider) || lazySuppressionProvider.Value == null)
                 {
                     return;
@@ -342,8 +342,8 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
 
                 await AppendFixesOrSuppressionsAsync(
                     document, span, diagnostics, result, lazySuppressionProvider.Value,
-                    hasFix: d => lazySuppressionProvider.Value.CanBeSuppressedOrUnsuppressed(d),
-                    getFixes: async dxs => (await lazySuppressionProvider.Value.GetSuppressionsAsync(
+                    hasFix: d =>  SuppressionHelpers.CanBeUnsuppressed(d) || SuppressionHelpers.CanBeSuppressed(d),
+                    getFixes: async dxs => (await lazySuppressionProvider.Value.GetFixesAsync(
                         document, span, dxs, cancellationToken).ConfigureAwait(false)).AsImmutable(),
                     cancellationToken: cancellationToken).ConfigureAwait(false);
             }
@@ -385,7 +385,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                 var supportedScopes = ImmutableArray<FixAllScope>.Empty;
                 if (fixAllProviderInfo != null)
                 {
-                    var codeFixProvider = (fixer as CodeFixProvider) ?? new WrapperCodeFixProvider((ISuppressionFixProvider)fixer, diagnostics.Select(d => d.Id));
+                    var codeFixProvider = (fixer as CodeFixProvider) ?? new WrapperCodeFixProvider((AbstractSuppressionCodeFixProvider)fixer, diagnostics.Select(d => d.Id));
                     fixAllState = CreateFixAllState(
                         fixAllProviderInfo.FixAllProvider,
                         document, fixAllProviderInfo, codeFixProvider, diagnostics,
@@ -428,7 +428,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
 
             public CodeFixProvider GetSuppressionFixer(string language, IEnumerable<string> diagnosticIds)
             {
-                Lazy<ISuppressionFixProvider> lazySuppressionProvider;
+                Lazy<AbstractSuppressionCodeFixProvider> lazySuppressionProvider;
                 if (!_suppressionProvidersMap.TryGetValue(language, out lazySuppressionProvider) || lazySuppressionProvider.Value == null)
                 {
                     return null;
@@ -481,7 +481,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                     hasAnySharedFixer = workspaceFixers.Any();
                 }
 
-                Lazy<ISuppressionFixProvider> lazySuppressionProvider = null;
+                Lazy<AbstractSuppressionCodeFixProvider> lazySuppressionProvider = null;
                 var hasSuppressionFixer =
                     considerSuppressionFixes &&
                     _suppressionProvidersMap.TryGetValue(document.Project.Language, out lazySuppressionProvider) &&
@@ -505,7 +505,7 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
 
                 var dx = await diagnostic.ToDiagnosticAsync(document.Project, cancellationToken).ConfigureAwait(false);
 
-                if (hasSuppressionFixer && lazySuppressionProvider.Value.CanBeSuppressedOrUnsuppressed(dx))
+                if (hasSuppressionFixer &&  SuppressionHelpers.CanBeSuppressed(dx) || SuppressionHelpers.CanBeUnsuppressed(dx))
                 {
                     return true;
                 }
@@ -660,14 +660,14 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn
                 return fixerMap;
             }
 
-            private static ImmutableDictionary<LanguageKind, Lazy<ISuppressionFixProvider>> GetSuppressionProvidersPerLanguageMap(
-                Dictionary<LanguageKind, List<Lazy<ISuppressionFixProvider, CodeChangeProviderMetadata>>> suppressionProvidersPerLanguage)
+            private static ImmutableDictionary<LanguageKind, Lazy<AbstractSuppressionCodeFixProvider>> GetSuppressionProvidersPerLanguageMap(
+                Dictionary<LanguageKind, List<Lazy<AbstractSuppressionCodeFixProvider, CodeChangeProviderMetadata>>> suppressionProvidersPerLanguage)
             {
-                var suppressionFixerMap = ImmutableDictionary.Create<LanguageKind, Lazy<ISuppressionFixProvider>>();
+                var suppressionFixerMap = ImmutableDictionary.Create<LanguageKind, Lazy<AbstractSuppressionCodeFixProvider>>();
                 foreach (var languageKindAndFixers in suppressionProvidersPerLanguage)
                 {
                     // ReSharper disable once PossibleNullReferenceException
-                    var suppressionFixerLazyMap = new Lazy<ISuppressionFixProvider>(() => languageKindAndFixers.Value.SingleOrDefault().Value);
+                    var suppressionFixerLazyMap = new Lazy<AbstractSuppressionCodeFixProvider>(() => languageKindAndFixers.Value.SingleOrDefault().Value);
                     suppressionFixerMap = suppressionFixerMap.Add(languageKindAndFixers.Key, suppressionFixerLazyMap);
                 }
 

@@ -10,7 +10,7 @@ namespace AvalonStudio.Studio.Shell.Commands
     internal class EditCommands
     {
         [ExportCommandDefinition("Edit.ShowQuickCommander")]
-        [DefaultKeyGestures("CTRL+P")]
+        [DefaultKeyGesture("CTRL+P")]
         public CommandDefinition ShowQuickCommanderCommand { get; }
 
         [ImportingConstructor]

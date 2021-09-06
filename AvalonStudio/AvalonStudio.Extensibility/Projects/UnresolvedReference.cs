@@ -27,7 +27,7 @@
 
         public ISolution Solution { get; set; }
 
-        public ObservableCollection<IProject> References => null;
+        public ObservableCollection<IProject> References { get; } = new ObservableCollection<IProject>();
 
         public IToolchain ToolChain { get; set; }
         public IDebugger Debugger2 { get; set; }

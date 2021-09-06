@@ -18,7 +18,7 @@ An extensible, cross platform IDE written in C# for Embedded C/C++, .NET Core, A
 ### 1. Install Dependencies
 
 - Git: https://git-scm.com/downloads
-- .NET Core 2.1: https://www.microsoft.com/net/download
+- .NET 5.0: https://www.microsoft.com/net/download
 
 ### 2. Get the code
 
@@ -39,6 +39,6 @@ dotnet build
 ### 4. Run locally built binaries
 
 ```sh
-cd bin/Debug/netcoreapp2.2
-dotnet ./AvalonStudio.dll
+cd bin/Debug/net5.0
+./AvalonStudio
 ```

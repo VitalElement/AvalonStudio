@@ -6,6 +6,11 @@ namespace AvalonStudio
 {
     internal class App : Application
     {
+        public App ()
+        {
+            Name = "AvalonStudio";
+        }
+
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

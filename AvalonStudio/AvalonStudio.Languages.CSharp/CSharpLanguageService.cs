@@ -720,6 +720,10 @@ namespace AvalonStudio.Languages.CSharp
                     result = HighlightType.Keyword;
                     break;
 
+                case "keyword - control":
+                    result = HighlightType.ControlKeyword;
+                    break;
+
                 case "identifier":
                     result = HighlightType.Identifier;
                     break;
@@ -769,7 +773,7 @@ namespace AvalonStudio.Languages.CSharp
                     break;
 
                 case "excluded code":
-                    result = HighlightType.None;
+                    result = HighlightType.ExcludedCode;
                     break;
 
                 default:
@@ -799,8 +803,7 @@ namespace AvalonStudio.Languages.CSharp
 
             try
             {
-                var highlightData = await Classifier.GetClassifiedSpansAsync(document, new TextSpan(0, textLength));
-                var displayParts = await Classifier.GetClassifiedSymbolDisplayPartsAsync(document, new TextSpan(0, textLength));
+                var highlightData = await Classifier.GetClassifiedSpansAsync(document, new TextSpan(0, textLength));                
 
                 foreach (var span in highlightData)
                 {
@@ -835,6 +838,7 @@ namespace AvalonStudio.Languages.CSharp
                     result = Format((uint)startOffset, (uint)(endOffset - startOffset), caret);
                 }
             }
+
             return result;
         }
 

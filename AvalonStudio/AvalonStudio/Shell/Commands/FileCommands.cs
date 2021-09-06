@@ -13,14 +13,15 @@ namespace AvalonStudio.Shell.Commands
     internal class FileCommands
     {
         [ExportCommandDefinition("File.Save")]
-        [DefaultKeyGestures("CTRL+S")]
+        [DefaultKeyGesture("CTRL + S")]
         public CommandDefinition SaveCommand { get; }
 
         [ExportCommandDefinition("File.SaveAll")]
+        [DefaultKeyGesture("CTRL + SHIFT + S")]
         public CommandDefinition SaveAllCommand { get; }
 
         [ExportCommandDefinition("File.Exit")]
-        [DefaultKeyGestures("ALT+F4")]
+        [DefaultKeyGesture("ALT+F4")]
         public CommandDefinition ExitCommand { get; }
 
         private readonly IStudio _studio;

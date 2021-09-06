@@ -1,8 +1,12 @@
 jobs:
 - job: Linux
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-18.04'
   steps:
+  - task: UseDotNet@2
+    inputs:
+      version: '5.0.x'
+        
   - script: |
       git fetch --tags
       export COREHOST_TRACE=0
@@ -19,7 +23,7 @@ jobs:
 
   - script: |
       cd AvalonStudio/AvalonStudioBuild
-      dotnet publish -c Release -f netcoreapp2.2 -r linux-x64
+      dotnet publish -c Release -f net5.0 -r linux-x64
 
   - task: Docker@2
     inputs:
@@ -35,8 +39,12 @@ jobs:
      
 - job: macOS
   pool:
-    vmImage: 'xcode9-macos10.13'
+    vmImage: 'macOS-10.14'
   steps:
+  - task: UseDotNet@2
+    inputs:
+      version: '5.0.x'
+        
   - script: |
       git fetch --tags
       export COREHOST_TRACE=0
@@ -56,7 +64,7 @@ jobs:
 
 - job: Windows
   pool:
-    vmImage: 'vs2017-win2016'
+    vmImage: 'windows-2019'
   steps:
   - script: |
       git fetch --tags

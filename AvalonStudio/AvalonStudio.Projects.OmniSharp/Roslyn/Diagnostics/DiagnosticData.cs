@@ -22,12 +22,11 @@ namespace AvalonStudio.Projects.OmniSharp.Roslyn.Diagnostics
         public int WarningLevel => _inner.WarningLevel;
         public IReadOnlyList<string> CustomTags => _inner.CustomTags;
         public ImmutableDictionary<string, string> Properties => _inner.Properties;
-        public bool IsSuppressed => _inner.IsSuppressed;
-        public Workspace Workspace => _inner.Workspace;
+        public bool IsSuppressed => _inner.IsSuppressed;        
         public ProjectId ProjectId => _inner.ProjectId;
         public DocumentId DocumentId => _inner.DocumentId;
         public bool HasTextSpan => _inner.HasTextSpan;
-        public TextSpan TextSpan => _inner.TextSpan;
+        public TextSpan TextSpan => _inner.GetTextSpan();
 
         public DiagnosticDataLocation DataLocation { get; }
         public IReadOnlyCollection<DiagnosticDataLocation> AdditionalLocations { get; }

@@ -88,7 +88,7 @@ namespace AvalonStudio.Languages.Xaml
 
             if (window != null)
             {
-                return window.PlatformImpl.Scaling;
+                return window.PlatformImpl.RenderScaling;
             }
 
             return 1;
@@ -205,12 +205,29 @@ namespace AvalonStudio.Languages.Xaml
         {
             var point = GetMousePoint(e);
 
+            Avalonia.Remote.Protocol.Input.MouseButton mouseButton = Avalonia.Remote.Protocol.Input.MouseButton.None;
+
+            if(e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+            {
+                mouseButton |= Avalonia.Remote.Protocol.Input.MouseButton.Left;
+            }
+
+            if (e.GetCurrentPoint(this).Properties.IsMiddleButtonPressed)
+            {
+                mouseButton |= Avalonia.Remote.Protocol.Input.MouseButton.Middle;
+            }
+
+            if (e.GetCurrentPoint(this).Properties.IsRightButtonPressed)
+            {
+                mouseButton |= Avalonia.Remote.Protocol.Input.MouseButton.Right;
+            }
+
             _connection.Send(new PointerReleasedEventMessage
             {
                 Modifiers = ToAvaloniaModifiers(e.InputModifiers),
                 X = point.X,
                 Y = point.Y,
-                Button = (Avalonia.Remote.Protocol.Input.MouseButton)e.MouseButton
+                Button = mouseButton
             });
 
             base.OnPointerReleased(e);
@@ -306,7 +323,7 @@ namespace AvalonStudio.Languages.Xaml
                 }
                 if (_bitmap != null)
                 {
-                    context.DrawImage(_bitmap, 1, new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height),
+                    context.DrawImage(_bitmap, new Rect(0, 0, _bitmap.Size.Width, _bitmap.Size.Height),
                         new Rect(Bounds.Size));
                 }
             }

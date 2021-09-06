@@ -1,6 +1,4 @@
-﻿using Avalonia.Controls;
-using Avalonia.Diagnostics.ViewModels;
-using AvalonStudio.Extensibility.Templating;
+﻿using AvalonStudio.Extensibility.Templating;
 using AvalonStudio.MVVM;
 using ReactiveUI;
 using System.Globalization;

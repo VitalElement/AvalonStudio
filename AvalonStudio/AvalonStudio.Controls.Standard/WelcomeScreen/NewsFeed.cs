@@ -23,7 +23,7 @@
 
             ClickCommand = ReactiveCommand.Create(() =>
             {
-                System.Diagnostics.Process.Start(url);
+                Platforms.Platform.OpenWebPage(url);
             });
         }
 

@@ -2,10 +2,12 @@
 using AvalonStudio.Documents;
 using AvalonStudio.Projects.OmniSharp.Roslyn;
 using Microsoft.CodeAnalysis.CodeRefactorings;
+using Microsoft.CodeAnalysis.PasteTracking;
 using Microsoft.CodeAnalysis.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,7 +51,8 @@ namespace AvalonStudio.Languages.CSharp
                     document,
                     textSpan, cancellationToken).ConfigureAwait(false))
                     .Where(x => ExcludedRefactoringProviders.All(p => !x.Provider.GetType().Name.Contains(p)))
-                    .SelectMany(refactoring => refactoring.Actions)
+                    .SelectMany(refactoring => refactoring.CodeActions)
+                    .Select(x=>x.action)
                     .GroupBy(f => f.EquivalenceKey)
                     .Select(group => group.First())
                     .Select(refactoring => new CodeFix { Action = new RoslynCodeAction(refactoring) });

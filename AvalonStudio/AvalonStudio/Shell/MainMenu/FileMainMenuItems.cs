@@ -10,8 +10,24 @@ namespace AvalonStudio.Shell.Menus
         [DefaultOrder(0)]
         public IMenuItem File => _menuItemFactory.CreateHeaderMenuItem("File", null);
 
+        [DefaultOrder(500)]
+        [ExportMainMenuDefaultGroup("File", "Save")]
+        public object SaveGroup => null;
+
+        [ExportMainMenuItem("File", "Save")]
+        [DefaultOrder(0)]
+        [DefaultGroup("Save")]
+        public IMenuItem Save => _menuItemFactory.CreateCommandMenuItem("File.Save");
+
+        [ExportMainMenuItem("File", "SaveAll")]
+        [DefaultOrder(1)]
+        [DefaultGroup("Save")]
+        public IMenuItem SaveAll => _menuItemFactory.CreateCommandMenuItem("File.SaveAll");
+
+        [ExportOnPlatform(osx: false)]
         [ExportMainMenuDefaultGroup("File", "Exit")]
         [DefaultOrder(1000)]
+
         public object ExitGroup => null;
 
         [ExportMainMenuItem("File", "Exit")]

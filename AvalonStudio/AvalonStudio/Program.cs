@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Logging.Serilog;
+using Avalonia.Dialogs;
 using Avalonia.Threading;
 using AvalonStudio.Extensibility;
 using AvalonStudio.Extensibility.Studio;
@@ -8,7 +8,7 @@ using AvalonStudio.Packaging;
 using AvalonStudio.Platforms;
 using AvalonStudio.Shell;
 using AvalonStudio.Terminals.Unix;
-using Serilog;
+using AvalonStudio.Shell.Controls;
 using System;
 
 namespace AvalonStudio
@@ -21,17 +21,17 @@ namespace AvalonStudio
             UnixPsuedoTerminal.Trampoline(args);
 
 #if !DEBUG
-        try
+            try
             {
 #endif
-            if (args == null)
-            {
-                throw new ArgumentNullException(nameof(args));
-            }
+                if (args == null)
+                {
+                    throw new ArgumentNullException(nameof(args));
+                }
 
-            BuildAvaloniaApp().StartShellApp("AvalonStudio", AppMain, args);
+                BuildAvaloniaApp().StartShellApp("AvalonStudio", AppMain, args);
 #if !DEBUG
-    }
+            }
             catch (Exception e)
             {
                 Print(e);
@@ -47,9 +47,7 @@ namespace AvalonStudio
         // container, etc.
         private static void AppMain(string[] args)
         {
-            var studio = IoC.Get<IStudio>();
-
-            InitializeLogging();
+            var studio = IoC.Get<IStudio>();            
 
             Platform.Initialise();
 
@@ -71,7 +69,8 @@ namespace AvalonStudio
             }
             else
             {
-                result.UsePlatformDetect();
+                result.UsePlatformDetect()
+                    .UseManagedSystemDialogs<AppBuilder, MetroWindow>();
             }
 
             return result
@@ -79,16 +78,6 @@ namespace AvalonStudio
                 .With(new MacOSPlatformOptions { ShowInDock = true })
                 .With(new AvaloniaNativePlatformOptions { UseDeferredRendering = true, UseGpu = true })
                 .With(new X11PlatformOptions { UseGpu = true, UseEGL = true });
-        }
-
-        private static void InitializeLogging()
-        {
-#if DEBUG
-            SerilogLogger.Initialize(new LoggerConfiguration()
-                .MinimumLevel.Warning()
-                .WriteTo.Trace(outputTemplate: "{Area}: {Message}")
-                .CreateLogger());
-#endif
         }
 
 #if !DEBUG
