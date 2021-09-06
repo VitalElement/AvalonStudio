@@ -31,7 +31,7 @@ jobs:
       containerRegistry: 'dan-docker-hub'
       repository: 'vitalelement/avalonbuildvsts'
       Dockerfile: 'AvalonStudio/AvalonStudioBuild/Dockerfile'
-      buildContext: 'AvalonStudio/AvalonStudioBuild/bin/Release/netcoreapp2.2/linux-x64/publish'
+      buildContext: 'AvalonStudio/AvalonStudioBuild/bin/Release/net5.0/linux-x64/publish'
       
   - task: PublishBuildArtifacts@1
     inputs:
