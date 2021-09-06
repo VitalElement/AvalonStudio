@@ -24,6 +24,14 @@ jobs:
   - script: |
       cd AvalonStudio/AvalonStudioBuild
       dotnet publish -c Release -f net5.0 -r linux-x64
+
+  - task: Docker@2
+    inputs:
+      command: 'buildAndPush'
+      containerRegistry: 'dan-docker-hub'
+      repository: 'vitalelement/avalonbuildvsts'
+      Dockerfile: 'AvalonStudio/AvalonStudioBuild/Dockerfile'
+      buildContext: 'AvalonStudio/AvalonStudioBuild/bin/Release/net5.0/linux-x64/publish'
       
   - task: PublishBuildArtifacts@1
     inputs:
