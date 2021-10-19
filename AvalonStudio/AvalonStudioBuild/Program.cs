@@ -521,11 +521,6 @@ namespace AvalonStudio
         {
             var arguments = $"cvf package.tar {options.SourceDirectory}";
 
-            if(options.SourceDirectory == ".")
-            {
-                arguments += " --exclude=package.tar";
-            }
-
             if (!File.Exists(Path.Combine(options.SourceDirectory, "package.manifest")))
             {
                 console.WriteLine("File: package.manifest was not found.");
@@ -546,7 +541,7 @@ namespace AvalonStudio
 
             process.WaitForExit();
 
-            process = Process.Start("7z", "a package.7z -mx9 -mmt -md29 -ms=on -myx=9 -mfb=273 package.tar");
+            process = Process.Start("7z", "a package.7z -mx9 -ms=on -myx=0 -mfb=20 package.tar");
 
             process.WaitForExit();
 
