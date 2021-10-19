@@ -11,9 +11,11 @@ using Mono.Unix;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -113,16 +115,87 @@ namespace AvalonStudio.Packaging
             return await ListPackages("toolchain");
         }
 
+        private static bool s_isAdministrator;
+        private static bool s_hasPerformedCheck;
+        private static object s_adminCheckLock = new object();
+
+        private static bool CanExtract ()
+        {
+            if (!s_isAdministrator && !s_hasPerformedCheck && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                lock (s_adminCheckLock) 
+                {
+                    var testFile = Path.Combine(Platform.PackageDirectory, "testlink");
+                    var linkPath = Path.Combine(Platform.PackageDirectory, "symlink");
+
+                    bool result = false;
+
+                    if (File.Exists(testFile))
+                    {
+                        File.Delete(testFile);
+                    }
+
+                    if (File.Exists(linkPath))
+                    {
+                        File.Delete(linkPath);
+                    }
+
+                    using (File.CreateText(testFile))
+                    {
+                        result = Platform.CreateSymbolicLinkWin32(linkPath, testFile, true);
+
+                        if (result)
+                        {
+                            s_isAdministrator = true;
+                        }
+
+                        s_hasPerformedCheck = true;
+                    }
+
+                    if (File.Exists(testFile))
+                    {
+                        File.Delete(testFile);
+                    }
+
+                    if (File.Exists(linkPath))
+                    {
+                        File.Delete(linkPath);
+                    }
+
+                    return result;
+                }
+            }
+
+            s_hasPerformedCheck = true;
+
+            return true;
+        }
+
+        private static bool EnsureAdminCanExtract (IConsole console)
+        {
+            var result = CanExtract();
+
+            if(!result)
+            {
+                console?.WriteLine("Unable to install packages, run as administrator on Windows or enable developer mode and try again.");
+            }
+
+            return result;
+        }
+
             
         public static void ExtractAllToolchainPackages (IConsole console = null)
         {
-            foreach (var package in Directory.EnumerateDirectories(Platform.PackageDirectory))
+            if (EnsureAdminCanExtract(console))
             {
-                foreach(var version in Directory.EnumerateDirectories(package))
+                foreach (var package in Directory.EnumerateDirectories(Platform.PackageDirectory))
                 {
-                    foreach (var archive in Directory.EnumerateFiles(version, "*.avpkg"))
+                    foreach (var version in Directory.EnumerateDirectories(package))
                     {
-                        UnpackArchive(archive, version, (offset, length) => console?.OverWrite($"Extracting: [{(((float)offset / length) * 100.0f).ToString("0.00")}%])"), true);
+                        foreach (var archive in Directory.EnumerateFiles(version, "*.avpkg"))
+                        {
+                            UnpackArchive(archive, version, (offset, length) => console?.OverWrite($"Extracting: [{(((float)offset / length) * 100.0f).ToString("0.00")}%])"), true);
+                        }
                     }
                 }
             }
@@ -367,6 +440,7 @@ namespace AvalonStudio.Packaging
             if (!File.Exists(archiveFileName))
                 throw new FileNotFoundException("Archive not found.", archiveFileName);
 
+
             // Ensure that the target directory exists.
             Directory.CreateDirectory(targetDirectory);
 
@@ -543,7 +617,7 @@ namespace AvalonStudio.Packaging
                         case '2':
                             if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
                             {
-                                Platform.CreateSymbolicLinkWin32(outName.NormalizePath(), tarEntry.TarHeader.LinkName, !tarEntry.IsDirectory);
+                                Platform.CreateSymbolicLinkWin32(outName.NormalizePath(), tarEntry.TarHeader.LinkName.NormalizePath(), !tarEntry.IsDirectory);
                             }
                             else
                             {
@@ -634,12 +708,12 @@ namespace AvalonStudio.Packaging
             await Task.Run(() =>
             {
                 var archivePath = Path.Combine(Platform.PackageDirectory, package.Name, package.Version.ToString());
-                
+
                 UnpackArchive(Path.Combine(archivePath, package.BlobIdentity), archivePath, progress, true);
 
                 if (!CICacheMode)
                 {
-                    File.Delete(Path.Combine(archivePath, package.BlobIdentity));                    
+                    File.Delete(Path.Combine(archivePath, package.BlobIdentity));
                 }
             });
         }
@@ -651,7 +725,12 @@ namespace AvalonStudio.Packaging
 
         public static async Task<PackageEnsureStatus> EnsurePackage(string packageName, string version, IConsole console)
         {
-            packageName = packageName.ToLower();
+            if (!EnsureAdminCanExtract(console))
+            {
+                return PackageEnsureStatus.Unknown;
+            }
+
+                packageName = packageName.ToLower();
 
             if (string.IsNullOrWhiteSpace(packageName))
             {

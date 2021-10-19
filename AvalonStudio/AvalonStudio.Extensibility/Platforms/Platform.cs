@@ -329,13 +329,11 @@ namespace AvalonStudio.Platforms
         public static string OSDescription => RuntimeInformation.OSDescription;
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-
         internal static extern byte CreateSymbolicLinkW(string lpSymlinkFileName, string lpTargetFileName, uint dwFlags);
 
         internal const uint SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE = 2;
 
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-
         internal static extern byte CreateHardLinkW(string lpFileName, string lpExistingFileName, IntPtr lpSecurityAttributes);
 
         public static bool CreateSymbolicLinkWin32(string linkName, string target, bool isFile)
