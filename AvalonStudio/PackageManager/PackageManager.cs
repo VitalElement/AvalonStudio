@@ -617,7 +617,7 @@ namespace AvalonStudio.Packaging
                         case '2':
                             if (Platform.PlatformIdentifier == Platforms.PlatformID.Win32NT)
                             {
-                                Platform.CreateSymbolicLinkWin32(outName.NormalizePath(), tarEntry.TarHeader.LinkName.NormalizePath(), !tarEntry.IsDirectory);
+                                Platform.CreateSymbolicLinkWin32(outName.NormalizePath(), tarEntry.TarHeader.LinkName, !tarEntry.IsDirectory);
                             }
                             else
                             {
