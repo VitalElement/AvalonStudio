@@ -14,9 +14,8 @@ jobs:
       export DOTNET_CLI_TELEMETRY_OPTOUT=1
       which dotnet
       dotnet --info
-      dotnet tool install -g Cake.Tool --version 0.30.0
       export PATH="$PATH:$HOME/.dotnet/tools"
-      dotnet cake build.cake -Configuration="Release" -Target="Linux"
+      dotnet cake build.cake --Configuration="Release" -Target="Linux"
       cd packages
       ./package-debian.sh
       cd ..
@@ -52,9 +51,8 @@ jobs:
       export DOTNET_CLI_TELEMETRY_OPTOUT=1
       which dotnet
       dotnet --info
-      dotnet tool install -g Cake.Tool --version 0.30.0
       export PATH="$PATH:$HOME/.dotnet/tools"
-      dotnet cake build.cake -Configuration="Release" -Target="OSX"
+      dotnet cake build.cake --Configuration="Release" -Target="OSX"
       cd packages
       ./package-osx.sh
       cd ..
@@ -73,9 +71,13 @@ jobs:
       set DOTNET_CLI_TELEMETRY_OPTOUT=1
       where dotnet
       dotnet --info
-      dotnet tool install -g Cake.Tool --version 0.30.0
       set PATH=%PATH%;%USERPROFILE%\.dotnet\tools
-      dotnet cake build.cake -Configuration="Release"
+      dotnet cake build.cake --Configuration="Release"
+
   - task: PublishBuildArtifacts@1
     inputs:
       pathToPublish: artifacts/zip/
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: AvalonStudio/AvalonStudioBuild/nupkg

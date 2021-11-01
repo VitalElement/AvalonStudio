@@ -357,6 +357,7 @@ Task("Publish-AppVeyorNuget")
 Task("Default")
     .IsDependentOn("Clean")
     .IsDependentOn("Run-Net-Core-Unit-Tests")
+    .IsDependentOn("Build-NetCore")
     .IsDependentOn("Publish-NetCore")
     .IsDependentOn("Copy-Redist-Files-NetCore")
     .IsDependentOn("Zip-NetCore");
