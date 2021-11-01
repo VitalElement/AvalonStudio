@@ -14,7 +14,7 @@ jobs:
       export DOTNET_CLI_TELEMETRY_OPTOUT=1
       which dotnet
       dotnet --info
-      export PATH="$PATH:$HOME/.dotnet/tools"
+      dotnet tool restore
       dotnet cake build.cake --Configuration="Release" -Target="Linux"
       cd packages
       ./package-debian.sh
@@ -51,7 +51,7 @@ jobs:
       export DOTNET_CLI_TELEMETRY_OPTOUT=1
       which dotnet
       dotnet --info
-      export PATH="$PATH:$HOME/.dotnet/tools"
+      dotnet tool restore
       dotnet cake build.cake --Configuration="Release" -Target="OSX"
       cd packages
       ./package-osx.sh
@@ -71,7 +71,7 @@ jobs:
       set DOTNET_CLI_TELEMETRY_OPTOUT=1
       where dotnet
       dotnet --info
-      set PATH=%PATH%;%USERPROFILE%\.dotnet\tools
+      dotnet tool restore
       dotnet cake build.cake --Configuration="Release"
 
   - task: PublishBuildArtifacts@1
