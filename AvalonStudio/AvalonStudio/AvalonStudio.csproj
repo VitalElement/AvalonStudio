@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Product>AvalonStudio</Product>
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net5.0</TargetFrameworks>
     <TieredCompilations>True</TieredCompilations>
@@ -83,4 +84,6 @@
       <_FakeOutputPath Include="$(MSBuildProjectDirectory)\$(PackageOutputPath)\$(AssemblyName).UNK" />
     </ItemGroup>
   </Target>
+
+   <Import Project="..\build\SharedVersion.props" />
 </Project>

@@ -52,26 +52,6 @@ var isMyGetRelease = !isTagged && isReleasable;
 var isNuGetRelease = isTagged && isReleasable;
 
 ///////////////////////////////////////////////////////////////////////////////
-// VERSION
-///////////////////////////////////////////////////////////////////////////////
-
-var version = "0.10.0";
-
-if (isRunningOnAppVeyor)
-{
-    if (isTagged)
-    {
-        // Use Tag Name as version
-        version = BuildSystem.AppVeyor.Environment.Repository.Tag.Name;
-    }
-    else
-    {
-        // Use AssemblyVersion with Build as version
-        version += "-build" + EnvironmentVariable("APPVEYOR_BUILD_NUMBER") + "-alpha";
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // DIRECTORIES
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -102,43 +82,12 @@ var netCoreProjects = netCoreApps.Select(name =>
         Framework = XmlPeek(string.Format("{0}/{1}/{1}.csproj", netCoreAppsRoot, name), "//*[local-name()='TargetFrameworks']/text()").Split(';').First(),
         Runtimes = XmlPeek(string.Format("{0}/{1}/{1}.csproj", netCoreAppsRoot, name), "//*[local-name()='RuntimeIdentifiers']/text()").Split(';')
     }).ToList();
-///////////////////////////////////////////////////////////////////////////////
-// NUGET NUSPECS
-///////////////////////////////////////////////////////////////////////////////
-
-public NuGetPackSettings GetPackSettings(string rid, string version, string nugetRoot)
-{
-    var nuspecNuGetBehaviors = new NuGetPackSettings()
-    {
-        Id = "VitalElement.AvalonBuild." + rid,
-        Version = version.Replace("v",""),
-        Authors = new [] { "VitalElement" },
-        Owners = new [] { "Dan Walmsley (dan at walms.co.uk)" },
-        LicenseUrl = new Uri("http://opensource.org/licenses/MIT"),
-        ProjectUrl = new Uri("https://github.com/VitalElement/AvalonStudio/"),
-        RequireLicenseAcceptance = false,
-        Symbols = false,
-        NoPackageAnalysis = true,
-        Description = "Command Line build tools for AvalonStudio.",
-        Copyright = "Copyright 2018",
-        Tags = new [] { "AvalonStudio", "AvalonBuild" },
-        Files = new []
-        {
-            new NuSpecContent { Source = "**", Target = "content/" },
-        },
-        BasePath = Directory("artifacts/zip/AvalonStudioBuild-" + rid + "/"),
-        OutputDirectory = nugetRoot
-    };
-
-    return nuspecNuGetBehaviors;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // INFORMATION
 ///////////////////////////////////////////////////////////////////////////////
 
-Information("Building version {0} of AvalonStudio ({1}, {2}, {3}) using version {4} of Cake.", 
-    version,
+Information("Building version {0} of AvalonStudio ({1}, {2}) using version {3} of Cake.", 
     platform,
     configuration,
     target,
@@ -201,6 +150,7 @@ Task("Build-NetCore")
 
         var settings = new DotNetCoreBuildSettings {
             Configuration = configuration,
+
             MSBuildSettings = new DotNetCoreMSBuildSettings {
                 MaxCpuCount = 0
             }
@@ -312,46 +262,6 @@ Task("Zip-NetCore")
             }
         }
     }    
-});
-
-Task("Generate-NuGetPackages")
-.IsDependentOn("Publish-NetCore")
-.WithCriteria(()=>((isTagged && isMainRepo && isMasterBranch && isRunningOnAppVeyor && !isPullRequest) || isLocalBuild))
-.Does(()=>{
-    foreach(var rid in avalonBuildRIDs)
-    {
-        NuGetPack(GetPackSettings(rid, version, nugetRoot.ToString()));
-    }
-});
-
-Task("Publish-AppVeyorNuget")
-    .IsDependentOn("Generate-NuGetPackages")        
-    .WithCriteria(()=>(isTagged && isMainRepo && isMasterBranch && isRunningOnAppVeyor && !isPullRequest))   
-    .Does(() =>
-{
-    var apiKey = EnvironmentVariable("NUGET_API_KEY");
-    if(string.IsNullOrEmpty(apiKey))
-    {
-        throw new InvalidOperationException("Could not resolve MyGet API key.");
-    }
-
-    var apiUrl = EnvironmentVariable("NUGET_API_URL");
-    if(string.IsNullOrEmpty(apiUrl)) 
-    {
-        throw new InvalidOperationException("Could not resolve MyGet API url.");
-    }
-
-    foreach(var rid in avalonBuildRIDs)
-    {
-        var nuspec = GetPackSettings(rid, version, nugetRoot.ToString());
-        var settings  = nuspec.OutputDirectory.CombineWithFilePath(string.Concat(nuspec.Id, ".", nuspec.Version, ".nupkg"));
-
-        NuGetPush(settings, new NuGetPushSettings
-        {
-            Source = apiUrl,
-            ApiKey = apiKey
-        });
-    }
 });
 
 Task("Default")

@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Product>AvalonBuild</Product>
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net5.0</TargetFrameworks>
     <AssemblyName>avalon</AssemblyName>
@@ -46,4 +47,6 @@
       <_FakeOutputPath Include="$(MSBuildProjectDirectory)\$(PackageOutputPath)\$(AssemblyName).UNK" />
     </ItemGroup>
   </Target>
+
+  <Import Project="..\build\SharedVersion.props" />
 </Project>
