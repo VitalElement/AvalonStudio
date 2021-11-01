@@ -11,6 +11,7 @@
     <NoWarn>NU1701</NoWarn>
 	<PackAsTool>true</PackAsTool>
 	<ToolCommandName>avalon</ToolCommandName>
+  <PackageId>AvalonBuild</PackageId>
 	<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
 	<PackageOutputPath>./nupkg</PackageOutputPath>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
