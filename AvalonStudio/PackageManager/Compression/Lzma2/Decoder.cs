@@ -16,7 +16,7 @@ namespace ManagedLzma.LZMA2
         private readonly DecoderSettings mSettings;
         private LZMA.Master.LZMA.CLzma2Dec mDecoder;
         private LZMA.Master.LZMA.ELzmaStatus mStatus;
-        private int mDecoderPosition;
+        private long mDecoderPosition;
         private bool mInputComplete;
         private bool mOutputComplete;
         private bool mDisposed;
@@ -119,7 +119,7 @@ namespace ManagedLzma.LZMA2
 
             length = Math.Min(length, AvailableOutputLength);
 
-            Buffer.BlockCopy(mDecoder.mDecoder.mDic.mBuffer, mDecoder.mDecoder.mDic.mOffset + mDecoderPosition, buffer, offset, length);
+            Buffer.BlockCopy(mDecoder.mDecoder.mDic.mBuffer, mDecoder.mDecoder.mDic.mOffset + (int)mDecoderPosition, buffer, offset, length);
             mDecoderPosition += length;
             return length;
         }
