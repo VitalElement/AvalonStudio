@@ -11,11 +11,12 @@
     <NoWarn>NU1701</NoWarn>
 	<PackAsTool>true</PackAsTool>
 	<ToolCommandName>avalon</ToolCommandName>
-  <PackageId>AvalonBuild</PackageId>
-	<GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+	<AssemblyVersion>$(Version)</AssemblyVersion>
+    <PackageId>AvalonBuild</PackageId>
+	<GenerateAssemblyInfo>True</GenerateAssemblyInfo>
 	<PackageOutputPath>./nupkg</PackageOutputPath>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	 <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+	<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>

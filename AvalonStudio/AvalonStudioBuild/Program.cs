@@ -17,13 +17,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 
 namespace AvalonStudio
 {
     internal class Program
     {
-        private const string releaseName = "Apollo";
+        private const string releaseName = "Artemis";
 
         private static readonly ProgramConsole console = new ProgramConsole();
 
@@ -521,6 +522,11 @@ namespace AvalonStudio
         {
             var arguments = $"cvf package.tar {options.SourceDirectory}";
 
+            if(options.SourceDirectory == ".")
+            {
+                arguments += " --exclude=package.tar";
+            }
+
             if (!File.Exists(Path.Combine(options.SourceDirectory, "package.manifest")))
             {
                 console.WriteLine("File: package.manifest was not found.");
@@ -602,7 +608,10 @@ namespace AvalonStudio
 
             PackageManager.LoadAssetsAsync().Wait();
 
-            Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, ThisAssembly.Git.BaseVersion.Major + "." + ThisAssembly.Git.BaseVersion.Minor + "." + ThisAssembly.Git.BaseVersion.Patch, Platform.PlatformIdentifier);
+
+            var assemblyVersion = Assembly.GetCallingAssembly().GetName().Version;
+
+            Console.WriteLine("Avalon Build - {0} - {1}  - {2}", releaseName, assemblyVersion.Major + "." + assemblyVersion.Minor + "." + assemblyVersion.Build, Platform.PlatformIdentifier);
 
             Console.WriteLine($"Cache Path: {Platform.BaseDirectory}");
 

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Owners>VitalElement, Dan Walmsley</Owners>
     <Authors>Dan Walmsley</Authors>
-    <Version>0.10.0</Version>
+    <Version>0.10.1</Version>
     <Copyright>Copyright 2021 &#169; VitalElement</Copyright>
     <PackageLicenseUrl>https://github.com/VitalElement/AvalonStudio.Shell/blob/master/LICENSE.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/VitalElement/AvalonStudio/</PackageProjectUrl>

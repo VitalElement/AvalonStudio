@@ -5,12 +5,9 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // // set of attributes. Change these attribute values to modify the information
 // // associated with an assembly.
-[assembly: AssemblyTitle("Avalon Build")]
 [assembly: AssemblyDescription("")]
 // [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("VitalElement")]
-[assembly: AssemblyProduct("AvalonStudio")]
-[assembly: AssemblyCopyright("Copyright © 2019 Vital Element")]
+
 // [assembly: AssemblyTrademark("")]
 // [assembly: AssemblyCulture("")]
 //
@@ -35,8 +32,4 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.0.0")]
 // [assembly: AssemblyFileVersion("1.0.0.0")]
 //
-
-
-[assembly: AssemblyVersion (ThisAssembly.Git.BaseVersion.Major + "." + ThisAssembly.Git.BaseVersion.Minor + "." + ThisAssembly.Git.BaseVersion.Patch)]
-[assembly: AssemblyFileVersion (ThisAssembly.Git.BaseVersion.Major + "." + ThisAssembly.Git.BaseVersion.Minor + "." + ThisAssembly.Git.BaseVersion.Patch)]
 
