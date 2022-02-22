@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace AvalonStudio.Projects
 {
-    public interface ISolutionType
+    public interface IOpenableItem
     {
         string Description { get; }
 

@@ -3,7 +3,7 @@
 namespace AvalonStudio.Projects
 {
     [ExportSolutionType("sln")]
-    public class VisualStudioSolutionType : ISolutionType
+    public class VisualStudioSolutionType : IOpenableItem
     {
         public string Description => "Solution File";
 

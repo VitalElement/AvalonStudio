@@ -38,7 +38,7 @@ namespace AvalonStudio.Studio
         [ImportingConstructor]
         public StudioViewModel([ImportMany] IEnumerable<Lazy<IEditorProvider>> editorProviders,
             [ImportMany] IEnumerable<Lazy<ILanguageServiceProvider, LanguageServiceProviderMetadata>> languageServiceProviders,
-            [ImportMany] IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> solutionTypes,
+            [ImportMany] IEnumerable<Lazy<IOpenableItem, SolutionTypeMetadata>> solutionTypes,
             [ImportMany] IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> projectTypes,
             [ImportMany] IEnumerable<Lazy<ITestFramework>> testFrameworks,
             IContentTypeService contentTypeService)
@@ -89,7 +89,7 @@ namespace AvalonStudio.Studio
 
         public ReactiveCommand<Unit, Unit> EnableDebugModeCommand { get; }
 
-        public IEnumerable<Lazy<ISolutionType, SolutionTypeMetadata>> SolutionTypes { get; }
+        public IEnumerable<Lazy<IOpenableItem, SolutionTypeMetadata>> SolutionTypes { get; }
 
         public IEnumerable<Lazy<IProjectType, ProjectTypeMetadata>> ProjectTypes { get; }
 
@@ -440,8 +440,8 @@ namespace AvalonStudio.Studio
             if (System.IO.File.Exists(path))
             {
                 var extension = System.IO.Path.GetExtension(path);
-                var solutionType = IoC.Get<IStudio>().SolutionTypes.FirstOrDefault(
-                    s => s.Metadata.SupportedExtensions.Any(e => extension.EndsWith(e)));
+                var solutionType = SolutionTypes.FirstOrDefault(s => 
+                    s.Metadata.SupportedExtensions.Any(e => extension.EndsWith(e)));
 
                 if (solutionType != null)
                 {

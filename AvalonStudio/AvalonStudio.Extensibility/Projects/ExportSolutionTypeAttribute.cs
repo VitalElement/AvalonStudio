@@ -11,7 +11,7 @@ namespace AvalonStudio.Projects
         public IEnumerable<string> SupportedExtensions { get; }
 
         public ExportSolutionTypeAttribute(params string[] supportedExtensions)
-            : base (typeof(ISolutionType))
+            : base (typeof(IOpenableItem))
         {
             SupportedExtensions = supportedExtensions;
         }
