@@ -4,7 +4,7 @@
 
 # AvalonStudio
 
-An extensible, cross platform IDE written in C# for Embedded C/C++, .NET Core, Avalonia and Typescript
+An extensible, cross platform IDE written in C# for Embedded C/C++, .NET (C#, F#, Clojure, VB), Avalonia and Typescript
 
 <img src="https://files.gitter.im/VitalElement/AvalonStudio/3eEt/image.png" />
 <img src="https://files.gitter.im/VitalElement/AvalonStudio/3yMR/image.png" />
@@ -18,7 +18,7 @@ An extensible, cross platform IDE written in C# for Embedded C/C++, .NET Core, A
 ### 1. Install Dependencies
 
 - Git: https://git-scm.com/downloads
-- .NET 5.0: https://www.microsoft.com/net/download
+- .NET 5.0 or higher: https://www.microsoft.com/net/download
 
 ### 2. Get the code
 
