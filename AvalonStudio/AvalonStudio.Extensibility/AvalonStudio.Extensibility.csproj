@@ -18,6 +18,7 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="AsyncKeyedLock" Version="6.2.4" />
     <PackageReference Include="Avalonia" />    
     <PackageReference Include="Mono.Posix.NETStandard" Version="1.0.0" />    
     <PackageReference Include="Newtonsoft.Json" />
