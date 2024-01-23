@@ -1,8 +1,8 @@
-﻿using AvalonStudio.CommandLineTools;
+﻿using AsyncKeyedLock;
+using AvalonStudio.CommandLineTools;
 using AvalonStudio.Extensibility.Utils;
 using AvalonStudio.Utils;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -13,8 +13,7 @@ namespace AvalonStudio.Extensibility.Projects
 {
     public class DotNetCliService
     {       
-        private readonly ConcurrentDictionary<string, object> _locks;
-        private readonly SemaphoreSlim _semaphore;
+        private readonly AsyncKeyedLocker<string> _locks;
         private readonly IConsole _console;
         private DotNetInfo _info;
 
@@ -27,9 +26,12 @@ namespace AvalonStudio.Extensibility.Projects
         public DotNetInfo Info => _info;
         
         private DotNetCliService(string dotnetPath = null)
-        {            
-            this._locks = new ConcurrentDictionary<string, object>();
-            this._semaphore = new SemaphoreSlim(Environment.ProcessorCount / 2);
+        {
+            this._locks = new AsyncKeyedLocker<string>(o =>
+            {
+                o.PoolSize = 20;
+                o.PoolInitialFill = 1;
+            });
             this._console = IoC.Get<IConsole>();
 
             if (dotnetPath != null)
@@ -72,16 +74,14 @@ namespace AvalonStudio.Extensibility.Projects
 
         public Task RestoreAsync(string workingDirectory, string arguments = null, Action onFailure = null)
         {
-            return Task.Factory.StartNew(() =>
+            return Task.Factory.StartNew(async () =>
             {
                 _console.WriteLine($"Begin dotnet restore in '{workingDirectory}'");
 
-                var restoreLock = _locks.GetOrAdd(workingDirectory, new object());
-                lock (restoreLock)
+                using (await _locks.LockAsync(workingDirectory))
                 {
                     ShellExecuteResult? exitStatus = null;
                     //_eventEmitter.RestoreStarted(workingDirectory);
-                    _semaphore.Wait();
                     try
                     {
                         // A successful restore will update the project lock file which is monitored
@@ -90,10 +90,6 @@ namespace AvalonStudio.Extensibility.Projects
                     }
                     finally
                     {
-                        _semaphore.Release();
-
-                        _locks.TryRemove(workingDirectory, out _);
-
                         //_eventEmitter.RestoreFinished(workingDirectory, exitStatus.Succeeded);
 
                         if (exitStatus?.ExitCode != 0 && onFailure != null)
